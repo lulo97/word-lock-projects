@@ -1,0 +1,17 @@
+Make a app.cpp code
+
+When app start, stay in tray and show a small UI on bottom left call this "CountDownUI"
+
+CountDownUI content = a label with text "Word appear in N s" with N is from 3 seconds to 0 second.
+
+When N = 0 then show an InputUI screen with maximize window
+
+InputUI = have a container in center, inside container have a word "Apple" and a input field
+
+If you input "apple" correctly then show a correct text with green color and after that 300ms switch to InfoUI
+
+InfoUI = show apple definiton in english and vietnamse, have a listen button to play apple.ogg file
+
+Have a hint text in bottom of screen "Hit ENTER to close" and if user hit enter then close app and show back CountDownUI start count down from 3 2 1 0.
+
+For the tray icon, if left click show a menu with options = Open App, Exit

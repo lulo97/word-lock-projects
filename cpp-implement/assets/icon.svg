@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%">
+  <defs>
+    
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5E62" />
+      <stop offset="50%" stop-color="#FF7B54" />
+      <stop offset="100%" stop-color="#FFB26B" />
+    </linearGradient>
+
+    
+    <filter id="bubble-shadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#7A1C1C" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  
+  <rect x="32" y="32" width="960" height="960" rx="220" ry="220" fill="url(#bg-gradient)" />
+
+  
+  <rect x="36" y="36" width="952" height="952" rx="216" ry="216" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="6" />
+
+  
+  <g filter="url(#bubble-shadow)">
+    
+    <rect x="176" y="196" width="672" height="536" rx="164" ry="164" fill="#FFFDF9" />
+    
+    <path d="M 328 726 C 328 792, 360 836, 404 868 C 446 828, 492 778, 520 726 Z" fill="#FFFDF9" />
+  </g>
+
+  
+  <text x="512" y="535" text-anchor="middle" font-family="&#39;Hiragino Maru Gothic ProN&#39;, &#39;Rounded Mplus 1c&#39;, &#39;Noto Sans JP&#39;, sans-serif" font-weight="800" font-size="188" letter-spacing="14" fill="#2B1B2E">ことば</text>
+</svg>

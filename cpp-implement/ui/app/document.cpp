@@ -413,6 +413,15 @@ SIZE Document::measureContent(int maxWidth, float scale) {
         body = bodies.front();
 
     if (body) {
+        // If the body has an explicit width/height, size to the body itself.
+        if (body->style.width.unit == Length::Unit::Px &&
+            body->style.height.unit == Length::Unit::Px) {
+            return {
+                static_cast<LONG>(body->box.borderRect.w),
+                static_cast<LONG>(body->box.borderRect.h)
+            };
+        }
+
         for (auto& childPtr : body->children) {
             Element* content = dynamic_cast<Element*>(childPtr.get());
 
@@ -614,6 +623,51 @@ bool Document::tickBlink() {
     }
 
     return false;
+}
+
+namespace {
+
+void dumpElement(const Element& el, int depth, std::wostream& out) {
+    for (int i = 0; i < depth; ++i)
+        out << L"  ";
+
+    out << el.tag;
+    if (!el.id.empty())
+        out << L"#" << el.id;
+
+    if (!el.classList.empty()) {
+        out << L" ";
+        for (size_t i = 0; i < el.classList.size(); ++i) {
+            if (i)
+                out << L' ';
+            out << el.classList[i];
+        }
+    }
+
+    const RectF& r = el.box.borderRect;
+    out << L"  [x=" << static_cast<int>(r.x)
+        << L" y=" << static_cast<int>(r.y)
+        << L" w=" << static_cast<int>(r.w)
+        << L" h=" << static_cast<int>(r.h) << L"]\n";
+
+    for (const auto& child : el.children) {
+        if (child->kind == Node::Kind::Element)
+            dumpElement(*static_cast<const Element*>(child.get()), depth + 1, out);
+    }
+}
+
+} // namespace
+
+bool Document::dumpTree(const std::wstring& path) const {
+    if (!root_)
+        return false;
+
+    std::wofstream file(path);
+    if (!file)
+        return false;
+
+    dumpElement(*root_, 0, file);
+    return true;
 }
 
 } // namespace ui

@@ -64,6 +64,9 @@ public:
     Element* root() { return root_.get(); }
     EventState& events() { return events_; }
 
+    // Dump the element tree with layout boxes to a file. In: path. Out: true on success.
+    bool dumpTree(const std::wstring& path) const;
+
 private:
     std::unique_ptr<Element> root_;
     EventState events_;

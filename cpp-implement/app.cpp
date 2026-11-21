@@ -198,8 +198,8 @@ private:
     bool create_countdown() {
         ui::WindowOptions options;
         options.title = L"Countdown";
-        options.width = 180;
-        options.height = 51;
+        options.autoSizeToContent = true;
+
         options.popup = true;
         options.topmost = true;
         options.toolWindow = true;
@@ -211,6 +211,13 @@ private:
             return false;
 
         position_countdown();
+
+        // Dump UI tree for debugging.
+        wchar_t tempDir[MAX_PATH];
+        GetTempPathW(MAX_PATH, tempDir);
+        std::wstring dumpFile = std::wstring(tempDir) + L"\countdown_dump.txt";
+        countdown_->document().dumpTree(dumpFile);
+
         return true;
     }
 

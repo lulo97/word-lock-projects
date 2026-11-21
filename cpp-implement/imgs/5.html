@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotoba Lock - Word Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            /* Changed background to match the outer window area */
+            background-color: #182335; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center antialiased text-gray-300 p-8">
+
+    <!-- Main Card Container -->
+    <div class="bg-[#0c1421] border border-[#1e293b] w-full max-w-5xl p-10 md:p-14 shadow-2xl relative">
+        
+        <!-- Header Section -->
+        <div class="flex justify-between items-start pb-6 border-b border-[#1e293b]">
+            
+            <!-- Left Side: Kanji, Romaji, Part of Speech -->
+            <div>
+                <h1 class="text-white text-6xl font-bold tracking-wider mb-2 font-sans">
+                    明日
+                </h1>
+                <p class="text-[#38bdf8] text-[15px] mb-1">
+                    romaji: ashita
+                </p>
+                <div class="flex items-center gap-2">
+                    <span class="text-[#38bdf8] text-[13px] font-bold tracking-widest uppercase">Noun</span>
+                    <span class="text-[#38bdf8] text-[15px]">あした</span>
+                </div>
+            </div>
+
+            <!-- Right Side: Action Buttons -->
+            <div class="flex gap-4 pt-2">
+                <button class="px-6 py-1.5 bg-[#0f172a] border border-[#1e293b] text-gray-300 text-sm hover:bg-[#1e293b] transition-colors rounded-sm">
+                    Ignore
+                </button>
+                <button class="px-6 py-1.5 bg-[#0f172a] border border-[#1e293b] text-[#38bdf8] text-sm hover:bg-[#1e293b] transition-colors rounded-sm">
+                    Listen
+                </button>
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="pt-8 space-y-10">
+            
+            <!-- Meaning -->
+            <div>
+                <h3 class="text-[#38bdf8] text-[11px] font-bold tracking-widest uppercase mb-3">Meaning</h3>
+                <p class="text-white text-2xl mb-1 font-sans">今日の次の日。</p>
+                <p class="text-gray-400 italic text-[15px] mb-3">kyo no tsugi no hi.</p>
+                <p class="text-white text-xl font-bold">Ngày mai.</p>
+            </div>
+
+            <!-- Examples -->
+            <div>
+                <h3 class="text-[#38bdf8] text-[11px] font-bold tracking-widest uppercase mb-4">Examples</h3>
+                
+                <div class="space-y-6">
+                    <!-- Example 1 -->
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-white text-[17px] mb-1">• 明日は休みです。</p>
+                            <p class="text-gray-400 italic text-[14px] ml-4 mb-1">ashita wa yasumi desu.</p>
+                            <p class="text-gray-400 text-[15px] ml-4">Ngày mai được nghỉ.</p>
+                        </div>
+                        <button class="px-4 py-1 bg-[#1e293b] border border-[#334155] text-[#38bdf8] text-xs font-semibold rounded-sm hover:bg-[#334155] transition-colors mt-1">
+                            Speak
+                        </button>
+                    </div>
+
+                    <!-- Example 2 -->
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-white text-[17px] mb-1">• 明日また会いましょう。</p>
+                            <p class="text-gray-400 italic text-[14px] ml-4 mb-1">ashita mata ai masho u.</p>
+                            <p class="text-gray-400 text-[15px] ml-4">Mai gặp lại nhé.</p>
+                        </div>
+                        <button class="px-4 py-1 bg-[#1e293b] border border-[#334155] text-[#38bdf8] text-xs font-semibold rounded-sm hover:bg-[#334155] transition-colors mt-1">
+                            Speak
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="flex items-center gap-2 pt-2">
+                <span class="text-gray-400 text-[13px] tracking-wide uppercase">Tags:</span>
+                <span class="bg-[#1e293b] text-gray-300 px-2 py-0.5 text-[12px] rounded-sm">time</span>
+                <span class="bg-[#1e293b] text-gray-300 px-2 py-0.5 text-[12px] rounded-sm">daily</span>
+            </div>
+
+        </div>
+
+        <!-- Footer Section -->
+        <div class="mt-12 pt-6 border-t border-[#1e293b] text-center">
+            <p class="text-[#38bdf8] text-[22px] font-bold tracking-wide font-sans">
+                ENTER TO EXIT
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>

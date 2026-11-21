@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kotoba Lock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Optional: Use a font that supports Japanese well */
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap");
+      body {
+        font-family: "Noto Sans JP", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-[#1b2537] min-h-screen flex items-center justify-center antialiased"
+  >
+    <!-- Main Card Container -->
+    <div
+      class="bg-[#0c1421] border border-[#1e293b] w-[600px] py-16 px-12 flex flex-col items-center shadow-lg"
+    >
+      <!-- Header Label -->
+      <h2
+        class="text-[#38bdf8] text-[13px] font-bold tracking-[0.15em] uppercase mb-4"
+      >
+        Kotoba Lock
+      </h2>
+
+      <!-- Main Kanji -->
+      <h1 class="text-white text-7xl font-bold tracking-widest mb-3">明日</h1>
+
+      <!-- Hiragana -->
+      <h3 class="text-[#38bdf8] text-2xl font-medium mb-1">あした</h3>
+
+      <!-- Romaji -->
+      <p class="text-gray-400 text-[14px] mb-8">Romaji: ashita</p>
+
+      <!-- Instruction Text -->
+      <p class="text-gray-300 text-[15px] mb-4">
+        Type the romaji — correct answers unlock automatically
+      </p>
+
+      <!-- Input Field -->
+      <input
+        type="text"
+        class="w-full h-[60px] bg-[#0c1421] border-2 border-[#3b82f6] outline-none px-4 text-white text-lg tracking-wider focus:ring-0"
+        spellcheck="false"
+        autofocus
+      />
+
+      <!-- Ignore Button -->
+      <button
+        class="mt-12 px-6 py-2.5 bg-transparent border border-[#2a3a50] text-[#94a3b8] text-[14px] hover:bg-[#1e293b] transition-colors duration-200"
+      >
+        Ignore this word
+      </button>
+    </div>
+  </body>
+</html>

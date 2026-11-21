@@ -1,17 +1,489 @@
-Make a app.cpp code
+````markdown
+# HTML + Tailwind Renderer: Refactor and Extension Plan
 
-When app start, stay in tray and show a small UI on bottom left call this "CountDownUI"
+Target: pure Win32 + GDI/GDI+ renderer reaching about 90% visual fidelity on the 5 reference HTML files (timer, context menu, settings, word lock, word details).
 
-CountDownUI content = a label with text "Word appear in N s" with N is from 3 seconds to 0 second.
+Rule for the refactor: **each file has one job, and dependencies point one way** (down the list below). No file includes a file below it in the pipeline.
 
-When N = 0 then show an InputUI screen with maximize window
+```
+dom  ->  parser  ->  style  ->  layout  ->  paint  ->  app/interaction
+```
 
-InputUI = have a container in center, inside container have a word "Apple" and a input field
+---
 
-If you input "apple" correctly then show a correct text with green color and after that 300ms switch to InfoUI
+## 1. Target file layout
 
-InfoUI = show apple definiton in english and vietnamse, have a listen button to play apple.ogg file
+```
+src/ui/
+  core/
+    types.h            // Color, Rect, Edges, Length, small enums
+    utf.h/.cpp         // wstring helpers, trim, entity decode
+  dom/
+    node.h             // Node, Element, TextNode (tree only, no style logic)
+    tree_ops.h/.cpp    // find_by_id, append_child, remove, set_text, clone
+  parser/
+    html_parser.h/.cpp // tokenizer + tree builder, raw-text tags, void tags
+  style/
+    style.h            // ComputedStyle struct (all properties)
+    palette.h/.cpp     // slate/gray/blue/... color table, opacity handling
+    spacing.h/.cpp     // n*4px scale, fractions, arbitrary [..] values
+    class_table.h/.cpp // static class -> style mutation lookup
+    class_rules.h/.cpp // generic prefix rules (p-, w-, bg-, text-, ...)
+    variants.h/.cpp    // hover:, focus:, md: split + activation
+    resolve.h/.cpp     // cascade + inheritance + state -> ComputedStyle
+  layout/
+    box.h              // LayoutBox: border/padding/content rects
+    layout.h/.cpp      // entry point, block flow
+    flex.h/.cpp        // row/column, grow, justify, align, gap
+    inline_text.h/.cpp // line breaking, CJK break, letter-spacing, align
+    position.h/.cpp    // relative/absolute, translate, z-index
+    measure.h/.cpp     // intrinsic width/height, font metrics cache
+  paint/
+    canvas.h/.cpp      // GDI+ wrapper: fill/stroke rounded rect, alpha, clip
+    paint.h/.cpp       // tree walk, z-order, overflow clip
+    text_draw.h/.cpp   // run drawing with letter-spacing + font fallback
+    shadow.h/.cpp      // box-shadow approximation
+    scrollbar.h/.cpp   // dark thin overlay scrollbar
+    font_cache.h/.cpp  // (family,size,weight,italic) -> HFONT
+  svg/
+    svg_parse.h/.cpp   // <svg>, <path>, viewBox, stroke attrs
+    path.h/.cpp        // path data parser, arc -> bezier
+    svg_paint.h/.cpp   // stroke/fill via GDI+
+  controls/
+    control.h          // interface: hit, key, char, mouse, paint hooks
+    text_input.h/.cpp  // single-line input (caret, selection, scroll, IME)
+    text_area.h/.cpp   // multi-line
+    range_input.h/.cpp // slider
+    checkbox.h/.cpp    // (file 3 uses a styled div; optional real control)
+    button.h/.cpp      // hover/active states
+  app/
+    document.h/.cpp    // owns tree, runs parse -> style -> layout -> paint
+    window_host.h/.cpp // WndProc glue, double buffer, DPI, timers, cursor
+    events.h/.cpp      // hover/focus/click dispatch, tab order
+    bindings.h/.cpp    // set_text_by_id, on_click, template clone
+```
 
-Have a hint text in bottom of screen "Hit ENTER to close" and if user hit enter then close app and show back CountDownUI start count down from 3 2 1 0.
+Public header exposed to the rest of the app: `ui/document.h` only. Everything else is internal.
 
-For the tray icon, if left click show a menu with options = Open App, Exit
+---
+
+## 2. Data model changes
+
+### 2.1 Split `Element` into three concerns
+
+Today `Element` mixes DOM, style, layout results and control state.
+
+```cpp
+// dom/node.h
+struct Node {
+    enum class Kind { Element, Text } kind;
+    Node* parent = nullptr;
+    virtual ~Node() = default;
+};
+
+struct TextNode : Node {
+    std::wstring text;            // raw; collapsed at style/layout time
+};
+
+struct Element : Node {
+    std::wstring tag;
+    std::wstring id;
+    std::vector<std::pair<std::wstring,std::wstring>> attrs;
+    std::vector<std::unique_ptr<Node>> children;
+
+    // Filled by later stages (kept in side structs, not parser)
+    std::vector<std::wstring> classList;
+    ComputedStyle style;          // style stage
+    LayoutBox box;                // layout stage
+    std::unique_ptr<Control> control;  // input/textarea/range state
+    uint32_t stateFlags = 0;      // Hover | Focus | Active | Disabled
+};
+```
+
+- Text becomes its own node. `e.text +=` is gone.
+- `rect` becomes `LayoutBox` with `border`, `padding`, `content`, `margin` rects.
+- `caret`, `scrollX`, `focused`, `placeholder`, `inputType` move into `Control` subclasses.
+- Keep `hit_test` and `render_html` as thin wrappers during migration so the app code keeps compiling.
+
+### 2.2 `ComputedStyle`
+
+All properties have a default. Inherited ones are marked.
+
+```cpp
+struct ComputedStyle {
+    // display / position
+    Display display = Display::Block;       // Block, Flex, Inline, None
+    Position position = Position::Static;   // Static, Relative, Absolute
+    Length left, right, top, bottom;         // auto | px | percent
+    int zIndex = 0;
+    float translateXPct = 0, translateYPct = 0;
+
+    // box
+    Length width, height, minWidth, minHeight, maxWidth, maxHeight;
+    Edges margin, padding;
+    Edges borderWidth; Color borderColor[4];
+    CornerRadii radius;                      // per-corner (rounded-l-lg)
+    bool borderBox = true;                   // preflight
+
+    // flex
+    FlexDirection dir; JustifyContent justify; AlignItems align;
+    float grow = 0, shrink = 1; int gapX = 0, gapY = 0;
+    int spaceY = 0, spaceX = 0;              // space-y-N (applied to children)
+
+    // paint
+    Color background;                        // RGBA
+    std::vector<Shadow> shadows;
+    float opacity = 1;
+    Overflow overflowX, overflowY;
+
+    // inherited
+    Color color; int fontSize; int fontWeight; bool italic;
+    std::wstring fontFamily; float letterSpacing; // in px (em resolved)
+    float lineHeight; TextAlign textAlign; TextTransform transform;
+};
+```
+
+Colors are RGBA from the start (`border-gray-500/30`, rgba shadows).
+
+---
+
+## 3. Parser fixes (do before anything else)
+
+| Bug today | Fix |
+|---|---|
+| Unknown tags skipped but closing tags still pop | Create an `Element` for every tag; push all non-void |
+| `<style>/<script>/<title>` text leaks | Raw-text tags: read until matching `</tag>`, drop or store |
+| `<head>` content shows up | Skip subtree |
+| `<!doctype>`, comments | Skip; comments end at `-->` (not first `>`) |
+| `>` inside quoted attribute values | Tokenizer must respect quotes |
+| Text merged into parent | Emit `TextNode`; collapse whitespace at layout |
+| Void tags | `input, br, img, hr, meta, link, path` (path may also be `<path ... />`) |
+| Mismatched closers | Pop to the nearest matching open tag, not blindly |
+| Entities | Decode `&amp; &lt; &gt; &quot; &nbsp; &#NNN;` |
+| Boolean attrs | `autofocus`, `disabled`, `checked` without `=` |
+
+Whitespace rules (needed so indentation does not show up):
+- Drop text nodes that are whitespace-only between blocks.
+- Collapse runs of whitespace to one space inside inline content.
+- Trim leading and trailing space at line starts and ends.
+
+---
+
+## 4. Style system
+
+### 4.1 Pipeline
+
+```
+class string
+  -> split variants: "hover:bg-gray-100" -> {variant=hover, base="bg-gray-100"}
+  -> lookup in class_table (exact)         -> Declaration[]
+  -> else generic rules by prefix          -> Declaration[]
+  -> else ignore (log in debug)
+per element:
+  declarations (base) -> apply
+  + active variants (hover/focus/md)       -> apply in order
+  + inherit missing inherited props from parent
+  + preflight defaults per tag
+```
+
+Represent a class result as a small `Declaration { Prop prop; Value value; }` list, not direct writes into `Element`. This makes variants trivial: same declarations, applied only when the state matches.
+
+### 4.2 Preflight defaults (apply before classes)
+
+- All elements: `box-sizing: border-box; border-width: 0; border-style: solid`.
+- `h1..h6`: `font-size: inherit; font-weight: inherit; margin: 0`.
+- `p, div, span, h*`: `margin: 0`.
+- `button`: transparent bg, `color: inherit`, `padding: 0`, no default blue.
+- `input, textarea`: `font: inherit; color: inherit; bg: transparent; padding: 0; border: 0`.
+- `body`: `font-family: ui-sans/Segoe UI + CJK fallbacks; line-height: 1.5`.
+- Default `line-height: 1.5` for body text. Tailwind `text-sm` etc. also set line-height (`text-sm` = 20px, `text-base` = 24px, `text-3xl` = 36px, `text-7xl` = 1).
+
+### 4.3 Generic rules (prefix handlers)
+
+Each handler: `bool try_apply(const wstring& cls, Decls& out)`.
+
+| Prefix | Handler |
+|---|---|
+| `p/px/py/pt/pr/pb/pl-` | spacing scale or `[..]` |
+| `m/mx/my/mt/mr/mb/ml-` (and negative `-mt-`) | same |
+| `w-/h-/min-w-/min-h-/max-w-/max-h-` | scale, fraction, `full`, `screen`, `[..]`, `max-w-{xs..7xl}` |
+| `gap-/gap-x-/gap-y-/space-x-/space-y-` | scale |
+| `text-` | size keyword, align keyword, color (palette), `[13px]` vs `[#hex]` disambiguation |
+| `font-` | weight keyword, `mono/sans` family |
+| `leading-/tracking-` | keywords + `[..]` |
+| `bg-/border-` | palette color, `[#hex]`, `/NN` opacity; `border` width variants |
+| `rounded-`, `rounded-l-` etc. | size keyword, `full`, per-side |
+| `shadow-` | `sm, lg, xl, 2xl`, `[..]` arbitrary |
+| `left-/top-/right-/bottom-/inset-` | scale, fraction, `full` |
+| `translate-x-/-translate-y-` | fraction/percent |
+| `z-` | integer |
+| `grow/flex-1/shrink-0` | flex props |
+
+Arbitrary value parser (`[...]`): underscore means space, supports `#rgb/#rrggbb`, `rgba()`, `px`, `rem`, `em`, `%`, and shadow lists.
+
+### 4.4 Palette
+
+Minimum table: `white, black, transparent` plus `slate, gray, blue, sky, red, green` in shades 50–900 (only what files use is needed first: slate 200/300/400/700, gray 100/200/300/400/500/600/800, blue 400/500/600, sky 400). Add the rest lazily. Opacity suffix `/30` becomes alpha = 0.30.
+
+### 4.5 Variants
+
+- Store `{ condition, Decls }` per element. Conditions: `hover`, `focus`, `active`, `md` (min-width 768), `sm`, `lg`, `dark` (ignore).
+- Re-resolve style only for elements whose state flags changed, then repaint. Layout only reruns if the changed declarations affect geometry (padding, size, font). Compare old and new style to decide.
+
+### 4.6 Things to ignore on purpose
+
+`transition-*`, `duration-*`, `antialiased`, `select-none`, `cursor-*` (store cursor, no layout), `outline-none`, `ring-*` (approximate `focus:ring-1` as an extra 1px outline if cheap), `appearance-none`, `pointer-events-none` (store for hit testing).
+
+Do not parse `<style>` blocks. Hardcode what they provide:
+- scrollbar look (12px, track `#0b1120`, thumb `#334155`)
+- range input look (4px track, 16px thumb `#60a5fa`)
+- `@import` font rules (ignored)
+
+---
+
+## 5. Layout
+
+### 5.1 Box model
+
+- Every element: margin -> border -> padding -> content, border-box sizing.
+- `LayoutBox` stores the border-box rect plus resolved insets, so paint does not recompute.
+
+### 5.2 Algorithm
+
+```
+layout(element, constraints{availW, availH, definiteW?, definiteH?}):
+  resolve width/height/min/max (px, %, screen, auto)
+  switch display:
+    Flex   -> flex.cpp
+    Block  -> stack children vertically (apply space-y)
+    Inline -> handled by parent's inline formatter
+  then place absolute children against nearest positioned ancestor
+```
+
+Split into two phases, so measure is not mixed with place:
+1. `measure(el, maxW) -> {minContent, maxContent, height(for width)}`, cached per layout pass.
+2. `place(el, x, y, w, h)` assigns final rects.
+
+### 5.3 Flex (extend current engine)
+
+Currently supported: grow, justify, align, gap. Add:
+- `shrink-0` / shrink with min-content floor.
+- `items-start/center/end/stretch`, `self-*` optional.
+- `flex-col` with `flex-1` (already exists but only when parent has fixed height; fix by passing definite height from `min-h-screen` / fixed `h-[..]`).
+- `min-h-screen`: height = max(content, viewport).
+- `w-1/2`, `w-full` inside flex: treated as flex-basis.
+- `gap` plus `space-y-N` (as margin on children except first).
+
+### 5.4 Inline formatting
+
+For `p`, `span`, `label`, `button` text, and mixed children:
+- Build inline items: text runs and inline elements, each with style.
+- Break lines at spaces; also break between CJK characters and after CJK punctuation rules (basic: never start a line with `。、」`).
+- Overlong words: break by character (already done, move to this file).
+- Apply `text-align`, `line-height`, `uppercase` transform, `letter-spacing`.
+- Heuristic that covers all 5 files: `span` and `label` are **inline** inside `p, h*, button, label, span`, and **block** inside `div` when they are the only child content of a flex item. If this proves wrong, add `inline`/`block`/`inline-block` class support and use it.
+
+### 5.5 Absolute positioning
+
+- `relative`: creates containing block, takes part in flow.
+- `absolute`: removed from flow; resolve `left/right/top/bottom`, then `translate`.
+- Needed for: checkmark in the context menu, filled slider track in settings.
+- Paint order: by `z-index` then document order, within a stacking context.
+
+### 5.6 Scroll containers
+
+- `overflow-y-auto`: layout content at full height, store `contentHeight` and `scrollY`.
+- `overflow-hidden`: clip only.
+- Mouse wheel changes `scrollY`; clamp to `[0, contentHeight - clientHeight]`.
+
+---
+
+## 6. Paint
+
+### 6.1 Canvas wrapper
+
+Everything draws through `Canvas`, so GDI+ details stay in one place.
+
+```cpp
+class Canvas {
+public:
+    void fillRoundRect(RectF, CornerRadii, Color);
+    void strokeRoundRect(RectF, CornerRadii, Edges widths, Color[4]);
+    void drawLine(...); void drawEllipse(...);
+    void pushClip(RectF, CornerRadii); void popClip();
+    void drawPath(const Path&, StrokeStyle, FillStyle, Matrix);
+    void drawText(const TextRun&, PointF);
+    void drawShadow(RectF, CornerRadii, const Shadow&);
+};
+```
+
+Use GDI+ with `SmoothingModeAntiAlias` for shapes. Text: start with GDI+ `DrawString` or `TextRenderingHintClearTypeGridFit`; move to DirectWrite only if letter-spacing or CJK fallback is not good enough.
+
+### 6.2 Paint order per element
+
+1. Shadow (outside border box)
+2. Background (rounded)
+3. Border
+4. Push clip if overflow hidden/auto
+5. Children (sorted by z-index for positioned ones)
+6. Control overlay (caret, selection, slider thumb)
+7. Scrollbar overlay
+8. Pop clip
+
+### 6.3 Shadows
+
+Approximation: draw N (4 to 6) rounded rects, growing outward by `blur/N`, each with a low alpha, offset by `(x, y)`. Parse `shadow-sm/lg/xl/2xl` from a table and `shadow-[a_b_c_rgba()]` generically.
+
+### 6.4 Text drawing
+
+- Draw per inline run: `(text, font, color, letterSpacing, x, baseline)`.
+- Letter-spacing: draw char by char with advance + spacing (acceptable for headings), or use `SetTextCharacterExtra` for GDI.
+- Font fallback list: `Segoe UI, Yu Gothic UI, Meiryo, Microsoft YaHei UI`. With GDI+ use `FontFamily` fallback by checking glyph coverage per run, or split runs by script (Latin vs CJK) and choose a family per run.
+- `font-mono` -> `Consolas`.
+- Cache: `FontCache::get(family, px, weight, italic)` returns `HFONT` or `Gdiplus::Font`.
+
+### 6.3 Frame
+
+- Double buffer: create a memory DC and bitmap sized to client, paint, `BitBlt`.
+- `WM_ERASEBKGND` returns 1.
+- Layout only on `WM_SIZE`, DOM change, or style-affecting state change. Paint on `WM_PAINT` and `InvalidateRect`.
+
+---
+
+## 7. SVG mini-renderer
+
+Scope: 3 icons (clock, check x2). Supported:
+
+- `<svg viewBox fill stroke stroke-width class>` sized by `w-*/h-*` classes.
+- `<path d fill stroke stroke-linecap stroke-linejoin>`.
+- `stroke="currentColor"` -> computed `color`.
+- Path commands: `M m L l H h V v C c S s Q q A a Z z`.
+- Arc to Bézier conversion (endpoint -> center parameterization, split into <=90 degree segments).
+- Scale viewBox to element content box; keep aspect with centered `xMidYMid meet`.
+
+Parse `<svg>` children as a separate mini DOM (`SvgNode`) so the HTML layout engine only sees one replaced element with intrinsic size.
+
+---
+
+## 8. Controls
+
+Common interface:
+
+```cpp
+struct Control {
+    virtual void paint(Canvas&, Element&) = 0;
+    virtual bool onMouse(Element&, MouseEvent) { return false; }
+    virtual bool onKey(Element&, KeyEvent) { return false; }
+    virtual bool onChar(Element&, wchar_t) { return false; }
+    virtual SIZE intrinsicSize(Element&) { return {0,0}; }
+    virtual Cursor cursor() const { return Cursor::Arrow; }
+};
+```
+
+| Control | Must support |
+|---|---|
+| `text_input` | caret, blink, selection (shift+arrows, mouse drag), Home/End, Ctrl+A/C/V/X, Backspace/Delete, horizontal scroll, placeholder, IME composition (`WM_IME_*`), `autofocus`, value change callback |
+| `text_area` | wrap width, caret up/down, Enter, vertical scroll, placeholder |
+| `range_input` | min/max/value, drag on track and thumb, keyboard arrows, change callback, fill color from a class or default `#3b82f6` |
+| `button` | hover/active/focus style states, click, Enter/Space |
+| `checkbox` (optional) | toggled state, check icon via SVG |
+
+Controls render using the element's computed style (bg, border, radius, color), so Tailwind classes still apply.
+
+---
+
+## 9. App layer
+
+### 9.1 `Document` API
+
+```cpp
+class Document {
+public:
+    bool load(const std::wstring& html);
+    Element* byId(const std::wstring& id);
+    void setText(const std::wstring& id, const std::wstring& text);
+    void setClass(const std::wstring& id, const std::wstring& classes);
+    void setValue(const std::wstring& id, const std::wstring& value);
+    void onClick(const std::wstring& id, std::function<void()> fn);
+    void onInput(const std::wstring& id, std::function<void(const std::wstring&)> fn);
+    Element* cloneTemplate(const std::wstring& id, Element* parent); // examples list
+    void invalidateLayout(); void invalidatePaint();
+    void paint(HDC, RECT client, float dpiScale);
+    LRESULT handleMessage(HWND, UINT, WPARAM, LPARAM);
+};
+```
+
+### 9.2 Window host
+
+- Per-monitor DPI v2; scale = dpi / 96. Multiply all px values by scale at layout time (store logical px in style).
+- Handle `WM_MOUSEMOVE` (hover, cursor), `WM_LBUTTONDOWN/UP` (click, focus, drag), `WM_MOUSEWHEEL`, `WM_KEYDOWN`, `WM_CHAR`, `WM_SETFOCUS/KILLFOCUS`, `WM_TIMER` (caret blink 530 ms, countdown tick), `WM_SIZE`, `WM_DPICHANGED`.
+- Context menu (file 2) and countdown bar (file 1) are separate top-level windows: each owns its own `Document`. Use `WS_POPUP | WS_EX_TOOLWINDOW | WS_EX_TOPMOST` for these.
+
+### 9.3 Dynamic content for these 5 screens
+
+- Static labels by id: `setText("kanji", ...)`, `setText("hiragana", ...)`, `setText("romaji", ...)`.
+- Countdown: `setText("countdown", L"55s")` per second.
+- Settings: read/write `input#delay`, `range#volume`, checkbox, `textarea#ignore`.
+- Examples list: `<template id="example">` with `{{jp}} {{romaji}} {{vi}}` placeholders, filled by `cloneTemplate`.
+- Tags: same template approach.
+
+---
+
+## 10. Migration steps (each step compiles and runs)
+
+1. **Split files without changing behavior.** Move helpers to `core/utf`, font to `paint/font_cache`, parser to `parser/`, layout to `layout/`, draw to `paint/`. Keep `html.h` as an umbrella header re-exporting old function names.
+2. **Parser rewrite** with text nodes and all-tag push. Update layout to read text children. Verify old sample still renders.
+3. **Introduce `ComputedStyle`** and port the existing `parse_classes` ladder into `class_table` + `class_rules`. Delete old fields from `Element`.
+4. **Inheritance + preflight + palette + arbitrary values + spacing scale.**
+5. **Border-box with borders**, `min-h-screen`, `max-w`, `w/h` classes, `space-y`.
+6. **Canvas + double buffering** (GDI+ rounded rects, alpha, fonts cache, letter-spacing).
+7. **Inline layout** (spans, line wrapping, CJK, text-align, line-height).
+8. **Absolute positioning, overflow clip, shadows.**
+9. **SVG paths.**
+10. **Controls** (input rewrite, textarea, range) and variants (`hover/focus`).
+11. **Scrolling and scrollbar overlay.**
+12. **Document API, template cloning, DPI.**
+
+Checkpoints (visual comparison against a browser screenshot of each file at the same size):
+- After step 6: files 1 and 4 within a few pixels.
+- After step 8: files 2 and 5.
+- After step 10: file 3.
+
+---
+
+## 11. Testing approach
+
+- `tests/golden/`: for each `N.html`, a reference PNG from Chrome at the target window size.
+- A debug mode renders to an offscreen bitmap and saves a PNG; a script computes per-pixel diff percentage. Accept under 10% differing pixels (matching the 90% goal), ignoring anti-aliasing noise.
+- Unit tests (plain `assert`, no framework needed) for: class parsing (`class_rules`), arbitrary values, palette lookups, path data parser, arc conversion, whitespace collapsing, line breaking (Latin and CJK), flex distribution.
+- Debug overlay (toggle with F12): draws each element's border-box outline, and dumps the computed style of the element under the cursor.
+
+---
+
+## 12. Class coverage checklist (from the 5 files)
+
+**Layout:** `flex flex-col flex-1 items-start items-center justify-center justify-between shrink-0 relative absolute z-0 z-10 w-64 w-full w-1/2 w-[Npx] h-9 h-1 h-36 h-[60px] min-h-screen max-w-5xl overflow-hidden overflow-y-auto mt-* mb-* mx-* p-* px-* py-* gap-* space-y-*`
+
+**Text:** `text-[11px] text-[13px] text-[14px] text-[15px] text-xs text-sm text-lg text-xl text-2xl text-3xl text-6xl text-7xl text-[22px] font-bold font-semibold font-medium font-mono font-sans italic uppercase text-center leading-none leading-relaxed tracking-tight tracking-wide tracking-widest tracking-wider tracking-[0.15em]`
+
+**Color:** `bg-white bg-gray-300 bg-gray-100 bg-[#hex] text-white text-slate-* text-gray-* text-[#hex] border-[#hex] border-gray-* border-gray-500/30 hover:bg-* hover:bg-[#hex] focus:ring-1 focus:ring-[#hex] focus:border-[#hex]`
+
+**Border/Radius/Shadow:** `border border-2 border-t border-b rounded rounded-sm rounded-full rounded-l-lg shadow-sm shadow-lg shadow-2xl shadow-[...]`
+
+**Position:** `left-3 left-0 top-1/2 -translate-y-1/2 pointer-events-none`
+
+**Ignored:** `select-none antialiased transition-colors duration-100 duration-200 cursor-pointer outline-none appearance-none resize-none focus:outline-none focus:ring-0`
+
+**Elements:** `html head body div p span h1 h2 h3 label button input textarea svg path` (plus `template` for binding).
+
+---
+
+## 13. Definition of done for "~90%"
+
+- Files 1, 2, 4, 5 look the same as Chrome at a glance: same colors, spacing, fonts, rounding, shadows, alignment.
+- File 3 has a working text input, textarea, range slider, checkbox, and scrolling.
+- Japanese text renders with correct fallback and wraps sanely.
+- Hover and focus states work on buttons and inputs.
+- No per-frame allocation storms: fonts cached, layout only on change.
+- All 5 screens are driven from C++ via `Document` (by-id setters and click handlers), with no HTML edits needed at runtime.
+````

@@ -8,11 +8,12 @@ set "SCRIPT_DIR=%~dp0"
 :: Defaults
 :: --------------------------------------------------
 set "INPUTS="
-set "OUTPUT=build\calculator.exe"
+set "FIRST_INPUT="
+set "OUTPUT=build\app.exe"
 
 :: --------------------------------------------------
 :: Parse arguments
-::   build.bat --input calculator.cpp --output build/calculator.exe
+::   build.bat --input app.cpp --output build/app.exe
 :: --------------------------------------------------
 :parse_args
 if "%~1"=="" goto args_done
@@ -20,6 +21,7 @@ if "%~1"=="" goto args_done
 if /I "%~1"=="--input" (
     if "%~2"=="" goto missing_value
 
+    if not defined FIRST_INPUT set "FIRST_INPUT=%~2"
     set INPUTS=!INPUTS! "%~2"
     shift
     shift
@@ -48,8 +50,8 @@ exit /b 1
 :usage
 echo Usage: build.bat [--input source.cpp] [--output path\to\app.exe]
 echo.
-echo   --input   Main source file (default: calculator.cpp)
-echo   --output  Output executable (default: build\calculator.exe)
+echo   --input   Main source file (default: app.cpp)
+echo   --output  Output executable (default: build\app.exe)
 exit /b 0
 
 :usage_error
@@ -76,9 +78,18 @@ if errorlevel 1 (
 cd /d "%SCRIPT_DIR%"
 
 :: --------------------------------------------------
-:: Resolve sources
+:: Resolve sources and intermediate folders
 :: --------------------------------------------------
-if not defined INPUTS set INPUTS="calculator.cpp"
+if not defined FIRST_INPUT set "FIRST_INPUT=app.cpp"
+if not defined INPUTS set INPUTS="app.cpp"
+
+for %%F in ("%FIRST_INPUT%") do set "SRC_BASE=%%~nF"
+
+set "OBJ_DIR=build\%SRC_BASE%_obj"
+set "RES_DIR=build\%SRC_BASE%_res"
+
+if not exist "%OBJ_DIR%" mkdir "%OBJ_DIR%"
+if not exist "%RES_DIR%" mkdir "%RES_DIR%"
 
 for %%F in (%INPUTS%) do (
     if not exist "%%~F" (
@@ -109,7 +120,7 @@ if not "%OUTDIR%"=="" if not exist "%OUTDIR%" mkdir "%OUTDIR%"
 :: Embed the application icon (and any other resources) in the .exe.
 set "RESOURCE="
 if exist "app.rc" (
-    rc /nologo /fo app.res app.rc
+    rc /nologo /fo "%RES_DIR%\app.res" app.rc
 
     if errorlevel 1 (
         echo Failed to compile app.rc
@@ -117,13 +128,13 @@ if exist "app.rc" (
         exit /b 1
     )
 
-    set "RESOURCE=app.res"
+    set "RESOURCE=%RES_DIR%\app.res"
 )
 
 :: --------------------------------------------------
 :: Build
 :: --------------------------------------------------
-cl /EHsc /std:c++17 /O2 /I"ui_new" %INPUTS% user32.lib gdi32.lib shell32.lib winmm.lib gdiplus.lib /link /SUBSYSTEM:WINDOWS %RESOURCE% /OUT:"%OUTPUT%"
+cl /MP /EHsc /std:c++17 /O2 /I"ui_new" /Fo"%OBJ_DIR%\\" %INPUTS% user32.lib gdi32.lib shell32.lib winmm.lib gdiplus.lib /link /SUBSYSTEM:WINDOWS %RESOURCE% /OUT:"%OUTPUT%"
 
 if errorlevel 1 (
     echo Build failed!
@@ -131,8 +142,4 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if exist *.obj del *.obj
-if exist *.res del *.res
-
 echo Build successful: %OUTPUT%
-pause

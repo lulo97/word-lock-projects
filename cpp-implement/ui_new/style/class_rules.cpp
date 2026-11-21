@@ -355,10 +355,10 @@ bool ruleSizing(const std::wstring& cls, Declarations& out) {
 
         if (p.name == std::wstring(L"max-w-")) {
             static const std::pair<const wchar_t*, float> widths[] = {
-                { L"xs", 320 },  { L"sm", 384 },  { L"md", 448 },
-                { L"lg", 512 },  { L"xl", 576 },  { L"2xl", 672 },
-                { L"3xl", 768 }, { L"4xl", 896 }, { L"5xl", 1024 },
-                { L"6xl", 1152 }, { L"7xl", 1280 }
+                { L"xs", 320.0f },  { L"sm", 384.0f },  { L"md", 448.0f },
+                { L"lg", 512.0f },  { L"xl", 576.0f },  { L"2xl", 672.0f },
+                { L"3xl", 768.0f }, { L"4xl", 896.0f }, { L"5xl", 1024.0f },
+                { L"6xl", 1152.0f }, { L"7xl", 1280.0f }
             };
 
             for (const auto& w : widths) {

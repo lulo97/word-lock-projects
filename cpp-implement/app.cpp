@@ -31,7 +31,7 @@ std::wstring module_directory() {
 
         if (length < buffer.size() - 1) {
             std::wstring path(buffer.data(), length);
-            std::wstring::size_type slash = path.find_last_of(L"\/");
+            std::wstring::size_type slash = path.find_last_of(L"\\/");
 
             if (slash == std::wstring::npos)
                 return L".";
@@ -44,7 +44,7 @@ std::wstring module_directory() {
 }
 
 std::wstring parent_directory(const std::wstring& directory) {
-    std::wstring::size_type slash = directory.find_last_of(L"\/");
+    std::wstring::size_type slash = directory.find_last_of(L"\\/");
 
     if (slash == std::wstring::npos)
         return directory;

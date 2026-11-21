@@ -39,7 +39,19 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
     list(APPEND SOURCES "app.rc")
 endif()
 
+include(cmake/EmbedAssets.cmake)
+
 add_executable(MyApp ${SOURCES})
+
+# Embed HTML assets into the executable.
+target_embed_assets(MyApp
+    NAMESPACE assets
+    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/countdown.html"
+    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/info.html"
+    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/input.html"
+    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/settings.html"
+    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/tray_menu.html"
+)
 
 # Equivalent to /I"ui"
 target_include_directories(MyApp PRIVATE

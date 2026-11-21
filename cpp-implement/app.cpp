@@ -6,10 +6,11 @@
 #include "document.h"
 #include "core/utf.h"
 #include "utils/set_tray.h"
+#include "embedded_assets.h"
 
-#include <fstream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace {
@@ -18,103 +19,32 @@ constexpr UINT_PTR TIMER_COUNTDOWN = 100;
 constexpr UINT_PTR TIMER_TRANSITION = 101;
 constexpr UINT_PTR TIMER_INPUT_DONE = 102;
 
-std::wstring module_directory() {
-    std::vector<wchar_t> buffer(MAX_PATH);
+std::wstring load_embedded_html(const wchar_t* name) {
+    const unsigned char* data = nullptr;
+    std::size_t size = 0;
 
-    for (;;) {
-        DWORD length = GetModuleFileNameW(
-            nullptr, buffer.data(), static_cast<DWORD>(buffer.size())
-        );
-
-        if (length == 0)
-            return L"";
-
-        if (length < buffer.size() - 1) {
-            std::wstring path(buffer.data(), length);
-            std::wstring::size_type slash = path.find_last_of(L"\\/");
-
-            if (slash == std::wstring::npos)
-                return L".";
-
-            return path.substr(0, slash);
-        }
-
-        buffer.resize(buffer.size() * 2);
-    }
-}
-
-std::wstring parent_directory(const std::wstring& directory) {
-    std::wstring::size_type slash = directory.find_last_of(L"\\/");
-
-    if (slash == std::wstring::npos)
-        return directory;
-
-    if (slash == 2 && directory.size() >= 3 && directory[1] == L':')
-        return directory.substr(0, 3);
-
-    return directory.substr(0, slash);
-}
-
-std::wstring current_directory() {
-    DWORD length = GetCurrentDirectoryW(0, nullptr);
-
-    if (length == 0)
-        return L"";
-
-    std::vector<wchar_t> buffer(length);
-    length = GetCurrentDirectoryW(length, buffer.data());
-
-    if (length == 0)
-        return L"";
-
-    return std::wstring(buffer.data(), length);
-}
-
-bool file_exists(const std::wstring& path) {
-    DWORD attributes = GetFileAttributesW(path.c_str());
-    return attributes != INVALID_FILE_ATTRIBUTES &&
-           (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
-}
-
-std::wstring html_path(const std::wstring& name) {
-    std::wstring exeDir = module_directory();
-    std::wstring parent = parent_directory(exeDir);
-    std::wstring cwd = current_directory();
-
-    std::vector<std::wstring> candidates = {
-        exeDir + L"\\htmls\\" + name,
-        parent + L"\\htmls\\" + name,
-        cwd + L"\\htmls\\" + name,
-        exeDir + L"\\" + name,
-        parent + L"\\" + name,
-        cwd + L"\\" + name
-    };
-
-    for (const std::wstring& candidate : candidates) {
-        if (file_exists(candidate))
-            return candidate;
+    if (name == L"countdown.html") {
+        data = assets::countdown_html;
+        size = assets::countdown_html_size;
+    } else if (name == L"info.html") {
+        data = assets::info_html;
+        size = assets::info_html_size;
+    } else if (name == L"input.html") {
+        data = assets::input_html;
+        size = assets::input_html_size;
+    } else if (name == L"settings.html") {
+        data = assets::settings_html;
+        size = assets::settings_html_size;
+    } else if (name == L"tray_menu.html") {
+        data = assets::tray_menu_html;
+        size = assets::tray_menu_html_size;
     }
 
-    return L"";
-}
-
-std::wstring load_html_file(const wchar_t* name) {
-    std::wstring path = html_path(name);
-
-    if (path.empty())
+    if (!data || size == 0)
         return L"";
 
-    std::ifstream file(path, std::ios::binary);
-
-    if (!file)
-        return L"";
-
-    std::string bytes(
-        (std::istreambuf_iterator<char>(file)),
-        std::istreambuf_iterator<char>()
-    );
-
-    return ui::utf8ToWide(bytes);
+    std::string_view bytes(reinterpret_cast<const char*>(data), size);
+    return ui::utf8ToWide(std::string(bytes));
 }
 
 std::wstring missing_html_page(const wchar_t* name) {
@@ -131,7 +61,7 @@ bool create_host(
     const ui::WindowOptions& options,
     const wchar_t* htmlName
 ) {
-    std::wstring html = load_html_file(htmlName);
+    std::wstring html = load_embedded_html(htmlName);
 
     if (html.empty())
         html = missing_html_page(htmlName);

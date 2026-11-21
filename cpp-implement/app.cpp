@@ -224,8 +224,8 @@ private:
     bool create_tray_menu() {
         ui::WindowOptions options;
         options.title = L"Kotoba Lock";
-        options.width = 320;
-        options.height = 430;
+        options.autoSizeToContent = true;
+
         options.popup = true;
         options.topmost = true;
         options.toolWindow = true;

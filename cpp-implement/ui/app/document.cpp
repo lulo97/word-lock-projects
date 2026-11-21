@@ -422,18 +422,27 @@ SIZE Document::measureContent(int maxWidth, float scale) {
             };
         }
 
+        // Sum all visible children to get total content size.
+        float padX = (body->style.padding.left + body->style.padding.right) * scale;
+        float padY = (body->style.padding.top + body->style.padding.bottom) * scale;
+        float totalW = 0, totalH = 0;
+        bool any = false;
+
         for (auto& childPtr : body->children) {
             Element* content = dynamic_cast<Element*>(childPtr.get());
 
             if (!content || content->style.display == Display::None)
                 continue;
 
-            float padX = (body->style.padding.left + body->style.padding.right) * scale;
-            float padY = (body->style.padding.top + body->style.padding.bottom) * scale;
+            totalW = std::max(totalW, content->box.borderRect.w);
+            totalH += content->box.borderRect.h;
+            any = true;
+        }
 
+        if (any) {
             return {
-                static_cast<LONG>(content->box.borderRect.w + padX),
-                static_cast<LONG>(content->box.borderRect.h + padY)
+                static_cast<LONG>(totalW + padX),
+                static_cast<LONG>(totalH + padY)
             };
         }
     }

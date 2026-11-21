@@ -61,12 +61,14 @@ Measure measureElement(Element& el, float scale) {
     }
 
     if (!el.style.width.isAuto()) {
-        float width = el.style.width.value;
-        if (el.style.width.unit == Length::Unit::Percent)
-            width = 100; // caller will resolve against available width
-
-        result.minContent = width * scale;
-        result.maxContent = width * scale;
+        if (el.style.width.unit == Length::Unit::Px ||
+            el.style.width.unit == Length::Unit::Screen) {
+            float width = el.style.width.value * scale;
+            result.minContent = width;
+            result.maxContent = width;
+            g_cache[&el] = result;
+            return result;
+        }
     }
     else if (el.control) {
         SizeF intrinsic = el.control->intrinsicSize(el, scale);
@@ -101,7 +103,10 @@ Measure measureElement(Element& el, float scale) {
                     continue;
 
                 Measure childMeasure = measureElement(*child, scale);
-                float extra = horizontalBox(child->style, scale);
+                bool fixedBox = !child->style.width.isAuto() &&
+                    (child->style.width.unit == Length::Unit::Px ||
+                     child->style.width.unit == Length::Unit::Screen);
+                float extra = fixedBox ? 0.f : horizontalBox(child->style, scale);
 
                 if (el.style.display == Display::Flex &&
                     el.style.dir == FlexDirection::Row) {

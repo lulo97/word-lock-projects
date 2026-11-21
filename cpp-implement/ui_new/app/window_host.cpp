@@ -1,6 +1,7 @@
 #include "app/window_host.h"
 
 #include "../../utils/set_icon.h"
+#include "../../utils/set_tray.h"
 #include "paint/canvas.h"
 #include "paint/font_cache.h"
 
@@ -130,7 +131,7 @@ void WindowHost::show(bool visible) {
     if (!hwnd_)
         return;
 
-    bool noActivate = opt_.popup || opt_.toolWindow;
+    bool noActivate = opt_.noActivate;
     ShowWindow(
         hwnd_,
         visible ? (noActivate ? SW_SHOWNOACTIVATE : SW_SHOW) : SW_HIDE
@@ -250,6 +251,10 @@ LRESULT WindowHost::handle(UINT msg, WPARAM wp, LPARAM lp) {
         if (auto it = timers_.find(wp); it != timers_.end()) {
             auto callback = it->second;
             callback();
+
+            if (doc_ && doc_->needsPaint())
+                InvalidateRect(hwnd_, nullptr, FALSE);
+
             return 0;
         }
 
@@ -268,6 +273,15 @@ LRESULT WindowHost::handle(UINT msg, WPARAM wp, LPARAM lp) {
             onDeactivate();
 
         break;
+
+    case WM_KEYDOWN:
+        if (onKeyDown && onKeyDown(static_cast<UINT>(wp)))
+            return 0;
+        break;
+
+    case WM_TRAY_CALLBACK:
+        handle_tray_message(hwnd_, lp);
+        return 0;
 
     case WM_CLOSE:
         if (onClose)

@@ -19,6 +19,7 @@ struct WindowOptions {
     bool autoSizeToContent = false;      // size window from Document::measureContent
     bool centered = true;
     bool visible = true;
+    bool noActivate = false;             // overlay popup that must not take focus
 };
 
 // Win32 window that hosts one Document: message loop glue, double buffer, DPI, timers, cursor.
@@ -48,6 +49,7 @@ public:
     // Callback when window closes / loses focus (context menu dismissal).
     std::function<void()> onClose;
     std::function<void()> onDeactivate;
+    std::function<bool(UINT)> onKeyDown;  // return true to consume the key
 
     // Call once in main: enable per-monitor DPI v2 awareness.
     static void enableDpiAwareness();

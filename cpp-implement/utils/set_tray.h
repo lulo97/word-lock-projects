@@ -1,6 +1,7 @@
 #pragma once
 
 #include <windows.h>
+#include <functional>
 #include <string>
 
 // Callback message sent by the tray icon to the window.
@@ -15,6 +16,12 @@ bool set_tray(
     HICON icon = nullptr,
     const std::wstring& tooltip = L""
 );
+
+// Optional custom handler for tray clicks. When installed, the built-in
+// Open App / Exit popup menu is not shown. The window receives the raw
+// lParam from WM_TRAY_CALLBACK.
+using TrayClickCallback = std::function<void(HWND, LPARAM)>;
+void set_tray_click_callback(HWND hwnd, TrayClickCallback callback);
 
 // Remove the window's tray icon.
 void remove_tray(HWND hwnd);

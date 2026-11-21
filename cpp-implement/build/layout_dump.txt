@@ -1,14 +1,11 @@
-root [] {} box=0,0,525,775 contentH=775
-  html [] {} box=0,0,525,775 contentH=775
-    body [] {min-h-screen flex items-center justify-center antialiased } box=0,0,525,775 contentH=775
-      div [] {bg-white w-[260px] shadow-[0_4px_16px_rgba(0,0,0,0.2)] border border-gray-200 flex flex-col py-2 select-none } box=100,206.25,325,362.5 contentH=360
-        button [] {w-full text-left px-8 py-2.5 text-[15px] text-gray-800 hover:bg-gray-100 transition-colors duration-100 } box=101.25,217.5,322.5,53.125 contentH=53.125
-        button [] {w-full text-left px-8 py-2.5 text-[15px] text-gray-800 hover:bg-gray-100 transition-colors duration-100 } box=101.25,270.625,322.5,53.125 contentH=53.125
-        button [] {w-full text-left px-8 py-2.5 text-[15px] text-gray-800 hover:bg-gray-100 transition-colors duration-100 } box=101.25,323.75,322.5,53.125 contentH=53.125
-        button [] {w-full text-left px-8 py-2.5 text-[15px] text-gray-800 hover:bg-gray-100 transition-colors duration-100 } box=101.25,376.875,322.5,53.125 contentH=53.125
-        button [] {relative w-full text-left px-8 py-2.5 text-[15px] text-gray-800 hover:bg-gray-100 transition-colors duration-100 } box=101.25,430,322.5,53.125 contentH=53.125
-          span [] {absolute left-3 top-1/2 -translate-y-1/2 } box=116.25,445.312,22.5,22.5 contentH=22.5
-            svg [] {w-[18px] h-[18px] text-gray-600 } box=116.25,445.312,22.5,22.5 contentH=22.5
-              path [] {} box=0,-11.25,0,0 contentH=0
-        div [] {border-t border-gray-300 my-1.5 } box=101.25,490.625,322.5,1.25 contentH=0
-        button [] {w-full text-left px-8 py-3 text-[15px] text-gray-800 hover:bg-gray-100 transition-colors duration-100 } box=101.25,499.375,322.5,58.125 contentH=58.125
+root {} box=0,0,475,225
+  html {} box=0,0,475,225
+    body {bg-white min-h-screen flex items-center justify-center font-sans } box=0,0,475,225
+      div {relative } box=77.5,65.9375,320,93.125
+        div {bg-[#1e293b] w-64 px-4 py-3 flex items-center justify-between shadow-sm } box=77.5,65.9375,320,93.125
+          div {flex flex-col } box=97.5,80.9375,133,63.125
+            span {text-[11px] text-slate-400 font-bold tracking-widest uppercase mb-1 } box=97.5,80.9375,133,20.625
+            span {text-3xl font-bold text-white leading-none tracking-tight } box=97.5,106.562,133,37.5
+          div {w-9 h-9 border border-[#60a5fa] rounded-sm flex items-center justify-center } box=332.5,90,45,45
+            svg {w-5 h-5 text-[#60a5fa] } box=342.5,100,25,25
+              path {} box=0,0,0,0

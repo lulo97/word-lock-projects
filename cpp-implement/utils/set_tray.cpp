@@ -12,6 +12,7 @@ struct TrayState {
     NOTIFYICONDATAW nid{};
     HICON icon = nullptr;
     bool ownsIcon = false;
+    TrayClickCallback clickCallback;
 };
 
 std::map<HWND, TrayState> g_trays;
@@ -152,6 +153,13 @@ bool set_tray(
     return true;
 }
 
+void set_tray_click_callback(HWND hwnd, TrayClickCallback callback) {
+    auto it = g_trays.find(hwnd);
+
+    if (it != g_trays.end())
+        it->second.clickCallback = std::move(callback);
+}
+
 void remove_tray(HWND hwnd) {
     auto it = g_trays.find(hwnd);
 
@@ -167,6 +175,13 @@ void remove_tray(HWND hwnd) {
 }
 
 void handle_tray_message(HWND hwnd, LPARAM lParam) {
+    auto found = g_trays.find(hwnd);
+
+    if (found != g_trays.end() && found->second.clickCallback) {
+        found->second.clickCallback(hwnd, lParam);
+        return;
+    }
+
     // With NOTIFYICON_VERSION_4, the low word is the notification event.
     // For older versions lParam is the raw mouse message.
     UINT event = LOWORD(lParam);

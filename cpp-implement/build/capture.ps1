@@ -13,7 +13,7 @@ public class W32 {
 [W32]::SetProcessDPIAware() | Out-Null
 $argList = @()
 if ($AppArgs) { $argList = $AppArgs.Split(' ') }
-$p = Start-Process -FilePath $Exe -ArgumentList $argList -PassThru
+$p = if ($argList.Count -gt 0) { Start-Process -FilePath $Exe -ArgumentList $argList -PassThru } else { Start-Process -FilePath $Exe -PassThru }
 Start-Sleep -Seconds 2
 $p.Refresh()
 $h = $p.MainWindowHandle

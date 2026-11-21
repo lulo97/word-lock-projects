@@ -163,7 +163,7 @@ WordData pick_random_word() {
         std::string_view path = asset.relative_path;
         // Match "database/words/" prefix and ".json" suffix.
         if (path.size() > 20 &&
-            path.substr(0, 17) == "database/words/" &&
+            path.substr(0, 15) == "database/words/" &&
             path.size() >= 5 &&
             path.substr(path.size() - 5) == ".json") {
             wordPaths.push_back(std::string(path));
@@ -281,12 +281,6 @@ private:
 
         position_countdown();
 
-        // Dump UI tree for debugging.
-        wchar_t tempDir[MAX_PATH];
-        GetTempPathW(MAX_PATH, tempDir);
-        std::wstring dumpFile = std::wstring(tempDir) + L"\\countdown_dump.txt";
-        countdown_->document().dumpTree(dumpFile);
-
         return true;
     }
 
@@ -313,7 +307,8 @@ private:
 
         document.onClick(L"tray-open", [this] {
             hide_tray_menu();
-            start_countdown();
+            currentWord_ = pick_random_word();
+            show_input();
         });
 
         document.onClick(L"tray-show", [this] {
@@ -375,6 +370,12 @@ private:
                 on_answer_changed(value);
             }
         );
+
+        // Re-show countdown when input window is closed via X.
+        input_->onClose = [this] {
+            input_->show(false);
+            start_countdown();
+        };
 
         return true;
     }

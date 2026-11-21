@@ -97,6 +97,11 @@ if exist "utils" (
     for /r "utils" %%F in (*.cpp) do set INPUTS=!INPUTS! "%%~F"
 )
 
+:: Include the new modular UI library.
+if exist "ui_new" (
+    for /r "ui_new" %%F in (*.cpp) do set INPUTS=!INPUTS! "%%~F"
+)
+
 :: Make sure the output directory exists.
 for %%D in ("%OUTPUT%") do set "OUTDIR=%%~dpD"
 if not "%OUTDIR%"=="" if not exist "%OUTDIR%" mkdir "%OUTDIR%"
@@ -118,7 +123,7 @@ if exist "app.rc" (
 :: --------------------------------------------------
 :: Build
 :: --------------------------------------------------
-cl /EHsc /std:c++17 /O2 %INPUTS% user32.lib gdi32.lib shell32.lib winmm.lib /link /SUBSYSTEM:WINDOWS %RESOURCE% /OUT:"%OUTPUT%"
+cl /EHsc /std:c++17 /O2 /I"ui_new" %INPUTS% user32.lib gdi32.lib shell32.lib winmm.lib gdiplus.lib /link /SUBSYSTEM:WINDOWS %RESOURCE% /OUT:"%OUTPUT%"
 
 if errorlevel 1 (
     echo Build failed!

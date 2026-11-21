@@ -1,0 +1,23 @@
+{
+  "kanji": "りんご",
+  "hiragana": "りんご",
+  "romaji": "ringo",
+  "pos": "Noun",
+  "meaning_ja": "リンゴ属の落葉広葉樹、またはその実。",
+  "meaning_ja_romaji": "ringo zoku no rakuhyou kouyoku, mata wa sono mi.",
+  "meaning_vi": "Quả táo.",
+  "examples": [
+    {
+      "ja": "りんごを食べました。",
+      "romaji": "ringo o tabemashita.",
+      "vi": "Tôi đã ăn một quả táo."
+    },
+    {
+      "ja": "赤いりんごが好きです。",
+      "romaji": "akai ringo ga suki desu.",
+      "vi": "Tôi thích táo đỏ."
+    }
+  ],
+  "tags": ["food", "fruit"],
+  "audio": ""
+}

@@ -7,10 +7,13 @@
 #include "core/utf.h"
 #include "utils/set_tray.h"
 #include "embedded_assets.h"
+#include "json.hpp"
 
 #include <memory>
+#include <random>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace {
@@ -19,32 +22,163 @@ constexpr UINT_PTR TIMER_COUNTDOWN = 100;
 constexpr UINT_PTR TIMER_TRANSITION = 101;
 constexpr UINT_PTR TIMER_INPUT_DONE = 102;
 
-std::wstring load_embedded_html(const wchar_t* name) {
-    const unsigned char* data = nullptr;
-    std::size_t size = 0;
-
-    if (name == L"countdown.html") {
-        data = assets::countdown_html;
-        size = assets::countdown_html_size;
-    } else if (name == L"info.html") {
-        data = assets::info_html;
-        size = assets::info_html_size;
-    } else if (name == L"input.html") {
-        data = assets::input_html;
-        size = assets::input_html_size;
-    } else if (name == L"settings.html") {
-        data = assets::settings_html;
-        size = assets::settings_html_size;
-    } else if (name == L"tray_menu.html") {
-        data = assets::tray_menu_html;
-        size = assets::tray_menu_html_size;
+// Load an embedded asset by its relative path (e.g. "htmls/info.html").
+std::string load_asset_bytes(const std::string& path) {
+    if (const assets::EmbeddedAsset* asset = assets::find_asset(path)) {
+        return std::string(reinterpret_cast<const char*>(asset->data), asset->size);
     }
+    return {};
+}
 
-    if (!data || size == 0)
+std::wstring load_embedded_html(const wchar_t* name) {
+    // Convert wide name to UTF-8 path "htmls/<name>".
+    std::string utf8Name = ui::wideToUtf8(name);
+    std::string path = "htmls/" + utf8Name;
+    std::string bytes = load_asset_bytes(path);
+
+    if (bytes.empty())
         return L"";
 
-    std::string_view bytes(reinterpret_cast<const char*>(data), size);
-    return ui::utf8ToWide(std::string(bytes));
+    return ui::utf8ToWide(bytes);
+}
+
+// ----- Word database ----- 
+
+struct WordData {
+    std::wstring kanji;
+    std::wstring hiragana;
+    std::wstring romaji;
+    std::wstring pos;
+    std::wstring meaning_ja;
+    std::wstring meaning_ja_romaji;
+    std::wstring meaning_vi;
+    std::wstring example1_ja;
+    std::wstring example1_romaji;
+    std::wstring example1_vi;
+    std::wstring example2_ja;
+    std::wstring example2_romaji;
+    std::wstring example2_vi;
+    std::wstring tag1;
+    std::wstring tag2;
+    std::wstring audio;
+};
+
+WordData parse_word_json(const std::string& json) {
+    WordData w{};
+    auto j = nlohmann::json::parse(json, nullptr, false);
+    if (j.is_discarded())
+        return w;
+
+    auto get = [&](const char* key) -> std::wstring {
+        if (j.contains(key))
+            return ui::utf8ToWide(j[key].get<std::string>());
+        return L"";
+    };
+
+    w.kanji = get("kanji");
+    w.hiragana = get("hiragana");
+    w.romaji = get("romaji");
+    w.pos = get("pos");
+    w.meaning_ja = get("meaning_ja");
+    w.meaning_ja_romaji = get("meaning_ja_romaji");
+    w.meaning_vi = get("meaning_vi");
+    w.audio = get("audio");
+
+    if (j.contains("examples") && j["examples"].is_array()) {
+        auto& ex = j["examples"];
+        if (ex.size() > 0) {
+            w.example1_ja = ui::utf8ToWide(ex[0]["ja"].get<std::string>());
+            w.example1_romaji = ui::utf8ToWide(ex[0]["romaji"].get<std::string>());
+            w.example1_vi = ui::utf8ToWide(ex[0]["vi"].get<std::string>());
+        }
+        if (ex.size() > 1) {
+            w.example2_ja = ui::utf8ToWide(ex[1]["ja"].get<std::string>());
+            w.example2_romaji = ui::utf8ToWide(ex[1]["romaji"].get<std::string>());
+            w.example2_vi = ui::utf8ToWide(ex[1]["vi"].get<std::string>());
+        }
+    }
+
+    if (j.contains("tags") && j["tags"].is_array()) {
+        auto& tags = j["tags"];
+        if (tags.size() > 0)
+            w.tag1 = ui::utf8ToWide(tags[0].get<std::string>());
+        if (tags.size() > 1)
+            w.tag2 = ui::utf8ToWide(tags[1].get<std::string>());
+    }
+
+    return w;
+}
+
+// Fill {{key}} placeholders in HTML with word data.
+std::wstring fill_template(const std::wstring& html, const WordData& w) {
+    std::unordered_map<std::wstring, std::wstring> values = {
+        {L"kanji", w.kanji},
+        {L"hiragana", w.hiragana},
+        {L"romaji", w.romaji},
+        {L"pos", w.pos},
+        {L"meaning_ja", w.meaning_ja},
+        {L"meaning_ja_romaji", w.meaning_ja_romaji},
+        {L"meaning_vi", w.meaning_vi},
+        {L"example1_ja", w.example1_ja},
+        {L"example1_romaji", w.example1_romaji},
+        {L"example1_vi", w.example1_vi},
+        {L"example2_ja", w.example2_ja},
+        {L"example2_romaji", w.example2_romaji},
+        {L"example2_vi", w.example2_vi},
+        {L"tag1", w.tag1},
+        {L"tag2", w.tag2},
+        {L"audio", w.audio},
+    };
+
+    std::wstring result;
+    result.reserve(html.size() * 2);
+
+    for (std::wstring::size_type i = 0; i < html.size(); ) {
+        if (html[i] == L'{' && i + 1 < html.size() && html[i + 1] == L'{') {
+            // Find closing }}.
+            std::wstring::size_type close = html.find(L"}}", i + 2);
+            if (close != std::wstring::npos) {
+                std::wstring key = html.substr(i + 2, close - i - 2);
+                auto it = values.find(key);
+                if (it != values.end()) {
+                    result += it->second;
+                    i = close + 2;
+                    continue;
+                }
+            }
+        }
+        result += html[i];
+        ++i;
+    }
+
+    return result;
+}
+
+// Pick a random word from embedded database/words/*.json.
+WordData pick_random_word() {
+    std::vector<std::string> wordPaths;
+
+    for (std::size_t i = 0; i < assets::kAssetCount; ++i) {
+        const auto& asset = assets::kAssets[i];
+        std::string_view path = asset.relative_path;
+        // Match "database/words/" prefix and ".json" suffix.
+        if (path.size() > 20 &&
+            path.substr(0, 17) == "database/words/" &&
+            path.size() >= 5 &&
+            path.substr(path.size() - 5) == ".json") {
+            wordPaths.push_back(std::string(path));
+        }
+    }
+
+    if (wordPaths.empty())
+        return {};
+
+    static std::mt19937 rng{std::random_device{}()};
+    std::uniform_int_distribution<std::size_t> dist(0, wordPaths.size() - 1);
+    const std::string& chosen = wordPaths[dist(rng)];
+
+    std::string bytes = load_asset_bytes(chosen);
+    return parse_word_json(bytes);
 }
 
 std::wstring missing_html_page(const wchar_t* name) {
@@ -59,12 +193,16 @@ std::wstring missing_html_page(const wchar_t* name) {
 bool create_host(
     std::unique_ptr<ui::WindowHost>& host,
     const ui::WindowOptions& options,
-    const wchar_t* htmlName
+    const wchar_t* htmlName,
+    const WordData* word = nullptr
 ) {
     std::wstring html = load_embedded_html(htmlName);
 
     if (html.empty())
         html = missing_html_page(htmlName);
+
+    if (word)
+        html = fill_template(html, *word);
 
     auto document = std::make_shared<ui::Document>();
 
@@ -124,6 +262,7 @@ private:
 
     int countdownSeconds_ = 30;
     bool inputDone_ = false;
+    WordData currentWord_{};
 
     bool create_countdown() {
         ui::WindowOptions options;
@@ -145,7 +284,7 @@ private:
         // Dump UI tree for debugging.
         wchar_t tempDir[MAX_PATH];
         GetTempPathW(MAX_PATH, tempDir);
-        std::wstring dumpFile = std::wstring(tempDir) + L"\countdown_dump.txt";
+        std::wstring dumpFile = std::wstring(tempDir) + L"\\countdown_dump.txt";
         countdown_->document().dumpTree(dumpFile);
 
         return true;
@@ -227,7 +366,7 @@ private:
         options.centered = true;
         options.visible = false;
 
-        if (!create_host(input_, options, L"input.html"))
+        if (!create_host(input_, options, L"input.html", &currentWord_))
             return false;
 
         input_->document().onInput(
@@ -251,7 +390,7 @@ private:
         options.centered = true;
         options.visible = false;
 
-        if (!create_host(info_, options, L"info.html"))
+        if (!create_host(info_, options, L"info.html", &currentWord_))
             return false;
 
         info_->onKeyDown = [this](UINT key) {
@@ -270,6 +409,7 @@ private:
     void start_countdown() {
         countdownSeconds_ = 30;
         inputDone_ = false;
+        currentWord_ = pick_random_word();
 
         if (input_) input_->show(false);
         if (info_) info_->show(false);

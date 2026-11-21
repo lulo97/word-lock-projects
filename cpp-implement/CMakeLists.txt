@@ -43,14 +43,25 @@ include(cmake/EmbedAssets.cmake)
 
 add_executable(MyApp ${SOURCES})
 
-# Embed HTML assets into the executable.
+# Collect all embeddable assets.
+file(GLOB_RECURSE HTML_ASSETS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/*"
+)
+file(GLOB_RECURSE DB_ASSETS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/database/*"
+)
+
+# Embed into the executable with a path-based lookup table.
 target_embed_assets(MyApp
     NAMESPACE assets
-    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/countdown.html"
-    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/info.html"
-    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/input.html"
-    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/settings.html"
-    "${CMAKE_CURRENT_SOURCE_DIR}/htmls/tray_menu.html"
+    BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
+    ${HTML_ASSETS}
+    ${DB_ASSETS}
+)
+
+# nlohmann/json for parsing word JSON files.
+target_include_directories(MyApp PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party"
 )
 
 # Equivalent to /I"ui"

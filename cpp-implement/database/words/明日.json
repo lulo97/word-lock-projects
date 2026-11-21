@@ -1,0 +1,23 @@
+{
+  "kanji": "明日",
+  "hiragana": "あした",
+  "romaji": "ashita",
+  "pos": "Noun",
+  "meaning_ja": "今日の次の日。",
+  "meaning_ja_romaji": "kyo no tsugi no hi.",
+  "meaning_vi": "Ngày mai.",
+  "examples": [
+    {
+      "ja": "明日は休みです。",
+      "romaji": "ashita wa yasumi desu.",
+      "vi": "Ngày mai được nghỉ."
+    },
+    {
+      "ja": "明日また会いましょう。",
+      "romaji": "ashita mata ai masho u.",
+      "vi": "Mai gặp lại nhé."
+    }
+  ],
+  "tags": ["time", "daily"],
+  "audio": ""
+}

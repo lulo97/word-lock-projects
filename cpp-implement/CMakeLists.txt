@@ -24,14 +24,13 @@ set(SOURCES "${APP_MAIN_SOURCE}")
 # list(APPEND SOURCES
 #     ui/foo.cpp
 #     utils/bar.cpp
-#     ui_new/window.cpp
+#     ui/window.cpp
 # )
 
 # Option B: glob recursively with CONFIGURE_DEPENDS.
 file(GLOB_RECURSE EXTRA_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ui_new/*.cpp"
 )
 list(APPEND SOURCES ${EXTRA_SOURCES})
 
@@ -42,9 +41,9 @@ endif()
 
 add_executable(MyApp ${SOURCES})
 
-# Equivalent to /I"ui_new"
+# Equivalent to /I"ui"
 target_include_directories(MyApp PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/ui_new"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ui"
 )
 
 # Equivalent to user32.lib gdi32.lib shell32.lib winmm.lib gdiplus.lib

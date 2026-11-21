@@ -1,0 +1,43 @@
+{
+  "word": "notorious",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/nəˈtɔːriəs/",
+    "audio": "n/audios/notorious.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "famous or well-known for some bad quality or deed",
+      "vietnamese": "nổi tiếng vì điều xấu hoặc hành động xấu"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The city has a notorious reputation for corruption.",
+      "vietnamese": "Thành phố này có danh tiếng tai tiếng về tham nhũng.",
+      "audio": "n/audios_example/the_city_has_a_notorious_reputation_for_corruption.ogg"
+    },
+    {
+      "english": "He was a notorious criminal who evaded capture for years.",
+      "vietnamese": "Anh ta là một tội phạm khét tiếng đã trốn thoát khỏi sự bắt giữ trong nhiều năm.",
+      "audio": "n/audios_example/he_was_a_notorious_criminal_who_evaded_capture_for_years.ogg"
+    }
+  ],
+  "synonyms": [
+    "infamous",
+    "disreputable",
+    "notable"
+  ],
+  "antonyms": [
+    "celebrated",
+    "renowned"
+  ],
+  "tags": [
+    "adjective",
+    "negative"
+  ]
+}

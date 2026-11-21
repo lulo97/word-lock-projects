@@ -1,0 +1,43 @@
+{
+  "word": "skeptical",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈskɛptɪkəl/",
+    "audio": "s/audios/skeptical.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "not easily convinced; having doubts",
+      "vietnamese": "hoài nghi; nghi ngờ"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She was skeptical of the claims made by the new startup.",
+      "vietnamese": "Cô ấy hoài nghi về những tuyên bố của công ty khởi nghiệp mới.",
+      "audio": "s/audios_example/she_was_skeptical_of_the_claims_made_by_the_new_startup.ogg"
+    },
+    {
+      "english": "He remained skeptical about the possibility of a quick fix.",
+      "vietnamese": "Anh ấy vẫn hoài nghi về khả năng có một giải pháp nhanh chóng.",
+      "audio": "s/audios_example/he_remained_skeptical_about_the_possibility_of_a_quick_fix.ogg"
+    }
+  ],
+  "synonyms": [
+    "doubtful",
+    "cynical",
+    "distrustful"
+  ],
+  "antonyms": [
+    "believing",
+    "confident"
+  ],
+  "tags": [
+    "attitude",
+    "doubt"
+  ]
+}

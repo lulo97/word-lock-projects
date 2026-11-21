@@ -1,0 +1,42 @@
+{
+  "word": "precedent",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈpresɪdənt/",
+    "audio": "p/audios/precedent.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "An earlier event or action that is regarded as an example or guide to be considered in similar circumstances.",
+      "vietnamese": "Tiền lệ; sự đi trước"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The court's decision set a significant legal precedent for future cases.",
+      "vietnamese": "Quyết định của tòa án đã tạo ra một tiền lệ pháp lý quan trọng cho các vụ án trong tương lai.",
+      "audio": "p/audios_example/the_court_s_decision_set_a_significant_legal_precedent_for_future_cases.ogg"
+    },
+    {
+      "english": "We must follow the established precedent when making this kind of investment.",
+      "vietnamese": "Chúng ta phải tuân theo tiền lệ đã được thiết lập khi thực hiện loại đầu tư này.",
+      "audio": "p/audios_example/we_must_follow_the_established_precedent_when_making_this_kind_of_investment.ogg"
+    }
+  ],
+  "synonyms": [
+    "example",
+    "guide",
+    "benchmark"
+  ],
+  "antonyms": [
+    "novelty"
+  ],
+  "tags": [
+    "law",
+    "history"
+  ]
+}

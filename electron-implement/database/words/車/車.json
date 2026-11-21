@@ -1,0 +1,36 @@
+{
+  "word": "車",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "くるま",
+    "audio": "words/車/audios/車.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "道路を走る乗り物。",
+      "vietnamese": "Xe ô tô."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "車を運転します。",
+      "vietnamese": "Tôi lái xe.",
+      "audio": "words/車/audios_example/kuruma_o_unten_shi_masu.ogg"
+    },
+    {
+      "japanese": "赤い車がかっこいいです。",
+      "vietnamese": "Chiếc xe đỏ trông ngầu.",
+      "audio": "words/車/audios_example/akai_kuruma_ga_kakkoii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "transport",
+    "daily"
+  ]
+}

@@ -1,0 +1,4 @@
+# Kotoba Lock - Japanese words to generate (one per line)
+# Run: node database/generate.js --input database/words.txt
+天気
+雨

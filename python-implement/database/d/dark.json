@@ -1,0 +1,37 @@
+{
+  "word": "dark",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɑːrk/",
+    "audio": "d/audios/dark.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "The absence of light.",
+      "vietnamese": "Sự vắng mặt của ánh sáng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "It is dark outside.",
+      "vietnamese": "Bên ngoài trời tối.",
+      "audio": "d/audios_example/it_is_dark_outside.ogg"
+    }
+  ],
+  "synonyms": [
+    "gloomy",
+    "dim"
+  ],
+  "antonyms": [
+    "bright",
+    "light"
+  ],
+  "tags": [
+    "concept",
+    "description"
+  ]
+}

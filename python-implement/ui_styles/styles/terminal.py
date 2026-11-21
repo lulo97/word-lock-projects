@@ -1,0 +1,40 @@
+"""Terminal - phosphor green monospace, square corners."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="terminal",
+    name="Terminal",
+    description="Black-green console, neon phosphor text, monospace.",
+    appearance="dark",
+    color_theme="green",
+    gradient=True,
+    background_top="#04140c",
+    background_bottom="#000000",
+    card="#04120b",
+    card_border="#14532d",
+    chip_bg="#0b2417",
+    chip_hover="#14532d",
+    entry_bg="#020c07",
+    text_primary="#d1fae5",
+    text_body="#a7f3d0",
+    text_muted="#4ade80",
+    accent="#22c55e",
+    accent_soft="#4ade80",
+    accent_hover="#16a34a",
+    on_accent="#02150b",
+    error="#f87171",
+    success="#4ade80",
+    button_bg="#0b2417",
+    button_hover="#14532d",
+    button_border="#14532d",
+    button_text="#4ade80",
+    border_width=1,
+    overlay_alpha=0.94,
+    typography=Typography(
+        body=("Consolas", "Courier New", "DejaVu Sans Mono", "Segoe UI"),
+        display=("Consolas", "Courier New", "Segoe UI"),
+        scale=1.0,
+        uppercase_headings=True,
+    ),
+)

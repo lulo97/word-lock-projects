@@ -1,0 +1,44 @@
+{
+  "word": "obstinate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈɒbstɪnət/",
+    "audio": "o/audios/obstinate.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "stubbornly refusing to change one's opinion or chosen course of action.",
+      "vietnamese": "bướng bỉnh, cố chấp"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He was obstinate in his refusal to admit he was wrong.",
+      "vietnamese": "Anh ấy đã cố chấp trong việc từ chối thừa nhận mình đã sai.",
+      "audio": "o/audios_example/he_was_obstinate_in_his_refusal_to_admit_he_was_wrong.ogg"
+    },
+    {
+      "english": "The obstinate mule refused to move even when offered carrots.",
+      "vietnamese": "Con lừa bướng bỉnh từ chối di chuyển ngay cả khi được đưa cà rốt.",
+      "audio": "o/audios_example/the_obstinate_mule_refused_to_move_even_when_offered_carrots.ogg"
+    }
+  ],
+  "synonyms": [
+    "stubborn",
+    "headstrong",
+    "intransigent"
+  ],
+  "antonyms": [
+    "flexible",
+    "complaint",
+    "yielding"
+  ],
+  "tags": [
+    "personality",
+    "behavior"
+  ]
+}

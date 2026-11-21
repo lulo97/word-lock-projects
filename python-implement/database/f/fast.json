@@ -1,0 +1,37 @@
+{
+  "word": "fast",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/fɑːst/",
+    "audio": "f/audios/fast.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Moving or capable of moving at high speed.",
+      "vietnamese": "Di chuyển hoặc có khả năng di chuyển với tốc độ cao."
+    }
+  ],
+  "examples": [
+    {
+      "english": "A fast car.",
+      "vietnamese": "Một chiếc xe nhanh.",
+      "audio": "f/audios_example/a_fast_car.ogg"
+    }
+  ],
+  "synonyms": [
+    "quick",
+    "rapid"
+  ],
+  "antonyms": [
+    "slow",
+    "lethargic"
+  ],
+  "tags": [
+    "speed",
+    "description"
+  ]
+}

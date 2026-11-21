@@ -1,0 +1,36 @@
+{
+  "word": "grass",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɡræs/",
+    "audio": "g/audios/grass.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A low-growing plant with thin, green leaves.",
+      "vietnamese": "Một loại cây thấp có lá mỏng, màu xanh."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The children played on the grass.",
+      "vietnamese": "Những đứa trẻ chơi trên bãi cỏ.",
+      "audio": "g/audios_example/the_children_played_on_the_grass.ogg"
+    }
+  ],
+  "synonyms": [
+    "lawn",
+    "turf"
+  ],
+  "antonyms": [
+    "rock"
+  ],
+  "tags": [
+    "nature",
+    "plant"
+  ]
+}

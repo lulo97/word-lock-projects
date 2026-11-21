@@ -1,0 +1,43 @@
+{
+  "word": "empirical",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪmˈpɪrɪkəl/",
+    "audio": "e/audios/empirical.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "based on observation or experience",
+      "vietnamese": "dựa trên quan sát hoặc kinh nghiệm"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The scientist conducted an empirical study to test the hypothesis.",
+      "vietnamese": "Nhà khoa học đã tiến hành một nghiên cứu thực nghiệm để kiểm tra giả thuyết.",
+      "audio": "e/audios_example/the_scientist_conducted_an_empirical_study_to_test_the_hypothesis.ogg"
+    },
+    {
+      "english": "His claims were not theoretical but empirical, supported by data.",
+      "vietnamese": "Những tuyên bố của anh ấy không mang tính lý thuyết mà là thực nghiệm, được hỗ trợ bởi dữ liệu.",
+      "audio": "e/audios_example/his_claims_were_not_theoretical_but_empirical_supported_by_data.ogg"
+    }
+  ],
+  "synonyms": [
+    "experiential",
+    "observational",
+    "practical"
+  ],
+  "antonyms": [
+    "theoretical",
+    "abstract"
+  ],
+  "tags": [
+    "academic",
+    "science"
+  ]
+}

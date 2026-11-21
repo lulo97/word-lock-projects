@@ -1,0 +1,43 @@
+{
+  "word": "comprehensive",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌkɒmprɪˈhensɪv/",
+    "audio": "c/audios/comprehensive.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "including or dealing with all or nearly all elements or aspects of something",
+      "vietnamese": "toàn diện; bao quát"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The report provided a comprehensive analysis of the market trends.",
+      "vietnamese": "Báo cáo đã cung cấp một phân tích toàn diện về các xu hướng thị trường.",
+      "audio": "c/audios_example/the_report_provided_a_comprehensive_analysis_of_the_market_trends.ogg"
+    },
+    {
+      "english": "She has a comprehensive understanding of the subject matter.",
+      "vietnamese": "Cô ấy có sự hiểu biết toàn diện về chủ đề này.",
+      "audio": "c/audios_example/she_has_a_comprehensive_understanding_of_the_subject_matter.ogg"
+    }
+  ],
+  "synonyms": [
+    "thorough",
+    "extensive",
+    "all-inclusive"
+  ],
+  "antonyms": [
+    "partial",
+    "limited"
+  ],
+  "tags": [
+    "academic",
+    "formal"
+  ]
+}

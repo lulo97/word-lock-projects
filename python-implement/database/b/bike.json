@@ -1,0 +1,35 @@
+{
+  "word": "bike",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/baɪk/",
+    "audio": "b/audios/bike.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A bicycle.",
+      "vietnamese": "Một chiếc xe đạp."
+    }
+  ],
+  "examples": [
+    {
+      "english": "He rides his bike to work.",
+      "vietnamese": "Anh ấy đạp xe đi làm.",
+      "audio": "b/audios_example/he_rides_his_bike_to_work.ogg"
+    }
+  ],
+  "synonyms": [
+    "bicycle"
+  ],
+  "antonyms": [
+    "car"
+  ],
+  "tags": [
+    "transport",
+    "vehicle"
+  ]
+}

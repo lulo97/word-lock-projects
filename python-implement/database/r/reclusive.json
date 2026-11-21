@@ -1,0 +1,43 @@
+{
+  "word": "reclusive",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/rɪˈkluːsɪv/",
+    "audio": "r/audios/reclusive.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "solitary; preferring to be alone",
+      "vietnamese": "kín đáo; thích ở một mình"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The reclusive author rarely left his secluded cottage.",
+      "vietnamese": "Tác giả ẩn dật hiếm khi rời khỏi ngôi nhà hẻo lánh của mình.",
+      "audio": "r/audios_example/the_reclusive_author_rarely_left_his_secluded_cottage.ogg"
+    },
+    {
+      "english": "He led a reclusive life, avoiding all social gatherings.",
+      "vietnamese": "Anh ấy sống một cuộc đời khép kín, tránh mọi buổi tụ tập xã hội.",
+      "audio": "r/audios_example/he_led_a_reclusive_life_avoiding_all_social_gatherings.ogg"
+    }
+  ],
+  "synonyms": [
+    "solitary",
+    "withdrawn",
+    "secluded"
+  ],
+  "antonyms": [
+    "sociable",
+    "outgoing"
+  ],
+  "tags": [
+    "personality",
+    "lifestyle"
+  ]
+}

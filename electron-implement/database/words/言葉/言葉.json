@@ -1,0 +1,38 @@
+{
+  "word": "言葉",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ことば",
+    "audio": "words/言葉/audios/言葉.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "意味を持つ音や文字。",
+      "vietnamese": "Từ ngữ, ngôn từ, lời nói."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "言葉の意味を調べます。",
+      "vietnamese": "Tôi tra nghĩa của từ.",
+      "audio": "words/言葉/audios_example/kotoba_no_imi_o_shirabe_masu.ogg"
+    },
+    {
+      "japanese": "優しい言葉をかけてもらいました。",
+      "vietnamese": "Tôi được động viên bằng những lời dịu dàng.",
+      "audio": "words/言葉/audios_example/yasashii_kotoba_o_kake_te_morai_mashi_ta.ogg"
+    }
+  ],
+  "synonyms": [
+    "単語",
+    "言語"
+  ],
+  "antonyms": [],
+  "tags": [
+    "language"
+  ]
+}

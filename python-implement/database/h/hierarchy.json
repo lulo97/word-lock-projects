@@ -1,0 +1,42 @@
+{
+  "word": "hierarchy",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈhɪərɑːrki/",
+    "audio": "h/audios/hierarchy.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a system in which people or groups are ranked one above the other according to status or authority",
+      "vietnamese": "hệ thống trong đó mọi người hoặc các nhóm được xếp hạng theo thứ bậc về địa vị hoặc quyền lực"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The military has a strict hierarchy that dictates every action.",
+      "vietnamese": "Quân đội có một hệ thống cấp bậc nghiêm ngặt quy định mọi hành động.",
+      "audio": "h/audios_example/the_military_has_a_strict_hierarchy_that_dictates_every_action.ogg"
+    },
+    {
+      "english": "In this company, the management structure is a clear hierarchy.",
+      "vietnamese": "Trong công ty này, cấu trúc quản lý là một hệ thống phân cấp rõ ràng.",
+      "audio": "h/audios_example/in_this_company_the_management_structure_is_a_clear_hierarchy.ogg"
+    }
+  ],
+  "synonyms": [
+    "ranking",
+    "order",
+    "structure"
+  ],
+  "antonyms": [
+    "egalitarianism"
+  ],
+  "tags": [
+    "social",
+    "organizational"
+  ]
+}

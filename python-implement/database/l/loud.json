@@ -1,0 +1,37 @@
+{
+  "word": "loud",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/laʊd/",
+    "audio": "l/audios/loud.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Making a great deal of noise.",
+      "vietnamese": "Tạo ra nhiều tiếng ồn."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The music was too loud.",
+      "vietnamese": "Âm nhạc quá lớn.",
+      "audio": "l/audios_example/the_music_was_too_loud.ogg"
+    }
+  ],
+  "synonyms": [
+    "noisy",
+    "deafening"
+  ],
+  "antonyms": [
+    "quiet",
+    "silent"
+  ],
+  "tags": [
+    "sound",
+    "description"
+  ]
+}

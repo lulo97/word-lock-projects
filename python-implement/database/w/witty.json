@@ -1,0 +1,43 @@
+{
+  "word": "witty",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈwɪti/",
+    "audio": "w/audios/witty.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "showing or characterized by quick and inventive humor",
+      "vietnamese": "thông minh, dí dỏm"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She made a witty remark that made everyone laugh.",
+      "vietnamese": "Cô ấy đã đưa ra một nhận xét dí dỏm khiến mọi người bật cười.",
+      "audio": "w/audios_example/she_made_a_witty_remark_that_made_everyone_laugh.ogg"
+    },
+    {
+      "english": "The comedian was known for his witty observations about modern life.",
+      "vietnamese": "Diễn viên hài đó nổi tiếng với những quan sát sắc sảo về cuộc sống hiện đại.",
+      "audio": "w/audios_example/the_comedian_was_known_for_his_witty_observations_about_modern_life.ogg"
+    }
+  ],
+  "synonyms": [
+    "clever",
+    "humorous",
+    "sharp"
+  ],
+  "antonyms": [
+    "dull",
+    "stupid"
+  ],
+  "tags": [
+    "humor",
+    "intelligence"
+  ]
+}

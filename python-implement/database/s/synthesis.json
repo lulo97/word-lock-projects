@@ -1,0 +1,43 @@
+{
+  "word": "synthesis",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈsɪnθəsɪs/",
+    "audio": "s/audios/synthesis.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The combination of ideas, elements, or principles to form a coherent whole.",
+      "vietnamese": "Sự tổng hợp; sự hợp nhất"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The author's synthesis of historical data provided a new perspective on the conflict.",
+      "vietnamese": "Sự tổng hợp dữ liệu lịch sử của tác giả đã mang lại một góc nhìn mới về cuộc xung đột.",
+      "audio": "s/audios_example/the_author_s_synthesis_of_historical_data_provided_a_new_perspective_on_the_conflict.ogg"
+    },
+    {
+      "english": "The chemical synthesis of the new compound was successful in the laboratory.",
+      "vietnamese": "Quá trình tổng hợp hóa học hợp chất mới đã thành công trong phòng thí nghiệm.",
+      "audio": "s/audios_example/the_chemical_synthesis_of_the_new_compound_was_successful_in_the_laboratory.ogg"
+    }
+  ],
+  "synonyms": [
+    "combination",
+    "integration",
+    "amalgamation"
+  ],
+  "antonyms": [
+    "analysis",
+    "separation"
+  ],
+  "tags": [
+    "academic",
+    "science"
+  ]
+}

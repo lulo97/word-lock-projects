@@ -1,0 +1,43 @@
+{
+  "word": "lucrative",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈluːkrətɪv/",
+    "audio": "l/audios/lucrative.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "producing a great deal of profit",
+      "vietnamese": "sinh lời, có lợi nhuận cao"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She found a very lucrative career in finance.",
+      "vietnamese": "Cô ấy tìm thấy một sự nghiệp rất sinh lời trong lĩnh vực tài chính.",
+      "audio": "l/audios_example/she_found_a_very_lucrative_career_in_finance.ogg"
+    },
+    {
+      "english": "The company offers a lucrative contract to top talent.",
+      "vietnamese": "Công ty đưa ra một hợp đồng béo bở cho những nhân tài hàng đầu.",
+      "audio": "l/audios_example/the_company_offers_a_lucrative_contract_to_top_talent.ogg"
+    }
+  ],
+  "synonyms": [
+    "profitable",
+    "rewarding",
+    "gainful"
+  ],
+  "antonyms": [
+    "unprofitable",
+    "loss-making"
+  ],
+  "tags": [
+    "business",
+    "finance"
+  ]
+}

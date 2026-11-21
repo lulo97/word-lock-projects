@@ -1,0 +1,47 @@
+{
+  "word": "dynamic",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/daɪˈnæmɪk/",
+    "audio": "d/audios/dynamic.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "characterized by constant change, activity, or progress",
+      "vietnamese": "có tính năng động, thay đổi liên tục"
+    },
+    {
+      "english": "relating to forces or energies that cause motion",
+      "vietnamese": "thuộc về lực hoặc năng lượng gây ra chuyển động"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company is known for its dynamic and innovative approach to business.",
+      "vietnamese": "Công ty này nổi tiếng với cách tiếp cận năng động và sáng tạo trong kinh doanh.",
+      "audio": "d/audios_example/the_company_is_known_for_its_dynamic_and_innovative_approach_to_business.ogg"
+    },
+    {
+      "english": "We need a dynamic team that can adapt to changing market conditions.",
+      "vietnamese": "Chúng ta cần một đội ngũ năng động có thể thích ứng với những thay đổi của thị trường.",
+      "audio": "d/audios_example/we_need_a_dynamic_team_that_can_adapt_to_changing_market_conditions.ogg"
+    }
+  ],
+  "synonyms": [
+    "energetic",
+    "active",
+    "ever-changing"
+  ],
+  "antonyms": [
+    "static",
+    "unchanging"
+  ],
+  "tags": [
+    "adjective",
+    "business"
+  ]
+}

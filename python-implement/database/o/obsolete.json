@@ -1,0 +1,44 @@
+{
+  "word": "obsolete",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌɒbsəˈliːt/",
+    "audio": "o/audios/obsolete.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "no longer produced or used; out of date",
+      "vietnamese": "lỗi thời; không còn được sử dụng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The rotary phone is now completely obsolete.",
+      "vietnamese": "Chiếc điện thoại quay giờ đã hoàn toàn lỗi thời.",
+      "audio": "o/audios_example/the_rotary_phone_is_now_completely_obsolete.ogg"
+    },
+    {
+      "english": "Many of the software features have become obsolete with the new update.",
+      "vietnamese": "Nhiều tính năng của phần mềm đã trở nên lỗi thời với bản cập nhật mới.",
+      "audio": "o/audios_example/many_of_the_software_features_have_become_obsolete_with_the_new_update.ogg"
+    }
+  ],
+  "synonyms": [
+    "outdated",
+    "archaic",
+    "obsolete"
+  ],
+  "antonyms": [
+    "modern",
+    "current",
+    "up-to-date"
+  ],
+  "tags": [
+    "technology",
+    "time"
+  ]
+}

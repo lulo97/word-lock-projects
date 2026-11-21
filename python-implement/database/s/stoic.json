@@ -1,0 +1,48 @@
+{
+  "word": "stoic",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈstoʊɪk/",
+    "audio": "s/audios/stoic.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "enduring pain or hardship without showing one's feelings or complaining.",
+      "vietnamese": "chịu đựng nỗi đau hoặc khó khăn mà không bộc lộ cảm xúc hay than phiền"
+    },
+    {
+      "english": "a person who can endure pain or hardship without showing their feelings or complaining.",
+      "vietnamese": "một người có thể chịu đựng nỗi đau hoặc khó khăn mà không bộc lộ cảm xúc hay than phiền"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He remained stoic in the face of adversity.",
+      "vietnamese": "Anh ấy vẫn giữ vẻ điềm tĩnh trước nghịch cảnh.",
+      "audio": "s/audios_example/he_remained_stoic_in_the_face_of_adversity.ogg"
+    },
+    {
+      "english": "Despite the bad news, she maintained a stoic demeanor.",
+      "vietnamese": "Mặc dù có tin xấu, cô ấy vẫn giữ thái độ điềm tĩnh.",
+      "audio": "s/audios_example/despite_the_bad_news_she_maintained_a_stoic_demeanor.ogg"
+    }
+  ],
+  "synonyms": [
+    "unemotional",
+    "impassive",
+    "resilient"
+  ],
+  "antonyms": [
+    "emotional",
+    "sensitive",
+    "fretful"
+  ],
+  "tags": [
+    "personality",
+    "philosophy"
+  ]
+}

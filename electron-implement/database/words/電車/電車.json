@@ -1,0 +1,36 @@
+{
+  "word": "電車",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "でんしゃ",
+    "audio": "words/電車/audios/電車.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "電気で走る鉄道車両。",
+      "vietnamese": "Tàu điện."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "電車で会社へ行きます。",
+      "vietnamese": "Tôi đi làm bằng tàu điện.",
+      "audio": "words/電車/audios_example/densha_de_kaisha_e_iki_masu.ogg"
+    },
+    {
+      "japanese": "電車が遅れています。",
+      "vietnamese": "Tàu điện đang bị trễ.",
+      "audio": "words/電車/audios_example/densha_ga_okure_te_i_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "transport",
+    "daily"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "moon",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/muːn/",
+    "audio": "m/audios/moon.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The natural satellite of the earth.",
+      "vietnamese": "Vệ tinh tự nhiên của trái đất."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The moon shines at night.",
+      "vietnamese": "Mặt trăng tỏa sáng vào ban đêm.",
+      "audio": "m/audios_example/the_moon_shines_at_night.ogg"
+    }
+  ],
+  "synonyms": [
+    "satellite",
+    "celestial body"
+  ],
+  "antonyms": [
+    "sun"
+  ],
+  "tags": [
+    "celestial",
+    "nature"
+  ]
+}

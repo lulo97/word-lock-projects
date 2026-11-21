@@ -1,0 +1,40 @@
+"""Sunset - plum-to-ember gradient, warm coral accent."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="sunset",
+    name="Sunset",
+    description="Plum and ember gradient, coral highlights, soft humanist type.",
+    appearance="dark",
+    color_theme="blue",
+    gradient=True,
+    background_top="#2b0b2f",
+    background_bottom="#451a0b",
+    card="#1d0b18",
+    card_border="#7c2d5e",
+    chip_bg="#3b1330",
+    chip_hover="#55204a",
+    entry_bg="#140713",
+    text_primary="#fff5f0",
+    text_body="#fbdccb",
+    text_muted="#d3a58f",
+    accent="#fb7185",
+    accent_soft="#fdba74",
+    accent_hover="#f43f5e",
+    on_accent="#2b0b12",
+    error="#fecaca",
+    success="#86efac",
+    button_bg="#3b1330",
+    button_hover="#55204a",
+    button_border="#7c2d5e",
+    button_text="#fdba74",
+    border_width=1,
+    overlay_alpha=0.92,
+    typography=Typography(
+        body=("Candara", "Corbel", "Segoe UI"),
+        display=("Candara", "Constantia", "Segoe UI"),
+        scale=1.0,
+        uppercase_headings=False,
+    ),
+)

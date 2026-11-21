@@ -1,0 +1,36 @@
+{
+  "word": "key",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kiː/",
+    "audio": "k/audios/key.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A small piece of metal used to open a lock.",
+      "vietnamese": "Một mảnh kim loại nhỏ được sử dụng để mở khóa."
+    }
+  ],
+  "examples": [
+    {
+      "english": "I lost my house key.",
+      "vietnamese": "Tôi đã làm mất chìa khóa nhà.",
+      "audio": "k/audios_example/i_lost_my_house_key.ogg"
+    }
+  ],
+  "synonyms": [
+    "keypiece",
+    "opener"
+  ],
+  "antonyms": [
+    "lock"
+  ],
+  "tags": [
+    "object",
+    "security"
+  ]
+}

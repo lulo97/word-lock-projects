@@ -1,0 +1,47 @@
+{
+  "word": "frugal",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈfruːɡəl/",
+    "audio": "f/audios/frugal.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "sparing or economical with regard to money or food",
+      "vietnamese": "tiết kiệm, dè sẻn"
+    },
+    {
+      "english": "careful not to waste",
+      "vietnamese": "cẩn thận không lãng phí"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She lives a frugal lifestyle and rarely buys unnecessary things.",
+      "vietnamese": "Cô ấy sống một lối sống tiết kiệm và hiếm khi mua những thứ không cần thiết.",
+      "audio": "f/audios_example/she_lives_a_frugal_lifestyle_and_rarely_buys_unnecessary_things.ogg"
+    },
+    {
+      "english": "The couple managed to live frugally during their early years.",
+      "vietnamese": "Cặp đôi đã xoay xở sống tiết kiệm trong những năm đầu của họ.",
+      "audio": "f/audios_example/the_couple_managed_to_live_frugally_during_their_early_years.ogg"
+    }
+  ],
+  "synonyms": [
+    "thrifty",
+    "economical",
+    "sparing"
+  ],
+  "antonyms": [
+    "extravagant",
+    "wasteful"
+  ],
+  "tags": [
+    "finance",
+    "lifestyle"
+  ]
+}

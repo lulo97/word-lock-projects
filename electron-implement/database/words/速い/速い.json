@@ -1,0 +1,38 @@
+{
+  "word": "速い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "はやい",
+    "audio": "words/速い/audios/速い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "動きが早い。",
+      "vietnamese": "Nhanh."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "この車は速いです。",
+      "vietnamese": "Chiếc xe này nhanh.",
+      "audio": "words/速い/audios_example/kono_kuruma_wa_hayai_desu.ogg"
+    },
+    {
+      "japanese": "彼は走るのが速いです。",
+      "vietnamese": "Anh ấy chạy nhanh.",
+      "audio": "words/速い/audios_example/kare_wa_hashiru_no_ga_hayai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "遅い"
+  ],
+  "tags": [
+    "adjective",
+    "speed"
+  ]
+}

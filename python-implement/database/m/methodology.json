@@ -1,0 +1,39 @@
+{
+  "word": "methodology",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌmɛθəˈdɒlədʒi/",
+    "audio": "m/audios/methodology.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a system of methods used in a particular area of study or activity",
+      "vietnamese": "phương pháp luận"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The research paper clearly outlines its methodology for data collection.",
+      "vietnamese": "Bài báo nghiên cứu đã trình bày rõ phương pháp luận của nó về việc thu thập dữ liệu.",
+      "audio": "m/audios_example/the_research_paper_clearly_outlines_its_methodology_for_data_collection.ogg"
+    },
+    {
+      "english": "We need to refine our methodology to ensure the results are reliable.",
+      "vietnamese": "Chúng ta cần tinh chỉnh phương pháp luận của mình để đảm bảo kết quả đáng tin cậy.",
+      "audio": "m/audios_example/we_need_to_refine_our_methodology_to_ensure_the_results_are_reliable.ogg"
+    }
+  ],
+  "synonyms": [
+    "system",
+    "approach"
+  ],
+  "antonyms": [],
+  "tags": [
+    "academic",
+    "research"
+  ]
+}

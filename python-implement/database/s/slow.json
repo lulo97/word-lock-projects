@@ -1,0 +1,37 @@
+{
+  "word": "slow",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/sloʊ/",
+    "audio": "s/audios/slow.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Moving or operating at a low speed.",
+      "vietnamese": "Di chuyển hoặc hoạt động ở tốc độ thấp."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The turtle is a slow animal.",
+      "vietnamese": "Con rùa là một loài động vật chậm.",
+      "audio": "s/audios_example/the_turtle_is_a_slow_animal.ogg"
+    }
+  ],
+  "synonyms": [
+    "lethargic",
+    "gradual"
+  ],
+  "antonyms": [
+    "fast",
+    "quick"
+  ],
+  "tags": [
+    "speed",
+    "description"
+  ]
+}

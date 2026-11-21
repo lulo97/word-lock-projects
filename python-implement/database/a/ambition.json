@@ -1,0 +1,43 @@
+{
+  "word": "ambition",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/æmˈbɪʃən/",
+    "audio": "a/audios/ambition.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a strong desire to do or to achieve something, typically in a career or in life",
+      "vietnamese": "tham vọng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Her ambition was to become the CEO of the company.",
+      "vietnamese": "Tham vọng của cô ấy là trở thành CEO của công ty.",
+      "audio": "a/audios_example/her_ambition_was_to_become_the_ceo_of_the_company.ogg"
+    },
+    {
+      "english": "He has great ambition, but he needs to work harder to achieve it.",
+      "vietnamese": "Anh ấy có tham vọng lớn, nhưng anh ấy cần làm việc chăm chỉ hơn để đạt được nó.",
+      "audio": "a/audios_example/he_has_great_ambition_but_he_needs_to_work_harder_to_achieve_it.ogg"
+    }
+  ],
+  "synonyms": [
+    "aspiration",
+    "drive",
+    "zeal"
+  ],
+  "antonyms": [
+    "apathy",
+    "indifference"
+  ],
+  "tags": [
+    "career",
+    "personal growth"
+  ]
+}

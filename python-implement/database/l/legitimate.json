@@ -1,0 +1,50 @@
+{
+  "word": "legitimate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ləˈdʒɪtəmət/",
+    "audio": "l/audios/legitimate.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "conforming to the law or rules; lawful",
+      "vietnamese": "hợp pháp"
+    },
+    {
+      "english": "genuine or authentic",
+      "vietnamese": "chính thống, xác thực"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company must operate within the bounds of the law to remain legitimate.",
+      "vietnamese": "Công ty phải hoạt động trong khuôn khổ pháp luật để duy trì tính hợp pháp.",
+      "audio": "l/audios_example/the_company_must_operate_within_the_bounds_of_the_law_to_remain_legitimate.ogg"
+    },
+    {
+      "english": "She presented a legitimate concern regarding the safety of the new software.",
+      "vietnamese": "Cô ấy đã đưa ra một mối quan ngại chính đáng về sự an toàn của phần mềm mới.",
+      "audio": "l/audios_example/she_presented_a_legitimate_concern_regarding_the_safety_of_the_new_software.ogg"
+    }
+  ],
+  "synonyms": [
+    "lawful",
+    "valid",
+    "authentic",
+    "genuine"
+  ],
+  "antonyms": [
+    "illegal",
+    "invalid",
+    "fake",
+    "illegitimate"
+  ],
+  "tags": [
+    "law",
+    "authenticity"
+  ]
+}

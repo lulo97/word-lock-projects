@@ -1,0 +1,44 @@
+{
+  "word": "ambiguous",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌæmbɪɡjuəs/",
+    "audio": "a/audios/ambiguous.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "open to more than one interpretation; having a double meaning",
+      "vietnamese": "mơ hồ; có thể hiểu theo nhiều nghĩa"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The instructions were ambiguous, so we weren't sure what to do next.",
+      "vietnamese": "Các hướng dẫn rất mơ hồ, vì vậy chúng tôi không chắc phải làm gì tiếp theo.",
+      "audio": "a/audios_example/the_instructions_were_ambiguous_so_we_weren_t_sure_what_to_do_next.ogg"
+    },
+    {
+      "english": "His answer was ambiguous, leaving the audience confused.",
+      "vietnamese": "Câu trả lời của anh ấy rất mơ hồ, khiến khán giả bối rối.",
+      "audio": "a/audios_example/his_answer_was_ambiguous_leaving_the_audience_confused.ogg"
+    }
+  ],
+  "synonyms": [
+    "vague",
+    "equivocal",
+    "uncertain"
+  ],
+  "antonyms": [
+    "clear",
+    "unambiguous",
+    "definite"
+  ],
+  "tags": [
+    "vocabulary",
+    "adjective"
+  ]
+}

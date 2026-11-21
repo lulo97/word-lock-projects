@@ -1,0 +1,37 @@
+{
+  "word": "small",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/smɔːl/",
+    "audio": "s/audios/small.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Of limited size or extent.",
+      "vietnamese": "Có kích thước hoặc phạm vi hạn chế."
+    }
+  ],
+  "examples": [
+    {
+      "english": "A small bird flew by.",
+      "vietnamese": "Một con chim nhỏ bay qua.",
+      "audio": "s/audios_example/a_small_bird_flew_by.ogg"
+    }
+  ],
+  "synonyms": [
+    "little",
+    "tiny"
+  ],
+  "antonyms": [
+    "big",
+    "large"
+  ],
+  "tags": [
+    "size",
+    "description"
+  ]
+}

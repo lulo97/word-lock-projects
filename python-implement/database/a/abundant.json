@@ -1,0 +1,44 @@
+{
+  "word": "abundant",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/əˈbʌndənt/",
+    "audio": "a/audios/abundant.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "existing or available in large quantities; plentiful",
+      "vietnamese": "dồi dào; phong phú"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The region is known for its abundant wildlife.",
+      "vietnamese": "Khu vực này nổi tiếng với sự đa dạng của động vật hoang dã.",
+      "audio": "a/audios_example/the_region_is_known_for_its_abundant_wildlife.ogg"
+    },
+    {
+      "english": "There is an abundant supply of fresh produce at the market.",
+      "vietnamese": "Có nguồn cung cấp dồi dào các sản phẩm tươi tại khu chợ.",
+      "audio": "a/audios_example/there_is_an_abundant_supply_of_fresh_produce_at_the_market.ogg"
+    }
+  ],
+  "synonyms": [
+    "plentiful",
+    "copious",
+    "ample"
+  ],
+  "antonyms": [
+    "scarce",
+    "rare",
+    "meager"
+  ],
+  "tags": [
+    "adjective",
+    "quantity"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "word": "手",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "て",
+    "audio": "words/手/audios/手.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "腕の先にある体の部分。",
+      "vietnamese": "Bàn tay."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "手を洗ってください。",
+      "vietnamese": "Hãy rửa tay.",
+      "audio": "words/手/audios_example/te_o_aratte_kudasai.ogg"
+    },
+    {
+      "japanese": "手が冷たいです。",
+      "vietnamese": "Tay lạnh.",
+      "audio": "words/手/audios_example/te_ga_tsumetai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "body"
+  ]
+}

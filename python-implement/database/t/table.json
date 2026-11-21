@@ -1,0 +1,36 @@
+{
+  "word": "table",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈteɪbl/",
+    "audio": "t/audios/table.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A piece of furniture with a flat top and one or more legs.",
+      "vietnamese": "Một món đồ nội thất có mặt phẳng và một hoặc nhiều chân."
+    }
+  ],
+  "examples": [
+    {
+      "english": "We ate dinner at the table.",
+      "vietnamese": "Chúng tôi đã ăn tối tại bàn.",
+      "audio": "t/audios_example/we_ate_dinner_at_the_table.ogg"
+    }
+  ],
+  "synonyms": [
+    "desk",
+    "board"
+  ],
+  "antonyms": [
+    "floor"
+  ],
+  "tags": [
+    "furniture",
+    "object"
+  ]
+}

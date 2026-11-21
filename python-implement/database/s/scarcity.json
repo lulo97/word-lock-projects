@@ -1,0 +1,43 @@
+{
+  "word": "scarcity",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈskɛərsəti/",
+    "audio": "s/audios/scarcity.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "the state of being in short supply; insufficiency",
+      "vietnamese": "sự khan hiếm; sự thiếu thốn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The scarcity of fresh water is a growing concern in many arid regions.",
+      "vietnamese": "Sự khan hiếm nước ngọt là một mối lo ngại ngày càng tăng ở nhiều vùng khô hạn.",
+      "audio": "s/audios_example/the_scarcity_of_fresh_water_is_a_growing_concern_in_many_arid_regions.ogg"
+    },
+    {
+      "english": "Due to the scarcity of raw materials, the company had to raise prices.",
+      "vietnamese": "Do sự khan hiếm nguyên liệu thô, công ty đã phải tăng giá.",
+      "audio": "s/audios_example/due_to_the_scarcity_of_raw_materials_the_company_had_to_raise_prices.ogg"
+    }
+  ],
+  "synonyms": [
+    "shortage",
+    "dearth",
+    "paucity"
+  ],
+  "antonyms": [
+    "abundance",
+    "plenty"
+  ],
+  "tags": [
+    "economics",
+    "supply and demand"
+  ]
+}

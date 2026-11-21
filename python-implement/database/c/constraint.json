@@ -1,0 +1,43 @@
+{
+  "word": "constraint",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kənˈstreɪnt/",
+    "audio": "c/audios/constraint.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A limitation or restriction.",
+      "vietnamese": "Sự ràng buộc, giới hạn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The budget placed a significant constraint on the project's scope.",
+      "vietnamese": "Ngân sách đã đặt ra một ràng buộc đáng kể đối với phạm vi của dự án.",
+      "audio": "c/audios_example/the_budget_placed_a_significant_constraint_on_the_project_s_scope.ogg"
+    },
+    {
+      "english": "She worked within the constraints of the company's policy.",
+      "vietnamese": "Cô ấy làm việc trong khuôn khổ các quy định của công ty.",
+      "audio": "c/audios_example/she_worked_within_the_constraints_of_the_company_s_policy.ogg"
+    }
+  ],
+  "synonyms": [
+    "limitation",
+    "restriction",
+    "dilemma"
+  ],
+  "antonyms": [
+    "freedom",
+    "liberty"
+  ],
+  "tags": [
+    "business",
+    "academic"
+  ]
+}

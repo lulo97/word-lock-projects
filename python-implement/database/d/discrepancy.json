@@ -1,0 +1,43 @@
+{
+  "word": "discrepancy",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɪˈskrepənsi/",
+    "audio": "d/audios/discrepancy.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a lack of compatibility or similarity between two or more facts",
+      "vietnamese": "sự khác biệt, sự không nhất quán"
+    }
+  ],
+  "examples": [
+    {
+      "english": "There is a discrepancy between the two reports.",
+      "vietnamese": "Có một sự khác biệt giữa hai báo cáo.",
+      "audio": "d/audios_example/there_is_a_discrepancy_between_the_two_reports.ogg"
+    },
+    {
+      "english": "The auditor found a small discrepancy in the company's accounts.",
+      "vietnamese": "Kiểm toán viên đã tìm thấy một sự không nhất quán nhỏ trong sổ sách của công ty.",
+      "audio": "d/audios_example/the_auditor_found_a_small_discrepancy_in_the_company_s_accounts.ogg"
+    }
+  ],
+  "synonyms": [
+    "inconsistency",
+    "difference",
+    "variation"
+  ],
+  "antonyms": [
+    "agreement",
+    "consistency"
+  ],
+  "tags": [
+    "formal",
+    "business"
+  ]
+}

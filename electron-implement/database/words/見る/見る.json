@@ -1,0 +1,36 @@
+{
+  "word": "見る",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "みる",
+    "audio": "words/見る/audios/見る.ogg"
+  },
+  "part_of_speech": "verb (ichidan)",
+  "definitions": [
+    {
+      "japanese": "目で物をとらえる。",
+      "vietnamese": "Nhìn, xem."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "テレビを見ます。",
+      "vietnamese": "Tôi xem tivi.",
+      "audio": "words/見る/audios_example/terebi_o_mi_masu.ogg"
+    },
+    {
+      "japanese": "この写真を見てください。",
+      "vietnamese": "Hãy xem bức ảnh này.",
+      "audio": "words/見る/audios_example/kono_shashin_o_mi_te_kudasai.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "daily"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "word": "未来",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "みらい",
+    "audio": "words/未来/audios/未来.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "これから来る時間。",
+      "vietnamese": "Tương lai."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "未来のことを考えます。",
+      "vietnamese": "Tôi nghĩ về tương lai.",
+      "audio": "words/未来/audios_example/mirai_no_koto_o_kangae_masu.ogg"
+    },
+    {
+      "japanese": "明るい未来を信じます。",
+      "vietnamese": "Tôi tin vào tương lai tươi sáng.",
+      "audio": "words/未来/audios_example/akarui_mirai_o_shinji_masu.ogg"
+    }
+  ],
+  "synonyms": [
+    "将来"
+  ],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "abstract"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "綺麗",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "きれい",
+    "audio": "words/綺麗/audios/綺麗.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "美しい、または清潔である。",
+      "vietnamese": "Đẹp, sạch sẽ."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "花が綺麗です。",
+      "vietnamese": "Hoa đẹp.",
+      "audio": "words/綺麗/audios_example/hana_ga_kirei_desu.ogg"
+    },
+    {
+      "japanese": "部屋を綺麗にします。",
+      "vietnamese": "Tôi dọn phòng cho sạch.",
+      "audio": "words/綺麗/audios_example/heya_o_kirei_ni_shi_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "daily"
+  ]
+}

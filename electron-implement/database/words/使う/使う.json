@@ -1,0 +1,36 @@
+{
+  "word": "使う",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "つかう",
+    "audio": "words/使う/audios/使う.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "道具などを用いる。",
+      "vietnamese": "Sử dụng, dùng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "辞書を使います。",
+      "vietnamese": "Tôi dùng từ điển.",
+      "audio": "words/使う/audios_example/jisho_o_tsukai_masu.ogg"
+    },
+    {
+      "japanese": "このパソコンを使ってもいいですか。",
+      "vietnamese": "Tôi dùng máy tính này được không?",
+      "audio": "words/使う/audios_example/kono_pasokon_o_tsukatte_mo_ii_desu_ka.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "daily"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "word": "meticulous",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/məˈtɪkjələs/",
+    "audio": "m/audios/meticulous.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "showing great attention to detail; very careful and precise",
+      "vietnamese": "tỉ mỉ, kỹ lưỡng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The watchmaker was meticulous in his work, ensuring every gear was perfect.",
+      "vietnamese": "Người làm đồng hồ rất tỉ mỉ trong công việc của mình, đảm bảo mọi bánh răng đều hoàn hảo.",
+      "audio": "m/audios_example/the_watchmaker_was_meticulous_in_his_work_ensuring_every_gear_was_perfect.ogg"
+    },
+    {
+      "english": "She kept meticulous records of all her expenses.",
+      "vietnamese": "Cô ấy giữ hồ sơ chi tiêu rất kỹ lưỡng.",
+      "audio": "m/audios_example/she_kept_meticulous_records_of_all_her_expenses.ogg"
+    }
+  ],
+  "synonyms": [
+    "conscientious",
+    "painstaking",
+    "thorough"
+  ],
+  "antonyms": [
+    "careless",
+    "sloppy"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

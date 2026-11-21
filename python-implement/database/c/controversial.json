@@ -1,0 +1,43 @@
+{
+  "word": "controversial",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌkɒntrəˈvɜːʃəl/",
+    "audio": "c/audios/controversial.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "causing public disagreement or debate",
+      "vietnamese": "gây tranh cãi"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The new policy is highly controversial among the public.",
+      "vietnamese": "Chính sách mới gây nhiều tranh cãi trong công chúng.",
+      "audio": "c/audios_example/the_new_policy_is_highly_controversial_among_the_public.ogg"
+    },
+    {
+      "english": "He made a controversial statement during the interview.",
+      "vietnamese": "Anh ấy đã đưa ra một tuyên bố gây tranh cãi trong cuộc phỏng vấn.",
+      "audio": "c/audios_example/he_made_a_controversial_statement_during_the_interview.ogg"
+    }
+  ],
+  "synonyms": [
+    "disputed",
+    "contentious",
+    "polemical"
+  ],
+  "antonyms": [
+    "uncontroversial",
+    "unanimous"
+  ],
+  "tags": [
+    "opinion",
+    "debate"
+  ]
+}

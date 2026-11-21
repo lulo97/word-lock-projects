@@ -1,0 +1,37 @@
+{
+  "word": "big",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/bɪɡ/",
+    "audio": "b/audios/big.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Of considerable size, extent, or intensity.",
+      "vietnamese": "Có kích thước, phạm vi hoặc cường độ đáng kể."
+    }
+  ],
+  "examples": [
+    {
+      "english": "They live in a big city.",
+      "vietnamese": "Họ sống ở một thành phố lớn.",
+      "audio": "b/audios_example/they_live_in_a_big_city.ogg"
+    }
+  ],
+  "synonyms": [
+    "large",
+    "huge"
+  ],
+  "antonyms": [
+    "small",
+    "tiny"
+  ],
+  "tags": [
+    "size",
+    "description"
+  ]
+}

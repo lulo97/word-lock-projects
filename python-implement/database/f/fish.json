@@ -1,0 +1,36 @@
+{
+  "word": "fish",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/fɪʃ/",
+    "audio": "f/audios/fish.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A cold-blooded aquatic animal.",
+      "vietnamese": "Một loài động vật sống dưới nước, máu lạnh."
+    }
+  ],
+  "examples": [
+    {
+      "english": "I caught a big fish today.",
+      "vietnamese": "Hôm nay tôi đã bắt được một con cá lớn.",
+      "audio": "f/audios_example/i_caught_a_big_fish_today.ogg"
+    }
+  ],
+  "synonyms": [
+    "salmon",
+    "trout"
+  ],
+  "antonyms": [
+    "mammal"
+  ],
+  "tags": [
+    "animal",
+    "nature"
+  ]
+}

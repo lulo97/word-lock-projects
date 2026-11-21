@@ -1,0 +1,43 @@
+{
+  "word": "empathetic",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌɛmpəˈθɛtɪk/",
+    "audio": "e/audios/empathetic.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "showing an ability to understand and share the feelings of another.",
+      "vietnamese": "thể hiện khả năng thấu hiểu và chia sẻ cảm xúc của người khác."
+    }
+  ],
+  "examples": [
+    {
+      "english": "She was very empathetic towards the struggling students.",
+      "vietnamese": "Cô ấy rất đồng cảm với những sinh viên đang gặp khó khăn.",
+      "audio": "e/audios_example/she_was_very_empathetic_towards_the_struggling_students.ogg"
+    },
+    {
+      "english": "A good leader must be empathetic to the needs of their team.",
+      "vietnamese": "Một nhà lãnh đạo giỏi phải đồng cảm với nhu cầu của đội ngũ của họ.",
+      "audio": "e/audios_example/a_good_leader_must_be_empathetic_to_the_needs_of_their_team.ogg"
+    }
+  ],
+  "synonyms": [
+    "compassionate",
+    "understanding",
+    "sensitive"
+  ],
+  "antonyms": [
+    "unfeeling",
+    "indifferent"
+  ],
+  "tags": [
+    "emotion",
+    "psychology"
+  ]
+}

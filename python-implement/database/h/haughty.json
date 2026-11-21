@@ -1,0 +1,42 @@
+{
+  "word": "haughty",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈhɔːti/",
+    "audio": "h/audios/haughty.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "having or revealing an attitude of superiority",
+      "vietnamese": "kiêu ngạo, ngạo mạn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He gave a haughty look to anyone he considered beneath him.",
+      "vietnamese": "Anh ta liếc nhìn đầy kiêu ngạo bất cứ ai mà anh ta cho là thấp kém hơn mình.",
+      "audio": "h/audios_example/he_gave_a_haughty_look_to_anyone_he_considered_beneath_him.ogg"
+    },
+    {
+      "english": "The queen was known for her haughty demeanor.",
+      "vietnamese": "Nữ hoàng nổi tiếng với vẻ ngoài ngạo mạn của mình.",
+      "audio": "h/audios_example/the_queen_was_known_for_her_haughty_demeanor.ogg"
+    }
+  ],
+  "synonyms": [
+    "arrogant",
+    "haughty",
+    "supercilious"
+  ],
+  "antonyms": [
+    "humble",
+    "modest"
+  ],
+  "tags": [
+    "personality"
+  ]
+}

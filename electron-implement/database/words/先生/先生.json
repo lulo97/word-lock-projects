@@ -1,0 +1,37 @@
+{
+  "word": "先生",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "せんせい",
+    "audio": "words/先生/audios/先生.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "学校などで知識を教える人。",
+      "vietnamese": "Giáo viên, thầy cô."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "先生に質問しました。",
+      "vietnamese": "Tôi đã hỏi giáo viên.",
+      "audio": "words/先生/audios_example/sensei_ni_shitsumon_shi_mashi_ta.ogg"
+    },
+    {
+      "japanese": "田中先生は親切です。",
+      "vietnamese": "Thầy Tanaka tốt bụng.",
+      "audio": "words/先生/audios_example/tanaka_sensei_wa_shinsetsu_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "education",
+    "people",
+    "occupation"
+  ]
+}

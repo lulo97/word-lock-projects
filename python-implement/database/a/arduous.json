@@ -1,0 +1,43 @@
+{
+  "word": "arduous",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈɑːrdʒuəs/",
+    "audio": "a/audios/arduous.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "involving or requiring strenuous effort; difficult and tiring",
+      "vietnamese": "gian khổ, vất vả"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Climbing the steep mountain was an arduous task.",
+      "vietnamese": "Leo lên ngọn núi dốc là một nhiệm vụ gian khổ.",
+      "audio": "a/audios_example/climbing_the_steep_mountain_was_an_arduous_task.ogg"
+    },
+    {
+      "english": "The project proved to be an arduous process, taking months to complete.",
+      "vietnamese": "Dự án hóa ra là một quá trình vất vả, mất nhiều tháng mới hoàn thành.",
+      "audio": "a/audios_example/the_project_proved_to_be_an_arduous_process_taking_months_to_complete.ogg"
+    }
+  ],
+  "synonyms": [
+    "strenuous",
+    "laborious",
+    "demanding"
+  ],
+  "antonyms": [
+    "easy",
+    "effortless"
+  ],
+  "tags": [
+    "difficulty",
+    "effort"
+  ]
+}

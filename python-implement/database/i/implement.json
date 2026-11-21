@@ -1,0 +1,43 @@
+{
+  "word": "implement",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈɪmplɪment/",
+    "audio": "i/audios/implement.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to put a decision, plan, agreement, etc., into effect",
+      "vietnamese": "thực hiện"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company decided to implement a new remote work policy.",
+      "vietnamese": "Công ty đã quyết định thực hiện một chính sách làm việc từ xa mới.",
+      "audio": "i/audios_example/the_company_decided_to_implement_a_new_remote_work_policy.ogg"
+    },
+    {
+      "english": "It will take time to implement all the changes suggested by the committee.",
+      "vietnamese": "Sẽ mất thời gian để thực hiện tất cả những thay đổi do ủy ban đề xuất.",
+      "audio": "i/audios_example/it_will_take_time_to_implement_all_the_changes_suggested_by_the_committee.ogg"
+    }
+  ],
+  "synonyms": [
+    "execute",
+    "enact",
+    "carry out"
+  ],
+  "antonyms": [
+    "postpone",
+    "delay"
+  ],
+  "tags": [
+    "business",
+    "management"
+  ]
+}

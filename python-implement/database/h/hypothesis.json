@@ -1,0 +1,43 @@
+{
+  "word": "hypothesis",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/haɪˈpɒθəs/",
+    "audio": "h/audios/hypothesis.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a proposed explanation made on the basis of limited evidence as a starting point for further investigation",
+      "vietnamese": "giả thuyết; giả định"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The scientist formed a hypothesis to test in the laboratory.",
+      "vietnamese": "Nhà khoa học đã đưa ra một giả thuyết để kiểm tra trong phòng thí nghiệm.",
+      "audio": "h/audios_example/the_scientist_formed_a_hypothesis_to_test_in_the_laboratory.ogg"
+    },
+    {
+      "english": "Our initial hypothesis was that the new drug would improve patient recovery.",
+      "vietnamese": "Giả thuyết ban đầu của chúng tôi là loại thuốc mới sẽ cải thiện sự hồi phục của bệnh nhân.",
+      "audio": "h/audios_example/our_initial_hypothesis_was_that_the_new_drug_would_improve_patient_recovery.ogg"
+    }
+  ],
+  "synonyms": [
+    "theory",
+    "proposition",
+    "conjecture"
+  ],
+  "antonyms": [
+    "fact",
+    "certainty"
+  ],
+  "tags": [
+    "science",
+    "academic"
+  ]
+}

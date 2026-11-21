@@ -1,0 +1,36 @@
+{
+  "word": "元気",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "げんき",
+    "audio": "words/元気/audios/元気.ogg"
+  },
+  "part_of_speech": "na-adjective / noun",
+  "definitions": [
+    {
+      "japanese": "体や心が丈夫である。",
+      "vietnamese": "Khỏe mạnh, tràn đầy sức sống."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "お元気ですか。",
+      "vietnamese": "Bạn khỏe không?",
+      "audio": "words/元気/audios_example/o_genki_desu_ka.ogg"
+    },
+    {
+      "japanese": "元気に走っています。",
+      "vietnamese": "Cậu ấy đang chạy đầy sức sống.",
+      "audio": "words/元気/audios_example/genki_ni_hashitte_i_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "health"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "word": "努力",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "どりょく",
+    "audio": "words/努力/audios/努力.ogg"
+  },
+  "part_of_speech": "noun / verb",
+  "definitions": [
+    {
+      "japanese": "目標のために力を尽くすこと。",
+      "vietnamese": "Nỗ lực, cố gắng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "努力すれば夢は叶います。",
+      "vietnamese": "Nếu nỗ lực, ước mơ sẽ thành hiện thực.",
+      "audio": "words/努力/audios_example/doryoku_sure_ba_yume_wa_kanai_masu.ogg"
+    },
+    {
+      "japanese": "日々の努力が大切です。",
+      "vietnamese": "Nỗ lực mỗi ngày rất quan trọng.",
+      "audio": "words/努力/audios_example/hibi_no_doryoku_ga_taisetsu_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "奮闘"
+  ],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "action"
+  ]
+}

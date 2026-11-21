@@ -1,0 +1,37 @@
+{
+  "word": "飲む",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "のむ",
+    "audio": "words/飲む/audios/飲む.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "液体を口に入れる。",
+      "vietnamese": "Uống."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "お茶を飲みます。",
+      "vietnamese": "Tôi uống trà.",
+      "audio": "words/飲む/audios_example/ocha_o_nomi_masu.ogg"
+    },
+    {
+      "japanese": "毎朝コーヒーを飲みます。",
+      "vietnamese": "Mỗi sáng tôi uống cà phê.",
+      "audio": "words/飲む/audios_example/maiasa_kohi_o_nomi_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "drink",
+    "daily"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "word": "blatant",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈbleɪtənt/",
+    "audio": "b/audios/blatant.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "obvious and unashamed",
+      "vietnamese": "rõ ràng và không hề che giấu"
+    }
+  ],
+  "examples": [
+    {
+      "english": "It was a blatant lie.",
+      "vietnamese": "Đó là một lời nói dối trắng trợn.",
+      "audio": "b/audios_example/it_was_a_blatant_lie.ogg"
+    },
+    {
+      "english": "He made a blatant display of his wealth.",
+      "vietnamese": "Anh ta phô trương sự giàu có của mình một cách lộ liễu.",
+      "audio": "b/audios_example/he_made_a_blatant_display_of_his_wealth.ogg"
+    }
+  ],
+  "synonyms": [
+    "glaring",
+    "flagrant",
+    "obvious"
+  ],
+  "antonyms": [
+    "subtle",
+    "covert"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "word": "anomaly",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/əˈnɒməli/",
+    "audio": "a/audios/anomaly.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "something that deviates from what is standard, normal, or expected.",
+      "vietnamese": "sự bất thường; điều bất thường"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The sudden drop in temperature was an anomaly for this time of year.",
+      "vietnamese": "Sự sụt giảm nhiệt độ đột ngột là một điều bất thường đối với thời điểm này trong năm.",
+      "audio": "a/audios_example/the_sudden_drop_in_temperature_was_an_anomaly_for_this_time_of_year.ogg"
+    },
+    {
+      "english": "Scientists are studying the anomaly in the data set.",
+      "vietnamese": "Các nhà khoa học đang nghiên cứu sự bất thường trong bộ dữ liệu.",
+      "audio": "a/audios_example/scientists_are_studying_the_anomaly_in_the_data_set.ogg"
+    }
+  ],
+  "synonyms": [
+    "abnormality",
+    "deviation",
+    "irregularity"
+  ],
+  "antonyms": [
+    "normality",
+    "standard"
+  ],
+  "tags": [
+    "science",
+    "general"
+  ]
+}

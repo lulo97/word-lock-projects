@@ -1,0 +1,49 @@
+{
+  "word": "perpetuate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/pərˈpɛtʃueɪt/",
+    "audio": "p/audios/perpetuate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "To make something continue indefinitely.",
+      "vietnamese": "Duy trì, làm cho tiếp diễn mãi"
+    },
+    {
+      "english": "To keep a situation or belief going, often in a negative way.",
+      "vietnamese": "Củng cố, duy trì (một tình trạng hoặc niềm tin)"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The media often perpetuates stereotypes about certain groups of people.",
+      "vietnamese": "Truyền thông thường duy trì những khuôn mẫu rập khuôn về một số nhóm người nhất định.",
+      "audio": "p/audios_example/the_media_often_perpetuates_stereotypes_about_certain_groups_of_people.ogg"
+    },
+    {
+      "english": "We must take steps to perpetuate peace in the region.",
+      "vietnamese": "Chúng ta phải thực hiện các bước để duy trì hòa bình trong khu vực.",
+      "audio": "p/audios_example/we_must_take_steps_to_perpetuate_peace_in_the_region.ogg"
+    }
+  ],
+  "synonyms": [
+    "maintain",
+    "sustain",
+    "continue",
+    "preserve"
+  ],
+  "antonyms": [
+    "end",
+    "terminate",
+    "abolish"
+  ],
+  "tags": [
+    "formal",
+    "academic"
+  ]
+}

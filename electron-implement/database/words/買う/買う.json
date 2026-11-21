@@ -1,0 +1,37 @@
+{
+  "word": "買う",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "かう",
+    "audio": "words/買う/audios/買う.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "お金を払って手に入れる。",
+      "vietnamese": "Mua."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "パンを買います。",
+      "vietnamese": "Tôi mua bánh mì.",
+      "audio": "words/買う/audios_example/pan_o_kai_masu.ogg"
+    },
+    {
+      "japanese": "新しい靴を買いました。",
+      "vietnamese": "Tôi đã mua giày mới.",
+      "audio": "words/買う/audios_example/atarashii_kutsu_o_kai_mashi_ta.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "shopping",
+    "daily"
+  ]
+}

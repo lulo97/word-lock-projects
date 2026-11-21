@@ -1,0 +1,36 @@
+{
+  "word": "flower",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈflaʊər/",
+    "audio": "f/audios/flower.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The reproductive part of a plant, often colorful.",
+      "vietnamese": "Bộ phận sinh sản của thực vật, thường có màu sắc rực rỡ."
+    }
+  ],
+  "examples": [
+    {
+      "english": "She picked a beautiful flower.",
+      "vietnamese": "Cô ấy đã hái một bông hoa đẹp.",
+      "audio": "f/audios_example/she_picked_a_beautiful_flower.ogg"
+    }
+  ],
+  "synonyms": [
+    "blossom",
+    "bloom"
+  ],
+  "antonyms": [
+    "seed"
+  ],
+  "tags": [
+    "nature",
+    "plant"
+  ]
+}

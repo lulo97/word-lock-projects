@@ -1,0 +1,36 @@
+{
+  "word": "海",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "うみ",
+    "audio": "words/海/audios/海.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "大きな塩水の水域。",
+      "vietnamese": "Biển."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "夏に海へ行きます。",
+      "vietnamese": "Mùa hè tôi đi biển.",
+      "audio": "words/海/audios_example/natsu_ni_umi_e_iki_masu.ogg"
+    },
+    {
+      "japanese": "海は広いです。",
+      "vietnamese": "Biển rộng lớn.",
+      "audio": "words/海/audios_example/umi_wa_hiroi_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "nature",
+    "place"
+  ]
+}

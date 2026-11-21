@@ -1,0 +1,40 @@
+{
+  "word": "dilemma",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɪˈlemə/",
+    "audio": "d/audios/dilemma.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a situation in which a difficult choice has to be made between two or more alternatives",
+      "vietnamese": "tình thế khó xử; tình thế tiến thoái lưỡng nan"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She faced a dilemma: accept the high-paying job or stay close to her family.",
+      "vietnamese": "Cô ấy đối mặt với một tình thế khó xử: nhận công việc lương cao hay ở gần gia đình.",
+      "audio": "d/audios_example/she_faced_a_dilemma_accept_the_high_paying_job_or_stay_close_to_her_family.ogg"
+    },
+    {
+      "english": "The company is in a dilemma about whether to expand or downsize.",
+      "vietnamese": "Công ty đang ở trong tình thế tiến thoái lưỡng nan về việc có nên mở rộng hay thu hẹp quy mô.",
+      "audio": "d/audios_example/the_company_is_in_a_dilemma_about_whether_to_expand_or_downsize.ogg"
+    }
+  ],
+  "synonyms": [
+    "predicament",
+    "quandary",
+    "impasse"
+  ],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "difficult"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "star",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/stɑːr/",
+    "audio": "s/audios/star.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A massive, luminous sphere of plasma.",
+      "vietnamese": "Một khối plasma khổng lồ, phát sáng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "We saw many stars in the sky.",
+      "vietnamese": "Chúng tôi đã thấy nhiều ngôi sao trên bầu trời.",
+      "audio": "s/audios_example/we_saw_many_stars_in_the_sky.ogg"
+    }
+  ],
+  "synonyms": [
+    "celestial body",
+    "sun"
+  ],
+  "antonyms": [
+    "planet"
+  ],
+  "tags": [
+    "celestial",
+    "space"
+  ]
+}

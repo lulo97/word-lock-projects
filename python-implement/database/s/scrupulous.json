@@ -1,0 +1,46 @@
+{
+  "word": "scrupulous",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈskruːpələs/",
+    "audio": "s/audios/scrupulous.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "diligent and extremely attentive to details; meticulous",
+      "vietnamese": "tỉ mỉ, kỹ lưỡng"
+    },
+    {
+      "english": "having or showing a strict regard for what is right and wrong",
+      "vietnamese": "có lương tâm, liêm chính"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He is a scrupulous researcher who checks every source twice.",
+      "vietnamese": "Anh ấy là một nhà nghiên cứu tỉ mỉ, kiểm tra mọi nguồn hai lần.",
+      "audio": "s/audios_example/he_is_a_scrupulous_researcher_who_checks_every_source_twice.ogg"
+    },
+    {
+      "english": "She conducted her business with scrupulous honesty.",
+      "vietnamese": "Cô ấy điều hành công việc của mình với sự trung thực tuyệt đối.",
+      "audio": "s/audios_example/she_conducted_her_business_with_scrupulous_honesty.ogg"
+    }
+  ],
+  "synonyms": [
+    "meticulous",
+    "conscientious",
+    "diligent"
+  ],
+  "antonyms": [
+    "careless",
+    "negligent"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

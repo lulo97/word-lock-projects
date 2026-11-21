@@ -1,0 +1,35 @@
+{
+  "word": "空",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "そら",
+    "audio": "words/空/audios/空.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "地上から見上げた空間。",
+      "vietnamese": "Bầu trời."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "空が青いです。",
+      "vietnamese": "Bầu trời xanh.",
+      "audio": "words/空/audios_example/sora_ga_aoi_desu.ogg"
+    },
+    {
+      "japanese": "空を見るのが好きです。",
+      "vietnamese": "Tôi thích ngắm bầu trời.",
+      "audio": "words/空/audios_example/sora_o_miru_no_ga_suki_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "nature"
+  ]
+}

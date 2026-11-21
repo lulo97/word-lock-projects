@@ -1,0 +1,43 @@
+{
+  "word": "facilitate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/fəˈsɪlɪteɪt/",
+    "audio": "f/audios/facilitate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to make (an action or process) easy or easier",
+      "vietnamese": "tạo điều kiện, làm cho dễ dàng hơn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The new software will facilitate communication between departments.",
+      "vietnamese": "Phần mềm mới sẽ tạo điều kiện cho việc giao tiếp giữa các phòng ban.",
+      "audio": "f/audios_example/the_new_software_will_facilitate_communication_between_departments.ogg"
+    },
+    {
+      "english": "The government is taking steps to facilitate foreign investment.",
+      "vietnamese": "Chính phủ đang thực hiện các bước để tạo điều kiện cho đầu tư nước ngoài.",
+      "audio": "f/audios_example/the_government_is_taking_steps_to_facilitate_foreign_investment.ogg"
+    }
+  ],
+  "synonyms": [
+    "assist",
+    "promote",
+    "expedite"
+  ],
+  "antonyms": [
+    "hinder",
+    "obstruct"
+  ],
+  "tags": [
+    "business",
+    "process"
+  ]
+}

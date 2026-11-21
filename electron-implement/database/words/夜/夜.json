@@ -1,0 +1,36 @@
+{
+  "word": "夜",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "よる",
+    "audio": "words/夜/audios/夜.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "日が沈んで暗い時間。",
+      "vietnamese": "Ban đêm."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "夜は静かです。",
+      "vietnamese": "Ban đêm yên tĩnh.",
+      "audio": "words/夜/audios_example/yoru_wa_shizuka_desu.ogg"
+    },
+    {
+      "japanese": "夜、星が見えます。",
+      "vietnamese": "Ban đêm có thể thấy sao.",
+      "audio": "words/夜/audios_example/yoru_hoshi_ga_mie_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "nature"
+  ]
+}

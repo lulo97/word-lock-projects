@@ -1,0 +1,36 @@
+{
+  "word": "sky",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/skaɪ/",
+    "audio": "s/audios/sky.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The region of the atmosphere and outer space seen from the earth.",
+      "vietnamese": "Vùng của bầu khí quyển và không gian bên ngoài nhìn từ trái đất."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The sky is blue today.",
+      "vietnamese": "Bầu trời hôm nay màu xanh.",
+      "audio": "s/audios_example/the_sky_is_blue_today.ogg"
+    }
+  ],
+  "synonyms": [
+    "heavens",
+    "atmosphere"
+  ],
+  "antonyms": [
+    "earth"
+  ],
+  "tags": [
+    "nature",
+    "celestial"
+  ]
+}

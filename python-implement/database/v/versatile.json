@@ -1,0 +1,42 @@
+{
+  "word": "versatile",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈvɜːsətl/",
+    "audio": "v/audios/versatile.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "able to adapt or be adapted to many different functions or activities",
+      "vietnamese": "đa năng; linh hoạt"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The new software is very versatile and can be used for many different tasks.",
+      "vietnamese": "Phần mềm mới rất đa năng và có thể được sử dụng cho nhiều tác vụ khác nhau.",
+      "audio": "v/audios_example/the_new_software_is_very_versatile_and_can_be_used_for_many_different_tasks.ogg"
+    },
+    {
+      "english": "She is a versatile singer, capable of performing in jazz, pop, and classical styles.",
+      "vietnamese": "Cô ấy là một ca sĩ đa tài, có khả năng biểu diễn theo phong cách jazz, pop và cổ điển.",
+      "audio": "v/audios_example/she_is_a_versatile_singer_capable_of_performing_in_jazz_pop_and_classical_styles.ogg"
+    }
+  ],
+  "synonyms": [
+    "adaptable",
+    "flexible",
+    "all-purpose"
+  ],
+  "antonyms": [
+    "limited",
+    "specialized"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

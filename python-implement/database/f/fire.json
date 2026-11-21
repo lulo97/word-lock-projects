@@ -1,0 +1,37 @@
+{
+  "word": "fire",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈfaɪər/",
+    "audio": "f/audios/fire.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The process of burning, producing heat and light.",
+      "vietnamese": "Quá trình cháy, tạo ra nhiệt và ánh sáng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Be careful near the fire.",
+      "vietnamese": "Hãy cẩn thận gần lửa.",
+      "audio": "f/audios_example/be_careful_near_the_fire.ogg"
+    }
+  ],
+  "synonyms": [
+    "blaze",
+    "flame"
+  ],
+  "antonyms": [
+    "ice",
+    "water"
+  ],
+  "tags": [
+    "element",
+    "danger"
+  ]
+}

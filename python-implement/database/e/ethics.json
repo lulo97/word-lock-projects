@@ -1,0 +1,40 @@
+{
+  "word": "ethics",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈɛθɪks/",
+    "audio": "e/audios/ethics.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "moral principles that govern a person's behavior or the conduct of an activity.",
+      "vietnamese": "các nguyên tắc đạo đức chi phối hành vi của một người hoặc cách thức thực hiện một hoạt động."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company has a strict code of ethics regarding data privacy.",
+      "vietnamese": "Công ty có một bộ quy tắc đạo đức nghiêm ngặt về quyền riêng tư dữ liệu.",
+      "audio": "e/audios_example/the_company_has_a_strict_code_of_ethics_regarding_data_privacy.ogg"
+    },
+    {
+      "english": "Philosophers have debated the ethics of artificial intelligence for decades.",
+      "vietnamese": "Các nhà triết học đã tranh luận về đạo đức của trí tuệ nhân tạo trong nhiều thập kỷ.",
+      "audio": "e/audios_example/philosophers_have_debated_the_ethics_of_artificial_intelligence_for_decades.ogg"
+    }
+  ],
+  "synonyms": [
+    "morality",
+    "principles",
+    "conduct"
+  ],
+  "antonyms": [],
+  "tags": [
+    "philosophy",
+    "morality"
+  ]
+}

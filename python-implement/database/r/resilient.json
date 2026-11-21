@@ -1,0 +1,43 @@
+{
+  "word": "resilient",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/rɪˈzɪliənt/",
+    "audio": "r/audios/resilient.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "able to withstand or recover quickly from difficult conditions",
+      "vietnamese": "có khả năng phục hồi nhanh chóng sau những điều khó khăn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The community proved to be remarkably resilient after the natural disaster.",
+      "vietnamese": "Cộng đồng đã chứng tỏ khả năng phục hồi đáng kinh ngạc sau thảm họa thiên nhiên.",
+      "audio": "r/audios_example/the_community_proved_to_be_remarkably_resilient_after_the_natural_disaster.ogg"
+    },
+    {
+      "english": "She has a resilient spirit that helps her overcome challenges.",
+      "vietnamese": "Cô ấy có một tinh thần kiên cường giúp cô vượt qua những thử thách.",
+      "audio": "r/audios_example/she_has_a_resilient_spirit_that_helps_her_overcome_challenges.ogg"
+    }
+  ],
+  "synonyms": [
+    "tough",
+    "flexible",
+    "hardiness"
+  ],
+  "antonyms": [
+    "fragile",
+    "weak"
+  ],
+  "tags": [
+    "psychology",
+    "character"
+  ]
+}

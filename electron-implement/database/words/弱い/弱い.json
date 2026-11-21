@@ -1,0 +1,38 @@
+{
+  "word": "弱い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "よわい",
+    "audio": "words/弱い/audios/弱い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "力が少ない。",
+      "vietnamese": "Yếu."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "私はお酒に弱いです。",
+      "vietnamese": "Tôi kém rượu bia.",
+      "audio": "words/弱い/audios_example/watashi_wa_o_sake_ni_yowai_desu.ogg"
+    },
+    {
+      "japanese": "弱い光が見えます。",
+      "vietnamese": "Có thể thấy ánh sáng yếu.",
+      "audio": "words/弱い/audios_example/yowai_hikari_ga_mie_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "強い"
+  ],
+  "tags": [
+    "adjective",
+    "strength"
+  ]
+}

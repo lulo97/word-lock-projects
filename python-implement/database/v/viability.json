@@ -1,0 +1,43 @@
+{
+  "word": "viability",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌvaɪəˈbɪləti/",
+    "audio": "v/audios/viability.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "the ability to work successfully or survive",
+      "vietnamese": "khả năng tồn tại hoặc hoạt động thành công"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company is struggling with the viability of its new product line.",
+      "vietnamese": "Công ty đang vật lộn với tính khả thi của dòng sản phẩm mới.",
+      "audio": "v/audios_example/the_company_is_struggling_with_the_viability_of_its_new_product_line.ogg"
+    },
+    {
+      "english": "We need to assess the long-term viability of this business model.",
+      "vietnamese": "Chúng ta cần đánh giá tính khả thi lâu dài của mô hình kinh doanh này.",
+      "audio": "v/audios_example/we_need_to_assess_the_long_term_viability_of_this_business_model.ogg"
+    }
+  ],
+  "synonyms": [
+    "feasibility",
+    "sustainability",
+    "workability"
+  ],
+  "antonyms": [
+    "impracticality",
+    "untenability"
+  ],
+  "tags": [
+    "business",
+    "economics"
+  ]
+}

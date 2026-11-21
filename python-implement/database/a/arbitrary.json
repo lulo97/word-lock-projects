@@ -1,0 +1,44 @@
+{
+  "word": "arbitrary",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈærbɪtrəri/",
+    "audio": "a/audios/arbitrary.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "based on random choice or personal whim, rather than any reason or system",
+      "vietnamese": "tùy ý, ngẫu nhiên"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The decision to change the rules seemed completely arbitrary.",
+      "vietnamese": "Quyết định thay đổi luật dường như hoàn toàn tùy ý.",
+      "audio": "a/audios_example/the_decision_to_change_the_rules_seemed_completely_arbitrary.ogg"
+    },
+    {
+      "english": "He made an arbitrary selection from the list without considering the criteria.",
+      "vietnamese": "Anh ấy đã đưa ra một lựa chọn ngẫu nhiên từ danh sách mà không xem xét các tiêu chí.",
+      "audio": "a/audios_example/he_made_an_arbitrary_selection_from_the_list_without_considering_the_criteria.ogg"
+    }
+  ],
+  "synonyms": [
+    "capricious",
+    "random",
+    "whimsical"
+  ],
+  "antonyms": [
+    "systematic",
+    "logical",
+    "justified"
+  ],
+  "tags": [
+    "adjective",
+    "logic"
+  ]
+}

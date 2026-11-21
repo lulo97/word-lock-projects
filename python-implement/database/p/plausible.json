@@ -1,0 +1,43 @@
+{
+  "word": "plausible",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈplɔːzəbl/",
+    "audio": "p/audios/plausible.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "seeming reasonable or probable",
+      "vietnamese": "có vẻ hợp lý hoặc có khả năng xảy ra"
+    }
+  ],
+  "examples": [
+    {
+      "english": "His explanation for being late was quite plausible.",
+      "vietnamese": "Lời giải thích của anh ấy về việc đến muộn khá hợp lý.",
+      "audio": "p/audios_example/his_explanation_for_being_late_was_quite_plausible.ogg"
+    },
+    {
+      "english": "The detective found the suspect's alibi to be plausible.",
+      "vietnamese": "Thám tử nhận thấy lời bào chữa của nghi phạm là có khả năng xảy ra.",
+      "audio": "p/audios_example/the_detective_found_the_suspect_s_alibi_to_be_plausible.ogg"
+    }
+  ],
+  "synonyms": [
+    "believable",
+    "credible",
+    "reasonable"
+  ],
+  "antonyms": [
+    "implausible",
+    "unbelievable"
+  ],
+  "tags": [
+    "adjective",
+    "logic"
+  ]
+}

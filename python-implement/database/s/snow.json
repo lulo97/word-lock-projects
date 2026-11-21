@@ -1,0 +1,36 @@
+{
+  "word": "snow",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/snoʊ/",
+    "audio": "s/audios/snow.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "Frozen precipitation that falls from the sky.",
+      "vietnamese": "Lượng mưa đóng băng rơi từ bầu trời."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The snow covered the ground.",
+      "vietnamese": "Tuyết bao phủ mặt đất.",
+      "audio": "s/audios_example/the_snow_covered_the_ground.ogg"
+    }
+  ],
+  "synonyms": [
+    "flurry",
+    "powder"
+  ],
+  "antonyms": [
+    "heat"
+  ],
+  "tags": [
+    "weather",
+    "element"
+  ]
+}

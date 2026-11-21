@@ -1,0 +1,44 @@
+{
+  "word": "catalyst",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈkætəlɪst/",
+    "audio": "c/audios/catalyst.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a substance that increases the rate of a chemical reaction without itself undergoing any permanent chemical change",
+      "vietnamese": "chất xúc tác"
+    },
+    {
+      "english": "an agent that provokes or speeds up a particular action or event",
+      "vietnamese": "chất xúc tác, tác nhân"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The enzyme acts as a catalyst in the body's metabolic processes.",
+      "vietnamese": "Enzyme hoạt động như một chất xúc tác trong các quá trình trao đổi chất của cơ thể.",
+      "audio": "c/audios_example/the_enzyme_acts_as_a_catalyst_in_the_body_s_metabolic_processes.ogg"
+    },
+    {
+      "english": "His speech was the catalyst for the entire political movement.",
+      "vietnamese": "Bài phát biểu của ông là chất xúc tác cho toàn bộ phong trào chính trị.",
+      "audio": "c/audios_example/his_speech_was_the_catalyst_for_the_entire_political_movement.ogg"
+    }
+  ],
+  "synonyms": [
+    "accelerant",
+    "trigger",
+    "impetus"
+  ],
+  "antonyms": [],
+  "tags": [
+    "chemistry",
+    "science"
+  ]
+}

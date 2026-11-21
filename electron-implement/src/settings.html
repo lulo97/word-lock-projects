@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>Kotoba Lock Settings</title>
+    <link rel="stylesheet" href="tailwind.css" />
+  </head>
+  <body class="settings-body h-full">
+    <div class="settings-card">
+      <div id="settingsScroll" class="settings-scroll">
+        <h1 class="settings-title heading">Settings</h1>
+        <div id="configPath" class="settings-path"></div>
+        <div id="styleNote" class="settings-note"></div>
+
+        <div class="field-label">AUTO_SHOW_DELAY_MS</div>
+        <input id="delayEntry" class="text-input" type="text" />
+        <div class="field-hint">
+          Milliseconds before the word gate opens. 1000 = 1 second, 300000 = 5
+          minutes.
+        </div>
+
+        <div class="slider-header">
+          <span class="field-label">SOUND_VOLUME</span>
+          <span id="volumeValue" class="volume-value">x2.0</span>
+        </div>
+        <input
+          id="volumeSlider"
+          class="range"
+          type="range"
+          min="0"
+          max="4"
+          step="0.1"
+          value="2"
+        />
+        <div class="field-hint">
+          Playback gain relative to the Windows master volume. 2.0 = twice as
+          loud.
+        </div>
+
+        <div class="field-label">START_WITH_WINDOWS</div>
+        <label class="switch-row">
+          <input id="startupSwitch" class="switch-input" type="checkbox" />
+          <span class="switch"></span>
+          <span class="switch-text"
+            >Launch Kotoba Lock when I sign in to Windows</span
+          >
+        </label>
+        <div class="field-hint">
+          Adds an entry to the current user's registry Run key (no admin rights
+          needed). If the exe is moved or renamed, the entry is updated the next
+          time Kotoba Lock starts.
+        </div>
+
+        <div class="field-label">IGNORE_WORDS</div>
+        <div class="field-hint">
+          One word per line, or separate with commas. These words will never be
+          shown.
+        </div>
+        <textarea id="ignoreBox" class="ignore-box" spellcheck="false"></textarea>
+      </div>
+
+      <div class="settings-footer">
+        <div id="status" class="status"></div>
+        <div class="settings-actions">
+          <button id="cancelButton" class="btn btn-ghost" type="button">
+            Cancel
+          </button>
+          <button id="saveButton" class="btn btn-primary" type="button">
+            Save config
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="theme.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>

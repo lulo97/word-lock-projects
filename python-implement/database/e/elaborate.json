@@ -1,0 +1,43 @@
+{
+  "word": "elaborate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪˈlæbəreɪt/",
+    "audio": "e/audios/elaborate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "To develop or present in detail.",
+      "vietnamese": "Trình bày chi tiết; phát triển kỹ lưỡng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Could you elaborate on your proposal?",
+      "vietnamese": "Bạn có thể trình bày chi tiết hơn về đề xuất của mình không?",
+      "audio": "e/audios_example/could_you_elaborate_on_your_proposal.ogg"
+    },
+    {
+      "english": "She elaborated on the historical context of the event.",
+      "vietnamese": "Cô ấy đã giải thích kỹ về bối cảnh lịch sử của sự kiện.",
+      "audio": "e/audios_example/she_elaborated_on_the_historical_context_of_the_event.ogg"
+    }
+  ],
+  "synonyms": [
+    "detail",
+    "expand",
+    "amplify"
+  ],
+  "antonyms": [
+    "summarize",
+    "condense"
+  ],
+  "tags": [
+    "formal",
+    "academic"
+  ]
+}

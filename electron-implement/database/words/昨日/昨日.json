@@ -1,0 +1,36 @@
+{
+  "word": "昨日",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "きのう",
+    "audio": "words/昨日/audios/昨日.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "今日の前の日。",
+      "vietnamese": "Hôm qua."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "昨日、映画を見ました。",
+      "vietnamese": "Hôm qua tôi đã xem phim.",
+      "audio": "words/昨日/audios_example/kino_eiga_o_mi_mashi_ta.ogg"
+    },
+    {
+      "japanese": "昨日は寒かったです。",
+      "vietnamese": "Hôm qua trời lạnh.",
+      "audio": "words/昨日/audios_example/kino_wa_samukatta_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "daily"
+  ]
+}

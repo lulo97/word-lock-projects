@@ -1,0 +1,37 @@
+{
+  "word": "心",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "こころ",
+    "audio": "words/心/audios/心.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "感情や考えの源。",
+      "vietnamese": "Trái tim, tâm hồn, lòng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "心が温かくなりました。",
+      "vietnamese": "Trái tim tôi ấm áp.",
+      "audio": "words/心/audios_example/kokoro_ga_atatakaku_nari_mashi_ta.ogg"
+    },
+    {
+      "japanese": "心から感謝します。",
+      "vietnamese": "Tôi cảm ơn từ đáy lòng.",
+      "audio": "words/心/audios_example/kokorokara_kansha_shi_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "body",
+    "emotion",
+    "abstract"
+  ]
+}

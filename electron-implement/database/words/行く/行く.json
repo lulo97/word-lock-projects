@@ -1,0 +1,37 @@
+{
+  "word": "行く",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "いく",
+    "audio": "words/行く/audios/行く.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "目的地へ移動する。",
+      "vietnamese": "Đi."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "明日、東京へ行きます。",
+      "vietnamese": "Mai tôi sẽ đi Tokyo.",
+      "audio": "words/行く/audios_example/ashita_tokyo_e_iki_masu.ogg"
+    },
+    {
+      "japanese": "学校へ行く時間です。",
+      "vietnamese": "Đã đến giờ đi học.",
+      "audio": "words/行く/audios_example/gakko_e_iku_jikan_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "movement",
+    "daily"
+  ]
+}

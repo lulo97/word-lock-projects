@@ -1,0 +1,38 @@
+{
+  "word": "暑い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "あつい",
+    "audio": "words/暑い/audios/暑い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "気温が高い。",
+      "vietnamese": "Nóng (thời tiết)."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "今日は暑いです。",
+      "vietnamese": "Hôm nay trời nóng.",
+      "audio": "words/暑い/audios_example/kyo_wa_atsui_desu.ogg"
+    },
+    {
+      "japanese": "夏は暑いですね。",
+      "vietnamese": "Mùa hè nóng nhỉ.",
+      "audio": "words/暑い/audios_example/natsu_wa_atsui_desu_ne.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "寒い"
+  ],
+  "tags": [
+    "adjective",
+    "weather"
+  ]
+}

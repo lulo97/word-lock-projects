@@ -1,0 +1,40 @@
+"""Sage - soft light-green, square and calm."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="sage",
+    name="Sage",
+    description="Misty green wash, white cards, crisp square corners.",
+    appearance="light",
+    color_theme="green",
+    gradient=True,
+    background_top="#f2f8f0",
+    background_bottom="#d7e8d5",
+    card="#ffffff",
+    card_border="#bfd8bf",
+    chip_bg="#e3f0e1",
+    chip_hover="#d3e8d0",
+    entry_bg="#f8fcf7",
+    text_primary="#14301a",
+    text_body="#2f4a34",
+    text_muted="#5f7a64",
+    accent="#2f855a",
+    accent_soft="#276749",
+    accent_hover="#276749",
+    on_accent="#ffffff",
+    error="#c53030",
+    success="#2f855a",
+    button_bg="#e3f0e1",
+    button_hover="#d3e8d0",
+    button_border="#bfd8bf",
+    button_text="#276749",
+    border_width=1,
+    overlay_alpha=0.95,
+    typography=Typography(
+        body=("Corbel", "Candara", "Segoe UI"),
+        display=("Corbel", "Constantia", "Candara", "Segoe UI"),
+        scale=1.0,
+        uppercase_headings=False,
+    ),
+)

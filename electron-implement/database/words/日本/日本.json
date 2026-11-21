@@ -1,0 +1,36 @@
+{
+  "word": "日本",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "にほん",
+    "audio": "words/日本/audios/日本.ogg"
+  },
+  "part_of_speech": "proper noun",
+  "definitions": [
+    {
+      "japanese": "東アジアにある島国。",
+      "vietnamese": "Nhật Bản."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "日本へ旅行したいです。",
+      "vietnamese": "Tôi muốn đi du lịch Nhật Bản.",
+      "audio": "words/日本/audios_example/nippon_e_ryoko_shi_tai_desu.ogg"
+    },
+    {
+      "japanese": "日本の春はきれいです。",
+      "vietnamese": "Mùa xuân ở Nhật rất đẹp.",
+      "audio": "words/日本/audios_example/nippon_no_haru_wa_kirei_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "country",
+    "place"
+  ]
+}

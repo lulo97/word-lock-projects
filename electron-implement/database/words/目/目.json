@@ -1,0 +1,35 @@
+{
+  "word": "目",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "め",
+    "audio": "words/目/audios/目.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "物を見るための器官。",
+      "vietnamese": "Mắt."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "目が大きいです。",
+      "vietnamese": "Mắt to.",
+      "audio": "words/目/audios_example/me_ga_okii_desu.ogg"
+    },
+    {
+      "japanese": "目を閉じてください。",
+      "vietnamese": "Hãy nhắm mắt lại.",
+      "audio": "words/目/audios_example/me_o_toji_te_kudasai.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "body"
+  ]
+}

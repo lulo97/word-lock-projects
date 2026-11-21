@@ -1,0 +1,36 @@
+{
+  "word": "米",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "こめ",
+    "audio": "words/米/audios/米.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "主食になる穀物。",
+      "vietnamese": "Gạo."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "米を買います。",
+      "vietnamese": "Tôi mua gạo.",
+      "audio": "words/米/audios_example/kome_o_kai_masu.ogg"
+    },
+    {
+      "japanese": "日本の米はおいしいです。",
+      "vietnamese": "Gạo Nhật rất ngon.",
+      "audio": "words/米/audios_example/nippon_no_kome_wa_oishii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "food",
+    "daily"
+  ]
+}

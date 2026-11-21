@@ -1,0 +1,45 @@
+{
+  "word": "candid",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈkændɪd/",
+    "audio": "c/audios/candid.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Truthful and straightforward; frank.",
+      "vietnamese": "Thành thật và thẳng thắn; thẳng thắn."
+    }
+  ],
+  "examples": [
+    {
+      "english": "She gave a candid assessment of the project's weaknesses.",
+      "vietnamese": "Cô ấy đã đưa ra một đánh giá thẳng thắn về những điểm yếu của dự án.",
+      "audio": "c/audios_example/she_gave_a_candid_assessment_of_the_project_s_weaknesses.ogg"
+    },
+    {
+      "english": "The journalist offered a candid interview with the politician.",
+      "vietnamese": "Nhà báo đã thực hiện một cuộc phỏng vấn thẳng thắn với chính trị gia.",
+      "audio": "c/audios_example/the_journalist_offered_a_candid_interview_with_the_politician.ogg"
+    }
+  ],
+  "synonyms": [
+    "frank",
+    "candid",
+    "open",
+    "honest"
+  ],
+  "antonyms": [
+    "deceptive",
+    "evasive",
+    "insincere"
+  ],
+  "tags": [
+    "personality",
+    "communication"
+  ]
+}

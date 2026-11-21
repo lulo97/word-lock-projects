@@ -1,0 +1,36 @@
+{
+  "word": "りんご",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "りんご",
+    "audio": "words/りんご/audios/りんご.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "赤や緑の丸い果物。",
+      "vietnamese": "Quả táo."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "りんごを一つ食べました。",
+      "vietnamese": "Tôi đã ăn một quả táo.",
+      "audio": "words/りんご/audios_example/ringo_o_hitotsu_tabe_mashi_ta.ogg"
+    },
+    {
+      "japanese": "りんごは甘いです。",
+      "vietnamese": "Táo ngọt.",
+      "audio": "words/りんご/audios_example/ringo_wa_amai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "food",
+    "fruit"
+  ]
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:;"
+    />
+    <title>Kotoba Lock</title>
+    <link rel="stylesheet" href="tailwind.css" />
+  </head>
+  <body class="window-body h-full">
+    <div class="screen">
+      <section id="quizScreen" class="card quiz-card">
+        <div class="brand heading">Kotoba Lock</div>
+        <div id="wordLabel" class="word"></div>
+        <div id="readingLabel" class="reading"></div>
+        <div id="romajiHint" class="romaji-hint"></div>
+        <div class="hint">
+          Type the romaji — correct answers unlock automatically
+        </div>
+        <input
+          id="answerInput"
+          class="answer-input"
+          type="text"
+          autofocus
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+        />
+        <div id="feedback" class="feedback"></div>
+        <button id="ignoreQuizButton" class="btn btn-outline" type="button">
+          Ignore this word
+        </button>
+      </section>
+
+      <section id="infoScreen" class="card info-card hidden">
+        <div id="infoScroll" class="info-scroll">
+          <div class="info-header">
+            <div class="info-title">
+              <div id="infoWord" class="info-word"></div>
+              <div id="infoRomaji" class="info-romaji"></div>
+            </div>
+            <div class="header-actions">
+              <button
+                id="ignoreInfoButton"
+                class="btn btn-ghost btn-small"
+                type="button"
+              >
+                Ignore
+              </button>
+              <button
+                id="listenButton"
+                class="btn btn-small hidden"
+                type="button"
+              >
+                Listen
+              </button>
+            </div>
+          </div>
+          <div id="infoMeta" class="info-meta"></div>
+          <div class="divider"></div>
+          <div id="infoBody"></div>
+        </div>
+        <div class="info-footer">
+          <div class="divider"></div>
+          <div class="enter-exit heading">Enter to exit</div>
+        </div>
+      </section>
+    </div>
+
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="theme.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>

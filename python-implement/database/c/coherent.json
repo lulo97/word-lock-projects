@@ -1,0 +1,49 @@
+{
+  "word": "coherent",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/koʊˈhɪərənt/",
+    "audio": "c/audios/coherent.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Logical and consistent",
+      "vietnamese": "Mạch lạc, chặt chẽ"
+    },
+    {
+      "english": "Able to think clearly and express oneself in a clear way",
+      "vietnamese": "Có khả năng suy nghĩ rõ ràng và diễn đạt mạch lạc"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She gave a coherent speech that convinced the entire audience.",
+      "vietnamese": "Cô ấy đã có một bài phát biểu mạch lạc khiến toàn bộ khán giả bị thuyết phục.",
+      "audio": "c/audios_example/she_gave_a_coherent_speech_that_convinced_the_entire_audience.ogg"
+    },
+    {
+      "english": "The novel's plot was not very coherent, making it difficult to follow.",
+      "vietnamese": "Cốt truyện của cuốn tiểu thuyết không được mạch lạc lắm, khiến người đọc khó theo dõi.",
+      "audio": "c/audios_example/the_novel_s_plot_was_not_very_coherent_making_it_difficult_to_follow.ogg"
+    }
+  ],
+  "synonyms": [
+    "logical",
+    "consistent",
+    "clear",
+    "lucid"
+  ],
+  "antonyms": [
+    "incoherent",
+    "disorganized",
+    "confused"
+  ],
+  "tags": [
+    "grammar",
+    "vocabulary"
+  ]
+}

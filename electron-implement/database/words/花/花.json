@@ -1,0 +1,36 @@
+{
+  "word": "花",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "はな",
+    "audio": "words/花/audios/花.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "植物が咲かせる部分。",
+      "vietnamese": "Hoa."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "花が咲きました。",
+      "vietnamese": "Hoa đã nở.",
+      "audio": "words/花/audios_example/hana_ga_saki_mashi_ta.ogg"
+    },
+    {
+      "japanese": "母に花を贈ります。",
+      "vietnamese": "Tôi tặng hoa cho mẹ.",
+      "audio": "words/花/audios_example/haha_ni_hana_o_okuri_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "nature",
+    "plant"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "word": "scrutinize",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈskruːtɪnaɪz/",
+    "audio": "s/audios/scrutinize.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "examine or inspect closely and thoroughly",
+      "vietnamese": "xem xét kỹ lưỡng, kiểm tra kỹ"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The detective scrutinized the evidence for any inconsistencies.",
+      "vietnamese": "Thám tử đã xem xét kỹ bằng chứng để tìm bất kỳ sự không nhất quán nào.",
+      "audio": "s/audios_example/the_detective_scrutinized_the_evidence_for_any_inconsistencies.ogg"
+    },
+    {
+      "english": "She scrutinized the contract before signing it.",
+      "vietnamese": "Cô ấy đã xem xét kỹ hợp đồng trước khi ký.",
+      "audio": "s/audios_example/she_scrutinized_the_contract_before_signing_it.ogg"
+    }
+  ],
+  "synonyms": [
+    "examine",
+    "inspect",
+    "analyze"
+  ],
+  "antonyms": [
+    "ignore",
+    "overlook"
+  ],
+  "tags": [
+    "formal",
+    "academic"
+  ]
+}

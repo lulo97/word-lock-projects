@@ -1,0 +1,42 @@
+{
+  "word": "formidable",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/fɔːˈmɪdəbl/",
+    "audio": "f/audios/formidable.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "inspiring fear or respect through being impressively large, powerful, intense, or capable",
+      "vietnamese": "đáng gờm, đáng sợ, hùng mạnh"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The chess grandmaster proved to be a formidable opponent.",
+      "vietnamese": "Vị đại kiện cờ đã chứng tỏ là một đối thủ đáng gờm.",
+      "audio": "f/audios_example/the_chess_grandmaster_proved_to_be_a_formidable_opponent.ogg"
+    },
+    {
+      "english": "She faced a formidable challenge in her new career.",
+      "vietnamese": "Cô ấy phải đối mặt với một thử thách to lớn trong sự nghiệp mới của mình.",
+      "audio": "f/audios_example/she_faced_a_formidable_challenge_in_her_new_career.ogg"
+    }
+  ],
+  "synonyms": [
+    "intimidating",
+    "awe-inspiring",
+    "powerful"
+  ],
+  "antonyms": [
+    "weak",
+    "insignificant"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

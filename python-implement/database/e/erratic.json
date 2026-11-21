@@ -1,0 +1,44 @@
+{
+  "word": "erratic",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪˈrætɪk/",
+    "audio": "e/audios/erratic.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "not regular in pattern or behavior; unpredictable",
+      "vietnamese": "thất thường, không theo quy luật"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The stock market has been erratic lately, making it hard to invest.",
+      "vietnamese": "Thị trường chứng khoán gần đây rất thất thường, khiến việc đầu tư trở nên khó khăn.",
+      "audio": "e/audios_example/the_stock_market_has_been_erratic_lately_making_it_hard_to_invest.ogg"
+    },
+    {
+      "english": "His erratic behavior worried his friends and family.",
+      "vietnamese": "Hành vi thất thường của anh ấy đã khiến bạn bè và gia đình lo lắng.",
+      "audio": "e/audios_example/his_erratic_behavior_worried_his_friends_and_family.ogg"
+    }
+  ],
+  "synonyms": [
+    "unpredictable",
+    "capricious",
+    "volatile"
+  ],
+  "antonyms": [
+    "regular",
+    "consistent",
+    "stable"
+  ],
+  "tags": [
+    "behavior",
+    "pattern"
+  ]
+}

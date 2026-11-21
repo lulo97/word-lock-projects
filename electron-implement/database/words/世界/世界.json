@@ -1,0 +1,36 @@
+{
+  "word": "世界",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "せかい",
+    "audio": "words/世界/audios/世界.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "地球上のすべて。",
+      "vietnamese": "Thế giới."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "世界を旅行したいです。",
+      "vietnamese": "Tôi muốn đi du lịch thế giới.",
+      "audio": "words/世界/audios_example/sekai_o_ryoko_shi_tai_desu.ogg"
+    },
+    {
+      "japanese": "世界は広いです。",
+      "vietnamese": "Thế giới rộng lớn.",
+      "audio": "words/世界/audios_example/sekai_wa_hiroi_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "place"
+  ]
+}

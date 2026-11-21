@@ -1,0 +1,37 @@
+{
+  "word": "weak",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/wiːk/",
+    "audio": "w/audios/weak.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Lacking in physical strength, effectiveness, or quality.",
+      "vietnamese": "Thiếu sức mạnh thể chất, hiệu quả hoặc chất lượng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The medicine made him feel weak.",
+      "vietnamese": "Thuốc làm anh ấy cảm thấy yếu.",
+      "audio": "w/audios_example/the_medicine_made_him_feel_weak.ogg"
+    }
+  ],
+  "synonyms": [
+    "feeble",
+    "frail"
+  ],
+  "antonyms": [
+    "strong",
+    "powerful"
+  ],
+  "tags": [
+    "quality",
+    "description"
+  ]
+}

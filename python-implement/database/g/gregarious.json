@@ -1,0 +1,42 @@
+{
+  "word": "gregarious",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɡrɪˈɡɛəriəs/",
+    "audio": "g/audios/gregarious.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "fond of company; sociable",
+      "vietnamese": "thích giao du; hòa đồng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She is a gregarious person who loves being around people.",
+      "vietnamese": "Cô ấy là một người hòa đồng, thích ở bên mọi người.",
+      "audio": "g/audios_example/she_is_a_gregarious_person_who_loves_being_around_people.ogg"
+    },
+    {
+      "english": "The gregarious nature of the wolf makes it a social animal.",
+      "vietnamese": "Bản tính thích giao tiếp của loài sóいの khiến nó trở thành một loài vật xã hội.",
+      "audio": "g/audios_example/the_gregarious_nature_of_the_wolf_makes_it_a_social_animal.ogg"
+    }
+  ],
+  "synonyms": [
+    "sociable",
+    "outgoing",
+    "extroverted"
+  ],
+  "antonyms": [
+    "introverted",
+    "solitary"
+  ],
+  "tags": [
+    "personality"
+  ]
+}

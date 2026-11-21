@@ -1,0 +1,36 @@
+{
+  "word": "鳥",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "とり",
+    "audio": "words/鳥/audios/鳥.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "羽とくちばしを持つ動物。",
+      "vietnamese": "Con chim."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "鳥が空を飛んでいます。",
+      "vietnamese": "Chim đang bay trên trời.",
+      "audio": "words/鳥/audios_example/tori_ga_sora_o_ton_de_i_masu.ogg"
+    },
+    {
+      "japanese": "朝、鳥の声が聞こえます。",
+      "vietnamese": "Buổi sáng nghe thấy tiếng chim.",
+      "audio": "words/鳥/audios_example/asa_tori_no_koe_ga_kikoe_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "animal",
+    "nature"
+  ]
+}

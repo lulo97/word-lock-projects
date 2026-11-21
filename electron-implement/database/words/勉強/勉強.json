@@ -1,0 +1,36 @@
+{
+  "word": "勉強",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "べんきょう",
+    "audio": "words/勉強/audios/勉強.ogg"
+  },
+  "part_of_speech": "noun / verb",
+  "definitions": [
+    {
+      "japanese": "知識を身につけること。",
+      "vietnamese": "Việc học, học tập."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "毎晩、日本語を勉強します。",
+      "vietnamese": "Mỗi tối tôi học tiếng Nhật.",
+      "audio": "words/勉強/audios_example/maiban_nihongo_o_benkyo_shi_masu.ogg"
+    },
+    {
+      "japanese": "勉強は大切です。",
+      "vietnamese": "Việc học rất quan trọng.",
+      "audio": "words/勉強/audios_example/benkyo_wa_taisetsu_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "education",
+    "daily"
+  ]
+}

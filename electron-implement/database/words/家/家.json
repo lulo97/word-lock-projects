@@ -1,0 +1,39 @@
+{
+  "word": "家",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "いえ",
+    "audio": "words/家/audios/家.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "人が住む建物。",
+      "vietnamese": "Nhà, ngôi nhà."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "家に帰ります。",
+      "vietnamese": "Tôi về nhà.",
+      "audio": "words/家/audios_example/ie_ni_kaeri_masu.ogg"
+    },
+    {
+      "japanese": "私の家は小さいです。",
+      "vietnamese": "Nhà tôi nhỏ.",
+      "audio": "words/家/audios_example/watashi_no_ie_wa_chisai_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "住宅",
+    "住まい"
+  ],
+  "antonyms": [],
+  "tags": [
+    "place",
+    "daily"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "word": "stereotype",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈstɛriətaɪp/",
+    "audio": "s/audios/stereotype.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a widely held but fixed and oversimplified image or idea of a particular type of person or thing",
+      "vietnamese": "một khuôn mẫu cố định và đơn giản hóa về một kiểu người hoặc sự vật cụ thể"
+    }
+  ],
+  "examples": [
+    {
+      "english": "It is a harmful stereotype to assume all teenagers are lazy.",
+      "vietnamese": "Việc cho rằng tất cả thanh thiếu niên đều lười biếng là một định kiến có hại.",
+      "audio": "s/audios_example/it_is_a_harmful_stereotype_to_assume_all_teenagers_are_lazy.ogg"
+    },
+    {
+      "english": "The movie relied on tired stereotypes of the city dwellers.",
+      "vietnamese": "Bộ phim đã dựa vào những khuôn mẫu cũ về những người sống ở thành phố.",
+      "audio": "s/audios_example/the_movie_relied_on_tired_stereotypes_of_the_city_dwellers.ogg"
+    }
+  ],
+  "synonyms": [
+    "cliché",
+    "trope",
+    "caricature"
+  ],
+  "antonyms": [
+    "individuality",
+    "uniqueness"
+  ],
+  "tags": [
+    "sociology",
+    "bias"
+  ]
+}

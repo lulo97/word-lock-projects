@@ -1,0 +1,44 @@
+{
+  "word": "diminish",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɪˈmɪnɪʃ/",
+    "audio": "d/audios/diminish.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to make or become less",
+      "vietnamese": "làm giảm, suy giảm"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The intensity of the pain began to diminish after the medication was taken.",
+      "vietnamese": "Cường độ cơn đau bắt đầu giảm sau khi uống thuốc.",
+      "audio": "d/audios_example/the_intensity_of_the_pain_began_to_diminish_after_the_medication_was_taken.ogg"
+    },
+    {
+      "english": "With the passage of time, his influence in the company started to diminish.",
+      "vietnamese": "Theo thời gian, ảnh hưởng của ông trong công ty bắt đầu suy giảm.",
+      "audio": "d/audios_example/with_the_passage_of_time_his_influence_in_the_company_started_to_diminish.ogg"
+    }
+  ],
+  "synonyms": [
+    "decrease",
+    "lessen",
+    "reduce"
+  ],
+  "antonyms": [
+    "increase",
+    "grow",
+    "augment"
+  ],
+  "tags": [
+    "verb",
+    "reduction"
+  ]
+}

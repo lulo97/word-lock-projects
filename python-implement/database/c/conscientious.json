@@ -1,0 +1,43 @@
+{
+  "word": "conscientious",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌkɒnʃiˈenʃəs/",
+    "audio": "c/audios/conscientious.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "wishing to do what is right, especially to do one's work or duty well and thoroughly",
+      "vietnamese": "có lương tâm, tận tâm"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She is a very conscientious student who always completes her assignments on time.",
+      "vietnamese": "Cô ấy là một sinh viên rất tận tâm, luôn hoàn thành bài tập đúng hạn.",
+      "audio": "c/audios_example/she_is_a_very_conscientious_student_who_always_completes_her_assignments_on_time.ogg"
+    },
+    {
+      "english": "He is a conscientious employee who takes great pride in the quality of his work.",
+      "vietnamese": "Anh ấy là một nhân viên có trách nhiệm, rất tự hào về chất lượng công việc của mình.",
+      "audio": "c/audios_example/he_is_a_conscientious_employee_who_takes_great_pride_in_the_quality_of_his_work.ogg"
+    }
+  ],
+  "synonyms": [
+    "diligent",
+    "scrupulous",
+    "meticulous"
+  ],
+  "antonyms": [
+    "careless",
+    "negligent"
+  ],
+  "tags": [
+    "personality",
+    "work ethic"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "name": "kotoba-lock",
+  "version": "1.0.0",
+  "description": "Kotoba Lock - a Japanese-Vietnamese word gate for Windows",
+  "main": "main.js",
+  "author": "Kotoba Lock",
+  "license": "MIT",
+  "scripts": {
+    "tailwind": "node scripts/build-tailwind.js",
+    "db:generate": "node database/generate.js --input database/words.txt",
+    "db:validate": "node database/validate_database.js",
+    "db:audio": "node database/generate_audio.js",
+    "db:audio-examples": "node database/generate_audio_examples.js",
+    "prestart": "npm run tailwind",
+    "start": "electron .",
+    "predist": "npm run tailwind",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8",
+    "tailwindcss": "^3.4.17"
+  },
+  "build": {
+    "appId": "com.kotobalock.app",
+    "productName": "Kotoba Lock",
+    "asar": false,
+    "files": [
+      "main.js",
+      "preload.js",
+      "lib/**/*",
+      "src/**/*",
+      "package.json",
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/kuroshiro/**/*",
+      "node_modules/kuroshiro-analyzer-kuromoji/**/*",
+      "node_modules/kuromoji/**/*",
+      "node_modules/async/**/*",
+      "node_modules/doublearray/**/*",
+      "node_modules/zlibjs/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "database",
+        "to": "database"
+      },
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Kotoba Lock"
+    }
+  },
+  "dependencies": {
+    "jquery": "^4.1.0",
+    "kuroshiro": "^2.0.0-beta.3",
+    "kuroshiro-analyzer-kuromoji": "^2.0.0-beta.3"
+  }
+}

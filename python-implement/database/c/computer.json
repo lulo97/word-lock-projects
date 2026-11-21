@@ -1,0 +1,36 @@
+{
+  "word": "computer",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kəmˈpjuːtər/",
+    "audio": "c/audios/computer.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "An electronic device for processing data.",
+      "vietnamese": "Một thiết bị điện tử để xử lý dữ liệu."
+    }
+  ],
+  "examples": [
+    {
+      "english": "I use my computer for work.",
+      "vietnamese": "Tôi sử dụng máy tính của mình cho công việc.",
+      "audio": "c/audios_example/i_use_my_computer_for_work.ogg"
+    }
+  ],
+  "synonyms": [
+    "PC",
+    "machine"
+  ],
+  "antonyms": [
+    "calculator"
+  ],
+  "tags": [
+    "technology",
+    "device"
+  ]
+}

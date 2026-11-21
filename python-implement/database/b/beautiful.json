@@ -1,0 +1,37 @@
+{
+  "word": "beautiful",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈbjuːtɪfəl/",
+    "audio": "b/audios/beautiful.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Pleasing the senses or mind aesthetically.",
+      "vietnamese": "Làm hài lòng các giác quan hoặc tâm trí về mặt thẩm mỹ."
+    }
+  ],
+  "examples": [
+    {
+      "english": "She wore a beautiful dress.",
+      "vietnamese": "Cô ấy mặc một chiếc váy đẹp.",
+      "audio": "b/audios_example/she_wore_a_beautiful_dress.ogg"
+    }
+  ],
+  "synonyms": [
+    "gorgeous",
+    "lovely"
+  ],
+  "antonyms": [
+    "ugly",
+    "hideous"
+  ],
+  "tags": [
+    "aesthetic",
+    "description"
+  ]
+}

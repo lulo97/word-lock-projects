@@ -1,0 +1,47 @@
+{
+  "word": "sustainable",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/səˈsteɪnəbl/",
+    "audio": "s/audios/sustainable.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "able to be maintained at a certain rate or level.",
+      "vietnamese": "có khả năng duy trì ở một tốc độ hoặc mức độ nhất định"
+    },
+    {
+      "english": "able to be maintained without depleting natural resources.",
+      "vietnamese": "có thể được duy trì mà không làm cạn kiệt tài nguyên thiên nhiên"
+    }
+  ],
+  "examples": [
+    {
+      "english": "We need to find a more sustainable way to power our city.",
+      "vietnamese": "Chúng ta cần tìm một cách bền vững hơn để cung cấp năng lượng cho thành phố của mình.",
+      "audio": "s/audios_example/we_need_to_find_a_more_sustainable_way_to_power_our_city.ogg"
+    },
+    {
+      "english": "The company is committed to sustainable business practices.",
+      "vietnamese": "Công ty cam kết thực hiện các hoạt động kinh doanh bền vững.",
+      "audio": "s/audios_example/the_company_is_committed_to_sustainable_business_practices.ogg"
+    }
+  ],
+  "synonyms": [
+    "enduring",
+    "maintainable",
+    "viable"
+  ],
+  "antonyms": [
+    "unsustainable",
+    "temporary"
+  ],
+  "tags": [
+    "environment",
+    "economics"
+  ]
+}

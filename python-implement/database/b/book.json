@@ -1,0 +1,36 @@
+{
+  "word": "book",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/bʊk/",
+    "audio": "b/audios/book.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A written work consisting of pages fastened together.",
+      "vietnamese": "Một tác phẩm viết gồm các trang được đóng lại với nhau."
+    }
+  ],
+  "examples": [
+    {
+      "english": "I am reading a good book.",
+      "vietnamese": "Tôi đang đọc một cuốn sách hay.",
+      "audio": "b/audios_example/i_am_reading_a_good_book.ogg"
+    }
+  ],
+  "synonyms": [
+    "volume",
+    "tome"
+  ],
+  "antonyms": [
+    "magazine"
+  ],
+  "tags": [
+    "object",
+    "literature"
+  ]
+}

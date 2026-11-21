@@ -1,0 +1,49 @@
+{
+  "word": "fragile",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈfrædʒəl/",
+    "audio": "f/audios/fragile.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "easily broken or damaged",
+      "vietnamese": "dễ vỡ, mỏng manh"
+    },
+    {
+      "english": "delicate or easily upset",
+      "vietnamese": "mong manh, dễ tổn thương"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Be careful with that fragile vase.",
+      "vietnamese": "Hãy cẩn thận với chiếc bình dễ vỡ đó.",
+      "audio": "f/audios_example/be_careful_with_that_fragile_vase.ogg"
+    },
+    {
+      "english": "Her fragile health required complete rest.",
+      "vietnamese": "Sức khỏe mong manh của cô ấy đòi hỏi sự nghỉ ngơi hoàn toàn.",
+      "audio": "f/audios_example/her_fragile_health_required_complete_rest.ogg"
+    }
+  ],
+  "synonyms": [
+    "delicate",
+    "brittle",
+    "faint"
+  ],
+  "antonyms": [
+    "sturdy",
+    "robust",
+    "strong"
+  ],
+  "tags": [
+    "adjective",
+    "physical",
+    "emotional"
+  ]
+}

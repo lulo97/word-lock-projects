@@ -1,0 +1,36 @@
+{
+  "word": "chair",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/tʃɛər/",
+    "audio": "c/audios/chair.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A seat for one person, typically with a back and four legs.",
+      "vietnamese": "Một chỗ ngồi cho một người, thường có lưng và bốn chân."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Please sit in the chair.",
+      "vietnamese": "Làm ơn ngồi vào ghế.",
+      "audio": "c/audios_example/please_sit_in_the_chair.ogg"
+    }
+  ],
+  "synonyms": [
+    "seat",
+    "stool"
+  ],
+  "antonyms": [
+    "bench"
+  ],
+  "tags": [
+    "furniture",
+    "object"
+  ]
+}

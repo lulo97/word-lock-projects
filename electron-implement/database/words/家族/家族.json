@@ -1,0 +1,36 @@
+{
+  "word": "家族",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "かぞく",
+    "audio": "words/家族/audios/家族.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "親子や兄弟など、一緒に暮らす身内。",
+      "vietnamese": "Gia đình."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "家族と夕食を食べます。",
+      "vietnamese": "Tôi ăn tối với gia đình.",
+      "audio": "words/家族/audios_example/kazoku_to_yushoku_o_tabe_masu.ogg"
+    },
+    {
+      "japanese": "私の家族は四人です。",
+      "vietnamese": "Gia đình tôi có bốn người.",
+      "audio": "words/家族/audios_example/watashi_no_kazoku_wa_yon_nin_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "family",
+    "people"
+  ]
+}

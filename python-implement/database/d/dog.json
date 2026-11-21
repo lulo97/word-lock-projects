@@ -1,0 +1,36 @@
+{
+  "word": "dog",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɔːɡ/",
+    "audio": "d/audios/dog.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A domesticated carnivorous mammal.",
+      "vietnamese": "Một loài động vật có vú ăn thịt được thuần hóa."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The dog barked loudly.",
+      "vietnamese": "Con chó sủa lớn.",
+      "audio": "d/audios_example/the_dog_barked_loudly.ogg"
+    }
+  ],
+  "synonyms": [
+    "canine",
+    "hound"
+  ],
+  "antonyms": [
+    "cat"
+  ],
+  "tags": [
+    "animal",
+    "pet"
+  ]
+}

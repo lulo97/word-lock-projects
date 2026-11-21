@@ -1,0 +1,38 @@
+{
+  "word": "天気",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "てんき",
+    "audio": "words/天気/audios/天気.ogg"
+  },
+  "part_of_speech": "名詞",
+  "definitions": [
+    {
+      "japanese": "空の様子や気温などの気象条件",
+      "vietnamese": "Thời tiết"
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "今日の天気はどうですか。",
+      "vietnamese": "Thời tiết hôm nay thế nào?",
+      "audio": "words/天気/audios_example/kyo_no_tenki_wa_do_desu_ka.ogg"
+    },
+    {
+      "japanese": "明日は晴れるといいですね。",
+      "vietnamese": "Hy vọng ngày mai trời sẽ nắng.",
+      "audio": "words/天気/audios_example/ashita_wa_hareru_to_ii_desu_ne.ogg"
+    }
+  ],
+  "synonyms": [
+    "気象"
+  ],
+  "antonyms": [],
+  "tags": [
+    "気象",
+    "自然"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "word": "validate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈvælɪdeɪt/",
+    "audio": "v/audios/validate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to check or prove the accuracy or truth of something",
+      "vietnamese": "xác nhận, chứng minh tính hợp lệ"
+    },
+    {
+      "english": "to confirm or approve the validity of something",
+      "vietnamese": "hợp thức hóa, phê duyệt"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The software needs to validate the user's input before processing it.",
+      "vietnamese": "Phần mềm cần xác thực dữ liệu đầu vào của người dùng trước khi xử lý.",
+      "audio": "v/audios_example/the_software_needs_to_validate_the_user_s_input_before_processing_it.ogg"
+    },
+    {
+      "english": "The committee will validate the research findings next month.",
+      "vietnamese": "Ủy ban sẽ xác nhận các phát hiện nghiên cứu vào tháng tới.",
+      "audio": "v/audios_example/the_committee_will_validate_the_research_findings_next_month.ogg"
+    }
+  ],
+  "synonyms": [
+    "confirm",
+    "verify",
+    "approve"
+  ],
+  "antonyms": [
+    "invalidate",
+    "disprove"
+  ],
+  "tags": [
+    "technical",
+    "formal"
+  ]
+}

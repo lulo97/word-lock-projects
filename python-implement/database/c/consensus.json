@@ -1,0 +1,43 @@
+{
+  "word": "consensus",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kənˈsensəs/",
+    "audio": "c/audios/consensus.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "general agreement",
+      "vietnamese": "sự đồng thuận"
+    }
+  ],
+  "examples": [
+    {
+      "english": "After much debate, the committee reached a consensus on the new policy.",
+      "vietnamese": "Sau nhiều cuộc tranh luận, ủy ban đã đạt được sự đồng thuận về chính sách mới.",
+      "audio": "c/audios_example/after_much_debate_the_committee_reached_a_consensus_on_the_new_policy.ogg"
+    },
+    {
+      "english": "There was a broad consensus among scientists regarding climate change.",
+      "vietnamese": "Có một sự đồng thuận rộng rãi trong giới khoa học về biến đổi khí hậu.",
+      "audio": "c/audios_example/there_was_a_broad_consensus_among_scientists_regarding_climate_change.ogg"
+    }
+  ],
+  "synonyms": [
+    "agreement",
+    "unanimity",
+    "accord"
+  ],
+  "antonyms": [
+    "disagreement",
+    "dissent"
+  ],
+  "tags": [
+    "politics",
+    "social"
+  ]
+}

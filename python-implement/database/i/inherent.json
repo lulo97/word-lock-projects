@@ -1,0 +1,43 @@
+{
+  "word": "inherent",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪnˈhɪrənt/",
+    "audio": "i/audios/inherent.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "existing in something as a permanent, essential, or characteristic attribute.",
+      "vietnamese": "có sẵn, vốn có"
+    }
+  ],
+  "examples": [
+    {
+      "english": "There is an inherent risk in every investment.",
+      "vietnamese": "Có một rủi ro cố hữu trong mọi khoản đầu tư.",
+      "audio": "i/audios_example/there_is_an_inherent_risk_in_every_investment.ogg"
+    },
+    {
+      "english": "The design has an inherent elegance.",
+      "vietnamese": "Thiết kế này có một vẻ thanh lịch vốn có.",
+      "audio": "i/audios_example/the_design_has_an_inherent_elegance.ogg"
+    }
+  ],
+  "synonyms": [
+    "intrinsic",
+    "innate",
+    "essential"
+  ],
+  "antonyms": [
+    "acquired",
+    "extrinsic"
+  ],
+  "tags": [
+    "adjective",
+    "abstract"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "日本語",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "にほんご",
+    "audio": "words/日本語/audios/日本語.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "日本で話されている言語。",
+      "vietnamese": "Tiếng Nhật."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "毎日日本語を勉強します。",
+      "vietnamese": "Tôi học tiếng Nhật mỗi ngày.",
+      "audio": "words/日本語/audios_example/mainichi_nihongo_o_benkyo_shi_masu.ogg"
+    },
+    {
+      "japanese": "日本語は面白いです。",
+      "vietnamese": "Tiếng Nhật thú vị.",
+      "audio": "words/日本語/audios_example/nihongo_wa_omoshiroi_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "language",
+    "education"
+  ]
+}

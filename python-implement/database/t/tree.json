@@ -1,0 +1,36 @@
+{
+  "word": "tree",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/triː/",
+    "audio": "t/audios/tree.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A perennial plant with a trunk and branches.",
+      "vietnamese": "Một loài thực vật lâu năm có thân và cành."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The tree provided shade.",
+      "vietnamese": "Cái cây cung cấp bóng mát.",
+      "audio": "t/audios_example/the_tree_provided_shade.ogg"
+    }
+  ],
+  "synonyms": [
+    "wood",
+    "timber"
+  ],
+  "antonyms": [
+    "bush"
+  ],
+  "tags": [
+    "nature",
+    "plant"
+  ]
+}

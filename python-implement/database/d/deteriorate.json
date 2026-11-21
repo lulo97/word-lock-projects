@@ -1,0 +1,45 @@
+{
+  "word": "deteriorate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɪˈtɪəriəreɪt/",
+    "audio": "d/audios/deteriorate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to become progressively worse",
+      "vietnamese": "trở nên tồi tệ hơn dần"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The patient's condition began to deteriorate rapidly after the surgery.",
+      "vietnamese": "Tình trạng của bệnh nhân bắt đầu xấu đi nhanh chóng sau ca phẫu thuật.",
+      "audio": "d/audios_example/the_patient_s_condition_began_to_deteriorate_rapidly_after_the_surgery.ogg"
+    },
+    {
+      "english": "If we don't maintain the equipment, it will deteriorate over time.",
+      "vietnamese": "Nếu chúng ta không bảo trì thiết bị, nó sẽ bị xuống cấp theo thời gian.",
+      "audio": "d/audios_example/if_we_don_t_maintain_the_equipment_it_will_deteriorate_over_time.ogg"
+    }
+  ],
+  "synonyms": [
+    "worsen",
+    "decline",
+    "degenerate"
+  ],
+  "antonyms": [
+    "improve",
+    "better",
+    "enhance"
+  ],
+  "tags": [
+    "health",
+    "condition",
+    "decline"
+  ]
+}

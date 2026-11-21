@@ -1,0 +1,43 @@
+{
+  "word": "introspective",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌɪntrəˈspektɪv/",
+    "audio": "i/audios/introspective.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "characterized by or given to introspection; thoughtful and self-examining",
+      "vietnamese": "tự suy ngẫm; hay tự xem xét bản thân"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He spent the weekend in quiet contemplation, being very introspective.",
+      "vietnamese": "Anh ấy dành cuối tuần để suy ngẫm trong tĩnh lặng, rất tự xem xét bản thân.",
+      "audio": "i/audios_example/he_spent_the_weekend_in_quiet_contemplation_being_very_introspective.ogg"
+    },
+    {
+      "english": "The novel is known for its deeply introspective characters.",
+      "vietnamese": "Cuốn tiểu thuyết này nổi tiếng với những nhân vật có chiều sâu nội tâm.",
+      "audio": "i/audios_example/the_novel_is_known_for_its_deeply_introspective_characters.ogg"
+    }
+  ],
+  "synonyms": [
+    "reflective",
+    "inward",
+    "contemplative"
+  ],
+  "antonyms": [
+    "extroverted",
+    "superficial"
+  ],
+  "tags": [
+    "psychology",
+    "personality"
+  ]
+}

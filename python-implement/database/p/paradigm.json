@@ -1,0 +1,44 @@
+{
+  "word": "paradigm",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈpærədaɪm/",
+    "audio": "p/audios/paradigm.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A typical example or pattern of something.",
+      "vietnamese": "Một ví dụ điển hình hoặc khuôn mẫu của điều gì đó."
+    },
+    {
+      "english": "A typical example or pattern of something.",
+      "vietnamese": "Một mô hình hoặc khuôn khổ tư duy."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The shift from Newtonian physics to quantum mechanics represented a major paradigm shift.",
+      "vietnamese": "Sự chuyển đổi từ vật lý Newton sang cơ học lượng tử đại diện cho một sự thay đổi mô hình lớn.",
+      "audio": "p/audios_example/the_shift_from_newtonian_physics_to_quantum_mechanics_represented_a_major_paradigm_shift.ogg"
+    },
+    {
+      "english": "We need to change our current paradigm regarding remote work to be more flexible.",
+      "vietnamese": "Chúng ta cần thay đổi mô hình hiện tại của mình về làm việc từ xa để linh hoạt hơn.",
+      "audio": "p/audios_example/we_need_to_change_our_current_paradigm_regarding_remote_work_to_be_more_flexible.ogg"
+    }
+  ],
+  "synonyms": [
+    "model",
+    "pattern",
+    "framework"
+  ],
+  "antonyms": [],
+  "tags": [
+    "academic",
+    "abstract"
+  ]
+}

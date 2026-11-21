@@ -1,0 +1,37 @@
+{
+  "word": "hot",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/hɒt/",
+    "audio": "h/audios/hot.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Having a high degree of heat.",
+      "vietnamese": "Có mức độ nhiệt cao."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The weather is very hot today.",
+      "vietnamese": "Thời tiết hôm nay rất nóng.",
+      "audio": "h/audios_example/the_weather_is_very_hot_today.ogg"
+    }
+  ],
+  "synonyms": [
+    "warm",
+    "scorching"
+  ],
+  "antonyms": [
+    "cold",
+    "chilly"
+  ],
+  "tags": [
+    "temperature",
+    "description"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "word": "友達",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ともだち",
+    "audio": "words/友達/audios/友達.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "親しく付き合っている人。",
+      "vietnamese": "Bạn bè, người bạn thân thiết."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "友達と映画を見ました。",
+      "vietnamese": "Tôi đã xem phim với bạn.",
+      "audio": "words/友達/audios_example/tomodachi_to_eiga_o_mi_mashi_ta.ogg"
+    },
+    {
+      "japanese": "彼は私の友達です。",
+      "vietnamese": "Anh ấy là bạn của tôi.",
+      "audio": "words/友達/audios_example/kare_wa_watashi_no_tomodachi_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "友人"
+  ],
+  "antonyms": [],
+  "tags": [
+    "people",
+    "relationship"
+  ]
+}

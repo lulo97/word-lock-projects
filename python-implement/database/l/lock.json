@@ -1,0 +1,36 @@
+{
+  "word": "lock",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/lɒk/",
+    "audio": "l/audios/lock.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A device used to secure a door or container.",
+      "vietnamese": "Một thiết bị được sử dụng để bảo vệ cửa hoặc vật chứa."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Make sure to lock the door.",
+      "vietnamese": "Hãy đảm bảo khóa cửa.",
+      "audio": "l/audios_example/make_sure_to_lock_the_door.ogg"
+    }
+  ],
+  "synonyms": [
+    "fastener",
+    "bolt"
+  ],
+  "antonyms": [
+    "key"
+  ],
+  "tags": [
+    "security",
+    "object"
+  ]
+}

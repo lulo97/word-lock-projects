@@ -1,0 +1,43 @@
+{
+  "word": "tangible",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈtændʒəbl/",
+    "audio": "t/audios/tangible.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "perceptible by touch; real or actual",
+      "vietnamese": "hữu hình; có thể sờ thấy được"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company needs to show more tangible results from the investment.",
+      "vietnamese": "Công ty cần cho thấy nhiều kết quả hữu hình hơn từ khoản đầu tư.",
+      "audio": "t/audios_example/the_company_needs_to_show_more_tangible_results_from_the_investment.ogg"
+    },
+    {
+      "english": "She prefers tangible evidence over mere speculation.",
+      "vietnamese": "Cô ấy thích bằng chứng hữu hình hơn là sự suy đoán đơn thuần.",
+      "audio": "t/audios_example/she_prefers_tangible_evidence_over_mere_speculation.ogg"
+    }
+  ],
+  "synonyms": [
+    "palpable",
+    "concrete",
+    "real"
+  ],
+  "antonyms": [
+    "intangible",
+    "abstract"
+  ],
+  "tags": [
+    "business",
+    "abstract"
+  ]
+}

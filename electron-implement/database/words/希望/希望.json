@@ -1,0 +1,38 @@
+{
+  "word": "希望",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "きぼう",
+    "audio": "words/希望/audios/希望.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "将来への願い。",
+      "vietnamese": "Hy vọng, nguyện vọng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "未来に希望を持っています。",
+      "vietnamese": "Tôi có hy vọng về tương lai.",
+      "audio": "words/希望/audios_example/mirai_ni_kibo_o_motte_i_masu.ogg"
+    },
+    {
+      "japanese": "希望の光が見えます。",
+      "vietnamese": "Tôi thấy ánh sáng của hy vọng.",
+      "audio": "words/希望/audios_example/kibo_no_hikari_ga_mie_masu.ogg"
+    }
+  ],
+  "synonyms": [
+    "望み"
+  ],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "emotion"
+  ]
+}

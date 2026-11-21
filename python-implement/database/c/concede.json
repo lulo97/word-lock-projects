@@ -1,0 +1,47 @@
+{
+  "word": "concede",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kənˈsiːd/",
+    "audio": "c/audios/concede.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "Admit that something is true or valid after first denying or resisting it.",
+      "vietnamese": "Thừa nhận (điều gì đó) là đúng hoặc hợp lệ sau khi đã phủ nhận hoặc phản kháng trước đó."
+    },
+    {
+      "english": "Yield a part of something to an opponent or competitor.",
+      "vietnamese": "Nhượng lại một phần cái gì đó cho đối thủ hoặc đối thủ cạnh tranh."
+    }
+  ],
+  "examples": [
+    {
+      "english": "After hours of debate, the politician had to concede that his initial plan was flawed.",
+      "vietnamese": "Sau nhiều giờ tranh luận, chính trị gia đã phải thừa nhận rằng kế hoạch ban đầu của mình có sai sót.",
+      "audio": "c/audios_example/after_hours_of_debate_the_politician_had_to_concede_that_his_initial_plan_was_flawed.ogg"
+    },
+    {
+      "english": "The losing team was forced to concede the match after the final quarter.",
+      "vietnamese": "Đội thua buộc phải chấp nhận thất bại sau hiệp cuối.",
+      "audio": "c/audios_example/the_losing_team_was_forced_to_concede_the_match_after_the_final_quarter.ogg"
+    }
+  ],
+  "synonyms": [
+    "admit",
+    "acknowledge",
+    "yield"
+  ],
+  "antonyms": [
+    "deny",
+    "refuse"
+  ],
+  "tags": [
+    "formal",
+    "negotiation"
+  ]
+}

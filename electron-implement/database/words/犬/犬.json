@@ -1,0 +1,36 @@
+{
+  "word": "犬",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "いぬ",
+    "audio": "words/犬/audios/犬.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "人に飼われる動物。",
+      "vietnamese": "Con chó."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "犬と散歩します。",
+      "vietnamese": "Tôi đi dạo với chó.",
+      "audio": "words/犬/audios_example/inu_to_sanpo_shi_masu.ogg"
+    },
+    {
+      "japanese": "あの犬は大きいです。",
+      "vietnamese": "Con chó kia to.",
+      "audio": "words/犬/audios_example/ano_inu_wa_okii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "animal",
+    "common"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "word": "explicit",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪkˈsplɪsɪt/",
+    "audio": "e/audios/explicit.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "stated clearly and in detail, leaving no room for confusion.",
+      "vietnamese": "rõ ràng, minh bạch"
+    },
+    {
+      "english": "having or showing no hidden meaning.",
+      "vietnamese": "trực tiếp, không ẩn ý"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The instructions were very explicit about what needed to be done.",
+      "vietnamese": "Các hướng dẫn rất rõ ràng về những gì cần làm.",
+      "audio": "e/audios_example/the_instructions_were_very_explicit_about_what_needed_to_be_done.ogg"
+    },
+    {
+      "english": "The movie contained explicit scenes that some viewers found offensive.",
+      "vietnamese": "Bộ phim chứa những cảnh nhạy cảm mà một số khán giả thấy xúc phạm.",
+      "audio": "e/audios_example/the_movie_contained_explicit_scenes_that_some_viewers_found_offensive.ogg"
+    }
+  ],
+  "synonyms": [
+    "clear",
+    "direct",
+    "unequivocal"
+  ],
+  "antonyms": [
+    "vague",
+    "implicit"
+  ],
+  "tags": [
+    "formal",
+    "descriptive"
+  ]
+}

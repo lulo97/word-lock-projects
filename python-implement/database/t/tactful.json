@@ -1,0 +1,43 @@
+{
+  "word": "tactful",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈtæktfəl/",
+    "audio": "t/audios/tactful.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "having or showing sensitivity in dealing with others",
+      "vietnamese": "khéo léo, tế nhị"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She gave a tactful response to the criticism.",
+      "vietnamese": "Cô ấy đã đưa ra một phản hồi khéo léo trước những lời chỉ trích.",
+      "audio": "t/audios_example/she_gave_a_tactful_response_to_the_criticism.ogg"
+    },
+    {
+      "english": "It takes a tactful person to deliver bad news.",
+      "vietnamese": "Cần một người tế nhị để truyền đạt những tin xấu.",
+      "audio": "t/audios_example/it_takes_a_tactful_person_to_deliver_bad_news.ogg"
+    }
+  ],
+  "synonyms": [
+    "diplomatic",
+    "sensitive",
+    "considerate"
+  ],
+  "antonyms": [
+    "tactless",
+    "blunt"
+  ],
+  "tags": [
+    "adjective",
+    "social"
+  ]
+}

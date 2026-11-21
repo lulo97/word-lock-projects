@@ -1,0 +1,37 @@
+{
+  "word": "quiet",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈkwaɪət/",
+    "audio": "q/audios/quiet.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Making little or no noise.",
+      "vietnamese": "Gây ra ít hoặc không có tiếng ồn."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Please be quiet in the library.",
+      "vietnamese": "Làm ơn giữ im lặng trong thư viện.",
+      "audio": "q/audios_example/please_be_quiet_in_the_library.ogg"
+    }
+  ],
+  "synonyms": [
+    "silent",
+    "hushed"
+  ],
+  "antonyms": [
+    "loud",
+    "noisy"
+  ],
+  "tags": [
+    "sound",
+    "description"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "word": "apple",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈæp.əl/",
+    "audio": "a/audios/apple.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A round fruit with firm, white flesh and a green, red, or yellow skin.",
+      "vietnamese": "Quả táo: loại quả tròn, thịt trắng giòn, vỏ màu xanh, đỏ hoặc vàng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "She ate an apple for breakfast.",
+      "vietnamese": "Cô ấy ăn một quả táo cho bữa sáng.",
+      "audio": "a/audios_example/she_ate_an_apple_for_breakfast.ogg"
+    },
+    {
+      "english": "The apple fell from the tree.",
+      "vietnamese": "Quả táo rơi từ trên cây xuống.",
+      "audio": "a/audios_example/the_apple_fell_from_the_tree.ogg"
+    }
+  ],
+  "synonyms": [
+    "fruit",
+    "pome"
+  ],
+  "antonyms": [],
+  "tags": [
+    "food",
+    "fruit",
+    "common"
+  ]
+}

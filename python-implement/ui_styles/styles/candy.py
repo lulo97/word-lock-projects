@@ -1,0 +1,40 @@
+"""Candy - bright rose and lavender, soft square UI."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="candy",
+    name="Candy",
+    description="Rose-pink light theme, friendly square shapes, no shouting caps.",
+    appearance="light",
+    color_theme="blue",
+    gradient=True,
+    background_top="#fff1f7",
+    background_bottom="#ffe4f0",
+    card="#ffffff",
+    card_border="#f9a8d4",
+    chip_bg="#fce7f3",
+    chip_hover="#fbcfe8",
+    entry_bg="#fff7fb",
+    text_primary="#3b0a26",
+    text_body="#5f2145",
+    text_muted="#9d5c7d",
+    accent="#db2777",
+    accent_soft="#be185d",
+    accent_hover="#be185d",
+    on_accent="#ffffff",
+    error="#dc2626",
+    success="#059669",
+    button_bg="#fce7f3",
+    button_hover="#fbcfe8",
+    button_border="#f9a8d4",
+    button_text="#be185d",
+    border_width=1,
+    overlay_alpha=0.96,
+    typography=Typography(
+        body=("Candara", "Corbel", "Segoe UI"),
+        display=("Candara", "Corbel", "Segoe UI"),
+        scale=1.0,
+        uppercase_headings=False,
+    ),
+)

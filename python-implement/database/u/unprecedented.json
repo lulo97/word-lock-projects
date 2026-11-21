@@ -1,0 +1,43 @@
+{
+  "word": "unprecedented",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ʌnˈprɛsɪdɛntɪd/",
+    "audio": "u/audios/unprecedented.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "never done or known before",
+      "vietnamese": "chưa từng có"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company faced unprecedented growth in the last quarter.",
+      "vietnamese": "Công ty đã đối mặt với sự tăng trưởng chưa từng có trong quý vừa qua.",
+      "audio": "u/audios_example/the_company_faced_unprecedented_growth_in_the_last_quarter.ogg"
+    },
+    {
+      "english": "The scale of the disaster was unprecedented.",
+      "vietnamese": "Quy mô của thảm họa là chưa từng có.",
+      "audio": "u/audios_example/the_scale_of_the_disaster_was_unprecedented.ogg"
+    }
+  ],
+  "synonyms": [
+    "unparalleled",
+    "unheard-of",
+    "novel"
+  ],
+  "antonyms": [
+    "precedented",
+    "usual"
+  ],
+  "tags": [
+    "formal",
+    "academic"
+  ]
+}

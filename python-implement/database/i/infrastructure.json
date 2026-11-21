@@ -1,0 +1,41 @@
+{
+  "word": "infrastructure",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈɪnfrəˌstrʌktʃər/",
+    "audio": "i/audios/infrastructure.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "the basic physical and organizational structures and facilities (e.g., buildings, roads, power supplies) needed for the operation of a society or enterprise.",
+      "vietnamese": "cơ sở hạ tầng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The city is investing heavily in improving its public transportation infrastructure.",
+      "vietnamese": "Thành phố đang đầu tư mạnh vào việc cải thiện cơ sở hạ tầng giao thông công cộng.",
+      "audio": "i/audios_example/the_city_is_investing_heavily_in_improving_its_public_transportation_infrastructure.ogg"
+    },
+    {
+      "english": "Reliable internet infrastructure is essential for modern businesses.",
+      "vietnamese": "Cơ sở hạ tầng internet đáng tin cậy là điều cần thiết cho các doanh nghiệp hiện đại.",
+      "audio": "i/audios_example/reliable_internet_infrastructure_is_essential_for_modern_businesses.ogg"
+    }
+  ],
+  "synonyms": [
+    "framework",
+    "facilities",
+    "systems"
+  ],
+  "antonyms": [],
+  "tags": [
+    "business",
+    "technology",
+    "urban planning"
+  ]
+}

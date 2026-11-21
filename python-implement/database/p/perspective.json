@@ -1,0 +1,46 @@
+{
+  "word": "perspective",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/pərˈspektɪv/",
+    "audio": "p/audios/perspective.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A particular attitude toward or way of regarding something; a point of view.",
+      "vietnamese": "Quan điểm; góc nhìn"
+    },
+    {
+      "english": "The point of view from which something is viewed.",
+      "vietnamese": "Góc nhìn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Try to look at the situation from my perspective.",
+      "vietnamese": "Hãy thử nhìn tình huống từ góc nhìn của tôi.",
+      "audio": "p/audios_example/try_to_look_at_the_situation_from_my_perspective.ogg"
+    },
+    {
+      "english": "The artist used linear perspective to create depth in the painting.",
+      "vietnamese": "Họa sĩ đã sử dụng phối cảnh tuyến tính để tạo chiều sâu trong bức tranh.",
+      "audio": "p/audios_example/the_artist_used_linear_perspective_to_create_depth_in_the_painting.ogg"
+    }
+  ],
+  "synonyms": [
+    "viewpoint",
+    "outlook",
+    "frame"
+  ],
+  "antonyms": [
+    "bias"
+  ],
+  "tags": [
+    "abstract",
+    "art"
+  ]
+}

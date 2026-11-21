@@ -1,0 +1,38 @@
+{
+  "word": "大きい",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "おおきい",
+    "audio": "words/大きい/audios/大きい.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "規模や形が大きい。",
+      "vietnamese": "To, lớn."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "大きい犬がいます。",
+      "vietnamese": "Có một con chó to.",
+      "audio": "words/大きい/audios_example/okii_inu_ga_i_masu.ogg"
+    },
+    {
+      "japanese": "この部屋は大きいです。",
+      "vietnamese": "Căn phòng này rộng.",
+      "audio": "words/大きい/audios_example/kono_heya_wa_okii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "小さい"
+  ],
+  "tags": [
+    "adjective",
+    "size"
+  ]
+}

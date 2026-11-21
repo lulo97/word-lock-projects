@@ -1,0 +1,43 @@
+{
+  "word": "diligent",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈdɪlɪdʒənt/",
+    "audio": "d/audios/diligent.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "having or showing care and conscientiousness in one's work or duties",
+      "vietnamese": "siêng năng, cần cù"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She is a diligent student who always completes her homework on time.",
+      "vietnamese": "Cô ấy là một học sinh chăm chỉ, luôn hoàn thành bài tập đúng hạn.",
+      "audio": "d/audios_example/she_is_a_diligent_student_who_always_completes_her_homework_on_time.ogg"
+    },
+    {
+      "english": "The diligent worker was recognized by the company for his dedication.",
+      "vietnamese": "Người làm việc cần cù đã được công ty ghi nhận vì sự tận tâm của mình.",
+      "audio": "d/audios_example/the_diligent_worker_was_recognized_by_the_company_for_his_dedication.ogg"
+    }
+  ],
+  "synonyms": [
+    "industrious",
+    "assiduous",
+    "conscientious"
+  ],
+  "antonyms": [
+    "lazy",
+    "negligent"
+  ],
+  "tags": [
+    "work",
+    "character"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "car",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kɑːr/",
+    "audio": "c/audios/car.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A road vehicle, typically with four wheels.",
+      "vietnamese": "Một phương tiện giao thông đường bộ, thường có bốn bánh."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The car is parked outside.",
+      "vietnamese": "Chiếc xe được đỗ bên ngoài.",
+      "audio": "c/audios_example/the_car_is_parked_outside.ogg"
+    }
+  ],
+  "synonyms": [
+    "automobile",
+    "vehicle"
+  ],
+  "antonyms": [
+    "bicycle"
+  ],
+  "tags": [
+    "transport",
+    "vehicle"
+  ]
+}

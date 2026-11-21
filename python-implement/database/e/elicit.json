@@ -1,0 +1,43 @@
+{
+  "word": "elicit",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪˈlɪsɪt/",
+    "audio": "e/audios/elicit.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to draw out (a response, answer, or fact) from someone in a particular way",
+      "vietnamese": "gợi ra, moi ra"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The interviewer tried to elicit more information from the witness.",
+      "vietnamese": "Người phỏng vấn đã cố gắng moi thêm thông tin từ nhân chứng.",
+      "audio": "e/audios_example/the_interviewer_tried_to_elicit_more_information_from_the_witness.ogg"
+    },
+    {
+      "english": "His sudden outburst elicited gasps from the audience.",
+      "vietnamese": "Sự bùng nổ đột ngột của anh ấy đã khiến khán giả phải nín thở.",
+      "audio": "e/audios_example/his_sudden_outburst_elicited_gasps_from_the_audience.ogg"
+    }
+  ],
+  "synonyms": [
+    "draw out",
+    "extract",
+    "evoke"
+  ],
+  "antonyms": [
+    "suppress",
+    "inhibit"
+  ],
+  "tags": [
+    "formal",
+    "psychology"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "window",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈwɪndoʊ/",
+    "audio": "w/audios/window.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "An opening in the wall or roof of a building, fitted with glass.",
+      "vietnamese": "Một lỗ mở trên tường hoặc mái của một tòa nhà, được lắp kính."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The window lets in a lot of light.",
+      "vietnamese": "Cửa sổ cho ánh sáng vào rất nhiều.",
+      "audio": "w/audios_example/the_window_lets_in_a_lot_of_light.ogg"
+    }
+  ],
+  "synonyms": [
+    "pane",
+    "opening"
+  ],
+  "antonyms": [
+    "wall"
+  ],
+  "tags": [
+    "building",
+    "object"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "好き",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "すき",
+    "audio": "words/好き/audios/好き.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "好ましく思う。",
+      "vietnamese": "Thích."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "私は音楽が好きです。",
+      "vietnamese": "Tôi thích âm nhạc.",
+      "audio": "words/好き/audios_example/watashi_wa_ongaku_ga_suki_desu.ogg"
+    },
+    {
+      "japanese": "好きな食べ物は何ですか。",
+      "vietnamese": "Món ăn bạn thích là gì?",
+      "audio": "words/好き/audios_example/suki_na_tabemono_wa_nani_desu_ka.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "emotion"
+  ]
+}

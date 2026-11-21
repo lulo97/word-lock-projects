@@ -1,0 +1,40 @@
+{
+  "word": "criterion",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈkraɪtəriən/",
+    "audio": "c/audios/criterion.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a principle or standard by which something may be judged or decided",
+      "vietnamese": "tiêu chuẩn; tiêu chí"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The main criterion for selection was experience.",
+      "vietnamese": "Tiêu chí chính để lựa chọn là kinh nghiệm.",
+      "audio": "c/audios_example/the_main_criterion_for_selection_was_experience.ogg"
+    },
+    {
+      "english": "We must establish clear criteria before starting the project.",
+      "vietnamese": "Chúng ta phải thiết lập các tiêu chí rõ ràng trước khi bắt đầu dự án.",
+      "audio": "c/audios_example/we_must_establish_clear_criteria_before_starting_the_project.ogg"
+    }
+  ],
+  "synonyms": [
+    "standard",
+    "benchmark",
+    "measure"
+  ],
+  "antonyms": [],
+  "tags": [
+    "academic",
+    "formal"
+  ]
+}

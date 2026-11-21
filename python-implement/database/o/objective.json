@@ -1,0 +1,48 @@
+{
+  "word": "objective",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/əbˈdʒɛktɪv/",
+    "audio": "o/audios/objective.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a goal or aim",
+      "vietnamese": "mục tiêu"
+    },
+    {
+      "english": "a fact or a thing that is not influenced by personal feelings or opinions",
+      "vietnamese": "khách quan"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Our main objective for this quarter is to increase sales by 15%.",
+      "vietnamese": "Mục tiêu chính của chúng tôi trong quý này là tăng doanh số lên 15%.",
+      "audio": "o/audios_example/our_main_objective_for_this_quarter_is_to_increase_sales_by_15.ogg"
+    },
+    {
+      "english": "The scientist presented an objective analysis of the data.",
+      "vietnamese": "Nhà khoa học đã trình bày một phân tích khách quan về dữ liệu.",
+      "audio": "o/audios_example/the_scientist_presented_an_objective_analysis_of_the_data.ogg"
+    }
+  ],
+  "synonyms": [
+    "aim",
+    "goal",
+    "target",
+    "impartial"
+  ],
+  "antonyms": [
+    "subjective",
+    "bias"
+  ],
+  "tags": [
+    "business",
+    "academic"
+  ]
+}

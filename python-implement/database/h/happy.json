@@ -1,0 +1,37 @@
+{
+  "word": "happy",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈhæpi/",
+    "audio": "h/audios/happy.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Feeling or showing pleasure or contentment.",
+      "vietnamese": "Cảm thấy hoặc thể hiện niềm vui hoặc sự hài lòng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "She was happy with the result.",
+      "vietnamese": "Cô ấy hài lòng với kết quả.",
+      "audio": "h/audios_example/she_was_happy_with_the_result.ogg"
+    }
+  ],
+  "synonyms": [
+    "joyful",
+    "cheerful"
+  ],
+  "antonyms": [
+    "sad",
+    "miserable"
+  ],
+  "tags": [
+    "emotion",
+    "feeling"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "学生",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "がくせい",
+    "audio": "words/学生/audios/学生.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "学校で勉強している人。",
+      "vietnamese": "Học sinh, sinh viên."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "私は大学の学生です。",
+      "vietnamese": "Tôi là sinh viên đại học.",
+      "audio": "words/学生/audios_example/watashi_wa_daigaku_no_gakusei_desu.ogg"
+    },
+    {
+      "japanese": "学生は図書館で勉強しています。",
+      "vietnamese": "Học sinh đang học ở thư viện.",
+      "audio": "words/学生/audios_example/gakusei_wa_toshokan_de_benkyo_shi_te_i_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "education",
+    "people"
+  ]
+}

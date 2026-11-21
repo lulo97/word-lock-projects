@@ -1,0 +1,43 @@
+{
+  "word": "warrant",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈwɔːrnt/",
+    "audio": "w/audios/warrant.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a document issued by a judge or other legal authority authorizing a search or arrest.",
+      "vietnamese": "lệnh của tòa án"
+    },
+    {
+      "english": "a justification or reason for something.",
+      "vietnamese": "sự bảo đảm; sự biện minh"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The police obtained a warrant to search the suspect's home.",
+      "vietnamese": "Cảnh sát đã xin lệnh để khám xét nhà của nghi phạm.",
+      "audio": "w/audios_example/the_police_obtained_a_warrant_to_search_the_suspect_s_home.ogg"
+    },
+    {
+      "english": "His consistent hard work is a warrant for his promotion.",
+      "vietnamese": "Sự chăm chỉ không ngừng của anh ấy là một sự bảo đảm cho việc thăng chức của anh ấy.",
+      "audio": "w/audios_example/his_consistent_hard_work_is_a_warrant_for_his_promotion.ogg"
+    }
+  ],
+  "synonyms": [
+    "authorization",
+    "justification"
+  ],
+  "antonyms": [],
+  "tags": [
+    "legal",
+    "formal"
+  ]
+}

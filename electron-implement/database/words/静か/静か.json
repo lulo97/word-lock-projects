@@ -1,0 +1,37 @@
+{
+  "word": "静か",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "しずか",
+    "audio": "words/静か/audios/静か.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "音が少なく落ち着いている。",
+      "vietnamese": "Yên tĩnh."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "この町は静かです。",
+      "vietnamese": "Thị trấn này yên tĩnh.",
+      "audio": "words/静か/audios_example/kono_machi_wa_shizuka_desu.ogg"
+    },
+    {
+      "japanese": "静かな部屋で勉強します。",
+      "vietnamese": "Tôi học trong phòng yên tĩnh.",
+      "audio": "words/静か/audios_example/shizuka_na_heya_de_benkyo_shi_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "賑やか"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "word": "ugly",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈʌɡli/",
+    "audio": "u/audios/ugly.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Unpleasant or unattractive to the eye.",
+      "vietnamese": "Không dễ chịu hoặc không hấp dẫn về mặt thị giác."
+    }
+  ],
+  "examples": [
+    {
+      "english": "That is an ugly painting.",
+      "vietnamese": "Đó là một bức tranh xấu.",
+      "audio": "u/audios_example/that_is_an_ugly_painting.ogg"
+    }
+  ],
+  "synonyms": [
+    "unattractive",
+    "hideous"
+  ],
+  "antonyms": [
+    "beautiful",
+    "pretty"
+  ],
+  "tags": [
+    "aesthetic",
+    "description"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "word": "学校",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "がっこう",
+    "audio": "words/学校/audios/学校.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "勉強するための教育機関。",
+      "vietnamese": "Trường học."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "毎日学校へ行きます。",
+      "vietnamese": "Ngày nào tôi cũng đến trường.",
+      "audio": "words/学校/audios_example/mainichi_gakko_e_iki_masu.ogg"
+    },
+    {
+      "japanese": "学校は駅の近くです。",
+      "vietnamese": "Trường học ở gần ga.",
+      "audio": "words/学校/audios_example/gakko_wa_eki_no_chikaku_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "学び舎"
+  ],
+  "antonyms": [],
+  "tags": [
+    "education",
+    "place",
+    "common"
+  ]
+}

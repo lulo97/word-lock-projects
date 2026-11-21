@@ -1,0 +1,42 @@
+{
+  "word": "trait",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/treɪt/",
+    "audio": "t/audios/trait.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a distinguishing quality or characteristic of a person or thing",
+      "vietnamese": "đặc điểm, tính chất"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Patience is one of her most admirable traits.",
+      "vietnamese": "Sự kiên nhẫn là một trong những đặc điểm đáng ngưỡng mộ nhất của cô ấy.",
+      "audio": "t/audios_example/patience_is_one_of_her_most_admirable_traits.ogg"
+    },
+    {
+      "english": "The company's innovative spirit is a defining trait.",
+      "vietnamese": "Tinh thần đổi mới của công ty là một đặc điểm nổi bật.",
+      "audio": "t/audios_example/the_company_s_innovative_spirit_is_a_defining_trait.ogg"
+    }
+  ],
+  "synonyms": [
+    "characteristic",
+    "attribute",
+    "quality"
+  ],
+  "antonyms": [
+    "defect"
+  ],
+  "tags": [
+    "psychology",
+    "description"
+  ]
+}

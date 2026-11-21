@@ -1,0 +1,36 @@
+{
+  "word": "魚",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "さかな",
+    "audio": "words/魚/audios/魚.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "水の中に住む動物。",
+      "vietnamese": "Cá."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "魚を食べます。",
+      "vietnamese": "Tôi ăn cá.",
+      "audio": "words/魚/audios_example/sakana_o_tabe_masu.ogg"
+    },
+    {
+      "japanese": "川で魚を釣ります。",
+      "vietnamese": "Tôi câu cá ở sông.",
+      "audio": "words/魚/audios_example/kawa_de_sakana_o_tsuri_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "animal",
+    "food"
+  ]
+}

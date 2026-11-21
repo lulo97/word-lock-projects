@@ -1,0 +1,60 @@
+# ---------- OS / editor junk ----------
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+# Accidental Windows reserved-name file created by `> NUL`
+NUL
+
+# ---------- Node / Electron (electron-implement) ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.electron-builder-cache/
+out/
+# Build output
+electron-implement/dist/
+electron-implement/src/tailwind.css
+*.blockmap
+*.nsis.7z
+
+# ---------- Python (python-implement) ----------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# PyInstaller build output
+python-implement/build/
+python-implement/dist/
+*.manifest
+# WordLock.spec is intentionally tracked (PyInstaller config)
+
+# ---------- Logs / local runtime data ----------
+*.log
+python-implement/database/gen_examples.log
+electron-implement/database/validation_errors.log
+python-implement/database/validation_errors.log
+# App writes runtime state to %USERPROFILE%\wordlock, but ignore any local copies
+config.json
+progress.json
+
+# ---------- Secrets / local env ----------
+.env
+.env.*
+!.env.example

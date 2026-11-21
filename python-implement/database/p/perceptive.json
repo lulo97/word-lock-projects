@@ -1,0 +1,43 @@
+{
+  "word": "perceptive",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/pərˈsɛptɪv/",
+    "audio": "p/audios/perceptive.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "having or showing sensitive insight",
+      "vietnamese": "có khả năng nhận thấy sâu sắc"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She is very perceptive and always notices the subtle changes in people's moods.",
+      "vietnamese": "Cô ấy rất tinh ý và luôn nhận ra những thay đổi tinh tế trong tâm trạng của mọi người.",
+      "audio": "p/audios_example/she_is_very_perceptive_and_always_notices_the_subtle_changes_in_people_s_moods.ogg"
+    },
+    {
+      "english": "A perceptive reader can understand the underlying themes of a complex novel.",
+      "vietnamese": "Một người đọc tinh tường có thể hiểu được các chủ đề tiềm ẩn của một cuốn tiểu thuyết phức tạp.",
+      "audio": "p/audios_example/a_perceptive_reader_can_understand_the_underlying_themes_of_a_complex_novel.ogg"
+    }
+  ],
+  "synonyms": [
+    "insightful",
+    "discerning",
+    "astute"
+  ],
+  "antonyms": [
+    "insensitive",
+    "oblivious"
+  ],
+  "tags": [
+    "personality",
+    "intelligence"
+  ]
+}

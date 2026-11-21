@@ -1,0 +1,43 @@
+{
+  "word": "compel",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/kəmˈpel/",
+    "audio": "c/audios/compel.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to force or oblige (someone) to do something",
+      "vietnamese": "buộc, ép buộc"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The evidence compelled the jury to reach a guilty verdict.",
+      "vietnamese": "Bằng chứng đã buộc bồi thẩm đoàn phải đưa ra phán quyết có tội.",
+      "audio": "c/audios_example/the_evidence_compelled_the_jury_to_reach_a_guilty_verdict.ogg"
+    },
+    {
+      "english": "She felt compelled to apologize after her argument.",
+      "vietnamese": "Cô ấy cảm thấy bị thôi thúc phải xin lỗi sau cuộc tranh cãi.",
+      "audio": "c/audios_example/she_felt_compelled_to_apologize_after_her_argument.ogg"
+    }
+  ],
+  "synonyms": [
+    "force",
+    "coerce",
+    "obligate"
+  ],
+  "antonyms": [
+    "persuade",
+    "invite"
+  ],
+  "tags": [
+    "formal",
+    "psychology"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "word": "sad",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/sæd/",
+    "audio": "s/audios/sad.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Feeling or showing sorrow; unhappy.",
+      "vietnamese": "Cảm thấy hoặc thể hiện sự buồn bã; không hạnh phúc."
+    }
+  ],
+  "examples": [
+    {
+      "english": "He looked sad after the news.",
+      "vietnamese": "Anh ấy trông buồn sau tin tức.",
+      "audio": "s/audios_example/he_looked_sad_after_the_news.ogg"
+    }
+  ],
+  "synonyms": [
+    "unhappy",
+    "gloomy"
+  ],
+  "antonyms": [
+    "happy",
+    "joyful"
+  ],
+  "tags": [
+    "emotion",
+    "feeling"
+  ]
+}

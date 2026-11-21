@@ -1,0 +1,43 @@
+{
+  "word": "ubiquitous",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/juːˈbɪkwɪtəs/",
+    "audio": "u/audios/ubiquitous.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "present or found everywhere",
+      "vietnamese": "có mặt ở khắp mọi nơi"
+    }
+  ],
+  "examples": [
+    {
+      "english": "In the modern world, mobile phones have become ubiquitous.",
+      "vietnamese": "Trong thế giới hiện đại, điện thoại di động đã trở nên phổ biến ở khắp mọi nơi.",
+      "audio": "u/audios_example/in_the_modern_world_mobile_phones_have_become_ubiquitous.ogg"
+    },
+    {
+      "english": "The company's logo is ubiquitous in the city's advertising.",
+      "vietnamese": "Logo của công ty xuất hiện ở khắp mọi nơi trong quảng cáo của thành phố.",
+      "audio": "u/audios_example/the_company_s_logo_is_ubiquitous_in_the_city_s_advertising.ogg"
+    }
+  ],
+  "synonyms": [
+    "omnipresent",
+    "pervasive",
+    "universal"
+  ],
+  "antonyms": [
+    "rare",
+    "scarce"
+  ],
+  "tags": [
+    "adjective",
+    "vocabulary"
+  ]
+}

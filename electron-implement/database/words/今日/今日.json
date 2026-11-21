@@ -1,0 +1,36 @@
+{
+  "word": "今日",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "きょう",
+    "audio": "words/今日/audios/今日.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "この日。",
+      "vietnamese": "Hôm nay."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "今日は雨です。",
+      "vietnamese": "Hôm nay trời mưa.",
+      "audio": "words/今日/audios_example/kyo_wa_ame_desu.ogg"
+    },
+    {
+      "japanese": "今日、何をしますか。",
+      "vietnamese": "Hôm nay bạn làm gì?",
+      "audio": "words/今日/audios_example/kyo_nani_o_shi_masu_ka.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "daily"
+  ]
+}

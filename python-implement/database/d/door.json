@@ -1,0 +1,36 @@
+{
+  "word": "door",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dɔːr/",
+    "audio": "d/audios/door.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A hinged barrier used to close an entrance.",
+      "vietnamese": "Một rào chắn có bản lề được sử dụng để đóng lối vào."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Close the door when you leave.",
+      "vietnamese": "Hãy đóng cửa khi bạn rời đi.",
+      "audio": "d/audios_example/close_the_door_when_you_leave.ogg"
+    }
+  ],
+  "synonyms": [
+    "gate",
+    "portal"
+  ],
+  "antonyms": [
+    "wall"
+  ],
+  "tags": [
+    "building",
+    "object"
+  ]
+}

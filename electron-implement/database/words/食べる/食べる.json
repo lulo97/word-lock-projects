@@ -1,0 +1,37 @@
+{
+  "word": "食べる",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "たべる",
+    "audio": "words/食べる/audios/食べる.ogg"
+  },
+  "part_of_speech": "verb (ichidan)",
+  "definitions": [
+    {
+      "japanese": "食物を口に入れて飲み込む。",
+      "vietnamese": "Ăn."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "朝ごはんを食べます。",
+      "vietnamese": "Tôi ăn sáng.",
+      "audio": "words/食べる/audios_example/asa_gohan_o_tabe_masu.ogg"
+    },
+    {
+      "japanese": "果物を食べるのが好きです。",
+      "vietnamese": "Tôi thích ăn trái cây.",
+      "audio": "words/食べる/audios_example/kudamono_o_taberu_no_ga_suki_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "food",
+    "daily"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "word": "来る",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "くる",
+    "audio": "words/来る/audios/来る.ogg"
+  },
+  "part_of_speech": "verb (irregular)",
+  "definitions": [
+    {
+      "japanese": "こちらへ近づく。",
+      "vietnamese": "Đến."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "友達が家に来ます。",
+      "vietnamese": "Bạn tôi sẽ đến nhà.",
+      "audio": "words/来る/audios_example/tomodachi_ga_ie_ni_ki_masu.ogg"
+    },
+    {
+      "japanese": "春が来ました。",
+      "vietnamese": "Mùa xuân đã đến.",
+      "audio": "words/来る/audios_example/haru_ga_ki_mashi_ta.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "movement",
+    "daily"
+  ]
+}

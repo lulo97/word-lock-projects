@@ -1,0 +1,43 @@
+{
+  "word": "fundamental",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌfʌndəˈmentl/",
+    "audio": "f/audios/fundamental.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "forming a necessary base or core; of central importance.",
+      "vietnamese": "cơ bản, nền tảng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "It is a fundamental principle of physics.",
+      "vietnamese": "Đó là một nguyên tắc cơ bản của vật lý.",
+      "audio": "f/audios_example/it_is_a_fundamental_principle_of_physics.ogg"
+    },
+    {
+      "english": "She has a fundamental understanding of the subject.",
+      "vietnamese": "Cô ấy có sự hiểu biết cơ bản về chủ đề này.",
+      "audio": "f/audios_example/she_has_a_fundamental_understanding_of_the_subject.ogg"
+    }
+  ],
+  "synonyms": [
+    "basic",
+    "essential",
+    "primary"
+  ],
+  "antonyms": [
+    "superficial",
+    "trivial"
+  ],
+  "tags": [
+    "academic",
+    "general"
+  ]
+}

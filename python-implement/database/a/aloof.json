@@ -1,0 +1,44 @@
+{
+  "word": "aloof",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/əˈluːf/",
+    "audio": "a/audios/aloof.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "distant and reserved",
+      "vietnamese": "xa cách và dè dặt"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She remained aloof from the other students, preferring to keep to herself.",
+      "vietnamese": "Cô ấy giữ khoảng cách với những học sinh khác, thích ở một mình.",
+      "audio": "a/audios_example/she_remained_aloof_from_the_other_students_preferring_to_keep_to_herself.ogg"
+    },
+    {
+      "english": "The celebrity gave an aloof air, rarely engaging with the press.",
+      "vietnamese": "Người nổi tiếng toát lên vẻ xa cách, hiếm khi tương tác với báo chí.",
+      "audio": "a/audios_example/the_celebrity_gave_an_aloof_air_rarely_engaging_with_the_press.ogg"
+    }
+  ],
+  "synonyms": [
+    "distant",
+    "reserved",
+    "unfriendly"
+  ],
+  "antonyms": [
+    "friendly",
+    "sociable",
+    "warm"
+  ],
+  "tags": [
+    "personality",
+    "social"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "自由",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "じゆう",
+    "audio": "words/自由/audios/自由.ogg"
+  },
+  "part_of_speech": "na-adjective / noun",
+  "definitions": [
+    {
+      "japanese": "束縛されないこと。",
+      "vietnamese": "Tự do."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "自由に話してください。",
+      "vietnamese": "Hãy nói một cách tự do.",
+      "audio": "words/自由/audios_example/jiyu_ni_hanashi_te_kudasai.ogg"
+    },
+    {
+      "japanese": "自由な時間が欲しいです。",
+      "vietnamese": "Tôi muốn có thời gian tự do.",
+      "audio": "words/自由/audios_example/jiyu_na_jikan_ga_hoshii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "society"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "word": "adverse",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈædvɜːrs/",
+    "audio": "a/audios/adverse.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "preventing success or development; harmful",
+      "vietnamese": "bất lợi; có hại"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company faced adverse economic conditions last quarter.",
+      "vietnamese": "Công ty phải đối mặt với điều kiện kinh tế bất lợi trong quý trước.",
+      "audio": "a/audios_example/the_company_faced_adverse_economic_conditions_last_quarter.ogg"
+    },
+    {
+      "english": "She took adverse measures to protect her privacy.",
+      "vietnamese": "Cô ấy đã thực hiện các biện pháp khắc nghiệt để bảo vệ quyền riêng tư của mình.",
+      "audio": "a/audios_example/she_took_adverse_measures_to_protect_her_privacy.ogg"
+    }
+  ],
+  "synonyms": [
+    "unfavorable",
+    "harmful",
+    "detrimental"
+  ],
+  "antonyms": [
+    "favorable",
+    "beneficial"
+  ],
+  "tags": [
+    "business",
+    "general"
+  ]
+}

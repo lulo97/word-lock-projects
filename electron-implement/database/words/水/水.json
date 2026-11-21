@@ -1,0 +1,36 @@
+{
+  "word": "水",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "みず",
+    "audio": "words/水/audios/水.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "飲み水などに使う透明な液体。",
+      "vietnamese": "Nước."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "水を一杯ください。",
+      "vietnamese": "Cho tôi một cốc nước.",
+      "audio": "words/水/audios_example/mizu_o_ippai_kudasai.ogg"
+    },
+    {
+      "japanese": "水は冷たいです。",
+      "vietnamese": "Nước lạnh.",
+      "audio": "words/水/audios_example/mizu_wa_tsumetai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "food",
+    "nature"
+  ]
+}

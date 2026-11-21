@@ -1,0 +1,36 @@
+{
+  "word": "作る",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "つくる",
+    "audio": "words/作る/audios/作る.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "物を組み立てて生み出す。",
+      "vietnamese": "Làm, tạo ra, nấu (món ăn)."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "料理を作ります。",
+      "vietnamese": "Tôi nấu ăn.",
+      "audio": "words/作る/audios_example/ryori_o_tsukuri_masu.ogg"
+    },
+    {
+      "japanese": "友達がケーキを作りました。",
+      "vietnamese": "Bạn tôi đã làm bánh.",
+      "audio": "words/作る/audios_example/tomodachi_ga_keki_o_tsukuri_mashi_ta.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "daily"
+  ]
+}

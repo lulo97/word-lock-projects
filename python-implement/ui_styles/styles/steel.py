@@ -1,0 +1,40 @@
+"""Steel - cool light grey slate with an orange signal accent."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="steel",
+    name="Steel",
+    description="Cool slate grey, tight ergonomic type, orange accent.",
+    appearance="light",
+    color_theme="blue",
+    gradient=True,
+    background_top="#eef2f7",
+    background_bottom="#cbd5e1",
+    card="#f8fafc",
+    card_border="#94a3b8",
+    chip_bg="#e2e8f0",
+    chip_hover="#cbd5e1",
+    entry_bg="#ffffff",
+    text_primary="#0f172a",
+    text_body="#334155",
+    text_muted="#64748b",
+    accent="#ea580c",
+    accent_soft="#c2410c",
+    accent_hover="#c2410c",
+    on_accent="#ffffff",
+    error="#dc2626",
+    success="#15803d",
+    button_bg="#e2e8f0",
+    button_hover="#cbd5e1",
+    button_border="#94a3b8",
+    button_text="#c2410c",
+    border_width=1,
+    overlay_alpha=0.95,
+    typography=Typography(
+        body=("Tahoma", "Verdana", "Segoe UI"),
+        display=("Verdana", "Tahoma", "Segoe UI"),
+        scale=0.96,
+        uppercase_headings=True,
+    ),
+)

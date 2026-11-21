@@ -1,0 +1,37 @@
+{
+  "word": "新しい",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "あたらしい",
+    "audio": "words/新しい/audios/新しい.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "できたばかりで古くない。",
+      "vietnamese": "Mới."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "新しい車を買いました。",
+      "vietnamese": "Tôi đã mua xe mới.",
+      "audio": "words/新しい/audios_example/atarashii_kuruma_o_kai_mashi_ta.ogg"
+    },
+    {
+      "japanese": "新しい仕事は楽しいです。",
+      "vietnamese": "Công việc mới rất vui.",
+      "audio": "words/新しい/audios_example/atarashii_shigoto_wa_tanoshii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "古い"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

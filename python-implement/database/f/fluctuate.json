@@ -1,0 +1,43 @@
+{
+  "word": "fluctuate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈflʌktʃueɪt/",
+    "audio": "f/audios/fluctuate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to rise and fall irregularly in number or amount",
+      "vietnamese": "dao động"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The stock market tends to fluctuate wildly.",
+      "vietnamese": "Thị trường chứng khoán có xu hướng biến động mạnh.",
+      "audio": "f/audios_example/the_stock_market_tends_to_fluctuate_wildly.ogg"
+    },
+    {
+      "english": "Temperatures in the desert can fluctuate greatly between day and night.",
+      "vietnamese": "Nhiệt độ ở sa mạc có thể dao động lớn giữa ngày và đêm.",
+      "audio": "f/audios_example/temperatures_in_the_desert_can_fluctuate_greatly_between_day_and_night.ogg"
+    }
+  ],
+  "synonyms": [
+    "vary",
+    "waver",
+    "oscillate"
+  ],
+  "antonyms": [
+    "remain constant",
+    "stabilize"
+  ],
+  "tags": [
+    "finance",
+    "science"
+  ]
+}

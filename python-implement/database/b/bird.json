@@ -1,0 +1,36 @@
+{
+  "word": "bird",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/bɜːrd/",
+    "audio": "b/audios/bird.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A feathered, winged animal.",
+      "vietnamese": "Một loài động vật có lông, có cánh."
+    }
+  ],
+  "examples": [
+    {
+      "english": "A small bird sang a song.",
+      "vietnamese": "Một con chim nhỏ đã hót một bài hát.",
+      "audio": "b/audios_example/a_small_bird_sang_a_song.ogg"
+    }
+  ],
+  "synonyms": [
+    "fowl",
+    "avian"
+  ],
+  "antonyms": [
+    "fish"
+  ],
+  "tags": [
+    "animal",
+    "nature"
+  ]
+}

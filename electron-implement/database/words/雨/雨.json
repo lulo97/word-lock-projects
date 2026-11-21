@@ -1,0 +1,38 @@
+{
+  "word": "雨",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "あめ",
+    "audio": "words/雨/audios/雨.ogg"
+  },
+  "part_of_speech": "名詞",
+  "definitions": [
+    {
+      "japanese": "雨",
+      "vietnamese": "mưa"
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "今日は雨が降っている。",
+      "vietnamese": "Hôm nay trời đang mưa.",
+      "audio": "words/雨/audios_example/kyo_wa_ame_ga_futte_iru.ogg"
+    },
+    {
+      "japanese": "傘を持って、雨に備えよう。",
+      "vietnamese": "Hãy mang ô và chuẩn bị cho cơn mưa.",
+      "audio": "words/雨/audios_example/kasa_o_motte_ame_ni_sonaeyo.ogg"
+    }
+  ],
+  "synonyms": [
+    "雨粒"
+  ],
+  "antonyms": [],
+  "tags": [
+    "自然",
+    "気象"
+  ]
+}

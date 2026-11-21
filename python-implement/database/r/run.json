@@ -1,0 +1,37 @@
+{
+  "word": "run",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/rʌn/",
+    "audio": "r/audios/run.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "To move at a speed faster than walking.",
+      "vietnamese": "Di chuyển với tốc độ nhanh hơn đi bộ."
+    }
+  ],
+  "examples": [
+    {
+      "english": "He likes to run in the park.",
+      "vietnamese": "Anh ấy thích chạy trong công viên.",
+      "audio": "r/audios_example/he_likes_to_run_in_the_park.ogg"
+    }
+  ],
+  "synonyms": [
+    "sprint",
+    "dash"
+  ],
+  "antonyms": [
+    "walk",
+    "crawl"
+  ],
+  "tags": [
+    "action",
+    "movement"
+  ]
+}

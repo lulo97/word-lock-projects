@@ -1,0 +1,37 @@
+{
+  "word": "jump",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/dʒʌmp/",
+    "audio": "j/audios/jump.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "To push oneself into the air by using the legs.",
+      "vietnamese": "Đẩy bản thân lên không trung bằng chân."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The frog can jump high.",
+      "vietnamese": "Con ếch có thể nhảy cao.",
+      "audio": "j/audios_example/the_frog_can_jump_high.ogg"
+    }
+  ],
+  "synonyms": [
+    "leap",
+    "spring"
+  ],
+  "antonyms": [
+    "fall",
+    "land"
+  ],
+  "tags": [
+    "action",
+    "movement"
+  ]
+}

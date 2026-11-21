@@ -1,0 +1,36 @@
+{
+  "word": "light",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/laɪt/",
+    "audio": "l/audios/light.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "Electromagnetic radiation that enables sight.",
+      "vietnamese": "Bức xạ điện từ cho phép nhìn thấy."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Turn on the light.",
+      "vietnamese": "Bật đèn lên.",
+      "audio": "l/audios_example/turn_on_the_light.ogg"
+    }
+  ],
+  "synonyms": [
+    "illumination",
+    "glow"
+  ],
+  "antonyms": [
+    "darkness"
+  ],
+  "tags": [
+    "energy",
+    "concept"
+  ]
+}

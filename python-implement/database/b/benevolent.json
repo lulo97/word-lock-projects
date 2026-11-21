@@ -1,0 +1,43 @@
+{
+  "word": "benevolent",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/bəˈnevələnt/",
+    "audio": "b/audios/benevolent.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "well-meaning and kindly",
+      "vietnamese": "tốt bụng, nhân từ"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The benevolent ruler was loved by his people.",
+      "vietnamese": "Vị bạo chúa nhân từ được người dân yêu mến.",
+      "audio": "b/audios_example/the_benevolent_ruler_was_loved_by_his_people.ogg"
+    },
+    {
+      "english": "She is a benevolent donor who supports many charities.",
+      "vietnamese": "Cô ấy là một nhà tài trợ nhân ái, người ủng hộ nhiều tổ chức từ thiện.",
+      "audio": "b/audios_example/she_is_a_benevolent_donor_who_supports_many_charities.ogg"
+    }
+  ],
+  "synonyms": [
+    "kind",
+    "generous",
+    "charitable"
+  ],
+  "antonyms": [
+    "male",
+    "cruel"
+  ],
+  "tags": [
+    "adjective",
+    "personality"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "word": "お茶",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "おちゃ",
+    "audio": "words/お茶/audios/お茶.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "茶葉から作る飲み物。",
+      "vietnamese": "Trà."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "お茶をどうぞ。",
+      "vietnamese": "Mời bạn uống trà.",
+      "audio": "words/お茶/audios_example/ocha_o_dozo.ogg"
+    },
+    {
+      "japanese": "食後にお茶を飲みます。",
+      "vietnamese": "Tôi uống trà sau bữa ăn.",
+      "audio": "words/お茶/audios_example/shokugo_ni_ocha_o_nomi_masu.ogg"
+    }
+  ],
+  "synonyms": [
+    "茶"
+  ],
+  "antonyms": [],
+  "tags": [
+    "drink",
+    "food",
+    "daily"
+  ]
+}

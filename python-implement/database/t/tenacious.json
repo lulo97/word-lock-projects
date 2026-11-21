@@ -1,0 +1,49 @@
+{
+  "word": "tenacious",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/təˈneɪʃəs/",
+    "audio": "t/audios/tenacious.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "tending to keep a firm hold of something; clinging or adhering to something",
+      "vietnamese": "bám chặt, dai dẳng"
+    },
+    {
+      "english": "tending to keep a firm hold of an idea or a goal; persistent",
+      "vietnamese": "kiên trì, bền bỉ"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The tenacious detective refused to give up on the case.",
+      "vietnamese": "Thám tử kiên trì đã không từ bỏ vụ án.",
+      "audio": "t/audios_example/the_tenacious_detective_refused_to_give_up_on_the_case.ogg"
+    },
+    {
+      "english": "She has a tenacious grip on her beliefs, even when faced with opposition.",
+      "vietnamese": "Cô ấy có một niềm tin bền bỉ, ngay cả khi đối mặt với sự phản đối.",
+      "audio": "t/audios_example/she_has_a_tenacious_grip_on_her_beliefs_even_when_faced_with_opposition.ogg"
+    }
+  ],
+  "synonyms": [
+    "persistent",
+    "determined",
+    "stubborn",
+    "resolute"
+  ],
+  "antonyms": [
+    "fickle",
+    "weak",
+    "giving up"
+  ],
+  "tags": [
+    "adjective",
+    "personality"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "word": "人",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ひと",
+    "audio": "words/人/audios/人.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "社会を作って暮らす人間。",
+      "vietnamese": "Người, con người."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "あの人は先生です。",
+      "vietnamese": "Người kia là giáo viên.",
+      "audio": "words/人/audios_example/ano_hito_wa_sensei_desu.ogg"
+    },
+    {
+      "japanese": "駅に人が多いです。",
+      "vietnamese": "Ở ga có nhiều người.",
+      "audio": "words/人/audios_example/eki_ni_hito_ga_oi_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "人間"
+  ],
+  "antonyms": [],
+  "tags": [
+    "people",
+    "common"
+  ]
+}

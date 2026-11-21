@@ -1,0 +1,36 @@
+{
+  "word": "有名",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ゆうめい",
+    "audio": "words/有名/audios/有名.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "多くの人に知られている。",
+      "vietnamese": "Nổi tiếng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "この店は有名です。",
+      "vietnamese": "Cửa hàng này nổi tiếng.",
+      "audio": "words/有名/audios_example/kono_mise_wa_yumei_desu.ogg"
+    },
+    {
+      "japanese": "有名な歌手に会いました。",
+      "vietnamese": "Tôi đã gặp một ca sĩ nổi tiếng.",
+      "audio": "words/有名/audios_example/yumei_na_kashu_ni_ai_mashi_ta.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "society"
+  ]
+}

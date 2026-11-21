@@ -1,0 +1,37 @@
+{
+  "word": "私",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "わたし",
+    "audio": "words/私/audios/私.ogg"
+  },
+  "part_of_speech": "pronoun",
+  "definitions": [
+    {
+      "japanese": "話し手自身を指す一人称代名詞。",
+      "vietnamese": "Đại từ nhân xưng ngôi thứ nhất, nghĩa là “tôi”."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "私は学生です。",
+      "vietnamese": "Tôi là học sinh.",
+      "audio": "words/私/audios_example/watashi_wa_gakusei_desu.ogg"
+    },
+    {
+      "japanese": "これは私の本です。",
+      "vietnamese": "Đây là sách của tôi.",
+      "audio": "words/私/audios_example/kore_wa_watashi_no_hon_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "pronoun",
+    "people",
+    "common"
+  ]
+}

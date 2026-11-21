@@ -1,0 +1,38 @@
+{
+  "word": "寒い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "さむい",
+    "audio": "words/寒い/audios/寒い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "気温が低い。",
+      "vietnamese": "Lạnh (thời tiết)."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "冬は寒いです。",
+      "vietnamese": "Mùa đông lạnh.",
+      "audio": "words/寒い/audios_example/fuyu_wa_samui_desu.ogg"
+    },
+    {
+      "japanese": "外は寒いです。",
+      "vietnamese": "Bên ngoài lạnh.",
+      "audio": "words/寒い/audios_example/soto_wa_samui_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "暑い"
+  ],
+  "tags": [
+    "adjective",
+    "weather"
+  ]
+}

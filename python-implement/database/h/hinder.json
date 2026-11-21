@@ -1,0 +1,44 @@
+{
+  "word": "hinder",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈhɪndər/",
+    "audio": "h/audios/hinder.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to create difficulties for (someone), thereby obstructing their progress",
+      "vietnamese": "cản trở"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The heavy traffic began to hinder our progress.",
+      "vietnamese": "Giao thông đông đúc bắt đầu cản trở tiến trình của chúng tôi.",
+      "audio": "h/audios_example/the_heavy_traffic_began_to_hinder_our_progress.ogg"
+    },
+    {
+      "english": "Lack of funding will hinder the development of the new project.",
+      "vietnamese": "Việc thiếu kinh phí sẽ cản trở sự phát triển của dự án mới.",
+      "audio": "h/audios_example/lack_of_funding_will_hinder_the_development_of_the_new_project.ogg"
+    }
+  ],
+  "synonyms": [
+    "impede",
+    "obstruct",
+    "hinder"
+  ],
+  "antonyms": [
+    "help",
+    "assist",
+    "facilitate"
+  ],
+  "tags": [
+    "verb",
+    "difficulty"
+  ]
+}

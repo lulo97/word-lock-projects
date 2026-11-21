@@ -1,0 +1,38 @@
+{
+  "word": "簡単",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "かんたん",
+    "audio": "words/簡単/audios/簡単.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "難しくない。",
+      "vietnamese": "Đơn giản, dễ."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "このテストは簡単です。",
+      "vietnamese": "Bài kiểm tra này dễ.",
+      "audio": "words/簡単/audios_example/kono_tesuto_wa_kantan_desu.ogg"
+    },
+    {
+      "japanese": "簡単な料理を作ります。",
+      "vietnamese": "Tôi nấu món đơn giản.",
+      "audio": "words/簡単/audios_example/kantan_na_ryori_o_tsukuri_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "難しい"
+  ],
+  "tags": [
+    "adjective",
+    "education"
+  ]
+}

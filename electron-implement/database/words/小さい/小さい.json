@@ -1,0 +1,38 @@
+{
+  "word": "小さい",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ちいさい",
+    "audio": "words/小さい/audios/小さい.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "形や規模が小さい。",
+      "vietnamese": "Nhỏ, bé."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "小さい猫が好きです。",
+      "vietnamese": "Tôi thích mèo nhỏ.",
+      "audio": "words/小さい/audios_example/chisai_neko_ga_suki_desu.ogg"
+    },
+    {
+      "japanese": "この箱は小さいです。",
+      "vietnamese": "Cái hộp này nhỏ.",
+      "audio": "words/小さい/audios_example/kono_hako_wa_chisai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "大きい"
+  ],
+  "tags": [
+    "adjective",
+    "size"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "word": "sweet",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/swiːt/",
+    "audio": "s/audios/sweet.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Having the taste of sugar.",
+      "vietnamese": "Có vị ngọt."
+    }
+  ],
+  "examples": [
+    {
+      "english": "I like sweet fruits.",
+      "vietnamese": "Tôi thích các loại trái cây ngọt.",
+      "audio": "s/audios_example/i_like_sweet_fruits.ogg"
+    }
+  ],
+  "synonyms": [
+    "sugary",
+    "honey"
+  ],
+  "antonyms": [
+    "sour",
+    "bitter"
+  ],
+  "tags": [
+    "taste",
+    "description"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "word": "paradox",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈpærədɒks/",
+    "audio": "p/audios/paradox.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a seemingly absurd or self-contradictory statement or proposition that when investigated may prove to be well-founded or true",
+      "vietnamese": "một mệnh đề hoặc nhận định dường như vô lý hoặc mâu thuẫn tự thân nhưng khi được xem xét kỹ có thể chứng minh là đúng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "It is a paradox that the more you try to avoid stress, the more you become anxious.",
+      "vietnamese": "Thật là một nghịch lý khi bạn càng cố gắng tránh căng thẳng, bạn lại càng trở nên lo lắng.",
+      "audio": "p/audios_example/it_is_a_paradox_that_the_more_you_try_to_avoid_stress_the_more_you_become_anxious.ogg"
+    },
+    {
+      "english": "The philosopher presented a paradox regarding the nature of free will.",
+      "vietnamese": "Nhà triết học đã trình bày một nghịch lý liên quan đến bản chất của ý chí tự do.",
+      "audio": "p/audios_example/the_philosopher_presented_a_paradox_regarding_the_nature_of_free_will.ogg"
+    }
+  ],
+  "synonyms": [
+    "contradiction",
+    "antinomy"
+  ],
+  "antonyms": [
+    "consistency",
+    "logic"
+  ],
+  "tags": [
+    "philosophy",
+    "logic"
+  ]
+}

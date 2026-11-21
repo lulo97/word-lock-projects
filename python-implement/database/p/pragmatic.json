@@ -1,0 +1,43 @@
+{
+  "word": "pragmatic",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/præɡˈmætɪk/",
+    "audio": "p/audios/pragmatic.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "dealing with things sensibly and realistically in a way that is based on practical rather than theoretical considerations.",
+      "vietnamese": "thực dụng, thực tế"
+    }
+  ],
+  "examples": [
+    {
+      "english": "We need a more pragmatic approach to solving this budget crisis.",
+      "vietnamese": "Chúng ta cần một cách tiếp cận thực tế hơn để giải quyết cuộc khủng hoảng ngân sách này.",
+      "audio": "p/audios_example/we_need_a_more_pragmatic_approach_to_solving_this_budget_crisis.ogg"
+    },
+    {
+      "english": "She is known for her pragmatic solutions to complex problems.",
+      "vietnamese": "Cô ấy được biết đến với những giải pháp thực tế cho các vấn đề phức tạp.",
+      "audio": "p/audios_example/she_is_known_for_her_pragmatic_solutions_to_complex_problems.ogg"
+    }
+  ],
+  "synonyms": [
+    "practical",
+    "realistic",
+    "sensible"
+  ],
+  "antonyms": [
+    "idealistic",
+    "impractical"
+  ],
+  "tags": [
+    "business",
+    "philosophy"
+  ]
+}

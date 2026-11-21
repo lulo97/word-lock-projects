@@ -1,0 +1,43 @@
+{
+  "word": "temperamental",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌtemprəˈmentl/",
+    "audio": "t/audios/temperamental.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "liable to unreasonable changes of mood or behavior",
+      "vietnamese": "thất thường, hay thay đổi tâm trạng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The diva was known for being temperamental and often refused to perform if she wasn't satisfied with the lighting.",
+      "vietnamese": "Nữ ca sĩ đó nổi tiếng là thất thường và thường từ chối biểu diễn nếu cô ấy không hài lòng với ánh sáng.",
+      "audio": "t/audios_example/the_diva_was_known_for_being_temperamental_and_often_refused_to_perform_if_she_wasn_t_satisfied_with_92659c75.ogg"
+    },
+    {
+      "english": "He has a temperamental old car that only starts when it's cold.",
+      "vietnamese": "Anh ấy có một chiếc xe cũ hay trục trặc, chỉ khởi động khi trời lạnh.",
+      "audio": "t/audios_example/he_has_a_temperamental_old_car_that_only_starts_when_it_s_cold.ogg"
+    }
+  ],
+  "synonyms": [
+    "fickle",
+    "moody",
+    "capricious"
+  ],
+  "antonyms": [
+    "stable",
+    "consistent"
+  ],
+  "tags": [
+    "personality",
+    "behavior"
+  ]
+}

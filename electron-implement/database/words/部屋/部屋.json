@@ -1,0 +1,36 @@
+{
+  "word": "部屋",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "へや",
+    "audio": "words/部屋/audios/部屋.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "建物の中の区切られた空間。",
+      "vietnamese": "Căn phòng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "部屋を掃除します。",
+      "vietnamese": "Tôi dọn phòng.",
+      "audio": "words/部屋/audios_example/heya_o_soji_shi_masu.ogg"
+    },
+    {
+      "japanese": "この部屋は明るいです。",
+      "vietnamese": "Căn phòng này sáng.",
+      "audio": "words/部屋/audios_example/kono_heya_wa_akarui_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "place",
+    "home"
+  ]
+}

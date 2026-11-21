@@ -1,0 +1,43 @@
+{
+  "word": "advocate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈædvəkət/",
+    "audio": "a/audios/advocate.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a person who publicly supports or recommends a particular cause or policy",
+      "vietnamese": "người ủng hộ hoặc cổ vũ một nguyên nhân hoặc chính sách cụ thể"
+    }
+  ],
+  "examples": [
+    {
+      "english": "She is a strong advocate for environmental protection.",
+      "vietnamese": "Cô ấy là một người ủng hộ mạnh mẽ việc bảo vệ môi trường.",
+      "audio": "a/audios_example/she_is_a_strong_advocate_for_environmental_protection.ogg"
+    },
+    {
+      "english": "The organization works as an advocate for human rights.",
+      "vietnamese": "Tổ chức này hoạt động như một người ủng hộ quyền con người.",
+      "audio": "a/audios_example/the_organization_works_as_an_advocate_for_human_rights.ogg"
+    }
+  ],
+  "synonyms": [
+    "champion",
+    "supporter",
+    "defender"
+  ],
+  "antonyms": [
+    "opponent",
+    "detractor"
+  ],
+  "tags": [
+    "politics",
+    "social issues"
+  ]
+}

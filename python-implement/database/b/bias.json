@@ -1,0 +1,43 @@
+{
+  "word": "bias",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈbaɪəs/",
+    "audio": "b/audios/bias.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a prejudice in favor of or against one thing, person, or group compared to another, usually in a way considered to be unfair.",
+      "vietnamese": "sự thiên vị, thành kiến"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The study was criticized for having a clear selection bias.",
+      "vietnamese": "Nghiên cứu bị chỉ trích vì có sự thiên vị trong việc lựa chọn mẫu.",
+      "audio": "b/audios_example/the_study_was_criticized_for_having_a_clear_selection_bias.ogg"
+    },
+    {
+      "english": "He admitted that his personal bias might influence his judgment.",
+      "vietnamese": "Anh ấy thừa nhận rằng thành kiến cá nhân của mình có thể ảnh hưởng đến phán đoán của mình.",
+      "audio": "b/audios_example/he_admitted_that_his_personal_bias_might_influence_his_judgment.ogg"
+    }
+  ],
+  "synonyms": [
+    "prejudice",
+    "partiality",
+    "leaning"
+  ],
+  "antonyms": [
+    "impartiality",
+    "objectivity"
+  ],
+  "tags": [
+    "psychology",
+    "statistics"
+  ]
+}

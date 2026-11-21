@@ -1,0 +1,40 @@
+{
+  "word": "phenomenon",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/fəˈnɒmɪnən/",
+    "audio": "p/audios/phenomenon.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a fact or situation that is observed to exist",
+      "vietnamese": "hiện tượng"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The aurora borealis is a beautiful natural phenomenon.",
+      "vietnamese": "Bắc cực quang là một hiện tượng tự nhiên tuyệt đẹp.",
+      "audio": "p/audios_example/the_aurora_borealis_is_a_beautiful_natural_phenomenon.ogg"
+    },
+    {
+      "english": "Climate change is a complex global phenomenon.",
+      "vietnamese": "Biến đổi khí hậu là một hiện tượng toàn cầu phức tạp.",
+      "audio": "p/audios_example/climate_change_is_a_complex_global_phenomenon.ogg"
+    }
+  ],
+  "synonyms": [
+    "occurrence",
+    "event",
+    "marvel"
+  ],
+  "antonyms": [],
+  "tags": [
+    "science",
+    "general"
+  ]
+}

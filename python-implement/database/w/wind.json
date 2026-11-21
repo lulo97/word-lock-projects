@@ -1,0 +1,36 @@
+{
+  "word": "wind",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/wɪnd/",
+    "audio": "w/audios/wind.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The perceptible natural movement of air.",
+      "vietnamese": "Sự chuyển động tự nhiên có thể cảm nhận được của không khí."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The wind blew the leaves away.",
+      "vietnamese": "Gió thổi bay những chiếc lá.",
+      "audio": "w/audios_example/the_wind_blew_the_leaves_away.ogg"
+    }
+  ],
+  "synonyms": [
+    "breeze",
+    "gust"
+  ],
+  "antonyms": [
+    "stillness"
+  ],
+  "tags": [
+    "weather",
+    "element"
+  ]
+}

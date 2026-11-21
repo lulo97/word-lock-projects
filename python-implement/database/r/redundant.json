@@ -1,0 +1,49 @@
+{
+  "word": "redundant",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/rɪˈdʌndənt/",
+    "audio": "r/audios/redundant.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "no longer needed or useful; superfluous",
+      "vietnamese": "thừa, dư thừa"
+    },
+    {
+      "english": "unnecessary because it is already present",
+      "vietnamese": "thừa thãi, lặp lại"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The company had to lay off many redundant employees due to budget cuts.",
+      "vietnamese": "Công ty đã phải sa thải nhiều nhân viên dư thừa do cắt giảm ngân sách.",
+      "audio": "r/audios_example/the_company_had_to_lay_off_many_redundant_employees_due_to_budget_cuts.ogg"
+    },
+    {
+      "english": "Including the same information twice in the report was considered redundant.",
+      "vietnamese": "Việc đưa cùng một thông tin hai lần trong báo cáo bị coi là thừa thãi.",
+      "audio": "r/audios_example/including_the_same_information_twice_in_the_report_was_considered_redundant.ogg"
+    }
+  ],
+  "synonyms": [
+    "superfluous",
+    "excess",
+    "unnecessary",
+    "pleonastic"
+  ],
+  "antonyms": [
+    "essential",
+    "necessary",
+    "vital"
+  ],
+  "tags": [
+    "business",
+    "language"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "house",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/haʊs/",
+    "audio": "h/audios/house.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A building for human habitation.",
+      "vietnamese": "Một tòa nhà để con người sinh sống."
+    }
+  ],
+  "examples": [
+    {
+      "english": "They live in a big house.",
+      "vietnamese": "Họ sống trong một ngôi nhà lớn.",
+      "audio": "h/audios_example/they_live_in_a_big_house.ogg"
+    }
+  ],
+  "synonyms": [
+    "home",
+    "dwelling"
+  ],
+  "antonyms": [
+    "apartment"
+  ],
+  "tags": [
+    "building",
+    "structure"
+  ]
+}

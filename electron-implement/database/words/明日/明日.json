@@ -1,0 +1,36 @@
+{
+  "word": "明日",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "あした",
+    "audio": "words/明日/audios/明日.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "今日の次の日。",
+      "vietnamese": "Ngày mai."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "明日は休みです。",
+      "vietnamese": "Ngày mai được nghỉ.",
+      "audio": "words/明日/audios_example/ashita_wa_yasumi_desu.ogg"
+    },
+    {
+      "japanese": "明日また会いましょう。",
+      "vietnamese": "Mai gặp lại nhé.",
+      "audio": "words/明日/audios_example/ashita_mata_ai_masho_u.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "daily"
+  ]
+}

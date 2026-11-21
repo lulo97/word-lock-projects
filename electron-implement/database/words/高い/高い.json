@@ -1,0 +1,39 @@
+{
+  "word": "高い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "たかい",
+    "audio": "words/高い/audios/高い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "高さや値段が上である。",
+      "vietnamese": "Cao, đắt."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "この山は高いです。",
+      "vietnamese": "Ngọn núi này cao.",
+      "audio": "words/高い/audios_example/kono_yama_wa_takai_desu.ogg"
+    },
+    {
+      "japanese": "この時計は高いです。",
+      "vietnamese": "Đồng hồ này đắt.",
+      "audio": "words/高い/audios_example/kono_tokei_wa_takai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "安い"
+  ],
+  "tags": [
+    "adjective",
+    "size",
+    "shopping"
+  ]
+}

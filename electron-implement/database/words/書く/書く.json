@@ -1,0 +1,37 @@
+{
+  "word": "書く",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "かく",
+    "audio": "words/書く/audios/書く.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "文字や文章を作る。",
+      "vietnamese": "Viết."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "手紙を書きます。",
+      "vietnamese": "Tôi viết thư.",
+      "audio": "words/書く/audios_example/tegami_o_kaki_masu.ogg"
+    },
+    {
+      "japanese": "名前を書いてください。",
+      "vietnamese": "Hãy viết tên vào.",
+      "audio": "words/書く/audios_example/namae_o_kai_te_kudasai.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "education",
+    "daily"
+  ]
+}

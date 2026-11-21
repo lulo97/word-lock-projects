@@ -1,0 +1,42 @@
+{
+  "word": "ephemeral",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/əˈfemərəl/",
+    "audio": "e/audios/ephemeral.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "lasting for a very short time",
+      "vietnamese": "ngắn ngủi, phù du"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The beauty of the cherry blossoms is ephemeral.",
+      "vietnamese": "Vẻ đẹp của hoa anh đào thật ngắn ngủi.",
+      "audio": "e/audios_example/the_beauty_of_the_cherry_blossoms_is_ephemeral.ogg"
+    },
+    {
+      "english": "Fame in the digital age can be ephemeral.",
+      "vietnamese": "Sự nổi tiếng trong thời đại kỹ thuật số có thể phù du.",
+      "audio": "e/audios_example/fame_in_the_digital_age_can_be_ephemeral.ogg"
+    }
+  ],
+  "synonyms": [
+    "fleeting",
+    "transient",
+    "momentary"
+  ],
+  "antonyms": [
+    "permanent",
+    "eternal"
+  ],
+  "tags": [
+    "abstract"
+  ]
+}

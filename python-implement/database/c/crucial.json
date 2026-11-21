@@ -1,0 +1,43 @@
+{
+  "word": "crucial",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈkruːʃəl/",
+    "audio": "c/audios/crucial.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "extremely important or decisive",
+      "vietnamese": "quan trọng sống còn; quyết định"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Time is of the essence in this crucial negotiation.",
+      "vietnamese": "Thời gian là yếu tố cốt lõi trong cuộc đàm phán quan trọng này.",
+      "audio": "c/audios_example/time_is_of_the_essence_in_this_crucial_negotiation.ogg"
+    },
+    {
+      "english": "The discovery of the new element was a crucial turning point in science.",
+      "vietnamese": "Việc phát hiện ra nguyên tố mới là một bước ngoặt quan trọng trong khoa học.",
+      "audio": "c/audios_example/the_discovery_of_the_new_element_was_a_crucial_turning_point_in_science.ogg"
+    }
+  ],
+  "synonyms": [
+    "vital",
+    "critical",
+    "pivotal"
+  ],
+  "antonyms": [
+    "unimportant",
+    "trivial"
+  ],
+  "tags": [
+    "importance",
+    "decision"
+  ]
+}

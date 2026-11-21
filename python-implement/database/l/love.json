@@ -1,0 +1,37 @@
+{
+  "word": "love",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/lʌv/",
+    "audio": "l/audios/love.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "An intense feeling of deep affection.",
+      "vietnamese": "Một cảm giác sâu sắc về tình cảm mãnh liệt."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Love is a powerful emotion.",
+      "vietnamese": "Tình yêu là một cảm xúc mạnh mẽ.",
+      "audio": "l/audios_example/love_is_a_powerful_emotion.ogg"
+    }
+  ],
+  "synonyms": [
+    "affection",
+    "adoration"
+  ],
+  "antonyms": [
+    "hate",
+    "dislike"
+  ],
+  "tags": [
+    "emotion",
+    "concept"
+  ]
+}

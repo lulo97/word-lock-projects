@@ -1,0 +1,36 @@
+{
+  "word": "夢",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ゆめ",
+    "audio": "words/夢/audios/夢.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "寝ているときに見る像、または目標。",
+      "vietnamese": "Giấc mơ, ước mơ."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "昨夜、変な夢を見ました。",
+      "vietnamese": "Đêm qua tôi mơ thấy giấc mơ kỳ lạ.",
+      "audio": "words/夢/audios_example/sakuya_hen_na_yume_o_mi_mashi_ta.ogg"
+    },
+    {
+      "japanese": "私の夢は先生になることです。",
+      "vietnamese": "Ước mơ của tôi là trở thành giáo viên.",
+      "audio": "words/夢/audios_example/watashi_no_yume_wa_sensei_ni_naru_koto_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "emotion"
+  ]
+}

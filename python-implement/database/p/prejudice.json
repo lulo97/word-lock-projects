@@ -1,0 +1,43 @@
+{
+  "word": "prejudice",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈpredʒədɪz/",
+    "audio": "p/audios/prejudice.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "preconceived opinion that is not based on reason or actual experience",
+      "vietnamese": "thành kiến, định kiến"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He was judged by others based on their prejudice against his background.",
+      "vietnamese": "Anh ấy bị người khác đánh giá dựa trên định kiến của họ về xuất thân của anh ấy.",
+      "audio": "p/audios_example/he_was_judged_by_others_based_on_their_prejudice_against_his_background.ogg"
+    },
+    {
+      "english": "We must try to overcome our prejudices to build a more inclusive society.",
+      "vietnamese": "Chúng ta phải cố gắng vượt qua những thành kiến của mình để xây dựng một xã hội hòa nhập hơn.",
+      "audio": "p/audios_example/we_must_try_to_overcome_our_prejudices_to_build_a_more_inclusive_society.ogg"
+    }
+  ],
+  "synonyms": [
+    "bias",
+    "bigotry",
+    "preconception"
+  ],
+  "antonyms": [
+    "open-mindedness",
+    "impartiality"
+  ],
+  "tags": [
+    "social",
+    "attitude"
+  ]
+}

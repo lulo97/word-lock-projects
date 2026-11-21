@@ -1,0 +1,48 @@
+{
+  "word": "authentic",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɔːˈθentɪk/",
+    "audio": "a/audios/authentic.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "genuine; real",
+      "vietnamese": "xác thực; chân thật"
+    },
+    {
+      "english": "conforming to a tradition or style",
+      "vietnamese": "phù hợp với truyền thống hoặc phong cách"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The museum displayed an authentic Roman coin.",
+      "vietnamese": "Bảo tàng đã trưng bày một đồng xu La Mã đích thực.",
+      "audio": "a/audios_example/the_museum_displayed_an_authentic_roman_coin.ogg"
+    },
+    {
+      "english": "She wore an authentic traditional Vietnamese dress.",
+      "vietnamese": "Cô ấy mặc một bộ trang phục truyền thống Việt Nam đích thực.",
+      "audio": "a/audios_example/she_wore_an_authentic_traditional_vietnamese_dress.ogg"
+    }
+  ],
+  "synonyms": [
+    "genuine",
+    "real",
+    "authentic"
+  ],
+  "antonyms": [
+    "fake",
+    "counterfeit",
+    "inauthentic"
+  ],
+  "tags": [
+    "adjective",
+    "quality"
+  ]
+}

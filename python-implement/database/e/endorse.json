@@ -1,0 +1,48 @@
+{
+  "word": "endorse",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪnˈdɔːrs/",
+    "audio": "e/audios/endorse.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to declare one's public approval or support of",
+      "vietnamese": "ủng hộ, tán thành"
+    },
+    {
+      "english": "to sign a document to approve it or to transfer ownership of it",
+      "vietnamese": "ký hậu, xác nhận (trên tài liệu)"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The celebrity decided to endorse the new environmental campaign.",
+      "vietnamese": "Người nổi tiếng đã quyết định ủng hộ chiến dịch môi trường mới.",
+      "audio": "e/audios_example/the_celebrity_decided_to_endorse_the_new_environmental_campaign.ogg"
+    },
+    {
+      "english": "He had to endorse the check before the bank would process the payment.",
+      "vietnamese": "Anh ấy phải ký hậu tấm séc trước khi ngân hàng xử lý khoản thanh toán.",
+      "audio": "e/audios_example/he_had_to_endorse_the_check_before_the_bank_would_process_the_payment.ogg"
+    }
+  ],
+  "synonyms": [
+    "support",
+    "approve",
+    "advocate"
+  ],
+  "antonyms": [
+    "oppose",
+    "disapprove"
+  ],
+  "tags": [
+    "business",
+    "politics",
+    "finance"
+  ]
+}

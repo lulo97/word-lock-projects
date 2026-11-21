@@ -1,0 +1,43 @@
+{
+  "word": "inevitable",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪnˈevɪtəbl/",
+    "audio": "i/audios/inevitable.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "certain to happen; unavoidable",
+      "vietnamese": "không thể tránh khỏi; tất yếu"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Death is an inevitable part of life.",
+      "vietnamese": "Cái chết là một phần tất yếu của cuộc sống.",
+      "audio": "i/audios_example/death_is_an_inevitable_part_of_life.ogg"
+    },
+    {
+      "english": "After the heavy rain, flooding was inevitable.",
+      "vietnamese": "Sau trận mưa lớn, lũ lụt là điều không thể tránh khỏi.",
+      "audio": "i/audios_example/after_the_heavy_rain_flooding_was_inevitable.ogg"
+    }
+  ],
+  "synonyms": [
+    "unavoidable",
+    "certain",
+    "unpreventable"
+  ],
+  "antonyms": [
+    "avoidable",
+    "preventable"
+  ],
+  "tags": [
+    "adjective",
+    "formal"
+  ]
+}

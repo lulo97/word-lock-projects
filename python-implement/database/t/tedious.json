@@ -1,0 +1,44 @@
+{
+  "word": "tedious",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈtiːdiəs/",
+    "audio": "t/audios/tedious.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "too long, slow, or dull; tiresome",
+      "vietnamese": "nhàm chán, tẻ nhạt"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The paperwork was tedious and took hours to complete.",
+      "vietnamese": "Các thủ tục giấy tờ thật tẻ nhạt và mất hàng giờ để hoàn thành.",
+      "audio": "t/audios_example/the_paperwork_was_tedious_and_took_hours_to_complete.ogg"
+    },
+    {
+      "english": "He found the tedious lecture difficult to concentrate on.",
+      "vietnamese": "Anh ấy thấy bài giảng nhàm chán rất khó tập trung.",
+      "audio": "t/audios_example/he_found_the_tedious_lecture_difficult_to_concentrate_on.ogg"
+    }
+  ],
+  "synonyms": [
+    "dull",
+    "monotonous",
+    "boring"
+  ],
+  "antonyms": [
+    "exciting",
+    "interesting",
+    "engaging"
+  ],
+  "tags": [
+    "adjective",
+    "dull"
+  ]
+}

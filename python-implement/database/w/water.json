@@ -1,0 +1,36 @@
+{
+  "word": "water",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈwɔːtər/",
+    "audio": "w/audios/water.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A colorless, transparent, odorless liquid that forms the seas and rivers.",
+      "vietnamese": "Một chất lỏng không màu, trong, không mùi tạo thành biển và sông."
+    }
+  ],
+  "examples": [
+    {
+      "english": "We need to drink more water.",
+      "vietnamese": "Chúng ta cần uống nhiều nước hơn.",
+      "audio": "w/audios_example/we_need_to_drink_more_water.ogg"
+    }
+  ],
+  "synonyms": [
+    "liquid",
+    "h2o"
+  ],
+  "antonyms": [
+    "oil"
+  ],
+  "tags": [
+    "element",
+    "liquid"
+  ]
+}

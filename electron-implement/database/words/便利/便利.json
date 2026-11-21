@@ -1,0 +1,36 @@
+{
+  "word": "便利",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "べんり",
+    "audio": "words/便利/audios/便利.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "使うのに都合がよい。",
+      "vietnamese": "Tiện lợi."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "このアプリは便利です。",
+      "vietnamese": "Ứng dụng này tiện lợi.",
+      "audio": "words/便利/audios_example/kono_apuri_wa_benri_desu.ogg"
+    },
+    {
+      "japanese": "駅の近くは便利です。",
+      "vietnamese": "Gần ga rất tiện lợi.",
+      "audio": "words/便利/audios_example/eki_no_chikaku_wa_benri_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "daily"
+  ]
+}

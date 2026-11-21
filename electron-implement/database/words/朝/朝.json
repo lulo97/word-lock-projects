@@ -1,0 +1,36 @@
+{
+  "word": "朝",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "あさ",
+    "audio": "words/朝/audios/朝.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "日の出から午前中までの時間。",
+      "vietnamese": "Buổi sáng."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "朝に散歩します。",
+      "vietnamese": "Tôi đi dạo vào buổi sáng.",
+      "audio": "words/朝/audios_example/asa_ni_sanpo_shi_masu.ogg"
+    },
+    {
+      "japanese": "朝ごはんはパンです。",
+      "vietnamese": "Bữa sáng là bánh mì.",
+      "audio": "words/朝/audios_example/asa_gohan_wa_pan_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "daily"
+  ]
+}

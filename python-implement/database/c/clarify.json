@@ -1,0 +1,43 @@
+{
+  "word": "clarify",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈklærɪfaɪ/",
+    "audio": "c/audios/clarify.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to make something less confusing or more understandable",
+      "vietnamese": "làm cho rõ ràng hơn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "Could you please clarify the instructions for the assignment?",
+      "vietnamese": "Bạn có thể làm rõ hướng dẫn cho bài tập được không?",
+      "audio": "c/audios_example/could_you_please_clarify_the_instructions_for_the_assignment.ogg"
+    },
+    {
+      "english": "The speaker paused to clarify a point that had been misunderstood.",
+      "vietnamese": "Người nói đã dừng lại để làm rõ một điểm đã bị hiểu sai.",
+      "audio": "c/audios_example/the_speaker_paused_to_clarify_a_point_that_had_been_misunderstood.ogg"
+    }
+  ],
+  "synonyms": [
+    "elucidate",
+    "explain",
+    "define"
+  ],
+  "antonyms": [
+    "confuse",
+    "obscure"
+  ],
+  "tags": [
+    "communication",
+    "understanding"
+  ]
+}

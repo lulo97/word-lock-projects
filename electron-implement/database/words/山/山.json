@@ -1,0 +1,36 @@
+{
+  "word": "山",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "やま",
+    "audio": "words/山/audios/山.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "高く盛り上がった地形。",
+      "vietnamese": "Núi."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "週末に山に登ります。",
+      "vietnamese": "Cuối tuần tôi leo núi.",
+      "audio": "words/山/audios_example/shumatsu_ni_yama_ni_nobori_masu.ogg"
+    },
+    {
+      "japanese": "あの山は高いです。",
+      "vietnamese": "Ngọn núi kia cao.",
+      "audio": "words/山/audios_example/ano_yama_wa_takai_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "nature",
+    "place"
+  ]
+}

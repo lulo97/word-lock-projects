@@ -1,0 +1,40 @@
+"""Royal - midnight violet with gold accents and serif headings."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="royal",
+    name="Royal",
+    description="Violet court, gold trim, serif display, tall square cards.",
+    appearance="dark",
+    color_theme="dark-blue",
+    gradient=True,
+    background_top="#1b1035",
+    background_bottom="#09040f",
+    card="#160f2b",
+    card_border="#4c1d95",
+    chip_bg="#241744",
+    chip_hover="#32205c",
+    entry_bg="#120c24",
+    text_primary="#f5f3ff",
+    text_body="#ddd6fe",
+    text_muted="#a78bfa",
+    accent="#fbbf24",
+    accent_soft="#fcd34d",
+    accent_hover="#f59e0b",
+    on_accent="#1b1035",
+    error="#fb7185",
+    success="#4ade80",
+    button_bg="#241744",
+    button_hover="#32205c",
+    button_border="#4c1d95",
+    button_text="#fcd34d",
+    border_width=1,
+    overlay_alpha=0.92,
+    typography=Typography(
+        body=("Constantia", "Corbel", "Segoe UI"),
+        display=("Palatino Linotype", "Constantia", "Segoe UI"),
+        scale=1.02,
+        uppercase_headings=True,
+    ),
+)

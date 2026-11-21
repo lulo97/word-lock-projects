@@ -1,0 +1,36 @@
+{
+  "word": "時間",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "じかん",
+    "audio": "words/時間/audios/時間.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "時が流れる長さ。",
+      "vietnamese": "Thời gian, giờ."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "時間がありません。",
+      "vietnamese": "Tôi không có thời gian.",
+      "audio": "words/時間/audios_example/jikan_ga_ari_mase_n.ogg"
+    },
+    {
+      "japanese": "会議の時間は三時です。",
+      "vietnamese": "Giờ họp là 3 giờ.",
+      "audio": "words/時間/audios_example/kaigi_no_jikan_wa_san_ji_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "time",
+    "daily"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "word": "mitigate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈmɪtɪɡeɪt/",
+    "audio": "m/audios/mitigate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to make something less severe, serious, or painful",
+      "vietnamese": "làm giảm mức độ nghiêm trọng, nghiêm trọng hoặc đau đớn của cái gì"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The new policy aims to mitigate the effects of climate change.",
+      "vietnamese": "Chính sách mới nhằm giảm thiểu tác động của biến đổi khí hậu.",
+      "audio": "m/audios_example/the_new_policy_aims_to_mitigate_the_effects_of_climate_change.ogg"
+    },
+    {
+      "english": "They took steps to mitigate the risks associated with the project.",
+      "vietnamese": "Họ đã thực hiện các bước để giảm thiểu những rủi ro liên quan đến dự án.",
+      "audio": "m/audios_example/they_took_steps_to_mitigate_the_risks_associated_with_the_project.ogg"
+    }
+  ],
+  "synonyms": [
+    "alleviate",
+    "lessen",
+    "moderate"
+  ],
+  "antonyms": [
+    "aggravate",
+    "worsen"
+  ],
+  "tags": [
+    "formal",
+    "academic"
+  ]
+}

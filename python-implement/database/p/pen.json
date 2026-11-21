@@ -1,0 +1,36 @@
+{
+  "word": "pen",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/pɛn/",
+    "audio": "p/audios/pen.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "An instrument for writing or drawing with ink.",
+      "vietnamese": "Một dụng cụ để viết hoặc vẽ bằng mực."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Please sign the document with a pen.",
+      "vietnamese": "Làm ơn ký tài liệu bằng bút.",
+      "audio": "p/audios_example/please_sign_the_document_with_a_pen.ogg"
+    }
+  ],
+  "synonyms": [
+    "stylus",
+    "marker"
+  ],
+  "antonyms": [
+    "pencil"
+  ],
+  "tags": [
+    "object",
+    "writing"
+  ]
+}

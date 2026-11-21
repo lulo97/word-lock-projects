@@ -1,0 +1,36 @@
+{
+  "word": "平和",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "へいわ",
+    "audio": "words/平和/audios/平和.ogg"
+  },
+  "part_of_speech": "na-adjective / noun",
+  "definitions": [
+    {
+      "japanese": "争いがない穏やかな状態。",
+      "vietnamese": "Hòa bình."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "世界の平和を願います。",
+      "vietnamese": "Tôi cầu mong hòa bình thế giới.",
+      "audio": "words/平和/audios_example/sekai_no_heiwa_o_negai_masu.ogg"
+    },
+    {
+      "japanese": "平和な日々が続きますように。",
+      "vietnamese": "Mong những ngày tháng bình yên tiếp diễn.",
+      "audio": "words/平和/audios_example/heiwa_na_hibi_ga_tsuzuki_masu_yo_ni.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "abstract",
+    "society"
+  ]
+}

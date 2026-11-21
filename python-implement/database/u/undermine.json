@@ -1,0 +1,43 @@
+{
+  "word": "undermine",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "ˌʌndərˈmaɪn",
+    "audio": "u/audios/undermine.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to lessen the effectiveness, power, or ability of, especially gradually",
+      "vietnamese": "làm suy yếu, làm xói mòn"
+    }
+  ],
+  "examples": [
+    {
+      "english": "His constant criticism began to undermine her confidence.",
+      "vietnamese": "Những lời chỉ trích liên tục của anh ấy bắt đầu làm suy yếu sự tự tin của cô ấy.",
+      "audio": "u/audios_example/his_constant_criticism_began_to_undermine_her_confidence.ogg"
+    },
+    {
+      "english": "The company's financial troubles began to undermine its reputation.",
+      "vietnamese": "Những khó khăn tài chính của công ty bắt đầu làm xói mòn danh tiếng của nó.",
+      "audio": "u/audios_example/the_company_s_financial_troubles_began_to_undermine_its_reputation.ogg"
+    }
+  ],
+  "synonyms": [
+    "weaken",
+    "erode",
+    "sabotage"
+  ],
+  "antonyms": [
+    "support",
+    "strengthen"
+  ],
+  "tags": [
+    "business",
+    "psychology"
+  ]
+}

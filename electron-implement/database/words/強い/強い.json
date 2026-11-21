@@ -1,0 +1,38 @@
+{
+  "word": "強い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "つよい",
+    "audio": "words/強い/audios/強い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "力がある。",
+      "vietnamese": "Mạnh, khỏe."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "彼は体が強いです。",
+      "vietnamese": "Anh ấy có cơ thể khỏe mạnh.",
+      "audio": "words/強い/audios_example/kare_wa_karada_ga_tsuyoi_desu.ogg"
+    },
+    {
+      "japanese": "今日は風が強いです。",
+      "vietnamese": "Hôm nay gió mạnh.",
+      "audio": "words/強い/audios_example/kyo_wa_kaze_ga_tsuyoi_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "弱い"
+  ],
+  "tags": [
+    "adjective",
+    "strength"
+  ]
+}

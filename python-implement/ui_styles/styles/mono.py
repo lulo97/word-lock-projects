@@ -1,0 +1,40 @@
+"""Mono - crisp white blueprint with black ink and monospace type."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="mono",
+    name="Mono",
+    description="White and graphite blueprint, monospace, hard square edges.",
+    appearance="light",
+    color_theme="dark-blue",
+    gradient=True,
+    background_top="#ffffff",
+    background_bottom="#e5e7eb",
+    card="#ffffff",
+    card_border="#9ca3af",
+    chip_bg="#f3f4f6",
+    chip_hover="#e5e7eb",
+    entry_bg="#ffffff",
+    text_primary="#111827",
+    text_body="#374151",
+    text_muted="#6b7280",
+    accent="#111827",
+    accent_soft="#1f2937",
+    accent_hover="#374151",
+    on_accent="#ffffff",
+    error="#b91c1c",
+    success="#166534",
+    button_bg="#f3f4f6",
+    button_hover="#e5e7eb",
+    button_border="#9ca3af",
+    button_text="#111827",
+    border_width=2,
+    overlay_alpha=0.96,
+    typography=Typography(
+        body=("Courier New", "Consolas", "DejaVu Sans Mono", "Segoe UI"),
+        display=("Courier New", "Consolas", "Segoe UI"),
+        scale=0.98,
+        uppercase_headings=True,
+    ),
+)

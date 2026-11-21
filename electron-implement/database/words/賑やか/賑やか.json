@@ -1,0 +1,37 @@
+{
+  "word": "賑やか",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "にぎやか",
+    "audio": "words/賑やか/audios/賑やか.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "人や音が多く活気がある。",
+      "vietnamese": "Náo nhiệt, nhộn nhịp."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "祭りは賑やかです。",
+      "vietnamese": "Lễ hội rất náo nhiệt.",
+      "audio": "words/賑やか/audios_example/matsuri_wa_nigiyaka_desu.ogg"
+    },
+    {
+      "japanese": "賑やかな街に住んでいます。",
+      "vietnamese": "Tôi sống ở thành phố náo nhiệt.",
+      "audio": "words/賑やか/audios_example/nigiyaka_na_machi_ni_sun_de_i_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "静か"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

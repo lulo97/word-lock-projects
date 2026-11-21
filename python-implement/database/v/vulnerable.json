@@ -1,0 +1,47 @@
+{
+  "word": "vulnerable",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈvʌlnərəbəl/",
+    "audio": "v/audios/vulnerable.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "open to physical or emotional attack or harm",
+      "vietnamese": "dễ bị tổn thương"
+    },
+    {
+      "english": "susceptible to being attacked or harmed",
+      "vietnamese": "dễ bị tấn công hoặc gây hại"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The old building was vulnerable to earthquakes.",
+      "vietnamese": "Tòa nhà cũ dễ bị động đất làm hư hại.",
+      "audio": "v/audios_example/the_old_building_was_vulnerable_to_earthquakes.ogg"
+    },
+    {
+      "english": "She felt vulnerable after sharing her deepest secrets.",
+      "vietnamese": "Cô ấy cảm thấy dễ bị tổn thương sau khi chia sẻ những bí mật sâu kín nhất của mình.",
+      "audio": "v/audios_example/she_felt_vulnerable_after_sharing_her_deepest_secrets.ogg"
+    }
+  ],
+  "synonyms": [
+    "susceptible",
+    "exposed",
+    "defenseless"
+  ],
+  "antonyms": [
+    "invulnerable",
+    "protected"
+  ],
+  "tags": [
+    "emotion",
+    "risk"
+  ]
+}

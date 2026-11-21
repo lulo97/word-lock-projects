@@ -1,0 +1,36 @@
+{
+  "word": "猫",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ねこ",
+    "audio": "words/猫/audios/猫.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "人に飼われる小さな動物。",
+      "vietnamese": "Con mèo."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "猫が好きです。",
+      "vietnamese": "Tôi thích mèo.",
+      "audio": "words/猫/audios_example/neko_ga_suki_desu.ogg"
+    },
+    {
+      "japanese": "猫がソファで寝ています。",
+      "vietnamese": "Con mèo đang ngủ trên ghế sofa.",
+      "audio": "words/猫/audios_example/neko_ga_sofa_de_ne_te_i_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "animal",
+    "common"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "楽しい",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "たのしい",
+    "audio": "words/楽しい/audios/楽しい.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "心が明るく満たされる。",
+      "vietnamese": "Vui vẻ, thú vị."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "旅行は楽しいです。",
+      "vietnamese": "Chuyến đi rất vui.",
+      "audio": "words/楽しい/audios_example/ryoko_wa_tanoshii_desu.ogg"
+    },
+    {
+      "japanese": "友達と話すのは楽しいです。",
+      "vietnamese": "Nói chuyện với bạn rất vui.",
+      "audio": "words/楽しい/audios_example/tomodachi_to_hanasu_no_wa_tanoshii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "emotion"
+  ]
+}

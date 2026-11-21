@@ -1,0 +1,38 @@
+{
+  "word": "安い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "やすい",
+    "audio": "words/安い/audios/安い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "値段が低い。",
+      "vietnamese": "Rẻ."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "この店は安いです。",
+      "vietnamese": "Cửa hàng này rẻ.",
+      "audio": "words/安い/audios_example/kono_mise_wa_yasui_desu.ogg"
+    },
+    {
+      "japanese": "安い野菜を買いました。",
+      "vietnamese": "Tôi đã mua rau rẻ.",
+      "audio": "words/安い/audios_example/yasui_yasai_o_kai_mashi_ta.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "高い"
+  ],
+  "tags": [
+    "adjective",
+    "shopping"
+  ]
+}

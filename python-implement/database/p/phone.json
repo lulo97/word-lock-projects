@@ -1,0 +1,36 @@
+{
+  "word": "phone",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/foʊn/",
+    "audio": "p/audios/phone.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A device used for making calls and sending messages.",
+      "vietnamese": "Một thiết bị dùng để gọi điện và gửi tin nhắn."
+    }
+  ],
+  "examples": [
+    {
+      "english": "My phone is ringing.",
+      "vietnamese": "Điện thoại của tôi đang reo.",
+      "audio": "p/audios_example/my_phone_is_ringing.ogg"
+    }
+  ],
+  "synonyms": [
+    "mobile",
+    "cell"
+  ],
+  "antonyms": [
+    "landline"
+  ],
+  "tags": [
+    "technology",
+    "device"
+  ]
+}

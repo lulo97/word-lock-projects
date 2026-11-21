@@ -1,0 +1,43 @@
+{
+  "word": "alleviate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/əˈliːvieɪt/",
+    "audio": "a/audios/alleviate.ogg"
+  },
+  "part_of_speech": "verb",
+  "definitions": [
+    {
+      "english": "to make suffering, deficiency, or a problem less severe",
+      "vietnamese": "làm giảm bớt, làm dịu"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The medication helped to alleviate her pain.",
+      "vietnamese": "Thuốc đã giúp làm giảm cơn đau của cô ấy.",
+      "audio": "a/audios_example/the_medication_helped_to_alleviate_her_pain.ogg"
+    },
+    {
+      "english": "They are working to alleviate poverty in the region.",
+      "vietnamese": "Họ đang nỗ lực để giảm nghèo trong khu vực.",
+      "audio": "a/audios_example/they_are_working_to_alleviate_poverty_in_the_region.ogg"
+    }
+  ],
+  "synonyms": [
+    "ease",
+    "mitigate",
+    "lessen"
+  ],
+  "antonyms": [
+    "aggravate",
+    "worsen"
+  ],
+  "tags": [
+    "medical",
+    "relief"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "cloud",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/klaʊd/",
+    "audio": "c/audios/cloud.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "A visible mass of condensed water vapor in the atmosphere.",
+      "vietnamese": "Một khối hơi nước ngưng tụ có thể nhìn thấy trong khí quyển."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The clouds drifted slowly across the sky.",
+      "vietnamese": "Những đám mây trôi chậm rãi trên bầu trời.",
+      "audio": "c/audios_example/the_clouds_drifted_slowly_across_the_sky.ogg"
+    }
+  ],
+  "synonyms": [
+    "cumulus",
+    "stratus"
+  ],
+  "antonyms": [
+    "clear sky"
+  ],
+  "tags": [
+    "nature",
+    "weather"
+  ]
+}

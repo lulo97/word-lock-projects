@@ -1,0 +1,38 @@
+{
+  "word": "難しい",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "むずかしい",
+    "audio": "words/難しい/audios/難しい.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "理解や実行が大変である。",
+      "vietnamese": "Khó."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "日本語は難しいです。",
+      "vietnamese": "Tiếng Nhật khó.",
+      "audio": "words/難しい/audios_example/nihongo_wa_muzukashii_desu.ogg"
+    },
+    {
+      "japanese": "この問題は難しいです。",
+      "vietnamese": "Bài toán này khó.",
+      "audio": "words/難しい/audios_example/kono_mondai_wa_muzukashii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "簡単"
+  ],
+  "tags": [
+    "adjective",
+    "education"
+  ]
+}

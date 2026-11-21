@@ -1,0 +1,36 @@
+{
+  "word": "川",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "かわ",
+    "audio": "words/川/audios/川.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "水が流れる道。",
+      "vietnamese": "Con sông."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "川で泳ぎます。",
+      "vietnamese": "Tôi bơi ở sông.",
+      "audio": "words/川/audios_example/kawa_de_oyogi_masu.ogg"
+    },
+    {
+      "japanese": "川の水はきれいです。",
+      "vietnamese": "Nước sông sạch.",
+      "audio": "words/川/audios_example/kawa_no_mizu_wa_kirei_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "nature",
+    "place"
+  ]
+}

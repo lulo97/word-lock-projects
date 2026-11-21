@@ -1,0 +1,36 @@
+{
+  "word": "話す",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "はなす",
+    "audio": "words/話す/audios/話す.ogg"
+  },
+  "part_of_speech": "verb (godan)",
+  "definitions": [
+    {
+      "japanese": "言葉で伝える。",
+      "vietnamese": "Nói, nói chuyện."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "日本語で話します。",
+      "vietnamese": "Tôi nói bằng tiếng Nhật.",
+      "audio": "words/話す/audios_example/nihongo_de_hanashi_masu.ogg"
+    },
+    {
+      "japanese": "彼と話すのが楽しいです。",
+      "vietnamese": "Nói chuyện với anh ấy rất vui.",
+      "audio": "words/話す/audios_example/kare_to_hanasu_no_ga_tanoshii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "verb",
+    "communication"
+  ]
+}

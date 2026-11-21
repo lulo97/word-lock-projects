@@ -1,0 +1,39 @@
+{
+  "word": "遅い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "おそい",
+    "audio": "words/遅い/audios/遅い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "時間がかかる、時刻が遅れる。",
+      "vietnamese": "Chậm, muộn."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "バスが遅いです。",
+      "vietnamese": "Xe buýt đến muộn.",
+      "audio": "words/遅い/audios_example/basu_ga_osoi_desu.ogg"
+    },
+    {
+      "japanese": "この時計は遅いです。",
+      "vietnamese": "Đồng hồ này chạy chậm.",
+      "audio": "words/遅い/audios_example/kono_tokei_wa_osoi_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "速い"
+  ],
+  "tags": [
+    "adjective",
+    "speed",
+    "time"
+  ]
+}

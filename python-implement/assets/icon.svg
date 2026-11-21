@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Word Lock icon">
+  <!-- App icon for Word Lock: a padlock on a dark blue tile -->
+  <rect width="256" height="256" fill="#0b1220"/>
+  <rect x="24" y="24" width="208" height="208" fill="#3b82f6"/>
+
+  <!-- Shackle -->
+  <path d="M86 116 V96 a42 42 0 0 1 84 0 v20"
+        fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- Lock body -->
+  <rect x="68" y="108" width="120" height="96" fill="#ffffff"/>
+
+  <!-- Keyhole -->
+  <circle cx="128" cy="146" r="13" fill="#3b82f6"/>
+  <rect x="120" y="150" width="16" height="34" fill="#3b82f6"/>
+</svg>

@@ -1,0 +1,43 @@
+{
+  "word": "dormant",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈdɔːrmənt/",
+    "audio": "d/audios/dormant.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "temporarily inactive or in a state of suspended animation.",
+      "vietnamese": "ngủ đông, không hoạt động tạm thời"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The volcano has been dormant for centuries, but scientists are monitoring it closely.",
+      "vietnamese": "Ngọn núi lửa đã ngủ yên hàng thế kỷ, nhưng các nhà khoa học đang theo dõi chặt chẽ nó.",
+      "audio": "d/audios_example/the_volcano_has_been_dormant_for_centuries_but_scientists_are_monitoring_it_closely.ogg"
+    },
+    {
+      "english": "Many seeds remain dormant until the right environmental conditions trigger germination.",
+      "vietnamese": "Nhiều hạt vẫn ở trạng thái ngủ cho đến khi các điều kiện môi trường thích hợp kích hoạt sự nảy mầm.",
+      "audio": "d/audios_example/many_seeds_remain_dormant_until_the_right_environmental_conditions_trigger_germination.ogg"
+    }
+  ],
+  "synonyms": [
+    "inactive",
+    "asleep",
+    "latent"
+  ],
+  "antonyms": [
+    "active",
+    "awake"
+  ],
+  "tags": [
+    "biology",
+    "state"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "rain",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/reɪn/",
+    "audio": "r/audios/rain.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "Water falling from the sky in drops.",
+      "vietnamese": "Nước rơi từ bầu trời thành giọt."
+    }
+  ],
+  "examples": [
+    {
+      "english": "It is raining outside.",
+      "vietnamese": "Trời đang mưa bên ngoài.",
+      "audio": "r/audios_example/it_is_raining_outside.ogg"
+    }
+  ],
+  "synonyms": [
+    "downpour",
+    "shower"
+  ],
+  "antonyms": [
+    "sunshine"
+  ],
+  "tags": [
+    "weather",
+    "element"
+  ]
+}

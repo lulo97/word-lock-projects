@@ -1,0 +1,47 @@
+{
+  "word": "profound",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/prəˈfaʊnd/",
+    "audio": "p/audios/profound.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "very great or intense",
+      "vietnamese": "sâu sắc; sâu xa"
+    },
+    {
+      "english": "having or showing great knowledge or insight",
+      "vietnamese": "sâu sắc; uyên bác"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The book offered a profound insight into human nature.",
+      "vietnamese": "Cuốn sách đã mang đến một cái nhìn sâu sắc về bản chất con người.",
+      "audio": "p/audios_example/the_book_offered_a_profound_insight_into_human_nature.ogg"
+    },
+    {
+      "english": "She made a profound impact on the community through her charity work.",
+      "vietnamese": "Cô ấy đã tạo ra một tác động sâu sắc đối với cộng đồng thông qua công việc từ thiện của mình.",
+      "audio": "p/audios_example/she_made_a_profound_impact_on_the_community_through_her_charity_work.ogg"
+    }
+  ],
+  "synonyms": [
+    "deep",
+    "intense",
+    "thorough"
+  ],
+  "antonyms": [
+    "superficial",
+    "shallow"
+  ],
+  "tags": [
+    "academic",
+    "intellectual"
+  ]
+}

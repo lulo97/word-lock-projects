@@ -1,0 +1,43 @@
+{
+  "word": "impartial",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪmˈpɑːrʃəl/",
+    "audio": "i/audios/impartial.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "treating all people equally or fairly; unbiased",
+      "vietnamese": "khách quan; không thiên vị"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The judge must remain impartial throughout the trial.",
+      "vietnamese": "Thẩm phán phải giữ thái độ khách quan trong suốt phiên tòa.",
+      "audio": "i/audios_example/the_judge_must_remain_impartial_throughout_the_trial.ogg"
+    },
+    {
+      "english": "We need an impartial review of the company's financial records.",
+      "vietnamese": "Chúng ta cần một đánh giá khách quan về hồ sơ tài chính của công ty.",
+      "audio": "i/audios_example/we_need_an_impartial_review_of_the_company_s_financial_records.ogg"
+    }
+  ],
+  "synonyms": [
+    "unbiased",
+    "objective",
+    "neutral"
+  ],
+  "antonyms": [
+    "biased",
+    "partial"
+  ],
+  "tags": [
+    "adjective",
+    "formal"
+  ]
+}

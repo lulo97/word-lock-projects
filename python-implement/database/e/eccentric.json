@@ -1,0 +1,43 @@
+{
+  "word": "eccentric",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ɪˈsentrik/",
+    "audio": "e/audios/eccentric.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "unconventional and slightly strange",
+      "vietnamese": "kỳ quặc, lập dị"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He has always been known for his eccentric fashion sense.",
+      "vietnamese": "Ông ấy luôn được biết đến với gu thời trang lập dị của mình.",
+      "audio": "e/audios_example/he_has_always_been_known_for_his_eccentric_fashion_sense.ogg"
+    },
+    {
+      "english": "The eccentric millionaire lived in a mansion filled with strange artifacts.",
+      "vietnamese": "Vị triệu phú lập dị sống trong một dinh thự đầy những cổ vật kỳ lạ.",
+      "audio": "e/audios_example/the_eccentric_millionaire_lived_in_a_mansion_filled_with_strange_artifacts.ogg"
+    }
+  ],
+  "synonyms": [
+    "peculiar",
+    "odd",
+    "quirky"
+  ],
+  "antonyms": [
+    "conventional",
+    "normal"
+  ],
+  "tags": [
+    "personality",
+    "behavior"
+  ]
+}

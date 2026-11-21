@@ -1,0 +1,43 @@
+{
+  "word": "mundane",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/mʌnˈdeɪn/",
+    "audio": "m/audios/mundane.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "lacking interest or excitement; dull",
+      "vietnamese": "tầm thường, nhàm chán"
+    }
+  ],
+  "examples": [
+    {
+      "english": "He found his daily routine to be incredibly mundane.",
+      "vietnamese": "Anh ấy thấy thói quen hàng ngày của mình cực kỳ nhàm chán.",
+      "audio": "m/audios_example/he_found_his_daily_routine_to_be_incredibly_mundane.ogg"
+    },
+    {
+      "english": "She longed for something more exciting than her mundane office job.",
+      "vietnamese": "Cô ấy khao khát điều gì đó thú vị hơn công việc văn phòng tẻ nhạt của mình.",
+      "audio": "m/audios_example/she_longed_for_something_more_exciting_than_her_mundane_office_job.ogg"
+    }
+  ],
+  "synonyms": [
+    "ordinary",
+    "prosaic",
+    "dull"
+  ],
+  "antonyms": [
+    "exciting",
+    "thrilling",
+    "extraordinary"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

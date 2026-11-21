@@ -1,0 +1,37 @@
+{
+  "word": "sour",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈsaʊər/",
+    "audio": "s/audios/sour.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Having a sharp, acidic taste.",
+      "vietnamese": "Có vị chua sắc."
+    }
+  ],
+  "examples": [
+    {
+      "english": "Lemons are very sour.",
+      "vietnamese": "Chanh rất chua.",
+      "audio": "s/audios_example/lemons_are_very_sour.ogg"
+    }
+  ],
+  "synonyms": [
+    "tart",
+    "acidic"
+  ],
+  "antonyms": [
+    "sweet",
+    "sweet"
+  ],
+  "tags": [
+    "taste",
+    "description"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "word": "愛",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "あい",
+    "audio": "words/愛/audios/愛.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "大切に思う深い気持ち。",
+      "vietnamese": "Tình yêu."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "家族への愛を大切にします。",
+      "vietnamese": "Tôi trân trọng tình yêu dành cho gia đình.",
+      "audio": "words/愛/audios_example/kazoku_e_no_ai_o_taisetsu_ni_shi_masu.ogg"
+    },
+    {
+      "japanese": "愛は世界を変えます。",
+      "vietnamese": "Tình yêu thay đổi thế giới.",
+      "audio": "words/愛/audios_example/ai_wa_sekai_o_kae_masu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "emotion",
+    "abstract"
+  ]
+}

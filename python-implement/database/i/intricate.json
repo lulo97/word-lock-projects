@@ -1,0 +1,43 @@
+{
+  "word": "intricate",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈɪntrɪkət/",
+    "audio": "i/audios/intricate.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Very complicated or detailed.",
+      "vietnamese": "Rất phức tạp hoặc chi tiết."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The watch had an intricate mechanism.",
+      "vietnamese": "Chiếc đồng hồ có một cơ chế phức tạp.",
+      "audio": "i/audios_example/the_watch_had_an_intricate_mechanism.ogg"
+    },
+    {
+      "english": "She wove an intricate pattern into the tapestry.",
+      "vietnamese": "Cô ấy đã dệt một hoa văn phức tạp vào tấm thảm.",
+      "audio": "i/audios_example/she_wove_an_intricate_pattern_into_the_tapestry.ogg"
+    }
+  ],
+  "synonyms": [
+    "complex",
+    "elaborate",
+    "detailed"
+  ],
+  "antonyms": [
+    "simple",
+    "plain"
+  ],
+  "tags": [
+    "descriptive",
+    "adjective"
+  ]
+}

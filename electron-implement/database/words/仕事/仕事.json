@@ -1,0 +1,36 @@
+{
+  "word": "仕事",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "しごと",
+    "audio": "words/仕事/audios/仕事.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "職業や職務。",
+      "vietnamese": "Công việc, nghề nghiệp."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "仕事は九時に始まります。",
+      "vietnamese": "Công việc bắt đầu lúc 9 giờ.",
+      "audio": "words/仕事/audios_example/shigoto_wa_kyu_ji_ni_hajimari_masu.ogg"
+    },
+    {
+      "japanese": "仕事が忙しいです。",
+      "vietnamese": "Công việc bận rộn.",
+      "audio": "words/仕事/audios_example/shigoto_ga_isogashii_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [],
+  "tags": [
+    "work",
+    "daily"
+  ]
+}

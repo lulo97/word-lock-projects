@@ -1,0 +1,38 @@
+{
+  "word": "本",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ほん",
+    "audio": "words/本/audios/本.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "japanese": "文字が書かれた読み物。",
+      "vietnamese": "Sách."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "本を読みます。",
+      "vietnamese": "Tôi đọc sách.",
+      "audio": "words/本/audios_example/hon_o_yomi_masu.ogg"
+    },
+    {
+      "japanese": "この本は面白いです。",
+      "vietnamese": "Cuốn sách này thú vị.",
+      "audio": "words/本/audios_example/kono_hon_wa_omoshiroi_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "書籍"
+  ],
+  "antonyms": [],
+  "tags": [
+    "object",
+    "education"
+  ]
+}

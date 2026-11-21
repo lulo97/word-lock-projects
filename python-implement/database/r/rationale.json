@@ -1,0 +1,42 @@
+{
+  "word": "rationale",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˌræʃəˈnæl/",
+    "audio": "r/audios/rationale.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "a set of reasons or a logical basis for a course of action",
+      "vietnamese": "lý do, cơ sở lý luận"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The committee provided a detailed rationale for their decision to postpone the meeting.",
+      "vietnamese": "Ủy ban đã đưa ra một lý do chi tiết cho quyết định hoãn cuộc họp của họ.",
+      "audio": "r/audios_example/the_committee_provided_a_detailed_rationale_for_their_decision_to_postpone_the_meeting.ogg"
+    },
+    {
+      "english": "Can you explain the rationale behind this new company policy?",
+      "vietnamese": "Bạn có thể giải thích cơ sở đằng sau chính sách mới của công ty này không?",
+      "audio": "r/audios_example/can_you_explain_the_rationale_behind_this_new_company_policy.ogg"
+    }
+  ],
+  "synonyms": [
+    "justification",
+    "reason",
+    "logic"
+  ],
+  "antonyms": [
+    "arbitrariness"
+  ],
+  "tags": [
+    "academic",
+    "formal"
+  ]
+}

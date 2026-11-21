@@ -1,0 +1,36 @@
+{
+  "word": "sun",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/sʌn/",
+    "audio": "s/audios/sun.ogg"
+  },
+  "part_of_speech": "noun",
+  "definitions": [
+    {
+      "english": "The star around which the earth orbits.",
+      "vietnamese": "Ngôi sao mà trái đất quay quanh."
+    }
+  ],
+  "examples": [
+    {
+      "english": "The sun rises in the east.",
+      "vietnamese": "Mặt trời mọc ở phía đông.",
+      "audio": "s/audios_example/the_sun_rises_in_the_east.ogg"
+    }
+  ],
+  "synonyms": [
+    "star",
+    "sol"
+  ],
+  "antonyms": [
+    "night"
+  ],
+  "tags": [
+    "celestial",
+    "nature"
+  ]
+}

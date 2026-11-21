@@ -1,0 +1,37 @@
+{
+  "word": "strong",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/strɔːŋ/",
+    "audio": "s/audios/strong.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Having great physical power or strength.",
+      "vietnamese": "Có sức mạnh thể chất hoặc sức mạnh lớn."
+    }
+  ],
+  "examples": [
+    {
+      "english": "He is a very strong man.",
+      "vietnamese": "Anh ấy là một người rất khỏe.",
+      "audio": "s/audios_example/he_is_a_very_strong_man.ogg"
+    }
+  ],
+  "synonyms": [
+    "powerful",
+    "robust"
+  ],
+  "antonyms": [
+    "weak",
+    "feeble"
+  ],
+  "tags": [
+    "quality",
+    "description"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "word": "paramount",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/ˈpærəmaʊnt/",
+    "audio": "p/audios/paramount.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "more important than anything else",
+      "vietnamese": "quan trọng nhất"
+    }
+  ],
+  "examples": [
+    {
+      "english": "The safety of the employees is of paramount importance.",
+      "vietnamese": "Sự an toàn của nhân viên là tối quan trọng.",
+      "audio": "p/audios_example/the_safety_of_the_employees_is_of_paramount_importance.ogg"
+    },
+    {
+      "english": "His paramount concern was the well-being of his family.",
+      "vietnamese": "Mối quan tâm hàng đầu của anh ấy là sự hạnh phúc của gia đình.",
+      "audio": "p/audios_example/his_paramount_concern_was_the_well_being_of_his_family.ogg"
+    }
+  ],
+  "synonyms": [
+    "supreme",
+    "chief",
+    "preeminent"
+  ],
+  "antonyms": [
+    "trivial",
+    "minor"
+  ],
+  "tags": [
+    "formal"
+  ]
+}

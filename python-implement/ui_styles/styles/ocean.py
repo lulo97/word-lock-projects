@@ -1,0 +1,40 @@
+"""Ocean - deep teal water, cyan glow."""
+
+from ..base import Style, Typography
+
+STYLE = Style(
+    key="ocean",
+    name="Ocean",
+    description="Deep sea gradient, cyan accent, compact technical headings.",
+    appearance="dark",
+    color_theme="blue",
+    gradient=True,
+    background_top="#052f3d",
+    background_bottom="#01131f",
+    card="#05222d",
+    card_border="#0f4c5c",
+    chip_bg="#073442",
+    chip_hover="#0b4a5c",
+    entry_bg="#031a23",
+    text_primary="#ecfeff",
+    text_body="#cffafe",
+    text_muted="#7dd3fc",
+    accent="#22d3ee",
+    accent_soft="#67e8f9",
+    accent_hover="#06b6d4",
+    on_accent="#012028",
+    error="#fb7185",
+    success="#34d399",
+    button_bg="#073442",
+    button_hover="#0b4a5c",
+    button_border="#0f4c5c",
+    button_text="#67e8f9",
+    border_width=1,
+    overlay_alpha=0.9,
+    typography=Typography(
+        body=("Bahnschrift", "Segoe UI", "Arial"),
+        display=("Bahnschrift", "Segoe UI", "Arial"),
+        scale=1.0,
+        uppercase_headings=True,
+    ),
+)

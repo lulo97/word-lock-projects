@@ -1,0 +1,37 @@
+{
+  "word": "古い",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "ふるい",
+    "audio": "words/古い/audios/古い.ogg"
+  },
+  "part_of_speech": "i-adjective",
+  "definitions": [
+    {
+      "japanese": "長い時間がたっている。",
+      "vietnamese": "Cũ."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "古い家に住んでいます。",
+      "vietnamese": "Tôi sống trong ngôi nhà cũ.",
+      "audio": "words/古い/audios_example/furui_ie_ni_sun_de_i_masu.ogg"
+    },
+    {
+      "japanese": "この本は古いです。",
+      "vietnamese": "Cuốn sách này cũ.",
+      "audio": "words/古い/audios_example/kono_hon_wa_furui_desu.ogg"
+    }
+  ],
+  "synonyms": [],
+  "antonyms": [
+    "新しい"
+  ],
+  "tags": [
+    "adjective"
+  ]
+}

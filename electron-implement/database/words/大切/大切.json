@@ -1,0 +1,38 @@
+{
+  "word": "大切",
+  "language": {
+    "source": "ja",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "kana": "たいせつ",
+    "audio": "words/大切/audios/大切.ogg"
+  },
+  "part_of_speech": "na-adjective",
+  "definitions": [
+    {
+      "japanese": "価値が高く、大事である。",
+      "vietnamese": "Quan trọng, quý giá."
+    }
+  ],
+  "examples": [
+    {
+      "japanese": "家族は大切です。",
+      "vietnamese": "Gia đình rất quan trọng.",
+      "audio": "words/大切/audios_example/kazoku_wa_taisetsu_desu.ogg"
+    },
+    {
+      "japanese": "この経験は大切な思い出です。",
+      "vietnamese": "Trải nghiệm này là kỷ niệm quý giá.",
+      "audio": "words/大切/audios_example/kono_keiken_wa_taisetsu_na_omoide_desu.ogg"
+    }
+  ],
+  "synonyms": [
+    "大事"
+  ],
+  "antonyms": [],
+  "tags": [
+    "adjective",
+    "emotion"
+  ]
+}

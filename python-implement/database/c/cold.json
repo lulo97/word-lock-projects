@@ -1,0 +1,37 @@
+{
+  "word": "cold",
+  "language": {
+    "source": "en",
+    "target": "vi"
+  },
+  "pronunciation": {
+    "ipa": "/koʊld/",
+    "audio": "c/audios/cold.ogg"
+  },
+  "part_of_speech": "adjective",
+  "definitions": [
+    {
+      "english": "Of a low or freezing temperature.",
+      "vietnamese": "Có nhiệt độ thấp hoặc đóng băng."
+    }
+  ],
+  "examples": [
+    {
+      "english": "It is cold in the winter.",
+      "vietnamese": "Trời lạnh vào mùa đông.",
+      "audio": "c/audios_example/it_is_cold_in_the_winter.ogg"
+    }
+  ],
+  "synonyms": [
+    "chilly",
+    "freezing"
+  ],
+  "antonyms": [
+    "hot",
+    "warm"
+  ],
+  "tags": [
+    "temperature",
+    "description"
+  ]
+}

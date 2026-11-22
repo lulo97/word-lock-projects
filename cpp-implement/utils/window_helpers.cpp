@@ -4,6 +4,7 @@
 
 #include "window_helpers.h"
 #include "core/utf.h"
+#include "debug_log.h"
 
 #include <windows.h>
 
@@ -35,8 +36,10 @@ bool create_host(
 ) {
     std::wstring html = load_embedded_html(htmlName);
 
-    if (html.empty())
+    if (html.empty()) {
+        UI_LOG("app", L"MISSING HTML %s", htmlName);
         html = missing_html_page(htmlName);
+    }
 
     if (word)
         html = fill_template(html, *word);

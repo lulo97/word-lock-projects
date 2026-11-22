@@ -1,0 +1,4 @@
+size 1200x800
+load htmls/input.html
+click #answer
+click #feedback

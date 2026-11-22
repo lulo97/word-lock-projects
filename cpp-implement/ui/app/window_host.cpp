@@ -1,5 +1,6 @@
 #include "app/window_host.h"
 
+#include "../../utils/debug_log.h"
 #include "../../utils/set_icon.h"
 #include "../../utils/set_tray.h"
 #include "paint/canvas.h"
@@ -173,6 +174,7 @@ void WindowHost::setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb
     if (id == kBlinkTimer)
         ++id;
 
+    UI_LOG("timer", L"hwnd=%p id=%llu set interval=%u ms", hwnd_, (unsigned long long)id, intervalMs);
     timers_[id] = std::move(cb);
 
     if (hwnd_)
@@ -180,6 +182,7 @@ void WindowHost::setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb
 }
 
 void WindowHost::killTimer(UINT_PTR id) {
+    UI_LOG("timer", L"hwnd=%p id=%llu killed", hwnd_, (unsigned long long)id);
     timers_.erase(id);
 
     if (hwnd_)
@@ -249,6 +252,7 @@ LRESULT WindowHost::handle(UINT msg, WPARAM wp, LPARAM lp) {
         }
 
         if (auto it = timers_.find(wp); it != timers_.end()) {
+            UI_LOG("timer", L"hwnd=%p id=%llu fired", hwnd_, (unsigned long long)wp);
             auto callback = it->second;
             callback();
 

@@ -1,4 +1,5 @@
 #include "freeze_chrome.h"
+#include "debug_log.h"
 
 #include <windows.h>
 #include <tlhelp32.h>
@@ -148,6 +149,7 @@ int freeze_chrome() {
         CloseHandle(process);
     }
 
+    UI_LOG("app", L"freeze_chrome suspended %d process(es)", suspendedCount);
     return suspendedCount;
 }
 
@@ -189,6 +191,7 @@ int resume_chrome() {
 
     g_suspended.swap(stillSuspended);
 
+    UI_LOG("app", L"resume_chrome resumed %d process(es)", resumedCount);
     return resumedCount;
 }
 

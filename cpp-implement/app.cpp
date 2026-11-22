@@ -8,6 +8,7 @@
 
 #include "document.h"
 #include "core/utf.h"
+#include "utils/debug_log.h"
 #include "utils/set_tray.h"
 #include "utils/word_db.h"
 #include "utils/window_helpers.h"
@@ -163,6 +164,7 @@ private:
     // Destroy cached input/info windows so they are recreated with
     // the new currentWord_ on next show.
     void reset_word_windows() {
+        UI_LOG("app", L"reset_word_windows word=%s", currentWord_.romaji.c_str());
         if (input_) {
             input_->show(false);
             input_.reset();
@@ -235,6 +237,8 @@ private:
         countdownSeconds_ = 30;
         inputDone_ = false;
         currentWord_ = pick_random_word();
+        UI_LOG("app", L"start_countdown word=%s seconds=%d",
+               currentWord_.romaji.c_str(), countdownSeconds_);
         reset_word_windows();
 
         if (input_) input_->show(false);
@@ -293,6 +297,7 @@ private:
         if (!ensure_input())
             return;
 
+        UI_LOG("app", L"show_input word=%s", currentWord_.romaji.c_str());
         countdown_->show(false);
 
         inputDone_ = false;
@@ -314,6 +319,7 @@ private:
             return;
 
         inputDone_ = true;
+        UI_LOG("app", L"input complete word=%s", currentWord_.romaji.c_str());
         input_->document().setText(L"feedback", L"Correct!");
 
         input_->setTimer(
@@ -330,6 +336,7 @@ private:
         if (!ensure_info())
             return;
 
+        UI_LOG("app", L"show_info word=%s", currentWord_.romaji.c_str());
         if (input_) input_->show(false);
 
         info_->show(true);

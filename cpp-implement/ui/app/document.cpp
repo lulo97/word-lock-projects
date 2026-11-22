@@ -13,6 +13,7 @@
 #include "parser/html_parser.h"
 #include "style/resolve.h"
 #include "style/variants.h"
+#include "../../utils/debug_log.h"
 
 #include "json.hpp"
 
@@ -117,10 +118,20 @@ bool Document::load(const std::wstring& html) {
 
             current = dynamic_cast<Element*>(current->parent);
         }
+
+        UI_LOG("event", L"click on <%s#%s>: NO HANDLER", el.tag.c_str(), el.id.c_str());
     };
 
     walk(*root_, [&](Element& el) {
         initializeControl(el);
+        return true;
+    });
+
+    // Surface silently ignored classes (typos, unsupported variants).
+    walk(*root_, [&](Element& el) {
+        for (const auto& issue : findClassIssues(el.classList))
+            UI_LOG("style", L"<%s> class '%s': %s",
+                   el.tag.c_str(), issue.token.c_str(), issue.reason.c_str());
         return true;
     });
 

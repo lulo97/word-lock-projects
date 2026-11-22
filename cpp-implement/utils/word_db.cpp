@@ -4,6 +4,7 @@
 
 #include "word_db.h"
 #include "core/utf.h"
+#include "debug_log.h"
 #include "embedded_assets.h"
 #include "json.hpp"
 
@@ -105,6 +106,15 @@ std::wstring fill_template(const std::wstring& html, const WordData& w) {
         }
         result.push_back(html[i]);
         ++i;
+    }
+
+    // Unmatched {{key}} placeholders stay in the page: log them so a
+    // template/JSON field mismatch is visible instead of showing raw text.
+    std::wstring::size_type pos = result.find(L"{{");
+    while (pos != std::wstring::npos) {
+        UI_LOG("app", L"unresolved placeholder near offset %zu: '%ls'",
+               pos, result.substr(pos, 40).c_str());
+        pos = result.find(L"{{", pos + 2);
     }
 
     return result;

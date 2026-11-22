@@ -2,6 +2,7 @@
 
 #include "dom/tree_ops.h"
 #include "layout/position.h"
+#include "../../utils/debug_log.h"
 
 #include <algorithm>
 
@@ -127,6 +128,11 @@ bool EventState::onMouseMove(Element& root, float x, float y, bool leftDown) {
 
 bool EventState::onMouseDown(Element& root, float x, float y) {
     Element* target = hitTest(root, x, y);
+
+    if (target)
+        UI_LOG("event", L"down (%.0f,%.0f) -> <%s#%s>", x, y, target->tag.c_str(), target->id.c_str());
+    else
+        UI_LOG("event", L"down (%.0f,%.0f) -> miss", x, y);
 
     if (!target)
         return false;

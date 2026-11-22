@@ -7,6 +7,7 @@
 #include "paint/font_cache.h"
 
 #include <algorithm>
+#include <vector>
 
 namespace ui {
 
@@ -170,12 +171,19 @@ float WindowHost::dpiScale() const {
     return static_cast<float>(dpi_) / 96.0f;
 }
 
-void WindowHost::setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb) {
+void WindowHost::setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb,
+                          bool oneShot) {
     if (id == kBlinkTimer)
         ++id;
 
-    UI_LOG("timer", L"hwnd=%p id=%llu set interval=%u ms", hwnd_, (unsigned long long)id, intervalMs);
+    UI_LOG("timer", L"hwnd=%p id=%llu set interval=%u ms oneShot=%d",
+           hwnd_, (unsigned long long)id, intervalMs, oneShot);
     timers_[id] = std::move(cb);
+
+    if (oneShot)
+        oneShotTimers_.insert(id);
+    else
+        oneShotTimers_.erase(id);
 
     if (hwnd_)
         SetTimer(hwnd_, id, intervalMs, nullptr);
@@ -184,9 +192,24 @@ void WindowHost::setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb
 void WindowHost::killTimer(UINT_PTR id) {
     UI_LOG("timer", L"hwnd=%p id=%llu killed", hwnd_, (unsigned long long)id);
     timers_.erase(id);
+    oneShotTimers_.erase(id);
 
     if (hwnd_)
         KillTimer(hwnd_, id);
+}
+
+void WindowHost::fireOneShotTimers() {
+    // Collect ids first: a callback kills its own timer (mutating the maps)
+    // and may enqueue further one-shot timers, which fire on the next tick.
+    std::vector<UINT_PTR> ids(oneShotTimers_.begin(), oneShotTimers_.end());
+    std::sort(ids.begin(), ids.end());
+
+    for (UINT_PTR id : ids) {
+        if (auto it = timers_.find(id); it != timers_.end()) {
+            UI_LOG("timer", L"hwnd=%p id=%llu fired (test)", hwnd_, (unsigned long long)id);
+            it->second();
+        }
+    }
 }
 
 LRESULT CALLBACK WindowHost::wndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {

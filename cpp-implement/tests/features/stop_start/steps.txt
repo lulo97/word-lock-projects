@@ -1,0 +1,74 @@
+# Stop/start toggle feature test.
+#
+# Runs headless in one process (app_test.exe): `app init` creates the real
+# (hidden) windows without a message loop, and `app tick` simulates the
+# countdown plus any pending one-shot timers. No real timers, no sleeping,
+# no launched process. Event handlers are driven directly.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - click "Stop app" -> stopped, windows hidden, button flips
+#   2. reverse      - click "Start app" -> running again, countdown restarts
+#   3. repeat       - toggle twice more (catches double-timer / stuck state)
+#   4. side effects - a stop leaves no pending timers
+#   5. interleaving - stop while the input window is showing with a pending
+#                      input-done timer; a later tick must NOT bring the info
+#                      window back (regression for the stale TIMER_INPUT_DONE)
+
+# --- setup: app is running, countdown going ---
+app init
+app word tests/word.json
+app assert stopped == false
+app assert countdown == 30
+
+# --- 1. happy path: click "Stop app" -> stopped, windows hidden, button flips ---
+window tray
+assert text #tray-stop == "Stop app"
+click #tray-stop
+app assert stopped == true
+app assert visible countdown == false
+app assert visible input == false
+app assert visible info == false
+window tray
+assert text #tray-stop == "Start app"
+
+# --- 2. reverse: click "Start app" -> running again, countdown restarts ---
+click #tray-stop
+app assert stopped == false
+app assert countdown == 30
+app assert visible countdown == true
+window tray
+assert text #tray-stop == "Stop app"
+
+# --- 3. repeat: toggle twice more (catches double-timer / stuck-state bugs) ---
+click #tray-stop
+app assert stopped == true
+click #tray-stop
+app assert stopped == false
+
+# --- 4. side effects: a stop leaves no pending timers ---
+click #tray-stop
+app assert stopped == true
+app assert timers == 0
+
+# --- 5. interleaving: stop while the input window is showing with a pending
+# input-done timer. Typing the correct answer arms TIMER_INPUT_DONE; stopping
+# must kill it so a later tick does not bring the info window back. ---
+window tray
+click #tray-stop
+app assert stopped == false
+app word tests/word.json   # start_countdown() picks a random word; pin it so the
+                           # typed answer below matches and arms the timer
+app tick 30
+app assert visible input == true
+window input
+type #answer ringo
+window tray
+click #tray-stop
+app assert stopped == true
+# stop must kill the pending input-done timer
+app assert timers == 0
+app tick
+# show_info must not resurrect after stop
+app assert visible info == false
+app assert visible input == false
+app assert timers == 0

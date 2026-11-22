@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include "app/document.h"
 
 namespace ui {
@@ -42,9 +43,20 @@ public:
     // Current DPI scale (dpi/96). Out: scale.
     float dpiScale() const;
 
-    // Start a repeating timer. In: id, intervalMs, callback. Out: none.
-    void setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb);
+    // Start a timer. In: id, intervalMs, callback, oneShot (one-shot timers
+    // kill themselves after firing; they are the ones tick() in app tests
+    // fires on behalf of the message pump). Out: none.
+    void setTimer(UINT_PTR id, UINT intervalMs, std::function<void()> cb,
+                  bool oneShot = false);
     void killTimer(UINT_PTR id);
+
+    // Test seams (no message pump in app_test): fire every pending one-shot
+    // timer once, in id order, simulating one WM_TIMER pass. Repeating timers
+    // are not fired (the app drives those via its own ticks).
+    void fireOneShotTimers();
+
+    // Number of pending timers (for `app assert timers == N`).
+    size_t pendingTimers() const { return timers_.size(); }
 
     // Callback when window closes / loses focus (context menu dismissal).
     std::function<void()> onClose;
@@ -67,6 +79,7 @@ private:
     WindowOptions opt_;
     UINT dpi_ = 96;
     std::unordered_map<UINT_PTR, std::function<void()>> timers_;
+    std::unordered_set<UINT_PTR> oneShotTimers_;   // ids marked one-shot
 };
 
 } // namespace ui

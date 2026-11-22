@@ -51,9 +51,17 @@ public:
     void invalidatePaint();
     bool needsPaint() const;
 
+    // Resolve styles + layout if dirty for a given viewport.
+    // In: width, height px, dpi scale. In: viewport + dirty flags updated.
+    void ensureLayout(int width, int height, float scale);
+
     // Resolve styles + layout if dirty, then paint into hdc.
     // In: hdc, client rect, dpi scale. Out: pixels.
     void paint(HDC hdc, const RECT& client, float scale);
+
+    // Render offscreen to a PNG file. In: path, width, height px, dpi scale,
+    // overlay (debug boxes). Out: true on success.
+    bool screenshot(const std::wstring& path, int w, int h, float scale, bool overlay = false);
 
     // Handle a window message. Out: true if handled (result in outResult).
     bool handleMessage(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT& outResult);

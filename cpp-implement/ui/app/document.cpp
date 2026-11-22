@@ -17,6 +17,7 @@
 #include "json.hpp"
 
 #include <fstream>
+#include <gdiplus.h>
 #include <windowsx.h>
 
 #include <algorithm>
@@ -492,14 +493,8 @@ bool Document::needsPaint() const {
     return paintDirty_ || layoutDirty_ || styleDirty_;
 }
 
-void Document::paint(HDC hdc, const RECT& client, float scale) {
+void Document::ensureLayout(int width, int height, float scale) {
     if (!root_)
-        return;
-
-    int width = client.right - client.left;
-    int height = client.bottom - client.top;
-
-    if (width <= 0 || height <= 0)
         return;
 
     scale_ = std::max(0.1f, scale);
@@ -523,6 +518,19 @@ void Document::paint(HDC hdc, const RECT& client, float scale) {
         layoutDocument(*root_, static_cast<float>(width), static_cast<float>(height), scale_);
         layoutDirty_ = false;
     }
+}
+
+void Document::paint(HDC hdc, const RECT& client, float scale) {
+    if (!root_)
+        return;
+
+    int width = client.right - client.left;
+    int height = client.bottom - client.top;
+
+    if (width <= 0 || height <= 0)
+        return;
+
+    ensureLayout(width, height, scale);
 
     RECT fill = client;
     FillRect(hdc, &fill, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
@@ -530,6 +538,68 @@ void Document::paint(HDC hdc, const RECT& client, float scale) {
     Canvas canvas(hdc, width, height);
     paintDocument(canvas, *root_, scale_);
     paintDirty_ = false;
+}
+
+namespace {
+
+// Find the CLSID of the registered PNG encoder. Out: true if found.
+bool pngEncoder(CLSID* clsid) {
+    UINT n = 0, bytes = 0;
+    Gdiplus::GetImageEncodersSize(&n, &bytes);
+    if (!bytes)
+        return false;
+    std::vector<BYTE> buf(bytes);
+    auto* info = reinterpret_cast<Gdiplus::ImageCodecInfo*>(buf.data());
+    Gdiplus::GetImageEncoders(n, bytes, info);
+    for (UINT i = 0; i < n; ++i)
+        if (wcscmp(info[i].MimeType, L"image/png") == 0) {
+            *clsid = info[i].Clsid;
+            return true;
+        }
+    return false;
+}
+
+} // namespace
+
+bool Document::screenshot(const std::wstring& path, int w, int h, float scale, bool overlay) {
+    if (!root_ || w <= 0 || h <= 0 || !initGraphics())
+        return false;
+
+    BITMAPINFO bmi{};
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = w;
+    bmi.bmiHeader.biHeight = -h;            // top-down => stride = w*4
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32;
+    bmi.bmiHeader.biCompression = BI_RGB;
+
+    HDC screen = GetDC(nullptr);
+    HDC mem = CreateCompatibleDC(screen);
+    void* bits = nullptr;
+    HBITMAP dib = CreateDIBSection(mem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+    HGDIOBJ old = SelectObject(mem, dib);
+
+    RECT rc{ 0, 0, w, h };
+    paint(mem, rc, scale);
+    if (overlay) {
+        Canvas c(mem, w, h);
+        paintDebugOverlay(c, *root_, events_.hovered);
+    }
+    GdiFlush();
+
+    bool ok = false;
+    {
+        // 32bppRGB (not ARGB): GDI leaves alpha = 0, which would make the PNG transparent.
+        Gdiplus::Bitmap bmp(w, h, w * 4, PixelFormat32bppRGB, static_cast<BYTE*>(bits));
+        CLSID png;
+        ok = pngEncoder(&png) && bmp.Save(path.c_str(), &png, nullptr) == Gdiplus::Ok;
+    }
+    SelectObject(mem, old);
+    DeleteObject(dib);
+    DeleteDC(mem);
+    ReleaseDC(nullptr, screen);
+    shutdownGraphics();
+    return ok;
 }
 
 bool Document::handleMessage(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT& outResult) {

@@ -62,3 +62,7 @@ progress.json
 go-implement
 cpp-implement/build
 cpp-implement/third_party
+cpp-implement/debug_out.txt
+cpp-implement/debug_test_improment.md
+cpp-implement/test_method.md
+cpp-implement/a.txt

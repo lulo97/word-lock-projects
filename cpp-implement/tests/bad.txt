@@ -1,2 +1,0 @@
-size 400x200
-load tests/bad.html

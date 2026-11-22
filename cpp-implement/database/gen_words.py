@@ -271,7 +271,50 @@ def run(args: argparse.Namespace) -> int:
     if args.retries < 0:
         args.retries = 0
 
-    prompt_template = PROMPT_PATH.read_text(encoding="utf-8")
+    prompt_template = """
+You generate one Japanese study-dictionary entry for a Japanese learner.
+
+Return exactly one valid JSON object and nothing else: no markdown fences, no
+comments, no explanation before or after it.
+
+Schema:
+{
+  "word": string,
+  "reading": string,
+  "romaji": string,
+  "meaning": string,
+  "type": string,
+  "audio": "",
+  "examples": [
+    {
+      "jp": string,
+      "reading": string,
+      "romaji": string,
+      "en": string,
+      "audio": ""
+    }
+  ]
+}
+
+Rules:
+- "word" must be exactly the requested Japanese word, unchanged.
+- "reading" is the full hiragana reading (katakana words are written in
+  hiragana).
+- "romaji" is lowercase Hepburn romaji of "reading". Use only ASCII letters,
+  spaces, apostrophes, hyphens and periods. Never put Japanese characters,
+  macrons or other accents in "romaji".
+- "meaning" is one short, natural English definition.
+- "type" is the part of speech in lower case, e.g. "noun", "i-adjective",
+  "na-adjective", "verb", "adverb", "expression".
+- Give exactly two natural Japanese example sentences. For each example:
+  "jp" is the Japanese sentence, "reading" its full hiragana reading,
+  "romaji" its lowercase Hepburn romaji (ASCII only), and "en" its natural
+  English translation.
+- Keep "audio" as an empty string everywhere; audio is generated later.
+- Do not add extra top-level keys or extra keys inside examples.
+
+Japanese word: {{word}}
+"""
     words = read_words(input_path)
     existing = load_existing()
 

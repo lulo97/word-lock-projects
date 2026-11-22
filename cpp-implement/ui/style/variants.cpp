@@ -107,4 +107,26 @@ bool isVariantActive(Variant v, uint32_t stateFlags, int viewportWidth) {
     }
 }
 
+std::vector<ClassIssue> findClassIssues(const std::vector<std::wstring>& classList) {
+    std::vector<ClassIssue> out;
+
+    for (const std::wstring& token : classList) {
+        VariantClass vc = splitVariant(token);
+        std::wstring base = toLower(vc.base);
+
+        if (base.empty() || isIgnoredClass(base))
+            continue;
+
+        // "dark:bg-x", "group-hover:x": splitVariant() falls back to Variant::None,
+        // so the base class gets applied UNCONDITIONALLY. Report it.
+        if (token.find(L':') != std::wstring::npos && vc.variant == Variant::None)
+            out.push_back({ token, L"unsupported variant prefix (applied unconditionally!)" });
+
+        if (declarationsFor(base).empty())
+            out.push_back({ token, L"unknown class (ignored)" });
+    }
+
+    return out;
+}
+
 } // namespace ui

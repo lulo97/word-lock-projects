@@ -12,6 +12,9 @@
 #include "paint/paint.h"
 #include "parser/html_parser.h"
 #include "style/resolve.h"
+#include "style/variants.h"
+
+#include "json.hpp"
 
 #include <fstream>
 #include <windowsx.h>
@@ -636,46 +639,109 @@ bool Document::tickBlink() {
 
 namespace {
 
-void dumpElement(const Element& el, int depth, std::wostream& out) {
-    for (int i = 0; i < depth; ++i)
-        out << L"  ";
+std::string hex(Color c) {
+    char b[16];
+    sprintf_s(b, "#%02x%02x%02x%02x", c.r, c.g, c.b, c.a);
+    return b;
+}
 
-    out << el.tag;
-    if (!el.id.empty())
-        out << L"#" << el.id;
+bool isDescendant(const Element* anc, const Element* e) {
+    for (; e; e = dynamic_cast<const Element*>(e->parent))
+        if (e == anc) return true;
+    return false;
+}
 
-    if (!el.classList.empty()) {
-        out << L" ";
-        for (size_t i = 0; i < el.classList.size(); ++i) {
-            if (i)
-                out << L' ';
-            out << el.classList[i];
+nlohmann::json toJson(Element& el, EventState& ev, Element& root, int depth, int maxDepth) {
+    using J = nlohmann::json;
+    J j;
+    j["tag"] = wideToUtf8(el.tag);
+    if (!el.id.empty()) j["id"] = wideToUtf8(el.id);
+
+    J cls = J::array();
+    for (auto& c : el.classList) cls.push_back(wideToUtf8(c));
+    j["class"] = cls;
+
+    J issues = J::array();
+    for (auto& i : findClassIssues(el.classList))
+        issues.push_back({ {"token", wideToUtf8(i.token)}, {"reason", wideToUtf8(i.reason)} });
+    if (!issues.empty()) j["classIssues"] = issues;
+
+    const RectF& r = el.box.borderRect;
+    j["rect"] = { r.x, r.y, r.w, r.h };
+    j["scroll"] = { el.box.scrollX, el.box.scrollY, el.box.maxScrollY() };
+
+    const ComputedStyle& s = el.style;
+    j["style"] = {
+        {"display", (int)s.display}, {"position", (int)s.position},
+        {"dir", (int)s.dir}, {"justify", (int)s.justify}, {"align", (int)s.align},
+        {"grow", s.grow}, {"shrink", s.shrink}, {"gap", { s.gapX, s.gapY }},
+        {"color", hex(s.color)}, {"bg", hex(s.background)},
+        {"fontSize", s.fontSize}, {"opacity", s.opacity}, {"z", s.zIndex},
+        {"overflow", { (int)s.overflowX, (int)s.overflowY }},
+        {"pointerEvents", s.pointerEvents}
+    };
+
+    j["state"] = {
+        {"hover", (bool)(el.stateFlags & StateHover)},
+        {"focus", (bool)(el.stateFlags & StateFocus)},
+        {"styleDirty", el.styleDirty}, {"layoutDirty", el.layoutDirty}
+    };
+
+    // Why won't it click? Hit-test the element's own center.
+    if (s.display != Display::None && r.w > 0 && r.h > 0) {
+        Element* hit = EventState::hitTest(root, r.x + r.w / 2, r.y + r.h / 2);
+        if (hit && !isDescendant(&el, hit)) {
+            j["occludedBy"] = wideToUtf8(hit->tag) +
+                (hit->id.empty() ? "" : "#" + wideToUtf8(hit->id));
+        } else if (!hit) {
+            j["notHittable"] = true;
         }
     }
 
-    const RectF& r = el.box.borderRect;
-    out << L"  [x=" << static_cast<int>(r.x)
-        << L" y=" << static_cast<int>(r.y)
-        << L" w=" << static_cast<int>(r.w)
-        << L" h=" << static_cast<int>(r.h) << L"]\n";
-
-    for (const auto& child : el.children) {
-        if (child->kind == Node::Kind::Element)
-            dumpElement(*static_cast<const Element*>(child.get()), depth + 1, out);
+    if (el.control) {
+        J c; c["type"] = typeid(*el.control).name();
+        if (auto* t = dynamic_cast<TextInput*>(el.control.get()))
+            c["value"] = wideToUtf8(t->value), c["caret"] = t->caret, c["scrollX"] = t->scrollX;
+        if (auto* a = dynamic_cast<TextArea*>(el.control.get()))
+            c["value"] = wideToUtf8(a->value), c["caret"] = a->caret;
+        if (auto* r2 = dynamic_cast<RangeInput*>(el.control.get())) c["value"] = r2->value;
+        if (auto* k = dynamic_cast<Checkbox*>(el.control.get())) c["checked"] = k->checked;
+        j["control"] = c;
     }
+
+    std::wstring txt;
+    for (auto& ch : el.children)
+        if (ch->kind == Node::Kind::Text) txt += static_cast<TextNode*>(ch.get())->text;
+    if (!txt.empty()) j["text"] = wideToUtf8(txt.substr(0, 80));
+
+    if (depth < maxDepth) {
+        J kids = J::array();
+        for (auto& ch : el.children)
+            if (ch->kind == Node::Kind::Element)
+                kids.push_back(toJson(*static_cast<Element*>(ch.get()), ev, root, depth + 1, maxDepth));
+        if (!kids.empty()) j["children"] = kids;
+    }
+    return j;
 }
 
 } // namespace
 
-bool Document::dumpTree(const std::wstring& path) const {
+bool Document::dumpTree(const std::wstring& path, int maxDepth) {
     if (!root_)
         return false;
 
-    std::wofstream file(path);
-    if (!file)
-        return false;
+    nlohmann::json out;
+    out["header"] = {
+        {"viewport", { viewportW_, viewportH_ }}, {"scale", scale_},
+        {"dirty", { {"style", styleDirty_}, {"layout", layoutDirty_}, {"paint", paintDirty_} }},
+        {"focused", events_.focused ? wideToUtf8(events_.focused->id) : ""},
+        {"hovered", events_.hovered ? wideToUtf8(events_.hovered->id) : ""}
+    };
+    out["tree"] = toJson(*root_, events_, *root_, 0, maxDepth);
 
-    dumpElement(*root_, 0, file);
+    std::ofstream f(path, std::ios::binary);
+    if (!f) return false;
+    f << out.dump(2);
     return true;
 }
 

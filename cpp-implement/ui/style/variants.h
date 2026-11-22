@@ -29,4 +29,11 @@ VariantSet buildVariantSet(const std::vector<std::wstring>& classList);
 // Is a variant active now? In: variant, stateFlags, viewportWidth. Out: bool.
 bool isVariantActive(Variant v, uint32_t stateFlags, int viewportWidth);
 
+// A class token that was silently dropped or misapplied.
+struct ClassIssue { std::wstring token; std::wstring reason; };
+
+// Find classes in a list that are unknown or have unsupported variant prefixes.
+// In: classList. Out: list of issues (empty if all fine).
+std::vector<ClassIssue> findClassIssues(const std::vector<std::wstring>& classList);
+
 } // namespace ui

@@ -64,8 +64,8 @@ public:
     Element* root() { return root_.get(); }
     EventState& events() { return events_; }
 
-    // Dump the element tree with layout boxes to a file. In: path. Out: true on success.
-    bool dumpTree(const std::wstring& path) const;
+    // Dump the element tree as JSON to a file. In: path, maxDepth. Out: true on success.
+    bool dumpTree(const std::wstring& path, int maxDepth = 99);
 
 private:
     std::unique_ptr<Element> root_;

@@ -40,6 +40,15 @@ void KotobaCppApp::setDebug(bool d) { debug_ = d; }
 bool KotobaCppApp::init() {
     ui::WindowHost::enableDpiAwareness();
 
+    // Config/progress live in %USERPROFILE%\kotoba by default; tests point
+    // the hooks at their own folder (self-contained, deterministic).
+    config_ = ConfigStore(hooks.configPath.empty() ? ConfigStore::defaultPath()
+                                                   : hooks.configPath);
+    progress_ = ProgressStore(hooks.progressPath.empty() ? ProgressStore::defaultPath()
+                                                          : hooks.progressPath);
+    if (!config_.load() || !progress_.load())
+        return false;
+
     if (!create_countdown())
         return false;
 
@@ -152,7 +161,22 @@ nlohmann::json KotobaCppApp::stateJson() {
     j["timers"] = pendingTimerCount();
     j["freezeCalls"] = hooks.freezeCalls;
     j["resumeCalls"] = hooks.resumeCalls;
+    j["picked"] = (int)recentPicks_.size();
+    j["wordCount"] = count_words();
     return j;
+}
+
+void KotobaCppApp::pick_word() {
+    currentWord_ = pick_even_word(config_.get().ignoreWords,
+                                  progress_.get().attempts);
+    // Empty: no eligible word (empty or fully ignored database). Nothing to
+    // record; the UI will show blank fields rather than a bogus "" key.
+    if (currentWord_.kanji.empty() && currentWord_.word.empty())
+        return;
+    std::wstring key = wordKey(currentWord_);
+    recentPicks_.push_back(key);
+    progress_.record(key);
+    progress_.save();
 }
 
 void KotobaCppApp::setWord(const std::string& json) {
@@ -212,7 +236,7 @@ bool KotobaCppApp::create_tray_menu() {
 
     document.onClick(L"tray-open", [this] {
         hide_tray_menu();
-        currentWord_ = hooks.pickWord();
+        pick_word();
         reset_word_windows();
         show_input();
     });
@@ -331,10 +355,10 @@ bool KotobaCppApp::ensure_info() {
 // ----- countdown -----
 
 void KotobaCppApp::start_countdown() {
-    countdownSeconds_ = 30;
+    countdownSeconds_ = config_.get().countdownSeconds;
     inputDone_ = false;
     stopped_ = false;
-    currentWord_ = hooks.pickWord();
+    pick_word();
     UI_LOG("app", L"start_countdown word=%s seconds=%d",
            currentWord_.romaji.c_str(), countdownSeconds_);
     reset_word_windows();
@@ -560,6 +584,10 @@ void KotobaCppApp::quit() {
 // (same vocabulary as app_test/ui_test), and writes the report to
 // debug_out.txt. The command file is consumed (deleted) after each poll.
 void KotobaCppApp::poll_debug_commands() {
+    // One report per poll: the runner is long-lived, so drop the previous
+    // poll's notes/failures instead of re-printing them every time.
+    current_.resetReport();
+
     std::ifstream in("debug_cmd.txt");
     if (!in)
         return;
@@ -600,6 +628,34 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
         // Note (not failure) so it lands in summary()/debug_out.txt.
         runner.note(L"state " + ui::utf8ToWide(stateJson().dump()));
     }
+    else if (sub == L"config") {
+        if (t.size() >= 3 && t[2] == L"reload") { config_.load(); return; }
+        if (t.size() < 4) { runner.fail(L"app config: need <key> <value> or reload"); return; }
+        Config c = config_.get();
+        const std::wstring& key = t[2];
+        const std::wstring& value = t[3];
+        if (key == L"countdownSeconds") c.countdownSeconds = _wtoi(value.c_str());
+        else if (key == L"volume") c.volume = (float)_wtof(value.c_str());
+        else if (key == L"randomUi") c.randomUi = value == L"true" || value == L"1";
+        else if (key == L"startWithWindows") c.startWithWindows = value == L"true" || value == L"1";
+        else if (key == L"freezeChrome") c.freezeChrome = value == L"true" || value == L"1";
+        else if (key == L"maxFreezeMinutes") c.maxFreezeMinutes = _wtoi(value.c_str());
+        else { runner.fail(L"app config: unknown key " + key); return; }
+        config_.set(c);
+        if (!config_.save()) runner.fail(L"app config: save failed");
+    }
+    else if (sub == L"progress") {
+        if (t.size() < 3) { runner.fail(L"app progress: need <reset>"); return; }
+        if (t[2] == L"reset") { progress_.reset(); progress_.save(); return; }
+        runner.fail(L"unknown app progress command " + t[2]);
+    }
+    else if (sub == L"pick") {
+        // Test seam: run the even picker n times (simulates n countdown
+        // restarts) so picker behaviour is testable without UI ceremony.
+        int n = t.size() > 2 ? _wtoi(t[2].c_str()) : 1;
+        for (int i = 0; i < n; ++i)
+            pick_word();
+    }
     else if (sub == L"tray-event") {
         if (t.size() < 3) { runner.fail(L"app tray-event: need <double-click|left-click|right-click>"); return; }
         UINT ev = t[2] == L"double-click" ? WM_LBUTTONDBLCLK
@@ -613,15 +669,60 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
         if (t.size() < 4) { runner.fail(L"app assert: need <key> == <value>"); return; }
         const std::wstring& key = t[2];
         const std::wstring& expected = t.back();
-        if (key != L"visible" && t[3] != L"==") {
-            runner.fail(L"app assert: operator must be ==, got " + t[3]);
-            return;
-        }
         std::wstring actual;
         if (key == L"visible") {
             if (t.size() < 5) { runner.fail(L"app assert visible: need <window>"); return; }
             actual = isVisible(t[3]) ? L"true" : L"false";
-        } else {
+        }
+        else if (key == L"config") {
+            if (t.size() < 5) { runner.fail(L"app assert config: need <key> == <value>"); return; }
+            const Config& c = config_.get();
+            const std::wstring& ck = t[3];
+            if (ck == L"countdownSeconds") actual = std::to_wstring(c.countdownSeconds);
+            else if (ck == L"volume") {
+                wchar_t buf[32];
+                swprintf(buf, 32, L"%g", c.volume);   // 1.5, not 1.500000
+                actual = buf;
+            }
+            else if (ck == L"randomUi") actual = c.randomUi ? L"true" : L"false";
+            else if (ck == L"startWithWindows") actual = c.startWithWindows ? L"true" : L"false";
+            else if (ck == L"freezeChrome") actual = c.freezeChrome ? L"true" : L"false";
+            else if (ck == L"maxFreezeMinutes") actual = std::to_wstring(c.maxFreezeMinutes);
+            else { runner.fail(L"app assert config: unknown key " + ck); return; }
+        }
+        else if (key == L"attempts") {
+            if (t.size() < 5) { runner.fail(L"app assert attempts: need <word> == <N>"); return; }
+            actual = std::to_wstring(progress_.attempts(t[3]));
+        }
+        else if (key == L"attemptsTotal") {
+            int total = 0;
+            for (const auto& [k, v] : progress_.get().attempts) total += v;
+            actual = std::to_wstring(total);
+        }
+        else if (key == L"attemptsMax") {
+            int max = 0;
+            for (const auto& [k, v] : progress_.get().attempts) max = std::max(max, v);
+            actual = std::to_wstring(max);
+        }
+        else if (key == L"picked_unique") {
+            // The last n recorded picks must be pairwise distinct. The even
+            // picker guarantees this up to the word count; beyond it this
+            // assertion fails (pigeonhole) - useful with expect-fail.
+            int n = t.size() > 3 ? _wtoi(t[3].c_str()) : 0;
+            if ((int)recentPicks_.size() < n) {
+                runner.fail(L"app assert picked_unique: only " +
+                             std::to_wstring(recentPicks_.size()) + L" picks recorded");
+                return;
+            }
+            auto begin = recentPicks_.end() - n;
+            bool unique = true;
+            for (auto a = begin; a != recentPicks_.end() && unique; ++a)
+                for (auto b = begin; b != a; ++b)   // within the window only
+                    if (*a == *b) { unique = false; break; }
+            actual = unique ? L"true" : L"false";
+        }
+        else {
+            if (t[3] != L"==") { runner.fail(L"app assert: operator must be ==, got " + t[3]); return; }
             auto state = stateJson();
             std::string k = ui::wideToUtf8(key);
             if (!state.contains(k)) { runner.fail(L"app assert: unknown key " + key); return; }

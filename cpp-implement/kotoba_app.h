@@ -1,5 +1,6 @@
 #pragma once
 
+#include <deque>
 #include <functional>
 #include <memory>
 #include <string>
@@ -7,6 +8,8 @@
 #include <ostream>
 #include "document.h"
 #include "app/script.h"
+#include "utils/config.h"
+#include "utils/progress.h"
 #include "utils/word_db.h"
 #include "json.hpp"
 
@@ -22,11 +25,15 @@ class KotobaCppApp {
 public:
     // Test seams: swap app internals for deterministic fakes.
     struct Hooks {
-        std::function<WordData()> pickWord = pick_random_word;  // fixed word in tests
         std::function<void()> freezeChrome = [] {};             // no-op default
         std::function<void()> resumeChrome = [] {};             // no-op default
         int freezeCalls = 0;
         int resumeCalls = 0;
+        // Config/progress file paths. Empty -> default %USERPROFILE%\kotoba
+        // (the real app); app_test points these at the feature-test folder
+        // so each test is self-contained and deterministic.
+        std::wstring configPath;
+        std::wstring progressPath;
     } hooks;
 
     KotobaCppApp();
@@ -84,6 +91,13 @@ private:
     bool stopped_ = false;
     WordData currentWord_{};
     ui::ScriptRunner current_;          // bound to a window via `window` command
+    ConfigStore config_;
+    ProgressStore progress_;
+    std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
+
+    // Pick the next word with the even picker (M1) and record the pick in
+    // progress. start_countdown() and tray-open both go through here.
+    void pick_word();
 
     // ----- window creation -----
     bool create_countdown();

@@ -38,7 +38,8 @@ ui/                HTML/CSS engine
   svg/             path parsing for vector shapes
   controls/        TextInput, TextArea, RangeInput, Checkbox
   app/             Document (tree+style+layout+events), WindowHost, ScriptRunner
-utils/             word database, window helpers, tray, debug logger, ...
+utils/             word database + even picker, config/progress stores,
+                     window helpers, tray, debug logger, ...
 htmls/             the five screens (countdown, tray_menu, settings, input, info)
 database/words/    word JSON files, one per word (embedded)
 tests/             regression pipeline (see below)
@@ -139,8 +140,14 @@ include <path>                # run another script (relative to this one);
 expect-fail <command>         # passes only if the inner command FAILS
                                # (guards against vacuous assertions)
 app init / tick [n] / word <file> / state
-app assert <key> == <value>   # key in stateJson(), incl. `visible <window>`;
+app assert <key> == <value>   # key in stateJson(), incl. `visible <window>`,
+                               # config <key>, attempts <word>, attemptsTotal,
+                               # attemptsMax, picked_unique <n> (== true|false);
                                # prints full state on failure
+app config <key> <value>      # set + persist (countdownSeconds, volume, ...)
+app config reload             # re-read from disk (persistence check)
+app progress reset            # clear attempt counts
+app pick <n>                  # run the even picker n times (test seam)
 app tray-event double-click | left-click | right-click
 window <countdown|tray|input|info|settings>
 ```

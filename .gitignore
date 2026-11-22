@@ -69,3 +69,5 @@ cpp-implement/a.txt
 cpp-implement/better_feature_test_setup.md
 cpp-implement/previous_work.txt
 cpp-implement/ROADMAP.md
+cpp-implement/tests/features/*/config.json
+cpp-implement/tests/features/*/progress.json

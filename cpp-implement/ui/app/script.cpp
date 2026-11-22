@@ -86,6 +86,11 @@ void ScriptRunner::note(const std::wstring& msg) {
     messages_.push_back(msg);
 }
 
+void ScriptRunner::resetReport() {
+    failures_ = 0;
+    messages_.clear();
+}
+
 // Splits a line on spaces; "quoted text" tokens may contain spaces.
 std::vector<std::wstring> ScriptRunner::tokens(const std::wstring& line) {
     std::vector<std::wstring> out;
@@ -335,8 +340,16 @@ void ScriptRunner::registerBuiltinCommands() {
             std::wstring sub = line.substr(pos);   // from the subcommand word
             int before = failures_;
             run(sub);
-            if (failures_ == before)
+            int delta = failures_ - before;
+            if (delta == 0)
                 fail(L"expect-fail: command did not fail: " + sub);
+            else {
+                // The inner failure is expected: undo its count and report
+                // it as a note, not a failure.
+                failures_ = before;
+                messages_.erase(std::prev(messages_.end(), delta), messages_.end());
+                note(L"expect-fail ok: " + sub + L" failed as required");
+            }
         });
 }
 

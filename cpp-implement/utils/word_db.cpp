@@ -21,6 +21,17 @@ std::wstring get_wstring(const nlohmann::json& j, const char* key) {
     return ui::utf8ToWide(j[key].get<std::string>());
 }
 
+std::mt19937& wordRng() {
+    // Shared by pick_random_word and pick_even_word; KOTOBA_SEED makes the
+    // tie-break deterministic in tests.
+    static std::mt19937 rng{[] {
+        if (const char* seed = getenv("KOTOBA_SEED"))
+            return static_cast<std::mt19937::result_type>(std::stoul(seed));
+        return std::random_device{}();
+    }()};
+    return rng;
+}
+
 } // namespace
 
 std::string load_asset_bytes(const std::string& path) {
@@ -44,6 +55,11 @@ WordData parse_word_json(const std::string& json) {
     w.meaning_ja_romaji = get_wstring(j, "meaning_ja_romaji");
     w.meaning_vi = get_wstring(j, "meaning_vi");
     w.audio = get_wstring(j, "audio");
+    // New format (M2 generator).
+    w.word = get_wstring(j, "word");
+    w.reading = get_wstring(j, "reading");
+    w.meaning = get_wstring(j, "meaning");
+    w.type = get_wstring(j, "type");
 
     if (j.contains("examples") && j["examples"].is_array()) {
         for (const auto& item : j["examples"]) {
@@ -52,7 +68,11 @@ WordData parse_word_json(const std::string& json) {
             w.examples.push_back({
                 get_wstring(item, "ja"),
                 get_wstring(item, "romaji"),
-                get_wstring(item, "vi")
+                get_wstring(item, "vi"),
+                get_wstring(item, "jp"),
+                get_wstring(item, "reading"),
+                get_wstring(item, "en"),
+                get_wstring(item, "audio")
             });
         }
     }
@@ -67,6 +87,10 @@ WordData parse_word_json(const std::string& json) {
     return w;
 }
 
+std::wstring wordKey(const WordData& w) {
+    return w.word.empty() ? w.kanji : w.word;
+}
+
 std::wstring fill_template(const std::wstring& html, const WordData& w) {
     std::unordered_map<std::wstring, std::wstring> values = {
         {L"kanji", w.kanji},
@@ -77,6 +101,10 @@ std::wstring fill_template(const std::wstring& html, const WordData& w) {
         {L"meaning_ja_romaji", w.meaning_ja_romaji},
         {L"meaning_vi", w.meaning_vi},
         {L"audio", w.audio},
+        {L"word", w.word},
+        {L"reading", w.reading},
+        {L"meaning", w.meaning},
+        {L"type", w.type},
     };
 
     for (std::size_t idx = 0; idx < w.examples.size(); ++idx) {
@@ -84,6 +112,10 @@ std::wstring fill_template(const std::wstring& html, const WordData& w) {
         values[prefix + L"_ja"] = w.examples[idx].ja;
         values[prefix + L"_romaji"] = w.examples[idx].romaji;
         values[prefix + L"_vi"] = w.examples[idx].vi;
+        values[prefix + L"_jp"] = w.examples[idx].jp;
+        values[prefix + L"_reading"] = w.examples[idx].reading;
+        values[prefix + L"_en"] = w.examples[idx].en;
+        values[prefix + L"_audio"] = w.examples[idx].audio;
     }
 
     for (std::size_t idx = 0; idx < w.tags.size(); ++idx) {
@@ -121,37 +153,72 @@ std::wstring fill_template(const std::wstring& html, const WordData& w) {
     return result;
 }
 
-WordData pick_random_word() {
-    constexpr std::string_view kPrefix = "database/words/";
-    constexpr std::string_view kSuffix = ".json";
+const std::vector<std::pair<std::wstring, WordData>>& embeddedWords() {
+    // Parsed once: the even picker scans this on every pick.
+    static const std::vector<std::pair<std::wstring, WordData>> words = [] {
+        constexpr std::string_view kPrefix = "database/words/";
+        constexpr std::string_view kSuffix = ".json";
+        std::vector<std::pair<std::wstring, WordData>> out;
+        for (std::size_t i = 0; i < assets::kAssetCount; ++i) {
+            const auto& asset = assets::kAssets[i];
+            const std::string_view path = asset.relative_path;
+            if (path.size() > kPrefix.size() + kSuffix.size() &&
+                path.substr(0, kPrefix.size()) == kPrefix &&
+                path.substr(path.size() - kSuffix.size()) == kSuffix) {
+                WordData w = parse_word_json(load_asset_bytes(std::string(path)));
+                out.emplace_back(wordKey(w), std::move(w));
+            }
+        }
+        return out;
+    }();
+    return words;
+}
 
-    std::vector<std::string> wordPaths;
-    for (std::size_t i = 0; i < assets::kAssetCount; ++i) {
-        const auto& asset = assets::kAssets[i];
-        const std::string_view path = asset.relative_path;
-        if (path.size() > kPrefix.size() + kSuffix.size() &&
-            path.substr(0, kPrefix.size()) == kPrefix &&
-            path.substr(path.size() - kSuffix.size()) == kSuffix) {
-            wordPaths.emplace_back(path);
+size_t count_words() {
+    return embeddedWords().size();
+}
+
+WordData pick_even_word(const std::vector<std::wstring>& ignored,
+                        const std::map<std::wstring, int>& attempts) {
+    std::vector<const WordData*> candidates;
+    int best = 0;
+    for (const auto& [key, w] : embeddedWords()) {
+        if (key.empty())
+            continue;
+        bool isIgnored = false;
+        for (const auto& ig : ignored)
+            if (ig == key) { isIgnored = true; break; }
+        if (isIgnored)
+            continue;
+        int a = 0;
+        if (const auto it = attempts.find(key); it != attempts.end())
+            a = it->second;
+        if (candidates.empty() || a < best) {
+            candidates.clear();
+            candidates.push_back(&w);
+            best = a;
+        } else if (a == best) {
+            candidates.push_back(&w);
         }
     }
-
-    if (wordPaths.empty())
+    if (candidates.empty())
         return {};
+    std::uniform_int_distribution<std::size_t> dist(0, candidates.size() - 1);
+    return *candidates[dist(wordRng())];
+}
 
+WordData pick_random_word() {
     // KOTOBA_WORD_ID: fixed word by asset path (e.g. "database/words/ringo.json").
-    // KOTOBA_SEED: deterministic rng seed.
+    // KOTOBA_SEED: deterministic rng seed (shared wordRng()).
     if (const char* id = getenv("KOTOBA_WORD_ID")) {
-        for (const auto& p : wordPaths)
-            if (p == id)
-                return parse_word_json(load_asset_bytes(p));
+        for (const auto& [key, w] : embeddedWords())
+            if (("database/words/" + ui::wideToUtf8(key) + ".json") == id)
+                return w;
     }
 
-    static std::mt19937 rng{[] {
-        if (const char* seed = getenv("KOTOBA_SEED"))
-            return static_cast<std::mt19937::result_type>(std::stoul(seed));
-        return std::random_device{}();
-    }()};
-    std::uniform_int_distribution<std::size_t> dist(0, wordPaths.size() - 1);
-    return parse_word_json(load_asset_bytes(wordPaths[dist(rng)]));
+    const auto& words = embeddedWords();
+    if (words.empty())
+        return {};
+    std::uniform_int_distribution<std::size_t> dist(0, words.size() - 1);
+    return words[dist(wordRng())].second;
 }

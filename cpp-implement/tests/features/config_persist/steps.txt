@@ -1,0 +1,37 @@
+# Config persistence feature test (M1).
+#
+# Config lives at %USERPROFILE%\kotoba\config.json (or the test-folder copy
+# that app_test points the hook at): load with defaults on missing, .bak on
+# corrupt, atomic save. Every set persists immediately.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - set a value, assert it takes effect on the next start
+#   2. reverse      - set it back, assert the old value is gone
+#   3. persistence  - reload from disk, the value survives
+#   4. side effects - state consistent, exactly one countdown timer
+
+# --- setup: app is running, countdown going (shared preamble) ---
+include ../common/running.txt
+
+# --- 1. happy path: countdownSeconds takes effect on the next start ---
+app config countdownSeconds 42
+app assert config countdownSeconds == 42
+window tray
+click #tray-show
+app assert countdown == 42
+
+# --- 2. reverse: restore the pinned value ---
+app config countdownSeconds 30
+app assert config countdownSeconds == 30
+
+# --- 3. persistence: reload from disk and the values survive ---
+app config volume 1.5
+app config randomUi false
+app config reload
+app assert config volume == 1.5
+app assert config randomUi == false
+app assert config countdownSeconds == 30
+
+# --- 4. side effects: countdown running, exactly one timer ---
+app assert visible countdown == true
+app assert timers == 1

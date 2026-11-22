@@ -67,6 +67,11 @@ public:
     // Record a non-failure note in the report (e.g. `app state`).
     void note(const std::wstring& msg);
 
+    // Clear accumulated notes/failures so a long-lived runner (the running
+    // app's debug poller) reports each poll independently instead of
+    // re-printing every earlier poll's output.
+    void resetReport();
+
     // Compare the layout snapshot against a golden file, reporting every
     // mismatch. In: path, update (true re-records the baseline; UPDATE_GOLDEN=1
     // in the environment does the same, so updating is a deliberate runner

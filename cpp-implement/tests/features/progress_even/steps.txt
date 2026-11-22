@@ -1,0 +1,50 @@
+# Even picker feature test (M1).
+#
+# The picker must never repeat a word until every non-ignored word has been
+# picked once ("every word is shown once before any word repeats"). The db
+# has a fixed word count, so this is deterministic, not probabilistic:
+# with N words, N picks are all unique and the (N+1)th pick MUST repeat.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - picks recorded, attempts tracked
+#   2. reverse      - reset returns to a clean slate
+#   3. evenness     - N picks unique, attemptsMax == 1
+#   4. pigeonhole   - the (N+1)th pick repeats (expect-fail guard against a
+#                      vacuous unique assertion)
+#   5. side effects - progress saved, state consistent
+
+# --- setup: app is running, countdown going (shared preamble) ---
+include ../common/running.txt
+
+# --- 2. reverse: reset returns to a clean slate ---
+app progress reset
+app assert attemptsTotal == 0
+# the preamble recorded 2 picks (init + the restart above)
+app assert picked == 2
+
+# --- 1. happy path: picks recorded, attempts tracked ---
+app pick 1
+app assert picked == 3
+app assert attemptsTotal == 1
+app assert attemptsMax == 1
+
+# --- 3. evenness: with 2 words in the db, 2 fresh picks are all unique ---
+app assert wordCount == 2
+app pick 1
+app assert picked == 4
+app assert attemptsTotal == 2
+app assert attemptsMax == 1
+app assert picked_unique 2 == true
+
+# --- 4. pigeonhole: the next pick must repeat a word ---
+app pick 1
+app assert attemptsMax == 2
+app assert attemptsTotal == 3
+# 3 picks of 2 words can never be all unique: the assertion must fail,
+# and expect-fail proves the assertion is not vacuous.
+expect-fail app assert picked_unique 3 == true
+
+# --- 5. side effects: reset again leaves no state ---
+app progress reset
+app assert attemptsTotal == 0
+app assert timers == 1

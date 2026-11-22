@@ -1,12 +1,18 @@
 # Shared feature-test setup: app running, word pinned to tests/word.json.
 #
 # Included from tests/features/*/steps.txt via `include ../common/running.txt`
-# (path relative to the including script's directory). Pinning the word here
-# in one place is what keeps every feature test from silently coupling to
-# the fixture: if the fixture changes, `app assert word == ringo` fails and
-# points at THIS file.
+# (path relative to the including script's directory). Pinning the word and
+# the countdown here in one place keeps every feature test from silently
+# coupling to the fixtures: if the fixture changes, `app assert word ==
+# ringo` fails and points at THIS file. (The config default is 600 s; we pin
+# 30 so the countdown is testable with `app tick 30`.)
 
 app init
+app config countdownSeconds 30
+# restart the countdown so it runs with the pinned seconds (init used the
+# 600 s default)
+window tray
+click #tray-show
 app word tests/word.json
 app assert word == ringo
 app assert stopped == false

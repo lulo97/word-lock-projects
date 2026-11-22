@@ -13,6 +13,7 @@
   ],
   "smartExcludesOff": [],
   "excludedFileTypes": [
+    ".json",
     ".bat",
     ".rc",
     ".txt",
@@ -22,7 +23,7 @@
     ".hpp",
     ".md",
     ".ps1",
-    ".json"
+    ".js"
   ],
   "manualExcludes": [],
   "manualIncludes": [],

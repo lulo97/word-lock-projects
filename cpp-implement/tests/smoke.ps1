@@ -58,14 +58,24 @@ try {
         exit 1
     }
 
-    # Prove the timers were live, not just that startup happened: in debug
-    # mode the countdown ticks at 10 ms, so by the first poll it has long
-    # since completed - the app must be in the post-countdown state
-    # (countdown=0 and the input window created by the transition timer).
-    if ($state -notmatch '"countdown":0' -or $state -notmatch '"inputWin":true') {
-        Write-Error "app did not reach the post-countdown state (countdown=0, inputWin=true); timers not live"
+    # Prove the countdown timer is live: it must decrease between two polls
+    # (debug mode ticks at 10 ms, so ~1.5 s is plenty for any configured
+    # countdown). If it already completed before the first poll (a very
+    # short configured countdown), accept the post-countdown state instead:
+    # countdown=0 plus the input window created by the transition timer.
+    $c1 = $null
+    if ($state -match '"countdown":(\d+)') { $c1 = [int]$Matches[1] }
+    Set-Content -Path (Join-Path $root "debug_cmd.txt") -Value "app state" -Encoding ASCII
+    Start-Sleep -Milliseconds 1500
+    $state2 = Get-Content $outFile -Raw
+    $c2 = $null
+    if ($state2 -match '"countdown":(\d+)') { $c2 = [int]$Matches[1] }
+    $completed = ($c1 -eq 0) -and ($state2 -match '"inputWin":true')
+    if ($null -eq $c1 -or $null -eq $c2 -or (($c2 -ge $c1) -and -not $completed)) {
+        Write-Error "countdown not decreasing between polls (c1=$c1 c2=$c2); timer not live"
         exit 1
     }
+    Write-Host "countdown live: $c1 -> $c2"
 }
 finally {
     # Always clean up: kill the app and remove the generated files.

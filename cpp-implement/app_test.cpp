@@ -45,6 +45,10 @@ int wmain(int argc, wchar_t** argv) {
     }
 
     KotobaCppApp app;
+    // Config/progress live in the test's own folder: self-contained and
+    // deterministic across runs and features.
+    app.hooks.configPath = scriptDirOf(script) + L"\\config.json";
+    app.hooks.progressPath = scriptDirOf(script) + L"\\progress.json";
     ScriptRunner runner;             // built-in commands
     app.registerCommands(runner);   // + `app` and `window`
     runner.setScriptDir(scriptDirOf(script));

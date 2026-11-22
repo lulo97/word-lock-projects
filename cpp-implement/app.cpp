@@ -7,12 +7,14 @@
 // then an info screen for a randomly picked Japanese word.
 
 #include "document.h"
+#include "app/script.h"
 #include "core/utf.h"
 #include "utils/debug_log.h"
 #include "utils/set_tray.h"
 #include "utils/word_db.h"
 #include "utils/window_helpers.h"
 
+#include <fstream>
 #include <memory>
 #include <string>
 
@@ -24,6 +26,13 @@ constexpr UINT_PTR TIMER_INPUT_DONE = 102;
 
 class KotobaCppApp {
 public:
+    KotobaCppApp() {
+        if (const wchar_t* env = _wgetenv(L"KOTOBA_DEBUG"))
+            debug_ = env[0] != L'0';
+    }
+
+    void setDebug(bool d) { debug_ = d; }
+
     ~KotobaCppApp() {
         if (countdown_ && countdown_->hwnd())
             remove_tray(countdown_->hwnd());
@@ -52,6 +61,11 @@ public:
 
         start_countdown();
 
+        if (debug_) {
+            // Poll debug_cmd.txt every 250 ms while the app runs.
+            countdown_->setTimer(200, 250, [this] { poll_debug_commands(); });
+        }
+
         MSG message{};
 
         while (GetMessageW(&message, nullptr, 0, 0) > 0) {
@@ -71,7 +85,9 @@ private:
 
     int countdownSeconds_ = 30;
     bool inputDone_ = false;
+    bool debug_ = false;
     WordData currentWord_{};
+    ui::ScriptRunner current_;          // bound to a window via `window` command
 
     // ----- window creation -----
 
@@ -256,9 +272,10 @@ private:
         countdown_->show(true);
         position_bottom_right(*countdown_, 20);
 
+        const int kTickMs = debug_ ? 10 : 1000;   // fast-forwarded countdown in debug
         countdown_->setTimer(
             TIMER_COUNTDOWN,
-            1000,
+            (UINT)kTickMs,
             [this] {
                 on_countdown_tick();
             }
@@ -413,11 +430,70 @@ private:
 
         PostQuitMessage(0);
     }
+
+    // ----- debug command file (agent-driven) -----
+
+    // Reads debug_cmd.txt, runs its commands against the bound window, and
+    // writes the report to debug_out.txt. The command file is consumed
+    // (deleted) after each poll.
+    void poll_debug_commands() {
+        std::ifstream in("debug_cmd.txt");
+        if (!in)
+            return;
+        std::vector<std::string> lines;
+        for (std::string l; std::getline(in, l);) lines.push_back(l);
+        in.close();
+        DeleteFileW(L"debug_cmd.txt");
+
+        std::wofstream out("debug_out.txt");
+        for (auto& raw : lines) {
+            auto t = ui::ScriptRunner::tokens(ui::utf8ToWide(raw));
+            if (t.empty()) continue;
+
+            if (t[0] == L"window") {
+                // window input|info|countdown|tray|settings
+                ui::WindowHost* h = t[1] == L"input" ? input_.get()
+                    : t[1] == L"info" ? info_.get()
+                    : t[1] == L"tray" ? trayMenu_.get()
+                    : t[1] == L"settings" ? settings_.get()
+                    : countdown_.get();
+                if (!h) { out << L"window not created: " << t[1] << L"\n"; continue; }
+                RECT rc; GetClientRect(h->hwnd(), &rc);
+                current_.bind(h->document(), rc.right, rc.bottom, h->dpiScale());
+                continue;
+            }
+            if (t[0] == L"app") { app_command(t, out); continue; }
+            current_.run(ui::utf8ToWide(raw));   // click/type/dump/shot/assert...
+        }
+        out << current_.summary();
+        InvalidateRect(countdown_->hwnd(), nullptr, FALSE);
+    }
+
+    void app_command(const std::vector<std::wstring>& t, std::wostream& out) {
+        if (t[1] == L"state")
+            out << L"countdown=" << countdownSeconds_ << L" inputDone=" << inputDone_
+                << L" word=" << currentWord_.romaji << L" inputWin=" << !!input_ << L"\n";
+        else if (t[1] == L"tick")
+            for (int i = 0, n = _wtoi(t[2].c_str()); i < n; ++i) on_countdown_tick();
+        else if (t[1] == L"show_input") show_input();
+        else if (t[1] == L"show_info") show_info();
+        else if (t[1] == L"word") {
+            currentWord_ = parse_word_json(read_file(t[2]));
+            reset_word_windows();
+        }
+    }
+
+    static std::string read_file(const std::wstring& path) {
+        std::ifstream f(std::string(ui::wideToUtf8(path)), std::ios::binary);
+        return std::string((std::istreambuf_iterator<char>(f)), {});
+    }
 };
 
 } // namespace
 
-int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
+int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmd, int) {
     KotobaCppApp app;
+    if (cmd && wcsstr(cmd, L"--debug"))
+        app.setDebug(true);
     return app.run();
 }

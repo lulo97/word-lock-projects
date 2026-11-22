@@ -8,6 +8,7 @@
 #include "embedded_assets.h"
 #include "json.hpp"
 
+#include <cstdlib>
 #include <random>
 #include <string_view>
 #include <unordered_map>
@@ -138,7 +139,19 @@ WordData pick_random_word() {
     if (wordPaths.empty())
         return {};
 
-    static std::mt19937 rng{std::random_device{}()};
+    // KOTOBA_WORD_ID: fixed word by asset path (e.g. "database/words/ringo.json").
+    // KOTOBA_SEED: deterministic rng seed.
+    if (const char* id = getenv("KOTOBA_WORD_ID")) {
+        for (const auto& p : wordPaths)
+            if (p == id)
+                return parse_word_json(load_asset_bytes(p));
+    }
+
+    static std::mt19937 rng{[] {
+        if (const char* seed = getenv("KOTOBA_SEED"))
+            return static_cast<std::mt19937::result_type>(std::stoul(seed));
+        return std::random_device{}();
+    }()};
     std::uniform_int_distribution<std::size_t> dist(0, wordPaths.size() - 1);
     return parse_word_json(load_asset_bytes(wordPaths[dist(rng)]));
 }

@@ -93,3 +93,30 @@ set_target_properties(MyApp PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}"
 )
+
+# Headless UI script runner (console). Same framework sources as MyApp,
+# but ui_test.cpp as entry point instead of app.cpp.
+add_executable(ui_test ui_test.cpp ${EXTRA_SOURCES})
+
+target_include_directories(ui_test PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ui"
+    "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets"
+)
+
+target_sources(ui_test PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets/embedded_assets.cpp")
+
+target_link_libraries(ui_test PRIVATE
+    user32
+    gdi32
+    shell32
+    winmm
+    gdiplus
+)
+
+set_target_properties(ui_test PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}"
+)

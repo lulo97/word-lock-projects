@@ -1,0 +1,9 @@
+size 1200x800
+dpi 1.5
+load htmls/input.html
+type #answer ringo
+assert value #answer == ringo
+assert exists #feedback
+assert rect #answer w>0
+dump out/smoke.json
+shot out/smoke.png overlay

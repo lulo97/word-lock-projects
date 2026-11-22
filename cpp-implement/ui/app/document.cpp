@@ -554,6 +554,30 @@ void Document::paint(HDC hdc, const RECT& client, float scale) {
     paintDirty_ = false;
 }
 
+namespace {
+
+void collectLayout(Element& el, const std::string& path, nlohmann::json& out) {
+    std::string name = path + "/" + wideToUtf8(el.tag) +
+                       (el.id.empty() ? "" : "#" + wideToUtf8(el.id));
+    const RectF& r = el.box.borderRect;
+    out[name] = { r.x, r.y, r.w, r.h };
+    std::unordered_map<std::string, int> seen;   // disambiguate siblings
+    for (auto& ch : el.children)
+        if (ch->kind == Node::Kind::Element) {
+            auto& c = *static_cast<Element*>(ch.get());
+            std::string key = wideToUtf8(c.tag) + (c.id.empty() ? "" : "#" + wideToUtf8(c.id));
+            collectLayout(c, name + "[" + std::to_string(seen[key]++) + "]", out);
+        }
+}
+
+} // namespace
+
+nlohmann::json Document::layoutSnapshot() {
+    nlohmann::json j = nlohmann::json::object();
+    if (root_) collectLayout(*root_, "", j);
+    return j;
+}
+
 std::vector<std::wstring> Document::validate() {
     std::vector<std::wstring> p;
     if (!root_)

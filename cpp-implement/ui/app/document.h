@@ -6,6 +6,8 @@
 #include "dom/node.h"
 #include "app/events.h"
 
+#include "json.hpp"
+
 namespace ui {
 
 // Owns one HTML screen: tree + styles + layout + events. One Document per top-level window.
@@ -78,6 +80,10 @@ public:
     // Check structural invariants (dangling pointers, duplicate ids, NaN rects,
     // unresolved placeholders). Out: list of problems (empty if fine).
     std::vector<std::wstring> validate();
+
+    // Compact layout snapshot for golden-snapshot regression tests:
+    // flat map of element path -> [x, y, w, h] border rects.
+    nlohmann::json layoutSnapshot();
 
 private:
     std::unique_ptr<Element> root_;

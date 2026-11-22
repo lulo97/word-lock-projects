@@ -1,0 +1,4 @@
+size 800x600
+dpi 1
+load page.html
+golden expected.layout.json

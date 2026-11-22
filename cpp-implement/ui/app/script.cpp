@@ -4,7 +4,11 @@
 #include "core/utf.h"
 #include "dom/tree_ops.h"
 
+#include "json.hpp"
+
 #include <cwchar>
+#include <cmath>
+#include <fstream>
 
 namespace ui {
 
@@ -120,6 +124,49 @@ void ScriptRunner::assertCmd(const std::vector<std::wstring>& t) {
     }
 }
 
+void ScriptRunner::setScriptDir(const std::wstring& dir) {
+    scriptDir_ = dir;
+}
+
+std::wstring ScriptRunner::resolvePath(const std::wstring& path) const {
+    bool absolute = (path.size() >= 2 && iswalpha(path[0]) && path[1] == L':')
+        || (path.size() >= 1 && (path[0] == L'/' || path[0] == L'\\'));
+    if (!scriptDir_.empty() && !absolute)
+        return scriptDir_ + L"\\" + path;
+    return path;
+}
+
+void ScriptRunner::golden(const std::wstring& path, bool update) {
+    layout();
+    auto actual = doc_->layoutSnapshot();
+    std::wstring p = resolvePath(path);
+    std::ifstream f(std::string(wideToUtf8(p)));
+    if (!f) {
+        if (update) {
+            std::ofstream out(std::string(wideToUtf8(p)), std::ios::binary);
+            out << actual.dump(1);
+            return;
+        }
+        fail(L"golden: cannot open " + p);
+        return;
+    }
+
+    auto expected = nlohmann::json::parse(f, nullptr, false);
+    if (expected.is_discarded()) { fail(L"golden: cannot parse " + path); return; }
+
+    for (auto& [k, e] : expected.items()) {
+        if (!actual.contains(k)) { fail(L"golden: missing " + utf8ToWide(k)); continue; }
+        for (int i = 0; i < 4; ++i)
+            if (std::fabs(e[i].get<float>() - actual[k][i].get<float>()) > 0.5f) {
+                fail(utf8ToWide(k) + L" expected " + utf8ToWide(e.dump()) +
+                     L" got " + utf8ToWide(actual[k].dump()));
+                break;
+            }
+    }
+    for (auto& [k, v] : actual.items())
+        if (!expected.contains(k)) fail(L"golden: unexpected " + utf8ToWide(k));
+}
+
 void ScriptRunner::run(const std::wstring& line) {
     ++lineNo_;
     if (!doc_) { fail(L"no window bound"); return; }
@@ -157,6 +204,10 @@ void ScriptRunner::run(const std::wstring& line) {
             doc_->screenshot(t[1] + L".overlay.png", W_, H_, scale_, true);
     }
     else if (c == L"assert"){ assertCmd(t); }
+    else if (c == L"golden") {
+        if (t.size() < 2) fail(L"golden: missing path");
+        else golden(t[1], t.size() > 2 && t[2] == L"update");
+    }
     else fail(L"unknown command " + c);
 
     for (auto& p : doc_->validate())

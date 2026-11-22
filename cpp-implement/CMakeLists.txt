@@ -94,29 +94,41 @@ set_target_properties(MyApp PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}"
 )
 
-# Headless UI script runner (console). Same framework sources as MyApp,
-# but ui_test.cpp as entry point instead of app.cpp.
-add_executable(ui_test ui_test.cpp ${EXTRA_SOURCES})
+# Console test tools. Same framework sources as MyApp, with a console entry
+# point instead of app.cpp.
+function(add_console_ui_target target_name main_source)
+    add_executable(${target_name} ${main_source} ${EXTRA_SOURCES})
+    target_include_directories(${target_name} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/third_party"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ui"
+        "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets"
+    )
+    target_sources(${target_name} PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets/embedded_assets.cpp")
+    target_link_libraries(${target_name} PRIVATE
+        user32
+        gdi32
+        shell32
+        winmm
+        gdiplus
+    )
+    set_target_properties(${target_name} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}"
+        RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}"
+        RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}"
+    )
+endfunction()
 
-target_include_directories(ui_test PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/third_party"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ui"
-    "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets"
-)
+add_console_ui_target(ui_test ui_test.cpp)
 
-target_sources(ui_test PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets/embedded_assets.cpp")
+# Unit tests (table-driven) and seeded fuzz.
+add_console_ui_target(unit_tests tests/unit/unit_tests.cpp)
+add_console_ui_target(fuzz tests/fuzz/fuzz.cpp)
 
-target_link_libraries(ui_test PRIVATE
-    user32
-    gdi32
-    shell32
-    winmm
-    gdiplus
-)
-
-set_target_properties(ui_test PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}"
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}"
-    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}"
-    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}"
-)
+# Optional AddressSanitizer for the fuzz target (MSVC 14.29+).
+option(UI_ENABLE_ASAN "Build fuzz with /fsanitize=address" OFF)
+if(UI_ENABLE_ASAN AND MSVC)
+    target_compile_options(fuzz PRIVATE /fsanitize=address)
+    target_link_options(fuzz PRIVATE /fsanitize=address)
+endif()

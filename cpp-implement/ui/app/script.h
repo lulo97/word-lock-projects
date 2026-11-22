@@ -34,6 +34,17 @@ public:
     // a failed load). In: message.
     void fail(const std::wstring& msg);
 
+    // Compare the layout snapshot against a golden file, reporting every
+    // mismatch. In: path, update (true re-records the baseline).
+    // Only writes when update is true; a missing file otherwise fails.
+    void golden(const std::wstring& path, bool update);
+
+    // Resolve command file paths relative to the running script's directory,
+    // so case files stay self-contained ("golden expected.layout.json").
+    // Absolute paths (drive letter or root) are returned as-is.
+    void setScriptDir(const std::wstring& dir);
+    std::wstring resolvePath(const std::wstring& path) const;
+
     // Split a line on spaces; "quoted text" tokens may contain spaces.
     static std::vector<std::wstring> tokens(const std::wstring& line);
 
@@ -49,6 +60,7 @@ private:
     float scale_ = 1.f;
     int failures_ = 0, lineNo_ = 0;
     std::vector<std::wstring> messages_;
+    std::wstring scriptDir_;
 
     void settle();
     Element* need(const std::wstring& sel);

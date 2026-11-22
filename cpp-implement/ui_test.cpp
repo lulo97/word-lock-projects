@@ -51,7 +51,8 @@ struct Runner {
     ScriptRunner runner{ doc, W, H, scale };
 
     void loadCmd(const std::wstring& path) {
-        std::ifstream f(std::string(wideToUtf8(path)), std::ios::binary);
+        std::wstring p = runner.resolvePath(path);
+        std::ifstream f(std::string(wideToUtf8(p)), std::ios::binary);
         std::string bytes((std::istreambuf_iterator<char>(f)), {});
         std::wstring html = fill_template(utf8ToWide(bytes), word);
         if (!f || !doc.load(html)) {
@@ -62,12 +63,20 @@ struct Runner {
     }
 };
 
+static std::wstring scriptDirOf(const std::wstring& script) {
+    size_t slash = script.find_last_of(L"/\\");
+    return slash == std::wstring::npos ? std::wstring(L".") : script.substr(0, slash);
+}
+
 int wmain(int argc, wchar_t** argv) {
     Runner r;
     std::wstring script;
     for (int i = 1; i < argc; ++i) {
         std::wstring a = argv[i];
-        if (a == L"--script") script = argv[++i];
+        if (a == L"--script") {
+            script = argv[++i];
+            r.runner.setScriptDir(scriptDirOf(script));   // relative case paths
+        }
         else if (a == L"--word") {                       // deterministic template data
             std::ifstream f(wideToUtf8(argv[++i]), std::ios::binary);
             r.word = parse_word_json(std::string((std::istreambuf_iterator<char>(f)), {}));

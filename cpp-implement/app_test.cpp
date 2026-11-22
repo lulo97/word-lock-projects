@@ -17,6 +17,9 @@
 //   app assert <key> == <value>    key in {stopped,countdown,inputDone,word,
 //                                   inputWin,infoWin,timers,freezeCalls,
 //                                   resumeCalls} or `visible <window>`
+//   app tray-event <event>         deliver a real tray-icon event to
+//                                   on_tray_click: double-click | left-click
+//                                   | right-click
 //   app state                      print stateJson() (for debugging)
 //   window <name>                  bind to countdown/tray/input/info/settings
 //   click #id / type #id text / assert ...
@@ -90,6 +93,15 @@ struct AppRunner {
             app.setWord(std::string((std::istreambuf_iterator<char>(f)), {}));
         }
         else if (t[1] == L"assert") assertState(t);
+        else if (t[1] == L"tray-event") {
+            if (t.size() < 3) { fail(L"app tray-event: need <double-click|left-click|right-click>"); return; }
+            UINT ev = t[2] == L"double-click" ? WM_LBUTTONDBLCLK
+                     : t[2] == L"left-click"   ? WM_LBUTTONUP
+                     : t[2] == L"right-click"  ? WM_RBUTTONUP
+                     : 0;
+            if (!ev) { fail(L"app tray-event: unknown event " + t[2]); return; }
+            app.trayEvent(ev);
+        }
         else if (t[1] == L"state") std::wcout << utf8ToWide(app.stateJson().dump(2)) << L"\n";
         else fail(L"unknown app command " + t[1]);
     }

@@ -43,6 +43,7 @@ htmls/             the five screens (countdown, tray_menu, settings, input, info
 database/words/    word JSON files, one per word (embedded)
 tests/             regression pipeline (see below)
 ui_test.cpp        headless script runner (console entry point)
+app_test.cpp       headless feature-test runner (drives KotobaCppApp)
 imgs/              browser-based Tailwind design references for the screens
 ```
 
@@ -91,6 +92,14 @@ Built for agent-driven debugging: every tool produces files an agent can read.
   (no window, no `handleMessage`) with deterministic mouse/keyboard input and
   answers with JSON dumps, PNG screenshots, `validate()` after every step and
   a pass/fail exit code.
+- **`app_test.exe`** — headless feature-test runner. Drives a real (hidden)
+  `KotobaCppApp` through a `steps.txt` of `app` + ScriptRunner commands:
+  `app init` (windows, no message loop), `app tick [n]` (simulated countdown +
+  one-shot timers), `app word <file>`, `app assert <key> == <value>` (keys in
+  `stateJson()`, incl. `visible <window>`), `app tray-event double-click|
+  left-click|right-click` (real tray-icon events). One folder per feature
+  under `tests/features/`; every feature ships a `steps.txt` that fails
+  before the change and passes after.
 - **Command-file control of the running app** — with `--debug` or
   `KOTOBA_DEBUG=1`, the app polls `debug_cmd.txt` every 250 ms, runs the same
   `ScriptRunner` commands against a bound window, and writes the report to
@@ -134,6 +143,7 @@ exit code is nonzero on any failure.
 | Layer | What it catches | Where |
 |---|---|---|
 | Golden layout snapshots | layout/style/parser regressions | `tests/cases/*/` (8 cases: flex center/row/column/grow, absolute, padding/margin, overflow, input caret) |
+| Feature tests | app state-machine regressions (stop/start toggle, tray events) | `tests/features/*/` via `app_test.exe` |
 | Metamorphic DPI check | any code path that ignores scale | `ui_test.exe --dpi-matrix <page>` over every case |
 | Unit tests | pure functions (spacing, palette, classes, utf, parser, path, template) | `tests/unit/unit_tests.cpp` |
 | Seeded fuzz + `validate()` | crashes, hangs, dangling pointers | `tests/fuzz/fuzz.cpp` (parser fuzz + event storm) |

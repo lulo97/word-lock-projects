@@ -41,7 +41,15 @@ public:
 
     // Simulate time: call on_countdown_tick() n times, then fire any pending
     // one-shot timers (transition, input-done) once. No real timers, no sleep.
+    // The countdown tick only fires while its timer is pending, matching
+    // the message pump (a dead timer never fires).
     void tick(int n = 1);
+
+    // Simulate a real tray-icon event: the OS delivers these to
+    // on_tray_click via set_tray_click_callback. Test seam for headless
+    // tests (WM_LBUTTONDBLCLK = double click, WM_LBUTTONUP = left click,
+    // WM_RBUTTONUP = right click).
+    void trayEvent(UINT event);
 
     // Window host by name: "countdown", "tray", "input", "info", "settings".
     ui::WindowHost* window(const std::wstring& name);

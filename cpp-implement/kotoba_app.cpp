@@ -81,7 +81,11 @@ int KotobaCppApp::run() {
 
 void KotobaCppApp::tick(int n) {
     for (int i = 0; i < n; ++i)
-        on_countdown_tick();
+        // Only fire if the countdown timer is pending: a dead timer would
+        // never fire in the message pump, so ticking after a stop/skip must
+        // not advance the countdown.
+        if (countdown_ && countdown_->hasTimer(TIMER_COUNTDOWN))
+            on_countdown_tick();
 
     // Simulate one pass of the message pump: fire any one-shot timers that
     // became pending during the ticks (transition -> show_input,
@@ -92,6 +96,13 @@ void KotobaCppApp::tick(int n) {
     if (input_)      input_->fireOneShotTimers();
     if (info_)       info_->fireOneShotTimers();
     if (settings_)   settings_->fireOneShotTimers();
+}
+
+// Test seam: deliver a tray-icon event through the exact same path as the
+// OS callback (set_tray_click_callback -> on_tray_click(lParam), event in
+// the low word of lParam).
+void KotobaCppApp::trayEvent(UINT event) {
+    on_tray_click(event);
 }
 
 ui::WindowHost* KotobaCppApp::window(const std::wstring& name) {
@@ -385,7 +396,15 @@ void KotobaCppApp::show_input() {
         return;
 
     UI_LOG("app", L"show_input word=%s", currentWord_.romaji.c_str());
+    // Opening input cancels any in-flight countdown: kill its timers so a
+    // background tick can't reset the answer mid-typing. A real double-click
+    // delivers UP, DBLCLK, UP, and the trailing UP would re-toggle the tray
+    // menu, so close it now to keep the outcome deterministic.
+    hide_tray_menu();
+    countdown_->killTimer(TIMER_COUNTDOWN);
+    countdown_->killTimer(TIMER_TRANSITION);
     countdown_->show(false);
+    if (info_) info_->show(false);
 
     inputDone_ = false;
     input_->document().setValue(L"answer", L"");
@@ -458,11 +477,16 @@ void KotobaCppApp::on_tray_click(LPARAM lParam) {
         show_tray_menu();
         break;
 
+    // Double click: open the input screen right away, skipping the
+    // countdown.
+    case WM_LBUTTONDBLCLK:
+        show_input();
+        break;
+
     // Left click: toggle.
     case NIN_SELECT:
     case NIN_KEYSELECT:
     case WM_LBUTTONUP:
-    case WM_LBUTTONDBLCLK:
         toggle_tray_menu();
         break;
 

@@ -58,6 +58,10 @@ public:
     // Number of pending timers (for `app assert timers == N`).
     size_t pendingTimers() const { return timers_.size(); }
 
+    // Is a timer pending with this id? (a dead timer never fires in the
+    // message pump, so tick() gates on this)
+    bool hasTimer(UINT_PTR id) const { return timers_.count(id) != 0; }
+
     // Callback when window closes / loses focus (context menu dismissal).
     std::function<void()> onClose;
     std::function<void()> onDeactivate;

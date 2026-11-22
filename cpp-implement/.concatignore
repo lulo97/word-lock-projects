@@ -8,14 +8,21 @@
   ],
   "smartExcludes": [
     "build",
-    "README.md"
+    "README.md",
+    "out"
   ],
   "smartExcludesOff": [],
   "excludedFileTypes": [
     ".bat",
     ".rc",
     ".txt",
-    ".html"
+    ".html",
+    ".cmake",
+    ".h",
+    ".hpp",
+    ".md",
+    ".ps1",
+    ".json"
   ],
   "manualExcludes": [],
   "manualIncludes": [],

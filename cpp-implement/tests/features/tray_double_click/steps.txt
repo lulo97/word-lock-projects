@@ -1,0 +1,76 @@
+# Tray double-click feature test.
+#
+# Double-clicking the tray icon opens the input screen right away, skipping
+# the countdown. Runs headless in one process (app_test.exe): `app init`
+# creates the real (hidden) windows without a message loop, `app tick`
+# simulates pending timers, and `app tray-event` delivers the same OS events
+# the real tray icon would (WM_LBUTTONDBLCLK).
+#
+# Covers the per-feature checklist:
+#   1. happy path   - double-click -> input visible, countdown canceled
+#   2. complete     - type the answer -> info screen, no stale timers
+#   3. repeat       - double-click again (while info is showing) -> input
+#                      reopens with a fresh answer
+#   4. side effects - no pending timers, only the expected windows
+#   5. interleaving - stop right after arming the input-done timer; a later
+#                      tick must not bring the info window back
+#   6. while stopped- double-click reopens input even when the app is paused
+
+# --- setup: app is running, countdown going ---
+app init
+app word tests/word.json
+app assert stopped == false
+app assert countdown == 30
+
+# --- 1. happy path: double-click -> input opens right away ---
+app tray-event double-click
+app assert visible input == true
+app assert visible countdown == false
+window input
+assert value #answer == ""
+app assert inputDone == false
+# the in-flight countdown must be canceled (no phantom ticks)
+app assert timers == 0
+
+# --- 2. complete the word -> info screen ---
+type #answer ringo
+app assert inputDone == true
+app tick
+app assert visible info == true
+app assert visible input == false
+app assert timers == 0
+
+# --- 3. repeat: double-click again (while info is showing) -> input
+# reopens with a fresh answer (catches stuck-state / double-timer bugs) ---
+app tray-event double-click
+app assert visible input == true
+app assert visible info == false
+window input
+assert value #answer == ""
+
+# --- 4. side effects: no stale timers, only expected windows ---
+app assert timers == 0
+app assert inputWin == true
+app assert infoWin == true
+app assert stopped == false
+
+# --- 5. interleaving: arm the input-done timer, then stop; a later tick
+# must not bring the info window back ---
+window input
+type #answer ringo
+app assert inputDone == true
+window tray
+click #tray-stop
+app assert stopped == true
+app assert timers == 0
+app tick
+app assert visible info == false
+app assert visible input == false
+app assert timers == 0
+
+# --- 6. while stopped: double-click reopens input (pause, not quit) ---
+app tray-event double-click
+app assert visible input == true
+app assert inputDone == false
+window input
+assert value #answer == ""

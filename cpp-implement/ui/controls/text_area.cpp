@@ -59,6 +59,7 @@ std::vector<int> TextArea::wrapLines(Element& el, float width) const {
 }
 
 void TextArea::paint(Canvas& canvas, Element& el, float scale) {
+    scale_ = scale;
     RectF content = el.box.contentRect();
 
     if (content.w <= 0 || content.h <= 0)
@@ -135,8 +136,7 @@ bool TextArea::onMouse(Element& el, const MouseEvent& e) {
         return false;
 
     RectF content = el.box.contentRect();
-    float scale = 1.f;
-    TextRun run = makeRun(value, el.style, scale);
+    TextRun run = makeRun(value, el.style, scale_);
     measureRun(run);
 
     float lineH = run.lineHeightPx > 0 ? run.lineHeightPx : run.fontPx * 1.5f;
@@ -151,7 +151,7 @@ bool TextArea::onMouse(Element& el, const MouseEvent& e) {
         start += static_cast<int>(lines[i].size()) + 1;
 
     std::vector<float> offsets = charOffsets(run);
-    float relative = e.x - content.x - 4;
+    float relative = e.x - content.x - 4 * scale_;
     int column = 0;
 
     while (column < static_cast<int>(lines[line].size()) &&

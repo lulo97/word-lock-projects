@@ -15,6 +15,12 @@ for /d %%c in (tests\cases\*) do (
     if errorlevel 1 (echo CASE %%c FAILED >> tests\out\report.txt & set FAIL=1)
 )
 
+echo === dpi matrix === >> tests\out\report.txt
+for /d %%c in (tests\cases\*) do (
+    build\ui_test.exe --word tests\word.json --dpi-matrix %%c\page.html >> tests\out\report.txt 2>&1
+    if errorlevel 1 (echo DPI %%c FAILED >> tests\out\report.txt & set FAIL=1)
+)
+
 echo === fuzz === >> tests\out\report.txt
 build\fuzz.exe --seed 1 --iters 2000 >> tests\out\report.txt 2>&1 || set FAIL=1
 

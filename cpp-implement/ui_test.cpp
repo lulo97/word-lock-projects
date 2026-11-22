@@ -68,9 +68,47 @@ static std::wstring scriptDirOf(const std::wstring& script) {
     return slash == std::wstring::npos ? std::wstring(L".") : script.substr(0, slash);
 }
 
+// Metamorphic DPI check: the same page at scales 1.0/1.25/1.5/2.0 must scale
+// proportionally. No golden data needed; flags any code path that ignores scale.
+static int runDpiMatrix(const std::wstring& pagePath, const WordData& word) {
+    std::ifstream f(std::string(wideToUtf8(pagePath)), std::ios::binary);
+    std::string bytes((std::istreambuf_iterator<char>(f)), {});
+    std::wstring html = fill_template(utf8ToWide(bytes), word);
+    if (!f) { std::wcout << L"cannot load " << pagePath << L"\n"; return 1; }
+
+    int fails = 0;
+    auto snap = [&](float s) {
+        Document d;
+        d.load(html);
+        d.ensureLayout((int)(800 * s), (int)(600 * s), s);
+        return d.layoutSnapshot();
+    };
+
+    auto base = snap(1.0f);
+    for (float s : { 1.25f, 1.5f, 2.0f }) {
+        auto cur = snap(s);
+        for (auto& [k, v] : base.items()) {
+            if (!cur.contains(k)) { ++fails; std::wcout << L"missing at scale " << s << L": " << utf8ToWide(k) << L"\n"; continue; }
+            for (int i = 0; i < 4; ++i) {
+                float want = v[i].get<float>() * s;
+                float got = cur[k][i].get<float>();
+                if (std::fabs(want - got) > 2.0f + 0.01f * want) {   // text rounding slack
+                    ++fails;
+                    std::wcout << L"scale " << s << L" " << utf8ToWide(k) << L"[" << i << L"] want "
+                                << want << L" got " << got << L"\n";
+                }
+            }
+        }
+        for (auto& [k, v] : cur.items())
+            if (!base.contains(k)) { ++fails; std::wcout << L"unexpected at scale " << s << L": " << utf8ToWide(k) << L"\n"; }
+    }
+    std::wcout << (fails ? L"FAILED " : L"OK ") << fails << L" mismatch(es)\n";
+    return fails ? 1 : 0;
+}
+
 int wmain(int argc, wchar_t** argv) {
     Runner r;
-    std::wstring script;
+    std::wstring script, dpiMatrixPage;
     for (int i = 1; i < argc; ++i) {
         std::wstring a = argv[i];
         if (a == L"--script") {
@@ -81,7 +119,11 @@ int wmain(int argc, wchar_t** argv) {
             std::ifstream f(wideToUtf8(argv[++i]), std::ios::binary);
             r.word = parse_word_json(std::string((std::istreambuf_iterator<char>(f)), {}));
         }
+        else if (a == L"--dpi-matrix") dpiMatrixPage = argv[++i];
     }
+
+    if (!dpiMatrixPage.empty())
+        return runDpiMatrix(dpiMatrixPage, r.word);
     std::ifstream in(wideToUtf8(script));
     std::string line;
     while (std::getline(in, line)) {

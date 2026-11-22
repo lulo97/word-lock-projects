@@ -11,6 +11,7 @@ public:
     int caret = 0;                 // index in value
     int selAnchor = -1;            // selection start or -1
     float scrollX = 0;             // horizontal scroll px
+    float scale_ = 1.f;            // last known DPI scale (set in paint/intrinsicSize)
     bool caretVisible = true;
     std::function<void(const std::wstring&)> onChange;
 

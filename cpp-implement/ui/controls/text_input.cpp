@@ -68,6 +68,7 @@ void TextInput::init(Element& el) {
 }
 
 void TextInput::paint(Canvas& canvas, Element& el, float scale) {
+    scale_ = scale;
     RectF content = el.box.contentRect();
 
     if (content.w <= 0 || content.h <= 0)
@@ -248,6 +249,7 @@ void TextInput::onFocus(Element& el, bool focused) {
 }
 
 SizeF TextInput::intrinsicSize(Element& el, float scale) {
+    scale_ = scale;
     float lineHeight = el.style.lineHeightIsPx
         ? el.style.lineHeight * scale
         : el.style.fontSize * scale * el.style.lineHeight;
@@ -297,7 +299,7 @@ void TextInput::setValue(const std::wstring& text) {
 int TextInput::indexFromX(Element& el, float x) const {
     (void)el;
 
-    TextRun run = makeRun(value, el.style, 1.f);
+    TextRun run = makeRun(value, el.style, scale_);
     std::vector<float> offsets = charOffsets(run);
 
     int best = 0;
@@ -319,7 +321,7 @@ void TextInput::ensureCaretVisible(Element& el, float visibleW) {
     if (visibleW <= 0)
         return;
 
-    TextRun run = makeRun(value, el.style, 1.f);
+    TextRun run = makeRun(value, el.style, scale_);
     std::vector<float> offsets = charOffsets(run);
     int safeCaret = clampIndex(caret, static_cast<int>(value.size()));
     float caretX = offsets.empty() ? 0.f : offsets[safeCaret];

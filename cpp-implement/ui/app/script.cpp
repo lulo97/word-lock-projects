@@ -3,6 +3,7 @@
 #include "controls/text_input.h"
 #include "core/utf.h"
 #include "dom/tree_ops.h"
+#include "paint/text_draw.h"
 
 #include "json.hpp"
 
@@ -109,6 +110,11 @@ void ScriptRunner::assertCmd(const std::vector<std::wstring>& t) {
     } else if (kind == L"text" || kind == L"value") {
         std::wstring actual = kind == L"text" ? textContent(*e) : doc_->getValue(e->id);
         if (actual != t[4]) fail(t[2] + L" " + kind + L" = '" + actual + L"' expected '" + t[4] + L"'");
+    } else if (kind == L"caret") {                     // assert caret #id == N
+        auto* in = dynamic_cast<TextInput*>(e->control.get());
+        if (!in || in->caret != _wtoi(t[4].c_str()))
+            fail(t[2] + L" caret=" + (in ? std::to_wstring(in->caret) : std::wstring(L"n/a")) +
+                 L" expected " + t[4]);
     } else if (kind == L"rect") {
         const std::wstring& c = t[3];
         float v = c[0] == L'x' ? e->box.borderRect.x : c[0] == L'y' ? e->box.borderRect.y
@@ -204,6 +210,40 @@ void ScriptRunner::run(const std::wstring& line) {
             doc_->screenshot(t[1] + L".overlay.png", W_, H_, scale_, true);
     }
     else if (c == L"assert"){ assertCmd(t); }
+    else if (c == L"click-at") {                        // click-at #id fx fy (fractional)
+        if (t.size() < 4) fail(L"click-at: need #id fx fy");
+        else if (auto* e = need(t[1])) {
+            layout();
+            RectF r = e->box.borderRect;
+            float x = r.x + r.w * (float)_wtof(t[2].c_str());
+            float y = r.y + r.h * (float)_wtof(t[3].c_str());
+            auto& ev = doc_->events();
+            ev.onMouseMove(*doc_->root(), x, y, false);
+            ev.onMouseDown(*doc_->root(), x, y);
+            ev.onMouseUp(*doc_->root(), x, y);
+            settle();
+        }
+    }
+    else if (c == L"click-char") {                      // click-char #id N -> click on boundary N
+        if (t.size() < 3) fail(L"click-char: need #id N");
+        else if (auto* e = need(t[1])) {
+            layout();
+            auto* in = dynamic_cast<TextInput*>(e->control.get());
+            if (!in) { fail(L"click-char: not a text input"); return; }
+            int n = _wtoi(t[2].c_str());
+            TextRun run = makeRun(in->value, e->style, scale_);   // REAL scale, same as paint
+            auto offs = charOffsets(run);
+            if (n < 0 || n >= (int)offs.size()) { fail(L"click-char: N out of range"); return; }
+            RectF cr = e->box.contentRect();
+            float x = cr.x - in->scrollX + offs[n];
+            float y = cr.y + cr.h / 2;
+            auto& ev = doc_->events();
+            ev.onMouseMove(*doc_->root(), x, y, false);
+            ev.onMouseDown(*doc_->root(), x, y);
+            ev.onMouseUp(*doc_->root(), x, y);
+            settle();
+        }
+    }
     else if (c == L"golden") {
         if (t.size() < 2) fail(L"golden: missing path");
         else golden(t[1], t.size() > 2 && t[2] == L"update");

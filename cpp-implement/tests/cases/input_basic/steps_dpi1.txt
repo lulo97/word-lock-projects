@@ -1,0 +1,6 @@
+size 800x600
+dpi 1
+load page.html
+type #answer abcdef
+click-char #answer 2
+assert caret #answer == 2

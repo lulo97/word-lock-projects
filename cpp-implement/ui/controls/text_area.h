@@ -11,6 +11,7 @@ public:
     int caret = 0;
     int selAnchor = -1;
     float scrollY = 0;
+    float scale_ = 1.f;            // last known DPI scale (set in paint)
     bool caretVisible = true;
     std::function<void(const std::wstring&)> onChange;
 

@@ -168,7 +168,8 @@ struct Runner {
         else if (c == L"assert"){ assertCmd(t); }
         else fail(L"unknown command " + c);
 
-        // Document::validate() checks run after every step (added in method 5).
+        for (auto& p : doc.validate())
+            fail(L"validate: " + p);
     }
 };
 

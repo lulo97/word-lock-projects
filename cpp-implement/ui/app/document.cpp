@@ -22,6 +22,9 @@
 #include <windowsx.h>
 
 #include <algorithm>
+#include <cmath>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace ui {
 
@@ -551,6 +554,53 @@ void Document::paint(HDC hdc, const RECT& client, float scale) {
     paintDirty_ = false;
 }
 
+std::vector<std::wstring> Document::validate() {
+    std::vector<std::wstring> p;
+    if (!root_)
+        return p;
+
+    std::unordered_set<const Element*> alive;
+    std::unordered_map<std::wstring, int> ids;
+    auto name = [](const Element& e) { return e.tag + (e.id.empty() ? L"" : L"#" + e.id); };
+
+    walk(*root_, [&](Element& el) {
+        alive.insert(&el);
+        if (!el.id.empty() && ++ids[el.id] == 2)
+            p.push_back(L"duplicate id: " + el.id);
+
+        for (auto& ch : el.children)
+            if (ch->parent != &el)
+                p.push_back(L"bad parent pointer under " + name(el));
+
+        const RectF& r = el.box.borderRect;
+        if (!std::isfinite(r.x) || !std::isfinite(r.y) || !std::isfinite(r.w) || !std::isfinite(r.h))
+            p.push_back(L"NaN/Inf rect: " + name(el));
+        else if (r.w < 0 || r.h < 0)
+            p.push_back(L"negative size: " + name(el));
+
+        if (!std::isfinite(el.box.scrollY) || el.box.scrollY < 0 ||
+            el.box.scrollY > el.box.maxScrollY() + 0.5f)
+            p.push_back(L"scrollY out of range: " + name(el));
+
+        for (auto& a : el.attrs)
+            if (a.second.find(L"{{") != std::wstring::npos)
+                p.push_back(L"unresolved placeholder in attr " + a.first + L" of " + name(el));
+        for (auto& ch : el.children)
+            if (ch->kind == Node::Kind::Text &&
+                static_cast<TextNode*>(ch.get())->text.find(L"{{") != std::wstring::npos)
+                p.push_back(L"unresolved placeholder in text of " + name(el));
+        return true;
+    });
+
+    auto chk = [&](const Element* e, const wchar_t* what) {
+        if (e && !alive.count(e))
+            p.push_back(std::wstring(L"dangling EventState::") + what);
+    };
+    chk(events_.hovered, L"hovered");   chk(events_.focused, L"focused");
+    chk(events_.active, L"active");     chk(events_.captured, L"captured");
+    return p;
+}
+
 namespace {
 
 // Find the CLSID of the registered PNG encoder. Out: true if found.
@@ -818,6 +868,8 @@ bool Document::dumpTree(const std::wstring& path, int maxDepth) {
         {"focused", events_.focused ? wideToUtf8(events_.focused->id) : ""},
         {"hovered", events_.hovered ? wideToUtf8(events_.hovered->id) : ""}
     };
+    out["problems"] = nlohmann::json::array();
+    for (auto& p : validate()) out["problems"].push_back(wideToUtf8(p));
     out["tree"] = toJson(*root_, events_, *root_, 0, maxDepth);
 
     std::ofstream f(path, std::ios::binary);

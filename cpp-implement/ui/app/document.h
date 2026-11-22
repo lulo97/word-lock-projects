@@ -75,6 +75,10 @@ public:
     // Dump the element tree as JSON to a file. In: path, maxDepth. Out: true on success.
     bool dumpTree(const std::wstring& path, int maxDepth = 99);
 
+    // Check structural invariants (dangling pointers, duplicate ids, NaN rects,
+    // unresolved placeholders). Out: list of problems (empty if fine).
+    std::vector<std::wstring> validate();
+
 private:
     std::unique_ptr<Element> root_;
     EventState events_;

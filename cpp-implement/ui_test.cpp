@@ -77,9 +77,12 @@ static int runDpiMatrix(const std::wstring& pagePath, const WordData& word) {
     if (!f) { std::wcout << L"cannot load " << pagePath << L"\n"; return 1; }
 
     int fails = 0;
-    auto snap = [&](float s) {
+    // A failed load must count as a failure: an empty snapshot would
+    // trivially "match" and hide the broken page.
+    auto snap = [&](float s) -> nlohmann::json {
         Document d;
-        d.load(html);
+        if (!d.load(html)) { ++fails; std::wcout << L"load failed at scale " << s << L"\n";
+                              return nlohmann::json::object(); }
         d.ensureLayout((int)(800 * s), (int)(600 * s), s);
         return d.layoutSnapshot();
     };
@@ -109,7 +112,7 @@ static int runDpiMatrix(const std::wstring& pagePath, const WordData& word) {
 int wmain(int argc, wchar_t** argv) {
     Runner r;
     std::wstring script, dpiMatrixPage;
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i + 1 < argc; ++i) {
         std::wstring a = argv[i];
         if (a == L"--script") {
             script = argv[++i];
@@ -124,15 +127,26 @@ int wmain(int argc, wchar_t** argv) {
 
     if (!dpiMatrixPage.empty())
         return runDpiMatrix(dpiMatrixPage, r.word);
+
+    // A missing/typo'd script is a failure (exit 2), not a green run:
+    // previously an empty script reported 0 failures and passed.
     std::ifstream in(wideToUtf8(script));
-    std::string line;
-    while (std::getline(in, line)) {
-        std::wstring wline = utf8ToWide(line);
+    if (script.empty() || !in) {
+        std::wcout << L"cannot open script\n";
+        return 2;
+    }
+    int line = 0;
+    std::string raw;
+    while (std::getline(in, raw)) {
+        ++line;
+        std::wstring wline = utf8ToWide(raw);
         auto t = ScriptRunner::tokens(wline);
         if (!t.empty() && t[0] == L"load") {
+            r.runner.setLocation(script, line);
             r.loadCmd(t[1]);
             continue;
         }
+        r.runner.setLocation(script, line);
         r.runner.run(wline);
     }
     std::wcout << r.runner.summary();

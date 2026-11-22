@@ -52,8 +52,18 @@ try {
     $state = Get-Content $outFile -Raw
     Write-Host "app state: $state"
 
-    if ($state -notmatch "stopped=0") {
-        Write-Error "app state missing 'stopped=0' (tray/countdown not running)"
+    # stateJson() dumps bools as true/false, ints as digits.
+    if ($state -notmatch '"stopped":false') {
+        Write-Error "app state missing 'stopped:false' (tray/countdown not running)"
+        exit 1
+    }
+
+    # Prove the timers were live, not just that startup happened: in debug
+    # mode the countdown ticks at 10 ms, so by the first poll it has long
+    # since completed - the app must be in the post-countdown state
+    # (countdown=0 and the input window created by the transition timer).
+    if ($state -notmatch '"countdown":0' -or $state -notmatch '"inputWin":true') {
+        Write-Error "app did not reach the post-countdown state (countdown=0, inputWin=true); timers not live"
         exit 1
     }
 }

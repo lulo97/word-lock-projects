@@ -18,20 +18,36 @@
 #include "../../utils/word_db.h"
 
 #include <iostream>
+#include <sstream>
+#include <cmath>
 
 using namespace ui;
 
 static int g_fail = 0, g_run = 0;
 
+namespace {
+template <typename A, typename B>
+std::string eqMsg(const char* fa, const char* fb, const A& a, const B& b) {
+    std::ostringstream os;
+    os << fa << " != " << fb << "  [" << a << "] [" << b << "]";
+    return os.str();
+}
+}
+
 #define CHECK(c) do { ++g_run; if (!(c)) { ++g_fail; std::cout << __FILE__ << ":" << __LINE__ << "  " #c "\n"; } } while (0)
-#define CHECK_EQ(a, b) do { ++g_run; auto _a = (a); auto _b = (b); if (!(_a == _b)) { ++g_fail; std::cout << __FILE__ << ":" << __LINE__ << "  " #a " != " #b "\n"; } } while (0)
+// Prints actual values on failure (diagnosis without a debugger).
+#define CHECK_EQ(a, b) do { ++g_run; auto _a = (a); auto _b = (b); if (!(_a == _b)) { ++g_fail; std::cout << __FILE__ << ":" << __LINE__ << "  " << eqMsg(#a, #b, _a, _b) << "\n"; } } while (0)
 #define WCHECK_EQ(a, b) do { ++g_run; auto _a = (a); auto _b = (b); if (!(_a == _b)) { ++g_fail; std::wcout << __LINE__ << L"  " L#a L" != " L#b << L"  [" << _a << L"] [" << _b << L"]\n"; } } while (0)
+// Epsilon comparison for floats: exact == bites on 1.5rem-style math.
+#define CHECK_NEAR(a, b, eps) do { ++g_run; double _a = (a), _b = (b); if (std::fabs(_a - _b) > (eps)) { ++g_fail; std::cout << __FILE__ << ":" << __LINE__ << "  " #a " ~ " #b "  [" << _a << "] [" << _b << "]\n"; } } while (0)
 
 void test_spacing() {
     float px;
     bool pct;
-    CHECK(parseSpacingScale(L"4", px) && px == 16);
-    CHECK(parseSpacingScale(L"0.5", px) && px == 2);
+    CHECK(parseSpacingScale(L"4", px));
+    CHECK_NEAR(px, 16, 1e-4);
+    CHECK(parseSpacingScale(L"0.5", px));
+    CHECK_NEAR(px, 2, 1e-4);
     CHECK(!parseSpacingScale(L"13", px));                       // not in scale
     CHECK(parseArbitraryLength(L"[1.5rem]", 16, px, pct) && px == 24 && !pct);
     CHECK(parseArbitraryLength(L"[50%]", 16, px, pct) && pct && px == 50);
@@ -93,8 +109,10 @@ void test_template() {
     w.kanji = L"食べる";
     WCHECK_EQ(fill_template(L"{{kanji}}!", w), std::wstring(L"食べる!"));
     // Documents current behaviour of the unresolved-placeholder bug (#3).
+    // TODO(#3): flip this check once you decide to strip unresolved
+    // placeholders; keep it as a characterization test until then.
     std::wstring out = fill_template(L"{{example3_vi}}", w);
-    CHECK(out.find(L"{{") != std::wstring::npos);                // flip once you decide to strip
+    CHECK(out.find(L"{{") != std::wstring::npos);
 }
 
 int main() {

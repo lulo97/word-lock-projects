@@ -108,7 +108,12 @@ Built for agent-driven debugging: every tool produces files an agent can read.
 
 ### Script language
 
-Shared by `ui_test.exe` and the running-app poller (`ui/app/script.cpp`):
+One command registry (`ui/app/script.cpp`), shared by `ui_test.exe`,
+`app_test.exe` and the running-app poller: the built-in document commands
+plus the `app`/`window` commands registered by
+`KotobaCppApp::registerCommands()`. Unknown commands, unknown assert kinds,
+unknown keys and short argument lists are all **failures**, never silent
+passes; failures report `FAIL <file>:<line>: ...` (clickable in VS/VS Code).
 
 ```
 size 800x600              # viewport
@@ -122,23 +127,48 @@ key Enter / Backspace / Tab / ...
 wheel x y delta
 dump out.json              # rich JSON dump
 shot out.png [overlay]     # PNG screenshot
-assert exists #id / visible #id
-assert text|value #id == X
+assert exists #id / visible #id        # visible: hidden by own display/zero
+                                       # width OR any ancestor's display:none
+assert not exists #id / not visible #id
+assert text|value #id == X      # the operator must be ==, exactly
 assert caret #id == N
-assert rect #id w>0         # x/y/w/h with < > <= >= ==
+assert rect #id w>0             # x/y/w/h with < > <= >= == (== has 0.5 px slack)
 golden expected.layout.json [update]   # compact layout snapshot
+include <path>                # run another script (relative to this one);
+                               # shared setups live in tests/features/common/
+expect-fail <command>         # passes only if the inner command FAILS
+                               # (guards against vacuous assertions)
+app init / tick [n] / word <file> / state
+app assert <key> == <value>   # key in stateJson(), incl. `visible <window>`;
+                               # prints full state on failure
+app tray-event double-click | left-click | right-click
+window <countdown|tray|input|info|settings>
 ```
 
 `golden` compares a flat `element path -> [x,y,w,h]` map with a 0.5 px
-tolerance and reports every mismatch. `golden <file> update` (re)records the
-baseline; a missing file without `update` fails. Case files resolve
-`load`/`golden` paths relative to the script's own directory, so a case
-folder is self-contained.
+tolerance and reports every mismatch. A missing golden is a failure; re-
+recording the baseline is deliberate - `golden <file> update` in a steps
+file, or `UPDATE_GOLDEN=1` in the environment (set by `run.ps1 -Update`).
+Case files resolve `load`/`golden` paths relative to the script's own
+directory, so a case folder is self-contained.
 
 ## Tests
 
-`tests/run_tests.bat` runs the whole pipeline and writes `tests/out/report.txt`;
-exit code is nonzero on any failure.
+`tests/run.ps1` is the single test driver (PowerShell, not batch): it
+discovers every test, runs it, and writes `tests/out/report.txt` with a
+failure summary at the bottom; exit code is nonzero on any failure or any
+missing script/exe.
+
+```
+powershell -ExecutionPolicy Bypass -File tests\run.ps1                # everything
+powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Filter stop   # fast inner loop
+powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Update        # re-record goldens
+powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Seed random   # nightly fuzz
+```
+
+Discovery: `tests/cases/*/steps*.txt` (every script in a case folder runs,
+not just `steps.txt`), `tests/features/*/steps.txt`, unit tests, the DPI
+matrix, fuzz and the one real-process `smoke.ps1`.
 
 | Layer | What it catches | Where |
 |---|---|---|
@@ -156,10 +186,14 @@ build\unit_tests.exe
 build\fuzz.exe --seed 1 --iters 2000
 ```
 
-Convention: after any engine change, run `run_tests.bat`, read
+Convention: after any engine change, run `run.ps1`, read
 `tests/out/report.txt`, and on a failing case open the case's `shot`/dump
-files. Never run `golden ... update` (blessing a baseline) unless a human has
+files. Never run with `-Update` (blessing a baseline) unless a human has
 checked the screenshot.
+
+Scaffolding: `powershell -File tests\new_feature.ps1 <name>` copies the
+checklist template into `tests/features/<name>/steps.txt` and prints the
+`run.ps1 -Filter <name>` command to watch it fail first.
 
 ## Environment variables
 

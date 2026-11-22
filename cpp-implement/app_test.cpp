@@ -7,123 +7,35 @@
 // handlers are invoked directly (as ScriptRunner already does), which is why
 // no message loop is needed.
 //
+// All commands come from the shared ScriptRunner registry: the built-in
+// document commands (click/type/assert/...) plus the `app`/`window` commands
+// registered by KotobaCppApp::registerCommands(). There is no app-local
+// command code here; a feature test only writes steps.txt.
+//
 // Build:  cmake --build build --config Release   (target: app_test)
 // Usage:  build\app_test.exe --script tests\features\stop_start\steps.txt
 //
-// Script format (one command per line, # starts a comment):
-//   app init                       create windows (hidden), start countdown
-//   app word tests/word.json       fixed word (no random pick)
-//   app tick [n]                   simulate n countdown ticks + one-shot timers
-//   app assert <key> == <value>    key in {stopped,countdown,inputDone,word,
-//                                   inputWin,infoWin,timers,freezeCalls,
-//                                   resumeCalls} or `visible <window>`
-//   app tray-event <event>         deliver a real tray-icon event to
-//                                   on_tray_click: double-click | left-click
-//                                   | right-click
-//   app state                      print stateJson() (for debugging)
-//   window <name>                  bind to countdown/tray/input/info/settings
-//   click #id / type #id text / assert ...
-//                                   (standard ScriptRunner commands)
-//
-// A feature test ships as tests/features/<name>/steps.txt and must fail before
-// the change and pass after. run_tests.bat loops over features\*.
+// A feature test ships as tests/features/<name>/steps.txt and must fail
+// before the change and pass after. run.ps1 loops over features\* and
+// reports FAIL <file>:<line> lines.
 
 #include "kotoba_app.h"
 #include "app/script.h"
 #include "core/utf.h"
-#include "utils/word_db.h"
 
 #include <fstream>
 #include <iostream>
 
 using namespace ui;
 
-struct AppRunner {
-    KotobaCppApp app;
-    ScriptRunner runner;             // bound to a window via `window`
-    int appFailures = 0;
-
-    void fail(const std::wstring& msg) {
-        ++appFailures;
-        std::wcout << L"FAIL: " << msg << L"\n";
-    }
-
-    void bindWindow(const std::wstring& name) {
-        WindowHost* h = app.window(name);
-        if (!h) { fail(L"window not created: " + name); return; }
-        RECT rc; GetClientRect(h->hwnd(), &rc);
-        runner.bind(h->document(), rc.right, rc.bottom, h->dpiScale());
-    }
-
-    void assertState(const std::vector<std::wstring>& t) {
-        // `app assert <key> == <value>`; key may be `visible <window>`.
-        if (t.size() < 4) { fail(L"app assert: need <key> == <value>"); return; }
-        const std::wstring& key = t[2];
-        const std::wstring& expected = t.back();
-        std::wstring actual;
-        if (key == L"visible") {
-            if (t.size() < 5) { fail(L"app assert visible: need <window>"); return; }
-            actual = app.isVisible(t[3]) ? L"true" : L"false";
-        }
-        else {
-            auto state = app.stateJson();
-            std::string k = wideToUtf8(key);
-            if (!state.contains(k)) { fail(L"app assert: unknown key " + key); return; }
-            auto& v = state[k];
-            // String state (word) compares unquoted; everything else dumps
-            // (bools -> true/false, ints -> digits).
-            actual = v.is_string() ? utf8ToWide(v.get<std::string>())
-                                    : utf8ToWide(v.dump());
-        }
-        if (actual != expected)
-            fail(L"assert " + key + L" expected " + expected + L" got " + actual);
-    }
-
-    void appCmd(const std::vector<std::wstring>& t) {
-        if (t[1] == L"init") {
-            if (!app.init()) fail(L"app init failed");
-        }
-        else if (t[1] == L"tick") {
-            app.tick(t.size() > 2 ? _wtoi(t[2].c_str()) : 1);
-        }
-        else if (t[1] == L"word") {
-            if (t.size() < 3) { fail(L"app word: missing path"); return; }
-            std::ifstream f(std::string(wideToUtf8(t[2])), std::ios::binary);
-            if (!f) { fail(L"app word: cannot open " + t[2]); return; }
-            app.setWord(std::string((std::istreambuf_iterator<char>(f)), {}));
-        }
-        else if (t[1] == L"assert") assertState(t);
-        else if (t[1] == L"tray-event") {
-            if (t.size() < 3) { fail(L"app tray-event: need <double-click|left-click|right-click>"); return; }
-            UINT ev = t[2] == L"double-click" ? WM_LBUTTONDBLCLK
-                     : t[2] == L"left-click"   ? WM_LBUTTONUP
-                     : t[2] == L"right-click"  ? WM_RBUTTONUP
-                     : 0;
-            if (!ev) { fail(L"app tray-event: unknown event " + t[2]); return; }
-            app.trayEvent(ev);
-        }
-        else if (t[1] == L"state") std::wcout << utf8ToWide(app.stateJson().dump(2)) << L"\n";
-        else fail(L"unknown app command " + t[1]);
-    }
-
-    void runLine(const std::wstring& line) {
-        auto t = ScriptRunner::tokens(line);
-        if (t.empty() || t[0][0] == L'#') return;
-        if (t[0] == L"app") { appCmd(t); return; }
-        if (t[0] == L"window") {
-            if (t.size() < 2) { fail(L"window: need a name"); return; }
-            bindWindow(t[1]);
-            return;
-        }
-        runner.run(line);
-    }
-
-    int failuresTotal() const { return appFailures + runner.failures(); }
-};
+static std::wstring scriptDirOf(const std::wstring& script) {
+    size_t slash = script.find_last_of(L"/\\");
+    return slash == std::wstring::npos ? std::wstring(L".") : script.substr(0, slash);
+}
 
 int wmain(int argc, wchar_t** argv) {
     std::wstring script;
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i + 1 < argc; ++i) {
         std::wstring a = argv[i];
         if (a == L"--script") script = argv[++i];
     }
@@ -132,18 +44,23 @@ int wmain(int argc, wchar_t** argv) {
         return 2;
     }
 
-    AppRunner r;
+    KotobaCppApp app;
+    ScriptRunner runner;             // built-in commands
+    app.registerCommands(runner);   // + `app` and `window`
+    runner.setScriptDir(scriptDirOf(script));
+
     std::ifstream in(wideToUtf8(script));
     if (!in) {
         std::wcout << L"cannot open " << script << L"\n";
         return 2;
     }
-    std::string line;
-    while (std::getline(in, line))
-        r.runLine(utf8ToWide(line));
-
-    std::wcout << r.runner.summary();
-    int total = r.failuresTotal();
-    std::wcout << (total ? L"FAILED " : L"OK ") << total << L" failure(s) total\n";
-    return total ? 1 : 0;
+    int line = 0;
+    std::string raw;
+    while (std::getline(in, raw)) {
+        ++line;
+        runner.setLocation(script, line);
+        runner.run(utf8ToWide(raw));
+    }
+    std::wcout << runner.summary();
+    return runner.failures() ? 1 : 0;
 }

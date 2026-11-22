@@ -51,6 +51,11 @@ public:
     // WM_RBUTTONUP = right click).
     void trayEvent(UINT event);
 
+    // Register the `app` and `window` commands on a ScriptRunner, shared by
+    // app_test, ui_test and the debug command-file poller, so there is one
+    // implementation of the app command vocabulary (no drift).
+    void registerCommands(ui::ScriptRunner& runner);
+
     // Window host by name: "countdown", "tray", "input", "info", "settings".
     ui::WindowHost* window(const std::wstring& name);
 
@@ -110,7 +115,8 @@ private:
 
     // ----- debug command file (agent-driven) -----
     void poll_debug_commands();
-    void app_command(const std::vector<std::wstring>& t, std::wostream& out);
+    // `app <subcommand>` handler, registered via registerCommands().
+    void appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& runner);
 
     static std::string read_file(const std::wstring& path);
     int pendingTimerCount() const;

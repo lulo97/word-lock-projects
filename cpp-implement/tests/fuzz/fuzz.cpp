@@ -62,22 +62,29 @@ int wmain(int argc, wchar_t** argv) {
 
     // Fill the page with a deterministic word so {{key}} placeholders are
     // resolved before fuzzing (raw templates would trip validate()).
-    WordData word = parse_word_json(readFile(L"tests/word.json"));
-    std::wstring base = fill_template(readHtml(L"htmls/input.html"), word);
+    // Both reads must succeed: an empty file would fuzz a blank page and
+    // report a misleading "OK".
+    std::string wordJson = readFile(L"tests/word.json");
+    if (wordJson.empty()) { std::wcout << L"cannot read tests/word.json (run from the project root)\n"; return 1; }
+    std::wstring baseHtml = readHtml(L"htmls/input.html");
+    if (baseHtml.empty()) { std::wcout << L"cannot read htmls/input.html (run from the project root)\n"; return 1; }
+    std::wstring base = fill_template(baseHtml, parse_word_json(wordJson));
 
     // ---- 1. Parser fuzz: random mutations of a real page ----
+    int rejected = 0;   // mutations the loader refused (tracked so a
+                        // mostly-rejected corpus is visible)
     for (int i = 0; i < iters; ++i) {
         std::wstring s = base;
-        for (int k = 0; k < 1 + rnd(10); ++k) {
+        for (int k = 0; k < 1 + rnd(10) && !s.empty(); ++k) {   // empty s => rnd(0) mod 0
             size_t pos = rnd((int)s.size());
             switch (rnd(3)) {
             case 0: s.erase(pos, rnd(20)); break;
-            case 1: s.insert(pos, 1, L"<>/\"'&{}[]"[rnd(11)]); break;
+            case 1: s.insert(pos, 1, L"<>/\"'&{}[]"[rnd(10)]); break;  // 10 chars, no NUL
             case 2: s.insert(pos, L"class=\"bg-[#zz] w-[1/0] -p-3\""); break;
             }
         }
         Document d;
-        if (!d.load(s)) continue;
+        if (!d.load(s)) { ++rejected; continue; }
         d.ensureLayout(400 + rnd(800), 300 + rnd(600), 1.f + rnd(3) * 0.25f);
         auto problems = d.validate();
         if (!problems.empty()) {
@@ -87,6 +94,7 @@ int wmain(int argc, wchar_t** argv) {
             return 1;
         }
     }
+    std::wcout << L"parser fuzz: " << iters << L" iters, " << rejected << L" rejected by loader\n";
 
     // ---- 2. Event storm: random events, then mutate the tree mid-flight ----
     Document d;

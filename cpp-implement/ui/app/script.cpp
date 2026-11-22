@@ -7,13 +7,19 @@
 
 #include "json.hpp"
 
+#include <algorithm>
 #include <cwchar>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
 
 namespace ui {
 
-ScriptRunner::ScriptRunner(Document& doc, int w, int h, float scale) {
+ScriptRunner::ScriptRunner() {
+    registerBuiltinCommands();
+}
+
+ScriptRunner::ScriptRunner(Document& doc, int w, int h, float scale) : ScriptRunner() {
     bind(doc, w, h, scale);
 }
 
@@ -22,6 +28,22 @@ void ScriptRunner::bind(Document& doc, int w, int h, float scale) {
     W_ = w;
     H_ = h;
     scale_ = scale;
+}
+
+void ScriptRunner::unbind() {
+    doc_ = nullptr;
+    W_ = H_ = 0;
+    scale_ = 1.f;
+}
+
+void ScriptRunner::setLocation(const std::wstring& file, int line) {
+    file_ = file;
+    lineNo_ = line;
+}
+
+void ScriptRunner::addCommand(const std::wstring& name, size_t minArgs,
+                              const std::wstring& usage, CmdFn fn) {
+    cmds_[name] = { minArgs, usage, std::move(fn) };
 }
 
 std::wstring ScriptRunner::summary() const {
@@ -44,8 +66,10 @@ void ScriptRunner::settle() {
 }
 
 Element* ScriptRunner::need(const std::wstring& sel) {
-    if (!doc_)
+    if (!doc_) {
+        fail(L"no window bound (need a `window` command first)");
         return nullptr;
+    }
     Element* e = doc_->byId(sel.substr(sel[0] == L'#' ? 1 : 0));
     if (!e) fail(L"no element " + sel);
     return e;
@@ -53,7 +77,13 @@ Element* ScriptRunner::need(const std::wstring& sel) {
 
 void ScriptRunner::fail(const std::wstring& msg) {
     ++failures_;
-    messages_.push_back(L"FAIL line " + std::to_wstring(lineNo_) + L": " + msg);
+    std::wstring loc = file_.empty() ? std::to_wstring(lineNo_)
+                                      : file_ + L":" + std::to_wstring(lineNo_);
+    messages_.push_back(L"FAIL " + loc + L": " + msg);
+}
+
+void ScriptRunner::note(const std::wstring& msg) {
+    messages_.push_back(msg);
 }
 
 // Splits a line on spaces; "quoted text" tokens may contain spaces.
@@ -80,8 +110,9 @@ void ScriptRunner::mouse(Element& el, bool click) {
     settle();
 }
 
-void ScriptRunner::key(const std::wstring& name) {
-    if (!doc_) return;
+void ScriptRunner::keyCmd(const std::vector<std::wstring>& t) {
+    if (!doc_) { fail(L"key: no window bound"); return; }
+    const std::wstring& name = t[1];
     auto& ev = doc_->events();
     Element& root = *doc_->root();
     if (name == L"Backspace") ev.onChar(root, L'\b');
@@ -90,44 +121,223 @@ void ScriptRunner::key(const std::wstring& name) {
             {L"Enter", VK_RETURN}, {L"Tab", VK_TAB}, {L"Escape", VK_ESCAPE},
             {L"Left", VK_LEFT}, {L"Right", VK_RIGHT}, {L"Up", VK_UP}, {L"Down", VK_DOWN},
             {L"Home", VK_HOME}, {L"End", VK_END}, {L"Delete", VK_DELETE}, {L"Space", VK_SPACE}};
+        bool found = false;
         for (auto& m : map)
-            if (name == m.first) { KeyEvent k{}; k.vk = m.second; ev.onKeyDown(root, k); }
+            if (name == m.first) { KeyEvent k{}; k.vk = m.second; ev.onKeyDown(root, k); found = true; }
+        if (!found) { fail(L"unknown key " + name); return; }
     }
     settle();
 }
 
-// assert exists|visible #id   |   assert text|value #id == X   |   assert rect #id w>0
+// assert [not] exists #id
+// assert [not] visible #id          (hidden by own display/zero width OR
+//                                     any ancestor's display:none)
+// assert text|value #id == X        (the operator must be ==, exactly)
+// assert caret #id == N
+// assert rect #id x>0 | y>=0 | w<=0 | h==5   (== compares with 0.5 px slack)
 void ScriptRunner::assertCmd(const std::vector<std::wstring>& t) {
-    if (!doc_) return;
-    Element* e = need(t[2]);
-    if (!e) return;
-    const std::wstring& kind = t[1];
-    layout();
-    if (kind == L"exists") return;
+    const std::wstring& k0 = t[1];
+    bool negate = (k0 == L"not");
+    const std::wstring& kind = negate ? t[2] : k0;
+
+    if (kind == L"exists") {
+        if (t.size() < 3) { fail(L"assert: need #id"); return; }
+        if (!doc_) { fail(L"assert exists: no window bound"); return; }
+        Element* e = doc_->byId(t[2].substr(t[2][0] == L'#' ? 1 : 0));
+        bool ok = !!e;
+        if (negate) ok = !ok;
+        if (!ok) fail(t[2] + L" " + (negate ? L"exists (expected absent)"
+                                           : L"does not exist (expected present)"));
+        return;
+    }
+
     if (kind == L"visible") {
-        if (e->style.display == Display::None || e->box.borderRect.w <= 0)
-            fail(t[2] + L" not visible");
-    } else if (kind == L"text" || kind == L"value") {
+        if (t.size() < 3) { fail(L"assert: need #id"); return; }
+        Element* e = need(t[2]);
+        if (!e) return;
+        layout();
+        bool vis = true;
+        for (Element* p = e; p; p = static_cast<Element*>(p->parent))
+            if (p->style.display == Display::None) { vis = false; break; }
+        if (vis && e->box.borderRect.w <= 0) vis = false;
+        if (negate) vis = !vis;
+        if (!vis) fail(t[2] + L" " + (negate ? L"visible (expected hidden)"
+                                             : L"not visible (expected visible)"));
+        return;
+    }
+
+    if (kind == L"text" || kind == L"value") {
+        if (t.size() < 5) { fail(L"assert " + kind + L": need #id == value"); return; }
+        Element* e = need(t[2]);
+        if (!e) return;
+        if (t[3] != L"==") { fail(L"assert " + kind + L": operator must be ==, got " + t[3]); return; }
+        layout();
         std::wstring actual = kind == L"text" ? textContent(*e) : doc_->getValue(e->id);
         if (actual != t[4]) fail(t[2] + L" " + kind + L" = '" + actual + L"' expected '" + t[4] + L"'");
-    } else if (kind == L"caret") {                     // assert caret #id == N
+        return;
+    }
+
+    if (kind == L"caret") {
+        if (t.size() < 5) { fail(L"assert caret: need #id == N"); return; }
+        Element* e = need(t[2]);
+        if (!e) return;
+        if (t[3] != L"==") { fail(L"assert caret: operator must be ==, got " + t[3]); return; }
         auto* in = dynamic_cast<TextInput*>(e->control.get());
         if (!in || in->caret != _wtoi(t[4].c_str()))
             fail(t[2] + L" caret=" + (in ? std::to_wstring(in->caret) : std::wstring(L"n/a")) +
                  L" expected " + t[4]);
-    } else if (kind == L"rect") {
+        return;
+    }
+
+    if (kind == L"rect") {
+        if (t.size() < 4) { fail(L"assert rect: need #id <comp>"); return; }
+        Element* e = need(t[2]);
+        if (!e) return;
+        layout();
         const std::wstring& c = t[3];
         float v = c[0] == L'x' ? e->box.borderRect.x : c[0] == L'y' ? e->box.borderRect.y
                 : c[0] == L'w' ? e->box.borderRect.w : e->box.borderRect.h;
         size_t op = c.find_first_of(L"<>=");
         size_t vs = c.find_first_of(L"0123456789-", op);
-        float rhs;
-        parseFloat(c.substr(vs), rhs);
+        float rhs = 0.f;
+        if (op == std::wstring::npos || vs == std::wstring::npos || !parseFloat(c.substr(vs), rhs)) {
+            fail(L"assert rect: bad comparison " + c);
+            return;
+        }
         std::wstring o = c.substr(op, vs - op);
+        // == compares with 0.5 px slack: exact float comparison is flaky at
+        // DPI 1.25/1.5.
         bool ok = o == L">" ? v > rhs : o == L">=" ? v >= rhs : o == L"<" ? v < rhs
-                : o == L"<=" ? v <= rhs : v == rhs;
+                : o == L"<=" ? v <= rhs : std::fabs(v - rhs) <= 0.5f;
         if (!ok) fail(t[2] + L" " + c + L" (actual " + std::to_wstring(v) + L")");
+        return;
     }
+
+    fail(L"unknown assert kind " + kind + (negate ? L" (after 'not')" : L""));
+}
+
+void ScriptRunner::includeCmd(const std::vector<std::wstring>& t) {
+    std::wstring p = resolvePath(t[1]);
+    std::ifstream f(std::string(wideToUtf8(p)));
+    if (!f) { fail(L"include: cannot open " + p); return; }
+    if (++includeDepth_ > 8) {
+        fail(L"include: nesting too deep (cycle?)");
+        --includeDepth_;
+        return;
+    }
+    std::string line;
+    int n = 0;
+    while (std::getline(f, line)) {
+        ++n;
+        setLocation(p, n);
+        run(utf8ToWide(line));
+    }
+    --includeDepth_;
+}
+
+void ScriptRunner::registerBuiltinCommands() {
+    addCommand(L"size", 1, L"size WxH",
+        [this](const auto& t, const auto&) { swscanf_s(t[1].c_str(), L"%dx%d", &W_, &H_); });
+    addCommand(L"dpi", 1, L"dpi <scale>",
+        [this](const auto& t, const auto&) { parseFloat(t[1], scale_); });
+    addCommand(L"click", 1, L"click #id",
+        [this](const auto& t, const auto&) { if (auto* e = need(t[1])) mouse(*e, true); });
+    addCommand(L"hover", 1, L"hover #id",
+        [this](const auto& t, const auto&) { if (auto* e = need(t[1])) mouse(*e, false); });
+    addCommand(L"focus", 1, L"focus #id",
+        [this](const auto& t, const auto&) {
+            if (auto* e = need(t[1])) { doc_->events().setFocus(e); settle(); }
+        });
+    addCommand(L"type", 2, L"type #id text",
+        [this](const auto& t, const auto&) {
+            if (auto* e = need(t[1])) {
+                doc_->events().setFocus(e);
+                for (wchar_t ch : t[2]) doc_->events().onChar(*doc_->root(), ch);
+                settle();
+            }
+        });
+    addCommand(L"ime", 2, L"ime #id text",
+        [this](const auto& t, const auto&) {
+            if (auto* e = need(t[1]))
+                if (auto* in = dynamic_cast<TextInput*>(e->control.get())) { in->onImeComposition(t[2], true); settle(); }
+        });
+    addCommand(L"key", 1, L"key <Enter|Tab|Escape|...|Backspace>",
+        [this](const auto& t, const auto&) { keyCmd(t); });
+    addCommand(L"wheel", 3, L"wheel x y delta",
+        [this](const auto& t, const auto&) {
+            if (!doc_) { fail(L"wheel: no window bound"); return; }
+            layout();
+            doc_->events().onWheel(*doc_->root(), (float)_wtof(t[1].c_str()),
+                                   (float)_wtof(t[2].c_str()), _wtoi(t[3].c_str()));
+            settle();
+        });
+    addCommand(L"dump", 1, L"dump out.json",
+        [this](const auto& t, const auto&) {
+            if (!doc_) { fail(L"dump: no window bound"); return; }
+            layout();
+            doc_->dumpTree(t[1], 99);
+        });
+    addCommand(L"shot", 1, L"shot out.png [overlay]",
+        [this](const auto& t, const auto&) {
+            if (!doc_) { fail(L"shot: no window bound"); return; }
+            doc_->screenshot(t[1], W_, H_, scale_, false);
+            if (t.size() > 2 && t[2] == L"overlay")
+                doc_->screenshot(t[1] + L".overlay.png", W_, H_, scale_, true);
+        });
+    addCommand(L"assert", 2, L"assert [not] exists|visible|text|value|caret|rect ...",
+        [this](const auto& t, const auto&) { assertCmd(t); });
+    addCommand(L"click-at", 3, L"click-at #id fx fy",
+        [this](const auto& t, const auto&) {
+            if (auto* e = need(t[1])) {
+                layout();
+                RectF r = e->box.borderRect;
+                float x = r.x + r.w * (float)_wtof(t[2].c_str());
+                float y = r.y + r.h * (float)_wtof(t[3].c_str());
+                auto& ev = doc_->events();
+                ev.onMouseMove(*doc_->root(), x, y, false);
+                ev.onMouseDown(*doc_->root(), x, y);
+                ev.onMouseUp(*doc_->root(), x, y);
+                settle();
+            }
+        });
+    addCommand(L"click-char", 2, L"click-char #id N",
+        [this](const auto& t, const auto&) {
+            if (auto* e = need(t[1])) {
+                layout();
+                auto* in = dynamic_cast<TextInput*>(e->control.get());
+                if (!in) { fail(L"click-char: not a text input"); return; }
+                int n = _wtoi(t[2].c_str());
+                TextRun run = makeRun(in->value, e->style, scale_);   // REAL scale, same as paint
+                auto offs = charOffsets(run);
+                if (n < 0 || n >= (int)offs.size()) { fail(L"click-char: N out of range"); return; }
+                RectF cr = e->box.contentRect();
+                float x = cr.x - in->scrollX + offs[n];
+                float y = cr.y + cr.h / 2;
+                auto& ev = doc_->events();
+                ev.onMouseMove(*doc_->root(), x, y, false);
+                ev.onMouseDown(*doc_->root(), x, y);
+                ev.onMouseUp(*doc_->root(), x, y);
+                settle();
+            }
+        });
+    addCommand(L"golden", 1, L"golden expected.layout.json [update]",
+        [this](const auto& t, const auto&) {
+            golden(t[1], t.size() > 2 && t[2] == L"update");
+        });
+    addCommand(L"include", 1, L"include <path>  (path relative to this script's dir)",
+        [this](const auto& t, const auto&) { includeCmd(t); });
+    // expect-fail <command...>: the inner command MUST fail. Cheap guard
+    // against vacuous tests (an assertion that can't fire).
+    addCommand(L"expect-fail", 1, L"expect-fail <command line that must fail>",
+        [this](const auto& t, const std::wstring& line) {
+            size_t pos = line.find(t[1]);
+            if (pos == std::wstring::npos) { fail(L"expect-fail: malformed"); return; }
+            std::wstring sub = line.substr(pos);   // from the subcommand word
+            int before = failures_;
+            run(sub);
+            if (failures_ == before)
+                fail(L"expect-fail: command did not fail: " + sub);
+        });
 }
 
 void ScriptRunner::setScriptDir(const std::wstring& dir) {
@@ -143,8 +353,13 @@ std::wstring ScriptRunner::resolvePath(const std::wstring& path) const {
 }
 
 void ScriptRunner::golden(const std::wstring& path, bool update) {
+    if (!doc_) { fail(L"golden: no window bound"); return; }
     layout();
     auto actual = doc_->layoutSnapshot();
+    // Updating is deliberate: a runner flag (-Update sets UPDATE_GOLDEN=1),
+    // not a hand-edited steps line.
+    if (std::getenv("UPDATE_GOLDEN") != nullptr)
+        update = true;
     std::wstring p = resolvePath(path);
     std::ifstream f(std::string(wideToUtf8(p)));
     if (!f) {
@@ -153,7 +368,7 @@ void ScriptRunner::golden(const std::wstring& path, bool update) {
             out << actual.dump(1);
             return;
         }
-        fail(L"golden: cannot open " + p);
+        fail(L"golden: cannot open " + p + L" (run with -Update to record)");
         return;
     }
 
@@ -162,6 +377,13 @@ void ScriptRunner::golden(const std::wstring& path, bool update) {
 
     for (auto& [k, e] : expected.items()) {
         if (!actual.contains(k)) { fail(L"golden: missing " + utf8ToWide(k)); continue; }
+        // Shape check: a hand-edited golden must be an array of 4 numbers,
+        // otherwise report a failure instead of throwing.
+        if (!e.is_array() || e.size() != 4
+            || !std::all_of(e.begin(), e.end(), [](auto& x) { return x.is_number(); })) {
+            fail(L"golden: " + utf8ToWide(k) + L" is not an array of 4 numbers");
+            continue;
+        }
         for (int i = 0; i < 4; ++i)
             if (std::fabs(e[i].get<float>() - actual[k][i].get<float>()) > 0.5f) {
                 fail(utf8ToWide(k) + L" expected " + utf8ToWide(e.dump()) +
@@ -174,84 +396,17 @@ void ScriptRunner::golden(const std::wstring& path, bool update) {
 }
 
 void ScriptRunner::run(const std::wstring& line) {
-    ++lineNo_;
-    if (!doc_) { fail(L"no window bound"); return; }
-
     auto t = tokens(line);
     if (t.empty() || t[0][0] == L'#') return;
-    const std::wstring& c = t[0];
+    auto it = cmds_.find(t[0]);
+    if (it == cmds_.end()) { fail(L"unknown command " + t[0]); return; }
+    const Cmd& c = it->second;
+    if (t.size() - 1 < c.minArgs) { fail(it->first + L": " + c.usage); return; }
+    c.fn(t, line);
 
-    if (c == L"size")  { swscanf_s(t[1].c_str(), L"%dx%d", &W_, &H_); }
-    else if (c == L"dpi") { parseFloat(t[1], scale_); }
-    else if (c == L"click") { if (auto* e = need(t[1])) mouse(*e, true); }
-    else if (c == L"hover") { if (auto* e = need(t[1])) mouse(*e, false); }
-    else if (c == L"focus") { if (auto* e = need(t[1])) { doc_->events().setFocus(e); settle(); } }
-    else if (c == L"type")  {
-        if (auto* e = need(t[1])) {
-            doc_->events().setFocus(e);
-            for (wchar_t ch : t[2]) doc_->events().onChar(*doc_->root(), ch);
-            settle();
-        }
-    }
-    else if (c == L"ime")   {
-        if (auto* e = need(t[1]))
-            if (auto* in = dynamic_cast<TextInput*>(e->control.get())) { in->onImeComposition(t[2], true); settle(); }
-    }
-    else if (c == L"key")   { key(t[1]); }
-    else if (c == L"wheel") {
-        layout();
-        doc_->events().onWheel(*doc_->root(), (float)_wtof(t[1].c_str()), (float)_wtof(t[2].c_str()), _wtoi(t[3].c_str()));
-        settle();
-    }
-    else if (c == L"dump")  { layout(); doc_->dumpTree(t[1], 99); }
-    else if (c == L"shot")  {
-        doc_->screenshot(t[1], W_, H_, scale_, false);
-        if (t.size() > 2 && t[2] == L"overlay")
-            doc_->screenshot(t[1] + L".overlay.png", W_, H_, scale_, true);
-    }
-    else if (c == L"assert"){ assertCmd(t); }
-    else if (c == L"click-at") {                        // click-at #id fx fy (fractional)
-        if (t.size() < 4) fail(L"click-at: need #id fx fy");
-        else if (auto* e = need(t[1])) {
-            layout();
-            RectF r = e->box.borderRect;
-            float x = r.x + r.w * (float)_wtof(t[2].c_str());
-            float y = r.y + r.h * (float)_wtof(t[3].c_str());
-            auto& ev = doc_->events();
-            ev.onMouseMove(*doc_->root(), x, y, false);
-            ev.onMouseDown(*doc_->root(), x, y);
-            ev.onMouseUp(*doc_->root(), x, y);
-            settle();
-        }
-    }
-    else if (c == L"click-char") {                      // click-char #id N -> click on boundary N
-        if (t.size() < 3) fail(L"click-char: need #id N");
-        else if (auto* e = need(t[1])) {
-            layout();
-            auto* in = dynamic_cast<TextInput*>(e->control.get());
-            if (!in) { fail(L"click-char: not a text input"); return; }
-            int n = _wtoi(t[2].c_str());
-            TextRun run = makeRun(in->value, e->style, scale_);   // REAL scale, same as paint
-            auto offs = charOffsets(run);
-            if (n < 0 || n >= (int)offs.size()) { fail(L"click-char: N out of range"); return; }
-            RectF cr = e->box.contentRect();
-            float x = cr.x - in->scrollX + offs[n];
-            float y = cr.y + cr.h / 2;
-            auto& ev = doc_->events();
-            ev.onMouseMove(*doc_->root(), x, y, false);
-            ev.onMouseDown(*doc_->root(), x, y);
-            ev.onMouseUp(*doc_->root(), x, y);
-            settle();
-        }
-    }
-    else if (c == L"golden") {
-        if (t.size() < 2) fail(L"golden: missing path");
-        else golden(t[1], t.size() > 2 && t[2] == L"update");
-    }
-    else fail(L"unknown command " + c);
-
-    for (auto& p : doc_->validate())
-        fail(L"validate: " + p);
+    if (doc_)
+        for (auto& p : doc_->validate())
+            fail(L"validate: " + p);
 }
 
 } // namespace ui

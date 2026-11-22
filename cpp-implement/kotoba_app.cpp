@@ -25,6 +25,9 @@ constexpr UINT_PTR TIMER_INPUT_DONE = 102;
 KotobaCppApp::KotobaCppApp() {
     if (const wchar_t* env = _wgetenv(L"KOTOBA_DEBUG"))
         debug_ = env[0] != L'0';
+    // The debug poller's runner gets the same `app`/`window` commands as
+    // app_test and ui_test: one vocabulary, one implementation.
+    registerCommands(current_);
 }
 
 KotobaCppApp::~KotobaCppApp() {
@@ -103,6 +106,24 @@ void KotobaCppApp::tick(int n) {
 // the low word of lParam).
 void KotobaCppApp::trayEvent(UINT event) {
     on_tray_click(event);
+}
+
+void KotobaCppApp::registerCommands(ui::ScriptRunner& runner) {
+    runner.addCommand(L"window", 1, L"window <countdown|tray|input|info|settings>",
+        [this, &runner](const auto& t, const auto&) {
+            if (ui::WindowHost* h = window(t[1])) {
+                RECT rc; GetClientRect(h->hwnd(), &rc);
+                runner.bind(h->document(), rc.right, rc.bottom, h->dpiScale());
+            } else {
+                // Unbind so later commands fail clearly instead of running
+                // against a stale document.
+                runner.unbind();
+                runner.fail(L"window not created: " + t[1]);
+            }
+        });
+    runner.addCommand(L"app", 1,
+        L"app <init|tick [n]|word <file>|assert <key> == <value>|state|tray-event <event>>",
+        [this, &runner](const auto& t, const auto&) { appCmd(t, runner); });
 }
 
 ui::WindowHost* KotobaCppApp::window(const std::wstring& name) {
@@ -392,7 +413,9 @@ void KotobaCppApp::on_countdown_tick() {
 // ----- input / info -----
 
 void KotobaCppApp::show_input() {
-    if (!ensure_input())
+    // Defensive: the tray commands can be driven before init() in a test
+    // script; countdown_ is only guaranteed by init().
+    if (!ensure_input() || !countdown_)
         return;
 
     UI_LOG("app", L"show_input word=%s", currentWord_.romaji.c_str());
@@ -533,9 +556,9 @@ void KotobaCppApp::quit() {
 
 // ----- debug command file (agent-driven) -----
 
-// Reads debug_cmd.txt, runs its commands against the bound window, and
-// writes the report to debug_out.txt. The command file is consumed
-// (deleted) after each poll.
+// Reads debug_cmd.txt, runs its commands through the shared ScriptRunner
+// (same vocabulary as app_test/ui_test), and writes the report to
+// debug_out.txt. The command file is consumed (deleted) after each poll.
 void KotobaCppApp::poll_debug_commands() {
     std::ifstream in("debug_cmd.txt");
     if (!in)
@@ -546,42 +569,76 @@ void KotobaCppApp::poll_debug_commands() {
     DeleteFileW(L"debug_cmd.txt");
 
     std::wofstream out("debug_out.txt");
+    int line = 0;
     for (auto& raw : lines) {
-        auto t = ui::ScriptRunner::tokens(ui::utf8ToWide(raw));
-        if (t.empty()) continue;
-
-        if (t[0] == L"window") {
-            // window input|info|countdown|tray|settings
-            ui::WindowHost* h = t[1] == L"input" ? input_.get()
-                : t[1] == L"info" ? info_.get()
-                : t[1] == L"tray" ? trayMenu_.get()
-                : t[1] == L"settings" ? settings_.get()
-                : countdown_.get();
-            if (!h) { out << L"window not created: " << t[1] << L"\n"; continue; }
-            RECT rc; GetClientRect(h->hwnd(), &rc);
-            current_.bind(h->document(), rc.right, rc.bottom, h->dpiScale());
-            continue;
-        }
-        if (t[0] == L"app") { app_command(t, out); continue; }
-        current_.run(ui::utf8ToWide(raw));   // click/type/dump/shot/assert...
+        ++line;
+        current_.setLocation(L"debug_cmd.txt", line);
+        current_.run(ui::utf8ToWide(raw));   // click/type/dump/shot/assert/app/window
     }
     out << current_.summary();
     InvalidateRect(countdown_->hwnd(), nullptr, FALSE);
 }
 
-void KotobaCppApp::app_command(const std::vector<std::wstring>& t, std::wostream& out) {
-    if (t[1] == L"state")
-        out << L"countdown=" << countdownSeconds_ << L" inputDone=" << inputDone_
-            << L" word=" << currentWord_.romaji << L" stopped=" << (int)stopped_
-            << L" inputWin=" << !!input_ << L"\n";
-    else if (t[1] == L"tick")
-        for (int i = 0, n = _wtoi(t[2].c_str()); i < n; ++i) on_countdown_tick();
-    else if (t[1] == L"show_input") show_input();
-    else if (t[1] == L"show_info") show_info();
-    else if (t[1] == L"word") {
-        currentWord_ = parse_word_json(read_file(t[2]));
-        reset_word_windows();
+void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& runner) {
+    const std::wstring& sub = t[1];
+    if (sub == L"init") {
+        if (!init()) runner.fail(L"app init failed");
     }
+    else if (sub == L"tick") {
+        // Same tick() as app_test: gated on the pending countdown timer,
+        // then fires one-shot timers. (The old poller called
+        // on_countdown_tick() directly and drifted from this.)
+        tick(t.size() > 2 ? _wtoi(t[2].c_str()) : 1);
+    }
+    else if (sub == L"word") {
+        if (t.size() < 3) { runner.fail(L"app word: need <file>"); return; }
+        std::string j = read_file(t[2]);
+        if (j.empty()) { runner.fail(L"app word: cannot open " + t[2]); return; }
+        setWord(j);
+    }
+    else if (sub == L"state") {
+        // Note (not failure) so it lands in summary()/debug_out.txt.
+        runner.note(L"state " + ui::utf8ToWide(stateJson().dump()));
+    }
+    else if (sub == L"tray-event") {
+        if (t.size() < 3) { runner.fail(L"app tray-event: need <double-click|left-click|right-click>"); return; }
+        UINT ev = t[2] == L"double-click" ? WM_LBUTTONDBLCLK
+                 : t[2] == L"left-click"   ? WM_LBUTTONUP
+                 : t[2] == L"right-click"  ? WM_RBUTTONUP
+                 : 0;
+        if (!ev) { runner.fail(L"app tray-event: unknown event " + t[2]); return; }
+        trayEvent(ev);
+    }
+    else if (sub == L"assert") {
+        if (t.size() < 4) { runner.fail(L"app assert: need <key> == <value>"); return; }
+        const std::wstring& key = t[2];
+        const std::wstring& expected = t.back();
+        if (key != L"visible" && t[3] != L"==") {
+            runner.fail(L"app assert: operator must be ==, got " + t[3]);
+            return;
+        }
+        std::wstring actual;
+        if (key == L"visible") {
+            if (t.size() < 5) { runner.fail(L"app assert visible: need <window>"); return; }
+            actual = isVisible(t[3]) ? L"true" : L"false";
+        } else {
+            auto state = stateJson();
+            std::string k = ui::wideToUtf8(key);
+            if (!state.contains(k)) { runner.fail(L"app assert: unknown key " + key); return; }
+            auto& v = state[k];
+            // String state (word) compares unquoted; everything else dumps
+            // (bools -> true/false, ints -> digits).
+            actual = v.is_string() ? ui::utf8ToWide(v.get<std::string>())
+                                    : ui::utf8ToWide(v.dump());
+        }
+        if (actual != expected) {
+            runner.fail(L"app assert " + key + L" expected " + expected + L" got " + actual);
+            // Print the full state on failure: most timer/state bugs are
+            // diagnosed from this, and it saves a debugging round trip.
+            runner.note(L"state " + ui::utf8ToWide(stateJson().dump()));
+        }
+    }
+    else runner.fail(L"unknown app command " + sub);
 }
 
 std::string KotobaCppApp::read_file(const std::wstring& path) {

@@ -7,20 +7,19 @@
 # the real tray icon would (WM_LBUTTONDBLCLK).
 #
 # Covers the per-feature checklist:
-#   1. happy path   - double-click -> input visible, countdown canceled
-#   2. complete     - type the answer -> info screen, no stale timers
-#   3. repeat       - double-click again (while info is showing) -> input
-#                      reopens with a fresh answer
-#   4. side effects - no pending timers, only the expected windows
-#   5. interleaving - stop right after arming the input-done timer; a later
-#                      tick must not bring the info window back
-#   6. while stopped- double-click reopens input even when the app is paused
+#   1. happy path    - double-click -> input visible, countdown canceled
+#   2. complete      - type the answer -> info screen, no stale timers
+#   3. repeat        - double-click again (while info is showing) -> input
+#                       reopens with the answer cleared
+#   3b. real sequence - a real double-click delivers UP, DBLCLK, UP; the
+#                       trailing UP must not leave the menu open
+#   4. side effects  - no pending timers, only the expected windows
+#   5. interleaving  - stop right after arming the input-done timer; a later
+#                       tick must not bring the info window back
+#   6. while stopped - double-click reopens input even when the app is paused
 
-# --- setup: app is running, countdown going ---
-app init
-app word tests/word.json
-app assert stopped == false
-app assert countdown == 30
+# --- setup: app is running, countdown going (shared preamble) ---
+include ../common/running.txt
 
 # --- 1. happy path: double-click -> input opens right away ---
 app tray-event double-click
@@ -40,13 +39,26 @@ app assert visible info == true
 app assert visible input == false
 app assert timers == 0
 
-# --- 3. repeat: double-click again (while info is showing) -> input
-# reopens with a fresh answer (catches stuck-state / double-timer bugs) ---
+# --- 3. repeat: double-click again (while info is showing) -> input reopens
+# with the answer cleared. NOTE: the word is NOT re-picked here - only
+# start_countdown() and tray-open pick a new word; show_input() just clears
+# the value, which is what the assert below checks. ---
 app tray-event double-click
 app assert visible input == true
 app assert visible info == false
 window input
 assert value #answer == ""
+
+# --- 3b. real tray sequence: a real double-click delivers UP, DBLCLK, UP.
+# The first UP opened the tray menu, the trailing UP would re-toggle it;
+# show_input() closing the menu keeps the outcome deterministic (menu
+# closed, input visible). ---
+app tray-event left-click
+app assert visible tray == true
+app assert visible input == true
+app tray-event left-click
+app assert visible tray == false
+app assert visible input == true
 
 # --- 4. side effects: no stale timers, only expected windows ---
 app assert timers == 0
@@ -59,6 +71,7 @@ app assert stopped == false
 window input
 type #answer ringo
 app assert inputDone == true
+app assert timers == 1
 window tray
 click #tray-stop
 app assert stopped == true

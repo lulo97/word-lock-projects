@@ -14,11 +14,8 @@
 #                      input-done timer; a later tick must NOT bring the info
 #                      window back (regression for the stale TIMER_INPUT_DONE)
 
-# --- setup: app is running, countdown going ---
-app init
-app word tests/word.json
-app assert stopped == false
-app assert countdown == 30
+# --- setup: app is running, countdown going (shared preamble) ---
+include ../common/running.txt
 
 # --- 1. happy path: click "Stop app" -> stopped, windows hidden, button flips ---
 window tray
@@ -52,16 +49,23 @@ app assert timers == 0
 
 # --- 5. interleaving: stop while the input window is showing with a pending
 # input-done timer. Typing the correct answer arms TIMER_INPUT_DONE; stopping
-# must kill it so a later tick does not bring the info window back. ---
+# must kill it so a later tick does not bring the info window back.
+# The positive asserts (inputDone, timers == 1) prove the timer was ARMED,
+# so the later timers == 0 proves it was KILLED - not that it was never armed
+# (the old vacuous-pass mode if the fixture's romaji stopped matching). ---
 window tray
 click #tray-stop
 app assert stopped == false
-app word tests/word.json   # start_countdown() picks a random word; pin it so the
-                           # typed answer below matches and arms the timer
+# start_countdown() just picked a random word; pin the fixture again so the
+# typed answer below matches and arms the input-done timer.
+app word tests/word.json
+app assert word == ringo
 app tick 30
 app assert visible input == true
 window input
 type #answer ringo
+app assert inputDone == true
+app assert timers == 1
 window tray
 click #tray-stop
 app assert stopped == true

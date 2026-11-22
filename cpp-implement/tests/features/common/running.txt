@@ -1,0 +1,13 @@
+# Shared feature-test setup: app running, word pinned to tests/word.json.
+#
+# Included from tests/features/*/steps.txt via `include ../common/running.txt`
+# (path relative to the including script's directory). Pinning the word here
+# in one place is what keeps every feature test from silently coupling to
+# the fixture: if the fixture changes, `app assert word == ringo` fails and
+# points at THIS file.
+
+app init
+app word tests/word.json
+app assert word == ringo
+app assert stopped == false
+app assert countdown == 30

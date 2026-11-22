@@ -131,7 +131,7 @@ void KotobaCppApp::registerCommands(ui::ScriptRunner& runner) {
             }
         });
     runner.addCommand(L"app", 1,
-        L"app <init|tick [n]|word <file>|assert <key> == <value>|state|tray-event <event>>",
+        L"app <init|tick [n]|word <file>|add-word <file>|assert <key> == <value>|state|tray-event <event>>",
         [this, &runner](const auto& t, const auto&) { appCmd(t, runner); });
 }
 
@@ -162,13 +162,15 @@ nlohmann::json KotobaCppApp::stateJson() {
     j["freezeCalls"] = hooks.freezeCalls;
     j["resumeCalls"] = hooks.resumeCalls;
     j["picked"] = (int)recentPicks_.size();
-    j["wordCount"] = count_words();
+    j["wordCount"] = count_words() + (int)extraWords_.size();
+    j["dbRejected"] = dbRejected_;
     return j;
 }
 
 void KotobaCppApp::pick_word() {
     currentWord_ = pick_even_word(config_.get().ignoreWords,
-                                  progress_.get().attempts);
+                                  progress_.get().attempts,
+                                  extraWords_);
     // Empty: no eligible word (empty or fully ignored database). Nothing to
     // record; the UI will show blank fields rather than a bogus "" key.
     if (currentWord_.kanji.empty() && currentWord_.word.empty())
@@ -627,6 +629,22 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
     else if (sub == L"state") {
         // Note (not failure) so it lands in summary()/debug_out.txt.
         runner.note(L"state " + ui::utf8ToWide(stateJson().dump()));
+    }
+    else if (sub == L"add-word") {
+        // Test/extension seam (M4): add one word file to the picker pool.
+        // The same light check as startup applies; a bad file is counted
+        // and logged, never added.
+        if (t.size() < 3) { runner.fail(L"app add-word: need <file>"); return; }
+        std::wstring path = runner.resolvePath(t[2]);
+        std::string json = read_file(path);
+        if (json.empty()) { runner.fail(L"app add-word: cannot open " + path); return; }
+        WordData w = parse_word_json(json);
+        if (const std::wstring issue = wordIssue(w); !issue.empty()) {
+            ++dbRejected_;
+            dbg::log("db", L"rejected %ls: %ls", path.c_str(), issue.c_str());
+            return;
+        }
+        extraWords_.push_back(std::move(w));
     }
     else if (sub == L"config") {
         if (t.size() >= 3 && t[2] == L"reload") { config_.load(); return; }

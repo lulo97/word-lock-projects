@@ -1,0 +1,46 @@
+# Bad word skipped feature test (M4).
+#
+# validate_db.py guards the shipped database offline, but the C++ app must
+# also survive a bad entry: at startup a light check excludes it and logs the
+# reason (`dbg::log("db", ...)`), and the picker never offers it.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - a valid extra word joins the pool
+#   2. reverse      - the broken word is rejected, not added
+#   3. evenness     - the 3 valid words are each picked once
+#   4. never picked - the broken word stays at 0 attempts even when it would
+#                     be the mandatory lowest-attempt pick if it were present
+#   5. side effects - the countdown timer is untouched
+
+# --- setup: app is running, countdown going (shared preamble) ---
+include ../common/running.txt
+
+# --- 1. happy path: the shipped db has 2 valid words; a valid extra joins ---
+app assert wordCount == 2
+app add-word good.json
+app assert wordCount == 3
+app assert dbRejected == 0
+
+# --- 2. reverse: a bad file is rejected and counted, never added ---
+app add-word bad.json
+app assert dbRejected == 1
+app assert wordCount == 3
+
+# --- 3. evenness: with progress cleared, 3 valid words are each picked once ---
+app progress reset
+app assert attemptsTotal == 0
+app pick 3
+app assert attemptsTotal == 3
+app assert attemptsMax == 1
+
+# --- 4. never picked: every valid word now has 1 attempt, so the even picker
+# would be FORCED to pick the broken word next if it had entered the pool
+# (it would still have 0 attempts). It must not, so its count stays 0. ---
+app pick 1
+app assert attempts 壊れ == 0
+app assert attemptsTotal == 4
+app assert attemptsMax == 2
+
+# --- 5. side effects: picking does not disturb the countdown timer ---
+app assert timers == 1
+app assert stopped == false

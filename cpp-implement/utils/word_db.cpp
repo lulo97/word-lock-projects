@@ -91,6 +91,37 @@ std::wstring wordKey(const WordData& w) {
     return w.word.empty() ? w.kanji : w.word;
 }
 
+namespace {
+
+bool isJapaneseChar(wchar_t c) {
+    return (c >= 0x3000 && c <= 0x30FF)   // punctuation, hiragana, katakana
+        || (c >= 0x3400 && c <= 0x4DBF)   // CJK extension A
+        || (c >= 0x4E00 && c <= 0x9FFF)   // CJK unified ideographs
+        || (c >= 0xF900 && c <= 0xFAFF)   // CJK compatibility ideographs
+        || (c >= 0xFF66 && c <= 0xFF9F);  // halfwidth katakana
+}
+
+bool containsJapanese(const std::wstring& text) {
+    for (wchar_t c : text)
+        if (isJapaneseChar(c))
+            return true;
+    return false;
+}
+
+} // namespace
+
+std::wstring wordIssue(const WordData& w) {
+    if (wordKey(w).empty())
+        return L"missing word/kanji";
+    if (w.romaji.empty())
+        return L"missing romaji";
+    if (containsJapanese(w.romaji))
+        return L"romaji contains Japanese characters";
+    if (w.reading.empty() && w.hiragana.empty())
+        return L"missing reading/hiragana";
+    return {};
+}
+
 std::wstring fill_template(const std::wstring& html, const WordData& w) {
     std::unordered_map<std::wstring, std::wstring> values = {
         {L"kanji", w.kanji},
@@ -166,6 +197,13 @@ const std::vector<std::pair<std::wstring, WordData>>& embeddedWords() {
                 path.substr(0, kPrefix.size()) == kPrefix &&
                 path.substr(path.size() - kSuffix.size()) == kSuffix) {
                 WordData w = parse_word_json(load_asset_bytes(std::string(path)));
+                // M4 light check: a broken file is skipped, never fatal.
+                if (const std::wstring issue = wordIssue(w); !issue.empty()) {
+                    dbg::log("db", L"skipping %ls: %ls",
+                             ui::utf8ToWide(std::string(path)).c_str(),
+                             issue.c_str());
+                    continue;
+                }
                 out.emplace_back(wordKey(w), std::move(w));
             }
         }
@@ -179,17 +217,18 @@ size_t count_words() {
 }
 
 WordData pick_even_word(const std::vector<std::wstring>& ignored,
-                        const std::map<std::wstring, int>& attempts) {
+                        const std::map<std::wstring, int>& attempts,
+                        const std::vector<WordData>& extra) {
     std::vector<const WordData*> candidates;
     int best = 0;
-    for (const auto& [key, w] : embeddedWords()) {
-        if (key.empty())
-            continue;
-        bool isIgnored = false;
+
+    auto consider = [&](const WordData& w) {
+        const std::wstring key = wordKey(w);
+        if (key.empty() || !wordIssue(w).empty())
+            return;
         for (const auto& ig : ignored)
-            if (ig == key) { isIgnored = true; break; }
-        if (isIgnored)
-            continue;
+            if (ig == key)
+                return;
         int a = 0;
         if (const auto it = attempts.find(key); it != attempts.end())
             a = it->second;
@@ -200,7 +239,15 @@ WordData pick_even_word(const std::vector<std::wstring>& ignored,
         } else if (a == best) {
             candidates.push_back(&w);
         }
+    };
+
+    for (const auto& [key, w] : embeddedWords()) {
+        (void)key;
+        consider(w);
     }
+    for (const auto& w : extra)
+        consider(w);
+
     if (candidates.empty())
         return {};
     std::uniform_int_distribution<std::size_t> dist(0, candidates.size() - 1);

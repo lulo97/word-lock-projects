@@ -41,6 +41,11 @@ struct WordData {
 // key used by progress.json attempts and config ignoreWords.
 std::wstring wordKey(const WordData& w);
 
+// Light startup check (M4): returns an empty string for a usable word, or a
+// short reason ("missing word", "romaji contains Japanese", ...). The picker
+// excludes words with a non-empty issue and logs it as `db`.
+std::wstring wordIssue(const WordData& w);
+
 // Load an embedded asset by its relative path (e.g. "htmls/info.html").
 // Returns empty string if not found.
 std::string load_asset_bytes(const std::string& path);
@@ -60,6 +65,8 @@ WordData pick_random_word();
 // Even picker (M1): among non-ignored words, pick the one with the lowest
 // attempt count (random tie-break). `ignored` comes from Config.ignoreWords,
 // `attempts` from Progress (wordKey -> count). A word is never picked twice
-// until every non-ignored word has been picked once.
+// until every non-ignored word has been picked once. `extra` is the test/
+// extension seam (app add-word); invalid entries are filtered here too.
 WordData pick_even_word(const std::vector<std::wstring>& ignored,
-                        const std::map<std::wstring, int>& attempts);
+                        const std::map<std::wstring, int>& attempts,
+                        const std::vector<WordData>& extra = {});

@@ -94,6 +94,8 @@ private:
     ConfigStore config_;
     ProgressStore progress_;
     std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
+    std::vector<WordData> extraWords_;       // `app add-word` test seam (M4)
+    int dbRejected_ = 0;                     // words rejected by the light check
 
     // Pick the next word with the even picker (M1) and record the pick in
     // progress. start_countdown() and tray-open both go through here.

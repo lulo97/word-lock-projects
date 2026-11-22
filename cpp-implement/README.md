@@ -40,8 +40,11 @@ ui/                HTML/CSS engine
   app/             Document (tree+style+layout+events), WindowHost, ScriptRunner
 utils/             word database + even picker, config/progress stores,
                      window helpers, tray, debug logger, ...
+tools/             manual Python generators (words, audio, validation)
 htmls/             the five screens (countdown, tray_menu, settings, input, info)
+database/words.txt user word list, one Japanese word per line
 database/words/    word JSON files, one per word (embedded)
+database/audio/    generated WAV audio (embedded when present)
 tests/             regression pipeline (see below)
 ui_test.cpp        headless script runner (console entry point)
 app_test.cpp       headless feature-test runner (drives KotobaCppApp)
@@ -71,6 +74,32 @@ imgs/              browser-based Tailwind design references for the screens
 `{{romaji}}`, `{{example1_ja}}`, ... placeholders, filled in at window
 creation. `{{key}}` placeholders that have no matching field are left literal
 and reported by the logger/validator.
+
+The generator writes a newer schema (`word`, `reading`, `romaji`, `meaning`,
+`type`, `audio`, `examples[]` with `jp`/`reading`/`romaji`/`en`/`audio`). The
+C++ app reads both schemas, so old and new word files can coexist.
+
+## Adding words
+
+The generators are manual Python tools; the app never runs them.
+
+```
+1. edit database/words.txt            (one Japanese word per line, # comments)
+2. python tools/gen_words.py          (llama.cpp :9931 -> database/words/*.json)
+3. python tools/gen_audio.py          (llama.cpp :8080 TTS + ffmpeg -> WAV)
+4. python tools/validate_db.py        (schema, romaji, duplicates, audio files)
+```
+
+- `gen_words.py` skips words with a valid JSON; `--force` regenerates.
+  Failures are logged to `database/gen_words.errors.log`.
+- `gen_audio.py` writes `database/audio/<word>/word.wav` and `ex_<n>.wav`,
+  updates the JSON paths, skips existing non-empty files (`--force`), and
+  loudness-normalizes every clip. `--word-mode carrier` synthesizes a single
+  word inside a short phrase and trims the middle segment.
+- `validate_db.py` exits non-zero on any invalid file and writes
+  `database/validate_db.errors.log`. At runtime the C++ app applies a light
+  check of its own: a broken word is logged (`dbg::log("db", ...)`) and
+  excluded from the picker instead of crashing the app.
 
 ## Debug tooling
 
@@ -139,11 +168,12 @@ include <path>                # run another script (relative to this one);
                                # shared setups live in tests/features/common/
 expect-fail <command>         # passes only if the inner command FAILS
                                # (guards against vacuous assertions)
-app init / tick [n] / word <file> / state
+app init / tick [n] / word <file> / add-word <file> / state
 app assert <key> == <value>   # key in stateJson(), incl. `visible <window>`,
                                # config <key>, attempts <word>, attemptsTotal,
-                               # attemptsMax, picked_unique <n> (== true|false);
-                               # prints full state on failure
+                               # attemptsMax, picked_unique <n> (== true|false),
+                               # dbRejected, wordCount; prints full state on
+                               # failure
 app config <key> <value>      # set + persist (countdownSeconds, volume, ...)
 app config reload             # re-read from disk (persistence check)
 app progress reset            # clear attempt counts

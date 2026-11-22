@@ -1,0 +1,6 @@
+# The tools/ scripts use only the Python standard library (urllib, json,
+# subprocess). There is nothing to install for `pip install -r`.
+#
+# External requirements, installed by hand:
+#   * ffmpeg on PATH (audio generation/normalization)
+#   * llama.cpp servers: :9931 for words, :8080 with --mmproj for TTS

@@ -82,6 +82,13 @@ bool KotobaCppApp::init() {
     if (!config_.load() || !progress_.load())
         return false;
 
+    // M8: tests install an in-memory backend before init(); the real app
+    // uses HKCU\...\Run. Reconcile at startup so a moved/renamed exe updates
+    // its entry (and a disabled option removes a stale one).
+    startupRegistry_ = hooks.startupRegistry ? hooks.startupRegistry
+                                             : std::make_shared<WinStartupRegistry>();
+    syncStartupRegistry(config_.get().startWithWindows);
+
     if (!create_countdown())
         return false;
 
@@ -201,6 +208,9 @@ nlohmann::json KotobaCppApp::stateJson() {
     j["audio_last"] = audioLast_.empty() ? "none" : ui::wideToUtf8(audioLast_);
     j["audio_ready"] = audioReady_;
     j["audio_disabled"] = audioDisabled_;
+    j["startupRegistry"] = startupRegistry_ && startupRegistry_->isEnabled();
+    j["startupCommand"] =
+        startupRegistry_ ? ui::wideToUtf8(startupRegistry_->command()) : "";
     return j;
 }
 
@@ -556,6 +566,9 @@ bool KotobaCppApp::create_settings() {
                     nc.*flag = v;
                     config_.set(nc);
                     config_.save();
+                    // M8: the checkbox owns the HKCU Run entry too.
+                    if (flag == &Config::startWithWindows)
+                        applyStartup(v);
                 };
                 // Fires onChange only when the HTML attr differs from config.
                 check->setChecked(config_.get().*flag);
@@ -684,9 +697,16 @@ void KotobaCppApp::start_countdown() {
     countdown_->killTimer(TIMER_COUNTDOWN);
     countdown_->killTimer(TIMER_TRANSITION);
 
-    InvalidateRect(countdown_->hwnd(), nullptr, TRUE);
-    countdown_->show(true);
-    position_bottom_right(*countdown_, 20);
+    if (minimized_) {
+        // Started at sign-in: stay in the tray for this first run, then
+        // behave normally if the user restarts the countdown.
+        minimized_ = false;
+        countdown_->show(false);
+    } else {
+        InvalidateRect(countdown_->hwnd(), nullptr, TRUE);
+        countdown_->show(true);
+        position_bottom_right(*countdown_, 20);
+    }
 
     const int kTickMs = debug_ ? 10 : 1000;   // fast-forwarded countdown in debug
     countdown_->setTimer(
@@ -827,6 +847,30 @@ void KotobaCppApp::show_settings() {
 
     settings_->show(true);
     SetForegroundWindow(settings_->hwnd());
+}
+
+// Keep HKCU\...\Run in sync with the config flag. Writes only when the stored
+// command differs, so a normal start with the option on does not churn the
+// registry; a moved/renamed exe is corrected on the next launch.
+void KotobaCppApp::syncStartupRegistry(bool enabled) {
+    if (!startupRegistry_)
+        return;
+
+    if (!enabled) {
+        if (startupRegistry_->isEnabled())
+            startupRegistry_->setEnabled(false, L"");
+        return;
+    }
+
+    const std::wstring command = startupCommandLine(currentExePath());
+    if (startupRegistry_->command() != command) {
+        if (!startupRegistry_->setEnabled(true, command))
+            dbg::log("startup", L"could not write HKCU Run entry");
+    }
+}
+
+void KotobaCppApp::applyStartup(bool enabled) {
+    syncStartupRegistry(enabled);
 }
 
 void KotobaCppApp::on_tray_click(LPARAM lParam) {
@@ -977,6 +1021,9 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
         else { runner.fail(L"app config: unknown key " + key); return; }
         config_.set(c);
         if (!config_.save()) runner.fail(L"app config: save failed");
+        // Keep the test/agent seam consistent with the settings checkbox.
+        if (key == L"startWithWindows")
+            applyStartup(c.startWithWindows);
     }
     else if (sub == L"progress") {
         if (t.size() < 3) { runner.fail(L"app progress: need <reset>"); return; }

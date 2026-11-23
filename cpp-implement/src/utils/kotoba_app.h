@@ -10,6 +10,7 @@
 #include "app/script.h"
 #include "utils/config.h"
 #include "utils/progress.h"
+#include "utils/startup_registry.h"
 #include "utils/word_db.h"
 #include "json.hpp"
 
@@ -39,12 +40,19 @@ public:
         // play_audio()/stop_audio().
         std::function<bool(const std::wstring&, float)> playAudio;
         std::function<void()> stopAudio;
+        // M8 "start with Windows" backend. Empty -> the real HKCU Run key;
+        // app_test installs a FakeStartupRegistry so tests never touch it.
+        std::shared_ptr<StartupRegistry> startupRegistry;
     } hooks;
 
     KotobaCppApp();
     ~KotobaCppApp();
 
     void setDebug(bool d);
+
+    // Login launch (--minimized): the first countdown starts in the tray
+    // without showing its overlay; later starts behave normally.
+    void setMinimized(bool m) { minimized_ = m; }
 
     // Create all windows (countdown, tray, settings) and start the countdown,
     // WITHOUT entering a message loop. Tests call this, then drive the app
@@ -94,10 +102,12 @@ private:
     bool inputDone_ = false;
     bool debug_ = false;
     bool stopped_ = false;
+    bool minimized_ = false;                 // --minimized, consumed at first start
     WordData currentWord_{};
     ui::ScriptRunner current_;          // bound to a window via `window` command
     ConfigStore config_;
     ProgressStore progress_;
+    std::shared_ptr<StartupRegistry> startupRegistry_;   // set in init()
     std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
     std::vector<WordData> extraWords_;       // `app add-word` test seam (M4)
     int dbRejected_ = 0;                     // words rejected by the light check
@@ -149,6 +159,9 @@ private:
 
     // ----- settings / tray -----
     void show_settings();
+    // Make the Run key match `enabled`, rewriting a moved/renamed exe path.
+    void syncStartupRegistry(bool enabled);
+    void applyStartup(bool enabled);
     void on_tray_click(LPARAM lParam);
     void show_tray_menu();
     void toggle_tray_menu();

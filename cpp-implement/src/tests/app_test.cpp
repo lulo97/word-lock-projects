@@ -53,6 +53,9 @@ int wmain(int argc, wchar_t** argv) {
     // playing/idle and the last requested clip for `app assert audio...`.
     app.hooks.playAudio = [](const std::wstring&, float) { return true; };
     app.hooks.stopAudio = [] {};
+    // Headless: never touch the user's HKCU Run key (M8). Feature tests see
+    // the in-memory backend through `app assert startupRegistry == ...`.
+    app.hooks.startupRegistry = std::make_shared<FakeStartupRegistry>();
     ScriptRunner runner;             // built-in commands
     app.registerCommands(runner);   // + `app` and `window`
     runner.setScriptDir(scriptDirOf(script));

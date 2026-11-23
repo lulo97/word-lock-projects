@@ -79,6 +79,7 @@ target_link_libraries(MyApp PRIVATE
     shell32
     winmm
     gdiplus
+    advapi32
 )
 
 # Equivalent to /SUBSYSTEM:WINDOWS
@@ -115,6 +116,7 @@ function(add_console_ui_target target_name main_source)
         shell32
         winmm
         gdiplus
+        advapi32
     )
     set_target_properties(${target_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}"

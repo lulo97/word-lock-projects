@@ -16,5 +16,8 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmd, int) {
     KotobaCppApp app;
     if (cmd && wcsstr(cmd, L"--debug"))
         app.setDebug(true);
+    // Written by the "start with Windows" Run entry (M8): launch in the tray.
+    if (cmd && wcsstr(cmd, L"--minimized"))
+        app.setMinimized(true);
     return app.run();
 }

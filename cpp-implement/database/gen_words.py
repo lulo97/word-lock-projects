@@ -8,9 +8,9 @@ The script is a manual, offline tool. It is not imported or tested by the C++
 app; the app only reads the JSON files it produces.
 
 Usage:
-    python tools/gen_words.py
-    python tools/gen_words.py --input database/words.txt --force
-    python tools/gen_words.py --endpoint http://127.0.0.1:9931
+    python database/gen_words.py
+    python database/gen_words.py --input database/words.txt --force
+    python database/gen_words.py --endpoint http://127.0.0.1:9931
 
 Existing files that pass validation are skipped. Invalid files are
 regenerated. Failed words are appended to database/gen_words.errors.log.
@@ -40,7 +40,6 @@ ROOT = Path(__file__).resolve().parent.parent
 DATABASE_DIR = ROOT / "database"
 WORDS_DIR = DATABASE_DIR / "words"
 DEFAULT_INPUT = DATABASE_DIR / "words.txt"
-PROMPT_PATH = Path(__file__).resolve().parent / "prompts" / "word.txt"
 ERROR_LOG = DATABASE_DIR / "gen_words.errors.log"
 
 DEFAULT_ENDPOINT = "http://127.0.0.1:9931"
@@ -51,6 +50,8 @@ JAPANESE_RE = re.compile(
     "\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]"
 )
 INVALID_FILENAME_RE = re.compile(r'[\\/:*?"<>|\x00-\x1f]')
+# Hepburn romaji must stay ASCII: "dōbutsu" is not usable by the app.
+ROMAJI_ALLOWED_RE = re.compile(r"[A-Za-z0-9 .,'\-]+")
 
 
 class GenerateError(Exception):
@@ -127,6 +128,16 @@ def target_path_for(word: str) -> Path:
     return WORDS_DIR / f"{word}.json"
 
 
+def check_romaji(value: str, where: str) -> None:
+    if has_japanese(value):
+        raise GenerateError(f"{where} contains Japanese characters")
+    if not ROMAJI_ALLOWED_RE.fullmatch(value):
+        raise GenerateError(
+            f"{where} must be plain ASCII Hepburn romaji "
+            f"(e.g. dobutsu, not dōbutsu): {value!r}"
+        )
+
+
 def validate_entry(entry, word: str) -> dict:
     """Return a canonical new-schema entry or raise GenerateError."""
     if not isinstance(entry, dict):
@@ -145,8 +156,7 @@ def validate_entry(entry, word: str) -> dict:
             raise GenerateError(f"{key} must be a non-empty string")
         result[key] = value.strip()
 
-    if has_japanese(result["romaji"]):
-        raise GenerateError("romaji contains Japanese characters")
+    check_romaji(result["romaji"], "romaji")
 
     raw_examples = entry.get("examples")
     if not isinstance(raw_examples, list) or not raw_examples:
@@ -164,8 +174,7 @@ def validate_entry(entry, word: str) -> dict:
                     f"examples[{index}].{key} must be a non-empty string"
                 )
             example[key] = value.strip()
-        if has_japanese(example["romaji"]):
-            raise GenerateError(f"examples[{index}].romaji contains Japanese")
+        check_romaji(example["romaji"], f"examples[{index}].romaji")
         example["audio"] = ""
         examples.append(example)
 
@@ -263,9 +272,6 @@ def run(args: argparse.Namespace) -> int:
     input_path = args.input
     if not input_path.is_file():
         print(f"ERROR: input file not found: {input_path}")
-        return 2
-    if not PROMPT_PATH.is_file():
-        print(f"ERROR: prompt template not found: {PROMPT_PATH}")
         return 2
 
     if args.retries < 0:

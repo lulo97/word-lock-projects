@@ -10,14 +10,19 @@
     {
       "ja": "明日は休みです。",
       "romaji": "ashita wa yasumi desu.",
-      "vi": "Ngày mai được nghỉ."
+      "vi": "Ngày mai được nghỉ.",
+      "audio": "audio/明日/ex_1.ogg"
     },
     {
       "ja": "明日また会いましょう。",
       "romaji": "ashita mata ai masho u.",
-      "vi": "Mai gặp lại nhé."
+      "vi": "Mai gặp lại nhé.",
+      "audio": "audio/明日/ex_2.ogg"
     }
   ],
-  "tags": ["time", "daily"],
-  "audio": ""
+  "tags": [
+    "time",
+    "daily"
+  ],
+  "audio": "audio/明日/word.ogg"
 }

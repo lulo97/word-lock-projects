@@ -1,5 +1,1 @@
-# Kotoba word list: one Japanese word per line.
-# Blank lines and lines starting with # are ignored.
-# Generate the JSON files with: python tools/gen_words.py
-りんご
-明日
+猫

@@ -44,7 +44,7 @@ tools/             manual Python generators (words, audio, validation)
 htmls/             the five screens (countdown, tray_menu, settings, input, info)
 database/words.txt user word list, one Japanese word per line
 database/words/    word JSON files, one per word (embedded)
-database/audio/    generated WAV audio (embedded when present)
+database/audio/    generated OGG audio (embedded when present)
 tests/             regression pipeline (see below)
 ui_test.cpp        headless script runner (console entry point)
 app_test.cpp       headless feature-test runner (drives KotobaCppApp)
@@ -85,14 +85,14 @@ The generators are manual Python tools; the app never runs them.
 
 ```
 1. edit database/words.txt            (one Japanese word per line, # comments)
-2. python tools/gen_words.py          (llama.cpp :9931 -> database/words/*.json)
-3. python tools/gen_audio.py          (llama.cpp :8080 TTS + ffmpeg -> WAV)
-4. python tools/validate_db.py        (schema, romaji, duplicates, audio files)
+2. python database/gen_words.py       (llama.cpp :9931 -> database/words/*.json)
+3. python database/gen_audio.py       (llama.cpp :8080 TTS + ffmpeg -> OGG)
+4. python database/validate_db.py     (schema, romaji, duplicates, audio files)
 ```
 
 - `gen_words.py` skips words with a valid JSON; `--force` regenerates.
   Failures are logged to `database/gen_words.errors.log`.
-- `gen_audio.py` writes `database/audio/<word>/word.wav` and `ex_<n>.wav`,
+- `gen_audio.py` writes `database/audio/<word>/word.ogg` and `ex_<n>.ogg`,
   updates the JSON paths, skips existing non-empty files (`--force`), and
   loudness-normalizes every clip. `--word-mode carrier` synthesizes a single
   word inside a short phrase and trims the middle segment.

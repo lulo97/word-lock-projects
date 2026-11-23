@@ -6,7 +6,7 @@ Checks every database/words/**/*.json:
   * romaji contains no Japanese characters
   * examples are well formed
   * no duplicate words, and the filename matches the word
-  * every non-empty audio path exists, is large enough and has a WAV header
+  * every non-empty audio path exists, is large enough and has a WAV/OGG header
 
 Usage:
     python tools/validate_db.py
@@ -111,8 +111,10 @@ def check_audio(value, where: str, errors: list[str]) -> None:
     except OSError as error:
         errors.append(f"{where}: cannot read audio file: {error}")
         return
-    if not (header[:4] == b"RIFF" and header[8:12] == b"WAVE"):
-        errors.append(f"{where}: not a WAV file: {value}")
+    is_wav = header[:4] == b"RIFF" and header[8:12] == b"WAVE"
+    is_ogg = header[:4] == b"OggS"
+    if not (is_wav or is_ogg):
+        errors.append(f"{where}: not a WAV/OGG file: {value}")
 
 
 def validate_entry(data, file_path: Path) -> tuple[list[str], list[str], str]:

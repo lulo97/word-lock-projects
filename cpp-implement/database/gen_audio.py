@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
-"""Generate WAV audio for Kotoba words and example sentences.
+"""Generate OGG audio for Kotoba words and example sentences.
 
 Input:  database/words/**/*.json
 Output:
-    database/audio/<word>/word.wav
-    database/audio/<word>/ex_<n>.wav
+    database/audio/<word>/word.ogg
+    database/audio/<word>/ex_<n>.ogg
 and the relative paths are written back into the JSON ("audio" fields).
 
 The script is a manual, offline tool (llama.cpp TTS on :8080 + ffmpeg). It is
 not imported or tested by the C++ app.
 
 Usage:
-    python tools/gen_audio.py
-    python tools/gen_audio.py --word-mode carrier
-    python tools/gen_audio.py --force --only-word りんご
+    python database/gen_audio.py
+    python database/gen_audio.py --word-mode carrier
+    python database/gen_audio.py --force --only-word りんご
 
 Single words are often pronounced badly in isolation. `--word-mode carrier`
 synthesizes the word inside a short phrase ("えっと。<word>。えっと。") and keeps
 the middle speech segment. Example sentences are always synthesized directly.
-Every clip is loudness-normalized with ffmpeg loudnorm so the app's volume
-slider behaves predictably.
+Every clip is loudness-normalized with ffmpeg loudnorm and encoded to OGG/Opus
+(~40 kbit/s mono) instead of WAV so the database stays small. The C++ player
+transcodes OGG to a temporary WAV through ffmpeg at playback time.
 """
 
 from __future__ import annotations
@@ -54,6 +55,8 @@ DEFAULT_ENDPOINT = "http://127.0.0.1:8080"
 DEFAULT_CARRIER = "えっと。{word}。えっと。"
 MIN_AUDIO_BYTES = 1024
 LOUDNORM = "loudnorm=I=-16:TP=-1.5:LRA=11"
+AUDIO_EXTENSION = ".ogg"
+OGG_BITRATE = "40k"   # mono speech; a fraction of the original WAV size
 
 DURATION_RE = re.compile(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)")
 SILENCE_START_RE = re.compile(r"silence_start:\s*(-?\d+(?:\.\d+)?)")
@@ -204,27 +207,53 @@ def pick_word_segment(segments: list[tuple[float, float]]) -> tuple[float, float
     return segments[0]
 
 
-def write_wav(ffmpeg: str, raw: Path, target: Path,
+def write_ogg(ffmpeg: str, raw: Path, target: Path,
               segment: tuple[float, float] | None = None) -> None:
-    """Normalize loudness, optionally trimming to one speech segment."""
+    """Normalize loudness, optionally trim, then encode to OGG/Opus."""
     target.parent.mkdir(parents=True, exist_ok=True)
-    temp = target.with_name(target.name + ".tmp.wav")
+    temp = target.with_name(target.name + ".tmp" + AUDIO_EXTENSION)
     args = ["-i", str(raw)]
     if segment is not None:
         begin, end = segment
         args += ["-ss", f"{begin:.3f}", "-t", f"{max(0.05, end - begin):.3f}"]
     args += [
         "-af", LOUDNORM,
-        "-ar", "22050",
+        "-ar", "48000",   # Opus always decodes at 48 kHz
         "-ac", "1",
-        "-c:a", "pcm_s16le",
+        "-c:a", "libopus",
+        "-b:a", OGG_BITRATE,
         str(temp),
     ]
     run_ffmpeg(ffmpeg, args)
     if not is_audio_file(temp):
         temp.unlink(missing_ok=True)
-        raise AudioError("ffmpeg produced an empty WAV")
+        raise AudioError("ffmpeg produced an empty OGG file")
     os.replace(temp, target)
+
+
+def transcode_to_ogg(ffmpeg: str, source: Path, target: Path) -> None:
+    """Re-encode an existing clip (e.g. legacy .wav) into the OGG target."""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temp = target.with_name(target.name + ".tmp" + AUDIO_EXTENSION)
+    run_ffmpeg(
+        ffmpeg,
+        [
+            "-i", str(source),
+            "-af", LOUDNORM,
+            "-ar", "48000",
+            "-ac", "1",
+            "-c:a", "libopus",
+            "-b:a", OGG_BITRATE,
+            str(temp),
+        ],
+    )
+    if not is_audio_file(temp):
+        temp.unlink(missing_ok=True)
+        raise AudioError("ffmpeg produced an empty OGG file")
+    os.replace(temp, target)
+    # Drop the superseded file when it is a legacy WAV next to the new clip.
+    if source.parent == target.parent and source.name != target.name:
+        source.unlink(missing_ok=True)
 
 
 def generate_clip(text: str, target: Path, args, ffmpeg: str, *,
@@ -252,7 +281,7 @@ def generate_clip(text: str, target: Path, args, ffmpeg: str, *,
                 segment = pick_word_segment(speech_segments(ffmpeg, raw))
                 if segment is None:
                     print("  warning: no speech segment found; keeping full clip")
-            write_wav(ffmpeg, raw, target, segment)
+            write_ogg(ffmpeg, raw, target, segment)
             raw.unlink(missing_ok=True)
             return
         except (LlmError, AudioError, OSError) as error:
@@ -291,15 +320,16 @@ def process_entry(path: Path, entry: dict, args, ffmpeg: str) -> tuple[int, int]
     generated = skipped = 0
     changed = False
 
-    word_target = target_dir / "word.wav"
+    word_target = target_dir / ("word" + AUDIO_EXTENSION)
     existing = resolve_audio(entry.get("audio"))
     if not args.force and is_audio_file(word_target):
         print(f"  word: already has {relative_path(word_target)}")
         skipped += 1
     elif not args.force and is_audio_file(existing) and existing != word_target:
-        print(f"  word: reusing {relative_path(existing)}")
-        changed |= set_field(entry, "audio", relative_path(existing))
-        skipped += 1
+        print(f"  word: converting {relative_path(existing)} -> "
+              f"{relative_path(word_target)}")
+        transcode_to_ogg(ffmpeg, existing, word_target)
+        generated += 1
     else:
         print(f"  word: generating {relative_path(word_target)}")
         generate_clip(word, word_target, args, ffmpeg,
@@ -315,16 +345,16 @@ def process_entry(path: Path, entry: dict, args, ffmpeg: str) -> tuple[int, int]
             text = example_text(example)
             if not text:
                 continue
-            target = target_dir / f"ex_{index}.wav"
+            target = target_dir / f"ex_{index}{AUDIO_EXTENSION}"
             existing = resolve_audio(example.get("audio"))
             if not args.force and is_audio_file(target):
                 print(f"  ex_{index}: already has {relative_path(target)}")
                 skipped += 1
             elif not args.force and is_audio_file(existing) and existing != target:
-                print(f"  ex_{index}: reusing {relative_path(existing)}")
-                changed |= set_field(example, "audio", relative_path(existing))
-                skipped += 1
-                continue
+                print(f"  ex_{index}: converting {relative_path(existing)} -> "
+                      f"{relative_path(target)}")
+                transcode_to_ogg(ffmpeg, existing, target)
+                generated += 1
             else:
                 print(f"  ex_{index}: generating {relative_path(target)}")
                 try:
@@ -347,7 +377,7 @@ def log_failure(name: str, message: str) -> None:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Generate WAV audio for Kotoba words and examples."
+        description="Generate OGG audio for Kotoba words and examples."
     )
     parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT,
                         help=f"llama.cpp TTS base URL (default: {DEFAULT_ENDPOINT})")

@@ -10,14 +10,19 @@
     {
       "ja": "りんごを食べました。",
       "romaji": "ringo o tabemashita.",
-      "vi": "Tôi đã ăn một quả táo."
+      "vi": "Tôi đã ăn một quả táo.",
+      "audio": "audio/りんご/ex_1.ogg"
     },
     {
       "ja": "赤いりんごが好きです。",
       "romaji": "akai ringo ga suki desu.",
-      "vi": "Tôi thích táo đỏ."
+      "vi": "Tôi thích táo đỏ.",
+      "audio": "audio/りんご/ex_2.ogg"
     }
   ],
-  "tags": ["food", "fruit"],
-  "audio": ""
+  "tags": [
+    "food",
+    "fruit"
+  ],
+  "audio": "audio/りんご/word.ogg"
 }

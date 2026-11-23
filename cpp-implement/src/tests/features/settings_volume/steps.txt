@@ -1,0 +1,73 @@
+# Volume setting feature test (M6).
+#
+# The settings screen's #volume range input edits config.volume
+# (0..10, step 0.5) and persists immediately. The #volume-value label
+# tracks the slider.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - arrow keys move the slider, config + label follow
+#   2. reverse      - move back, the old value is restored
+#   3. repeat       - reopening settings, the slider shows the config value
+#   4. side effects - Home/End clamp to min/max
+#   5. interleaving - the label stays consistent while the countdown runs
+
+include ../common/running.txt
+
+# --- setup: open settings; the slider starts from the config value ---
+window tray
+click #tray-settings
+window settings
+assert value #volume == 2.00
+assert text #volume-value == x2
+
+# --- 1. happy path: Right x6 -> 5.0 ---
+focus #volume
+key Right
+key Right
+key Right
+key Right
+key Right
+key Right
+app assert config volume == 5
+assert value #volume == 5.00
+assert text #volume-value == x5
+
+# --- 2. reverse: Left x6 -> 2.0 ---
+key Left
+key Left
+key Left
+key Left
+key Left
+key Left
+app assert config volume == 2
+assert text #volume-value == x2
+
+# --- 4. side effects: Home/End clamp to min/max ---
+key End
+app assert config volume == 10
+assert value #volume == 10.00
+key Home
+app assert config volume == 0
+assert value #volume == 0.00
+
+# --- 3. repeat: reopen settings, the slider shows the config value ---
+key Right
+key Right
+key Right
+window tray
+click #tray-settings
+window settings
+assert value #volume == 1.50
+assert text #volume-value == x1.5
+
+# --- 5. interleaving: consistent while the countdown runs ---
+window tray
+click #tray-stop
+click #tray-stop
+window settings
+key Right
+app assert config volume == 2
+app assert timers == 1
+window tray
+click #tray-stop
+app assert timers == 0

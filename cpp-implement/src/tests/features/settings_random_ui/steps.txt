@@ -1,0 +1,52 @@
+# Random-UI setting feature test (M6).
+#
+# The settings screen's #random-ui checkbox toggles config.randomUi and
+# persists immediately. Sibling checkboxes are independent.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - uncheck -> false, check -> true
+#   2. reverse      - toggle back, the original value is restored
+#   3. repeat       - reopening settings, the checkbox shows the config state
+#   4. side effects - sibling checkboxes are not affected
+#   5. interleaving - the toggle survives app stop/start
+
+include ../common/running.txt
+
+# --- setup: open settings; the checkbox starts from the config value ---
+window tray
+click #tray-settings
+window settings
+app assert config randomUi == true
+
+# --- 1. happy path: uncheck ---
+click #random-ui
+app assert config randomUi == false
+
+# --- 2. reverse: check again ---
+click #random-ui
+app assert config randomUi == true
+
+# --- 4. side effects: siblings are not affected ---
+click #freeze-chrome
+app assert config freezeChrome == false
+app assert config randomUi == true
+click #freeze-chrome
+app assert config freezeChrome == true
+
+# --- 3. repeat: reopen settings, the checkbox shows the config state ---
+click #random-ui
+window tray
+click #tray-settings
+window settings
+app assert config randomUi == false
+
+# --- 5. interleaving: the toggle survives app stop/start ---
+click #random-ui
+window tray
+click #tray-stop
+click #tray-stop
+app assert config randomUi == true
+app assert timers == 1
+window tray
+click #tray-stop
+app assert timers == 0

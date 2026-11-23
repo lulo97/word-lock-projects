@@ -1,0 +1,63 @@
+# Countdown setting feature test (M6).
+#
+# The settings screen's #countdown text input edits
+# config.countdownSeconds and persists immediately through Config::save().
+# The next start_countdown() uses the new value.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - type a new countdown, config + next countdown follow
+#   2. reverse      - type the old value back, config restored
+#   3. repeat       - reopening settings, the input shows the current value
+#   4. side effects - invalid input is ignored, last valid value kept
+#   5. interleaving - settings stay consistent while the countdown runs
+
+include ../common/running.txt
+
+# --- setup: open the settings screen ---
+window tray
+click #tray-settings
+window settings
+assert value #countdown == 30
+
+# --- 1. happy path: type a new countdown ---
+focus #countdown
+key Ctrl+A
+type #countdown 45
+app assert config countdownSeconds == 45
+window tray
+click #tray-stop
+click #tray-stop
+app assert countdown == 45
+
+# --- 2. reverse: restore the pinned value ---
+window settings
+focus #countdown
+key Ctrl+A
+type #countdown 30
+app assert config countdownSeconds == 30
+
+# --- 3. repeat: reopening settings, the input shows the current value ---
+window tray
+click #tray-settings
+window settings
+assert value #countdown == 30
+
+# --- 4. side effects: invalid input is ignored, last valid value kept ---
+focus #countdown
+key Ctrl+A
+type #countdown abc
+app assert config countdownSeconds == 30
+
+# --- 5. interleaving: settings consistent while the countdown runs ---
+window tray
+click #tray-stop
+click #tray-stop
+window settings
+focus #countdown
+key Ctrl+A
+type #countdown 120
+app assert config countdownSeconds == 120
+app assert timers == 1
+window tray
+click #tray-stop
+app assert timers == 0

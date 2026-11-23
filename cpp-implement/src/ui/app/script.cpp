@@ -120,6 +120,12 @@ void ScriptRunner::keyCmd(const std::vector<std::wstring>& t) {
     const std::wstring& name = t[1];
     auto& ev = doc_->events();
     Element& root = *doc_->root();
+    if (name == L"Ctrl+A") {
+        KeyEvent k{}; k.vk = 'A'; k.ctrl = true;
+        ev.onKeyDown(root, k);
+        settle();
+        return;
+    }
     if (name == L"Backspace") ev.onChar(root, L'\b');
     else {
         static const std::pair<const wchar_t*, UINT> map[] = {
@@ -275,7 +281,7 @@ void ScriptRunner::registerBuiltinCommands() {
             if (auto* e = need(t[1]))
                 if (auto* in = dynamic_cast<TextInput*>(e->control.get())) { in->onImeComposition(t[2], true); settle(); }
         });
-    addCommand(L"key", 1, L"key <Enter|Tab|Escape|...|Backspace>",
+    addCommand(L"key", 1, L"key <Enter|Tab|Escape|...|Backspace|Ctrl+A>",
         [this](const auto& t, const auto&) { keyCmd(t); });
     addCommand(L"wheel", 3, L"wheel x y delta",
         [this](const auto& t, const auto&) {

@@ -7,6 +7,7 @@
 #include "utils/kotoba_app.h"
 
 #include "app/script.h"
+#include "controls/checkbox.h"
 #include "core/utf.h"
 #include "dom/tree_ops.h"
 #include "utils/debug_log.h"
@@ -498,7 +499,80 @@ bool KotobaCppApp::create_settings() {
     options.centered = true;
     options.visible = false;
 
-    return create_host(settings_, options, L"settings.html");
+    if (!create_host(settings_, options, L"settings.html"))
+        return false;
+
+    // M6: every control persists immediately through Config::save().
+    ui::Document& doc = settings_->document();
+    const Config& c = config_.get();
+
+    doc.onInput(L"countdown", [this](const std::wstring& value) {
+        int seconds = _wtoi(value.c_str());
+        if (seconds < 1 || seconds > 359999)
+            return;   // ignore garbage; keep the last valid value
+        Config nc = config_.get();
+        nc.countdownSeconds = seconds;
+        config_.set(nc);
+        config_.save();
+    });
+
+    doc.onInput(L"ignore-words", [this](const std::wstring& value) {
+        std::vector<std::wstring> words;
+        std::wstring current;
+        for (wchar_t ch : value) {
+            if (ch == L'\n' || ch == L'\r' || ch == L',') {
+                std::wstring w = ui::trim(current);
+                if (!w.empty())
+                    words.push_back(std::move(w));
+                current.clear();
+            } else {
+                current += ch;
+            }
+        }
+        std::wstring w = ui::trim(current);
+        if (!w.empty())
+            words.push_back(std::move(w));
+        Config nc = config_.get();
+        nc.ignoreWords = std::move(words);
+        config_.set(nc);
+        config_.save();
+    });
+
+    doc.onChange(L"volume", [this](float value) {
+        Config nc = config_.get();
+        nc.volume = value;
+        config_.set(nc);
+        config_.save();
+        wchar_t buf[32];
+        swprintf(buf, 32, L"x%g", value);
+        settings_->document().setText(L"volume-value", buf);
+    });
+
+    auto wire_check = [this, &doc](const std::wstring& id, bool Config::*flag) {
+        if (ui::Element* el = doc.byId(id))
+            if (auto* check = dynamic_cast<ui::Checkbox*>(el->control.get())) {
+                check->onChange = [this, flag](bool v) {
+                    Config nc = config_.get();
+                    nc.*flag = v;
+                    config_.set(nc);
+                    config_.save();
+                };
+                // Fires onChange only when the HTML attr differs from config.
+                check->setChecked(config_.get().*flag);
+            }
+    };
+    wire_check(L"random-ui", &Config::randomUi);
+    wire_check(L"start-with-windows", &Config::startWithWindows);
+    wire_check(L"freeze-chrome", &Config::freezeChrome);
+
+    doc.onClick(L"close", [this] { settings_->show(false); });
+
+    // Initial values. setValue fires onChange, which re-persists the same
+    // value (idempotent); the volume handler also refreshes the label.
+    doc.setValue(L"countdown", std::to_wstring(c.countdownSeconds));
+    doc.setValue(L"volume", std::to_wstring(c.volume));
+
+    return true;
 }
 
 // ----- word windows -----
@@ -744,6 +818,13 @@ void KotobaCppApp::show_settings() {
     if (!settings_)
         return;
 
+    // Refresh the fields from config every time the window opens, so the
+    // controls always show the current values (setValue fires onChange,
+    // which re-persists the same value; harmless).
+    ui::Document& doc = settings_->document();
+    const Config& c = config_.get();
+    doc.setValue(L"countdown", std::to_wstring(c.countdownSeconds));
+
     settings_->show(true);
     SetForegroundWindow(settings_->hwnd());
 }
@@ -956,6 +1037,13 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
             int max = 0;
             for (const auto& [k, v] : progress_.get().attempts) max = std::max(max, v);
             actual = std::to_wstring(max);
+        }
+        else if (key == L"ignored") {
+            if (t.size() < 5) { runner.fail(L"app assert ignored: need <word> == <value>"); return; }
+            bool found = false;
+            for (const auto& w : config_.get().ignoreWords)
+                if (w == t[3]) { found = true; break; }
+            actual = found ? L"true" : L"false";
         }
         else if (key == L"picked_unique") {
             // The last n recorded picks must be pairwise distinct. The even

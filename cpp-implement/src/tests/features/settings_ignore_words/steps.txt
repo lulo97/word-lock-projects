@@ -1,0 +1,56 @@
+# Ignore-words setting feature test (M6).
+#
+# The settings screen's #ignore-words textarea edits config.ignoreWords
+# (split on newlines/commas, trimmed) and persists immediately. Ignored
+# words are never picked by the even picker.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - type words, config + picker follow
+#   2. reverse      - clear the field, ignore list emptied
+#   3. repeat       - reopening settings, the textarea shows the words
+#   4. side effects - ignored words are never picked
+#   5. interleaving - the picker stays consistent across settings changes
+
+include ../common/running.txt
+
+# --- setup: open the settings screen ---
+window tray
+click #tray-settings
+window settings
+assert value #ignore-words == ""
+
+# --- 1. happy path: words split on the comma, space trimmed ---
+type #ignore-words "りんご, 犬"
+app assert ignored りんご == true
+app assert ignored 犬 == true
+
+# --- 4. side effects: ignored words are never picked ---
+app progress reset
+app pick 2
+app assert attempts りんご == 0
+app assert attempts 犬 == 0
+app assert attemptsTotal == 2
+
+# --- 2. reverse: clear the field, ignore list emptied ---
+key Backspace
+key Backspace
+key Backspace
+key Backspace
+key Backspace
+key Backspace
+app assert ignored りんご == false
+app assert ignored 犬 == false
+
+# --- 3. repeat: reopen settings, the textarea shows the words ---
+type #ignore-words 明日
+window tray
+click #tray-settings
+window settings
+assert value #ignore-words == 明日
+app assert ignored 明日 == true
+
+# --- 5. interleaving: with the ignore list active the picker picks the rest ---
+app progress reset
+app pick 2
+app assert attemptsTotal == 2
+app assert attempts 明日 == 0

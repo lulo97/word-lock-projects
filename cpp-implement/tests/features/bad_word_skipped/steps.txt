@@ -15,22 +15,22 @@
 # --- setup: app is running, countdown going (shared preamble) ---
 include ../common/running.txt
 
-# --- 1. happy path: the shipped db has 2 valid words; a valid extra joins ---
-app assert wordCount == 2
-app add-word good.json
+# --- 1. happy path: the shipped db has 3 valid words; a valid extra joins ---
 app assert wordCount == 3
+app add-word good.json
+app assert wordCount == 4
 app assert dbRejected == 0
 
 # --- 2. reverse: a bad file is rejected and counted, never added ---
 app add-word bad.json
 app assert dbRejected == 1
-app assert wordCount == 3
+app assert wordCount == 4
 
-# --- 3. evenness: with progress cleared, 3 valid words are each picked once ---
+# --- 3. evenness: with progress cleared, 4 valid words are each picked once ---
 app progress reset
 app assert attemptsTotal == 0
-app pick 3
-app assert attemptsTotal == 3
+app pick 4
+app assert attemptsTotal == 4
 app assert attemptsMax == 1
 
 # --- 4. never picked: every valid word now has 1 attempt, so the even picker
@@ -38,7 +38,7 @@ app assert attemptsMax == 1
 # (it would still have 0 attempts). It must not, so its count stays 0. ---
 app pick 1
 app assert attempts 壊れ == 0
-app assert attemptsTotal == 4
+app assert attemptsTotal == 5
 app assert attemptsMax == 2
 
 # --- 5. side effects: picking does not disturb the countdown timer ---

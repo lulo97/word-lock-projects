@@ -121,9 +121,6 @@ void resolveElement(Element& el, const ComputedStyle* parentStyle, const Resolve
     if (parentStyle)
         inheritFrom(*parentStyle, style);
 
-    if (el.hasAttr(L"hidden") || el.hasAttr(L"data-ui-hidden"))
-        style.display = Display::None;
-
     VariantSet classes = buildVariantSet(el.classList);
 
     applyDeclarations(style, classes.base);
@@ -153,6 +150,11 @@ void resolveElement(Element& el, const ComputedStyle* parentStyle, const Resolve
 
     if (isVariantActive(Variant::Disabled, el.stateFlags, ctx.viewportWidth))
         applyDeclarations(style, classes.disabled);
+
+    // The hidden attribute (Document::setVisible) must beat any display
+    // class such as flex/grid, so it is applied last.
+    if (el.hasAttr(L"hidden") || el.hasAttr(L"data-ui-hidden"))
+        style.display = Display::None;
 
     if (el.hasAttr(L"autofocus") && !el.stateFlags)
         el.stateFlags |= StateFocus;

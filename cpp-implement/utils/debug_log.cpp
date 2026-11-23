@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include <cstdarg>
+#include <filesystem>
 #include <fstream>
 #include <mutex>
 #include <string>
@@ -30,7 +31,12 @@ void log(const char* cat, const wchar_t* fmt, ...) {
     va_end(ap);
 
     std::lock_guard<std::mutex> lock(g_m);
-    static std::ofstream f("kotoba_debug.log", std::ios::app | std::ios::binary);
+    static const std::string path = [] {
+        std::error_code ec;
+        std::filesystem::create_directories("logs", ec);
+        return (std::filesystem::path("logs") / "kotoba_debug.log").string();
+    }();
+    static std::ofstream f(path, std::ios::app | std::ios::binary);
     f << GetTickCount64() << " [" << cat << "] " << ui::wideToUtf8(msg) << "\n";
     f.flush();                                     // survive crashes
 }

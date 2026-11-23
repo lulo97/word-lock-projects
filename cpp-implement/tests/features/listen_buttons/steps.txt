@@ -1,0 +1,104 @@
+# Audio button edge cases test.
+#
+# Covers the failure modes around the info screen's #speak / #listen-N
+# buttons: spam clicks, switching clips mid-playback, hiding/closing the
+# window while speaking, and the "Speaking..." animation lifecycle.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - click animates "Speaking." while the clip plays
+#   2. reverse      - switching buttons restores the previous label
+#   3. repeat       - spam clicks restart one clip, never stack timers
+#   4. side effects - hiding the window stops audio, restores labels, timers 0
+#   5. interleaving - stop while speaking, then reopen and play again
+
+include ../common/running.txt
+
+# --- setup: word with word + example audio, open info ---
+app word tests/word_audio.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+
+# --- 1. happy path: pressing #speak starts the animation ---
+assert text #speak == "Listen"
+click #speak
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+assert text #speak == "Speaking."
+
+# --- 3. repeat: spam clicks restart one clip; one timer only ---
+click #speak
+click #speak
+click #speak
+click #speak
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+assert text #speak == "Speaking."
+app assert timers == 1
+
+# the dots advance one step per pump pass, then wrap
+app tick
+assert text #speak == "Speaking.."
+app tick
+assert text #speak == "Speaking..."
+app tick
+assert text #speak == "Speaking."
+
+# --- 2. reverse: switching buttons restores the previous label ---
+click #listen-1
+app assert audio_last == audio/りんご/ex_1.ogg
+assert text #speak == "Listen"
+assert text #listen-1 == "Speaking."
+assert text #listen-2 == "Speak"
+
+click #listen-2
+app assert audio_last == audio/りんご/ex_2.ogg
+assert text #listen-1 == "Speak"
+assert text #listen-2 == "Speaking."
+
+# --- 5. interleaving: rapid alternation - last click wins, one timer ---
+click #listen-1
+click #listen-2
+click #listen-1
+app assert audio == playing
+app assert audio_last == audio/りんご/ex_1.ogg
+assert text #listen-1 == "Speaking."
+assert text #listen-2 == "Speak"
+app assert timers == 1
+
+# --- 4. side effects: hiding the window while speaking stops everything ---
+window tray
+click #tray-stop
+app assert stopped == true
+app assert visible info == false
+app assert audio == idle
+app assert timers == 0
+# labels are restored even though the window is hidden
+window info
+assert text #speak == "Listen"
+assert text #listen-1 == "Speak"
+assert text #listen-2 == "Speak"
+
+# --- 5b. stop during the dialog, then start again and replay ---
+window tray
+click #tray-stop
+app assert stopped == false
+app word tests/word_audio.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+click #listen-2
+app assert audio == playing
+assert text #listen-2 == "Speaking."
+app tick
+assert text #listen-2 == "Speaking.."
+window tray
+click #tray-stop
+app assert audio == idle
+app assert timers == 0
+window info
+assert text #listen-2 == "Speak"

@@ -34,8 +34,6 @@ file(GLOB_RECURSE EXTRA_SOURCES CONFIGURE_DEPENDS
 )
 list(APPEND SOURCES ${EXTRA_SOURCES})
 
-# The app proper (extracted from app.cpp so app_test can drive it headless).
-list(APPEND SOURCES "kotoba_app.cpp")
 
 # Resource file
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
@@ -67,8 +65,10 @@ target_include_directories(MyApp PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party"
 )
 
-# Equivalent to /I"ui"
+# Equivalent to /I"ui" (plus the source root, so "utils/..." resolves
+# from any file).
 target_include_directories(MyApp PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CMAKE_CURRENT_SOURCE_DIR}/ui"
 )
 
@@ -102,6 +102,7 @@ set_target_properties(MyApp PROPERTIES
 function(add_console_ui_target target_name main_source)
     add_executable(${target_name} ${main_source} ${EXTRA_SOURCES})
     target_include_directories(${target_name} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/third_party"
         "${CMAKE_CURRENT_SOURCE_DIR}/ui"
         "${CMAKE_CURRENT_BINARY_DIR}/embedded_assets"
@@ -123,12 +124,12 @@ function(add_console_ui_target target_name main_source)
     )
 endfunction()
 
-add_console_ui_target(ui_test ui_test.cpp)
+add_console_ui_target(ui_test tests/ui_test.cpp)
 
 # Headless feature-test runner: drives a real (hidden) KotobaCppApp through a
-# steps.txt of `app` + ScriptRunner commands. See app_test.cpp.
-add_console_ui_target(app_test app_test.cpp)
-target_sources(app_test PRIVATE kotoba_app.cpp)
+# steps.txt of `app` + ScriptRunner commands. See tests/app_test.cpp
+# (utils/kotoba_app.cpp comes in via the utils glob).
+add_console_ui_target(app_test tests/app_test.cpp)
 
 # Unit tests (table-driven) and seeded fuzz.
 add_console_ui_target(unit_tests tests/unit/unit_tests.cpp)

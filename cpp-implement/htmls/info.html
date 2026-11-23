@@ -11,15 +11,11 @@
             
             <!-- Left Side: Kanji, Romaji, Part of Speech -->
             <div>
-                <h1 class="text-white text-6xl font-bold tracking-wider mb-2 font-sans">
-                    {{kanji}}
-                </h1>
-                <p class="text-[#38bdf8] text-[15px] mb-1">
-                    romaji: {{romaji}}
-                </p>
+                <h1 id="word-jp" class="text-white text-6xl font-bold tracking-wider mb-2 font-sans">{{kanji}}</h1>
+                <p id="word-romaji" class="text-[#38bdf8] text-[15px] mb-1">romaji: {{romaji}}</p>
                 <div class="flex items-center gap-2">
-                    <span class="text-[#38bdf8] text-[13px] font-bold tracking-widest uppercase">{{pos}}</span>
-                    <span class="text-[#38bdf8] text-[15px]">{{hiragana}}</span>
+                    <span id="word-type" class="text-[#38bdf8] text-[13px] font-bold tracking-widest uppercase">{{pos}}</span>
+                    <span id="word-reading" class="text-[#38bdf8] text-[15px]">{{hiragana}}</span>
                 </div>
             </div>
 
@@ -28,9 +24,7 @@
                 <button class="px-6 py-1.5 bg-[#0f172a] border border-[#1e293b] text-gray-300 text-sm hover:bg-[#1e293b] transition-colors rounded-sm">
                     Ignore
                 </button>
-                <button class="px-6 py-1.5 bg-[#0f172a] border border-[#1e293b] text-[#38bdf8] text-sm hover:bg-[#1e293b] transition-colors rounded-sm">
-                    Listen
-                </button>
+                <button id="speak" class="px-6 py-1.5 bg-[#0f172a] border border-[#1e293b] text-[#38bdf8] text-sm hover:bg-[#1e293b] transition-colors rounded-sm">Listen</button>
             </div>
         </div>
 
@@ -49,39 +43,31 @@
             <div>
                 <h3 class="text-[#38bdf8] text-[11px] font-bold tracking-widest uppercase mb-4">Examples</h3>
                 
-                <div class="space-y-6">
-                    <!-- Example 1 -->
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-white text-[17px] mb-1">• {{example1_ja}}</p>
-                            <p class="text-gray-400 italic text-[14px] ml-4 mb-1">{{example1_romaji}}</p>
-                            <p class="text-gray-400 text-[15px] ml-4">{{example1_vi}}</p>
-                        </div>
-                        <button class="px-4 py-1 bg-[#1e293b] border border-[#334155] text-[#38bdf8] text-xs font-semibold rounded-sm hover:bg-[#334155] transition-colors mt-1">
-                            Speak
-                        </button>
-                    </div>
+                <div id="examples" class="space-y-6"></div>
 
-                    <!-- Example 2 -->
+                <!-- One row per example; KotobaCppApp::populateInfoAudio()
+                     clones this template and fills the text + listen button. -->
+                <template id="example-row">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-white text-[17px] mb-1">• {{example2_ja}}</p>
-                            <p class="text-gray-400 italic text-[14px] ml-4 mb-1">{{example2_romaji}}</p>
-                            <p class="text-gray-400 text-[15px] ml-4">{{example2_vi}}</p>
+                            <p class="jp text-white text-[17px] mb-1"></p>
+                            <p class="romaji text-gray-400 italic text-[14px] ml-4 mb-1"></p>
+                            <p class="en text-gray-400 text-[15px] ml-4"></p>
                         </div>
-                        <button class="px-4 py-1 bg-[#1e293b] border border-[#334155] text-[#38bdf8] text-xs font-semibold rounded-sm hover:bg-[#334155] transition-colors mt-1">
-                            Speak
-                        </button>
+                        <button class="listen px-4 py-1 bg-[#1e293b] border border-[#334155] text-[#38bdf8] text-xs font-semibold rounded-sm hover:bg-[#334155] transition-colors mt-1">Speak</button>
                     </div>
-                </div>
+                </template>
             </div>
 
-            <!-- Tags -->
-            <div class="flex items-center gap-2 pt-2">
+            <!-- Tags (hidden when the word has none) -->
+            <div id="tags" class="flex items-center gap-2 pt-2">
                 <span class="text-gray-400 text-[13px] tracking-wide uppercase">Tags:</span>
-                <span class="bg-[#1e293b] text-gray-300 px-2 py-0.5 text-[12px] rounded-sm">{{tag1}}</span>
-                <span class="bg-[#1e293b] text-gray-300 px-2 py-0.5 text-[12px] rounded-sm">{{tag2}}</span>
+                <div id="tags-list" class="flex items-center gap-2"></div>
             </div>
+
+            <template id="tag-chip">
+                <span class="bg-[#1e293b] text-gray-300 px-2 py-0.5 text-[12px] rounded-sm"></span>
+            </template>
 
         </div>
 

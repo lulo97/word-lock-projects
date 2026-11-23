@@ -46,6 +46,14 @@ std::wstring wordKey(const WordData& w);
 // excludes words with a non-empty issue and logs it as `db`.
 std::wstring wordIssue(const WordData& w);
 
+// Audio (M5). `relative` is the JSON "audio" value, e.g.
+// "audio/りんご/word.ogg". Availability checks the working directory and the
+// embedded database/ assets, so the app works both from the repo and as a
+// single .exe. prepare_audio_asset() extracts an embedded clip to a temp file
+// (cached) and returns a playable path, or an empty string when unavailable.
+bool audio_asset_exists(const std::wstring& relative);
+std::wstring prepare_audio_asset(const std::wstring& relative);
+
 // Load an embedded asset by its relative path (e.g. "htmls/info.html").
 // Returns empty string if not found.
 std::string load_asset_bytes(const std::string& path);

@@ -1,0 +1,53 @@
+# Example "Speak" buttons feature test (M5).
+#
+# Example rows come from <template id="example-row">, cloned once per example on
+# the info screen. Each row gets a unique listen-N id, its text is filled from
+# the word JSON, and its button plays that example's clip.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - #listen-1 plays ex_1, #listen-2 plays ex_2
+#   2. reverse      - a new clip stops the previous one (audio_last switches)
+#   3. repeat       - the same row can be replayed
+#   4. side effects - both rows exist, both buttons are enabled, no timers
+#   5. interleaving - alternating rows never leaves audio idle
+
+include ../common/running.txt
+
+# --- setup: pin a word with example audio, open info ---
+app word tests/word_audio.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+
+# --- 4. side effects: template produced one row per example ---
+assert exists #listen-1
+assert exists #listen-2
+assert text #listen-1 == "Speak"
+assert text #listen-2 == "Speak"
+app assert audio_ready == 3
+app assert audio_disabled == 0
+app assert timers == 0
+
+# --- 1. happy path: first example ---
+click #listen-1
+app assert audio == playing
+app assert audio_last == audio/りんご/ex_1.ogg
+
+# --- 2. reverse: selecting the second row switches the clip ---
+click #listen-2
+app assert audio == playing
+app assert audio_last == audio/りんご/ex_2.ogg
+
+# --- 3. repeat: replay the second row ---
+click #listen-2
+app assert audio == playing
+app assert audio_last == audio/りんご/ex_2.ogg
+
+# --- 5. interleaving: alternate rows; the latest request always wins ---
+click #listen-1
+app assert audio_last == audio/りんご/ex_1.ogg
+click #listen-2
+app assert audio_last == audio/りんご/ex_2.ogg
+app assert audio == playing

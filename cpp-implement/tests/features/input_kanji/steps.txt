@@ -1,0 +1,62 @@
+# New-schema word rendering test.
+#
+# The generator schema uses "word"/"reading" while the HTML templates use the
+# legacy "kanji"/"hiragana" placeholders. 猫.json only has the new fields, so
+# without aliasing the input screen showed an empty <h1>.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - input screen shows word/reading/romaji for a new word
+#   2. reverse      - the same fields survive on the info screen
+#   3. repeat       - re-opening the info screen still renders them
+#   4. side effects - no unresolved placeholders, no timer leak
+#   5. interleaving - a legacy-schema word still renders (no alias regression)
+
+include ../common/running.txt
+
+# --- 1. happy path: new-schema word on the input screen ---
+app word tests/word_new_schema.json
+app tick 30
+app assert visible input == true
+window input
+assert visible #word-jp
+assert text #word-jp == 猫
+assert text #word-reading == ねこ
+assert text #word-romaji == "Romaji: neko"
+
+# --- 2. reverse: the info screen keeps the word ---
+type #answer neko
+app tick
+app assert visible info == true
+window info
+assert text #word-jp == 猫
+assert text #word-reading == ねこ
+assert text #word-romaji == "romaji: neko"
+
+# --- 3. repeat: close + reopen the info screen ---
+window tray
+click #tray-stop
+click #tray-stop
+app word tests/word_new_schema.json
+app tick 30
+window input
+assert text #word-jp == 猫
+type #answer neko
+app tick
+window info
+assert text #word-jp == 猫
+assert text #word-reading == ねこ
+
+# --- 4. side effects ---
+app assert visible info == true
+app assert timers == 0
+
+# --- 5. interleaving: legacy schema still renders (kanji wins over word) ---
+window tray
+click #tray-stop
+click #tray-stop
+app word tests/word.json
+app tick 30
+window input
+assert text #word-jp == りんご
+assert text #word-reading == りんご
+assert text #word-romaji == "Romaji: ringo"

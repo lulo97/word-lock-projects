@@ -1,0 +1,71 @@
+# Missing audio feature test (M5).
+#
+# A word whose "audio" fields are empty must never crash or play something
+# else: every audio button is greyed (setClass) and bound to nothing.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - the info screen still opens and shows no playable button
+#   2. reverse      - clicking a greyed #speak / #listen-1 does nothing
+#   3. repeat       - a later valid word regains working buttons
+#   4. side effects - audio stays idle, audio_last stays "none", no timers
+#   5. interleaving - playing a valid word, then switching to a silent word,
+#                     stops playback instead of leaving the old clip running
+
+include ../common/running.txt
+
+# --- setup: tests/word.json has no audio on the word or its examples ---
+app word tests/word.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+
+# --- 1. happy path: screen opens; audio buttons are disabled, not fatal ---
+app assert visible info == true
+app assert audio_ready == 0
+app assert audio_disabled == 3
+app assert audio == idle
+app assert audio_last == none
+
+# --- 2. reverse: clicking a greyed button is a no-op ---
+click #speak
+app assert audio == idle
+app assert audio_last == none
+click #listen-1
+app assert audio == idle
+app assert audio_last == none
+
+# --- 4. side effects: no pending timers ---
+app assert timers == 0
+
+# --- 3. repeat: a valid word brings the buttons back ---
+window tray
+click #tray-stop
+click #tray-stop
+app word tests/word_audio.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+app assert audio_ready == 3
+app assert audio_disabled == 0
+click #speak
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+
+# --- 5. interleaving: switching to the silent word while playing stops it ---
+window tray
+click #tray-stop
+app assert audio == idle
+click #tray-stop
+app word tests/word.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+app assert audio == idle
+app assert audio_ready == 0
+app assert audio_disabled == 3

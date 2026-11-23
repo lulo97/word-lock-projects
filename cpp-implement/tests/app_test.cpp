@@ -19,7 +19,7 @@
 // before the change and pass after. run.ps1 loops over features\* and
 // reports FAIL <file>:<line> lines.
 
-#include "kotoba_app.h"
+#include "utils/kotoba_app.h"
 #include "app/script.h"
 #include "core/utf.h"
 
@@ -49,6 +49,10 @@ int wmain(int argc, wchar_t** argv) {
     // deterministic across runs and features.
     app.hooks.configPath = scriptDirOf(script) + L"\\config.json";
     app.hooks.progressPath = scriptDirOf(script) + L"\\progress.json";
+    // Headless: never touch the real audio device. The app still tracks
+    // playing/idle and the last requested clip for `app assert audio...`.
+    app.hooks.playAudio = [](const std::wstring&, float) { return true; };
+    app.hooks.stopAudio = [] {};
     ScriptRunner runner;             // built-in commands
     app.registerCommands(runner);   // + `app` and `window`
     runner.setScriptDir(scriptDirOf(script));

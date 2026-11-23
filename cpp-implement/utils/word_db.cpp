@@ -9,9 +9,12 @@
 #include "json.hpp"
 
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <random>
 #include <string_view>
 #include <unordered_map>
+#include <vector>
 
 namespace {
 
@@ -93,6 +96,87 @@ std::wstring wordKey(const WordData& w) {
 
 namespace {
 
+std::wstring normalize_rel(std::wstring value) {
+    for (wchar_t& c : value)
+        if (c == L'\\')
+            c = L'/';
+    return value;
+}
+
+std::vector<std::filesystem::path> audio_candidates(const std::wstring& relative) {
+    std::filesystem::path rel(relative);
+    std::error_code ec;
+    if (rel.is_absolute())
+        return {rel};
+    return {std::filesystem::path(L"database") / rel, rel};
+}
+
+bool existing_file(const std::filesystem::path& path) {
+    std::error_code ec;
+    return std::filesystem::is_regular_file(path, ec) &&
+           std::filesystem::file_size(path, ec) > 0;
+}
+
+std::wstring temp_name_for(const std::wstring& relative) {
+    std::wstring name = relative;
+    for (wchar_t& c : name)
+        if (c == L'/' || c == L'\\' || c == L':')
+            c = L'_';
+    return name;
+}
+
+} // namespace
+
+bool audio_asset_exists(const std::wstring& relative) {
+    const std::wstring rel = normalize_rel(relative);
+    if (rel.empty())
+        return false;
+    for (const auto& candidate : audio_candidates(rel))
+        if (existing_file(candidate))
+            return true;
+    const auto* asset = assets::find_asset("database/" + ui::wideToUtf8(rel));
+    return asset != nullptr && asset->size > 0;
+}
+
+std::wstring prepare_audio_asset(const std::wstring& relative) {
+    const std::wstring rel = normalize_rel(relative);
+    if (rel.empty())
+        return {};
+
+    // Prefer the real file when the app runs from the repo.
+    for (const auto& candidate : audio_candidates(rel))
+        if (existing_file(candidate))
+            return candidate.wstring();
+
+    // Single-exe mode: the clip is embedded. Extract once to a temp cache.
+    const auto* asset = assets::find_asset("database/" + ui::wideToUtf8(rel));
+    if (!asset || asset->size == 0)
+        return {};
+
+    std::error_code ec;
+    std::filesystem::path dir =
+        std::filesystem::temp_directory_path(ec) / "kotobacpp_audio";
+    if (ec)
+        return {};
+    std::filesystem::create_directories(dir, ec);
+    if (ec)
+        return {};
+
+    const std::filesystem::path out = dir / temp_name_for(rel);
+    if (!existing_file(out)) {
+        std::ofstream file(out, std::ios::binary | std::ios::trunc);
+        if (!file)
+            return {};
+        file.write(reinterpret_cast<const char*>(asset->data),
+                   static_cast<std::streamsize>(asset->size));
+        if (!file)
+            return {};
+    }
+    return out.wstring();
+}
+
+namespace {
+
 bool isJapaneseChar(wchar_t c) {
     return (c >= 0x3000 && c <= 0x30FF)   // punctuation, hiragana, katakana
         || (c >= 0x3400 && c <= 0x4DBF)   // CJK extension A
@@ -123,17 +207,20 @@ std::wstring wordIssue(const WordData& w) {
 }
 
 std::wstring fill_template(const std::wstring& html, const WordData& w) {
+    // The two schemas spell the same fields differently (kanji/word,
+    // hiragana/reading). The HTML only uses the legacy names, so alias the
+    // new-schema value when the legacy one is missing (e.g. 猫.json).
     std::unordered_map<std::wstring, std::wstring> values = {
-        {L"kanji", w.kanji},
-        {L"hiragana", w.hiragana},
+        {L"kanji", w.kanji.empty() ? w.word : w.kanji},
+        {L"hiragana", w.hiragana.empty() ? w.reading : w.hiragana},
         {L"romaji", w.romaji},
-        {L"pos", w.pos},
+        {L"pos", w.pos.empty() ? w.type : w.pos},
         {L"meaning_ja", w.meaning_ja},
         {L"meaning_ja_romaji", w.meaning_ja_romaji},
         {L"meaning_vi", w.meaning_vi},
         {L"audio", w.audio},
-        {L"word", w.word},
-        {L"reading", w.reading},
+        {L"word", w.word.empty() ? w.kanji : w.word},
+        {L"reading", w.reading.empty() ? w.hiragana : w.reading},
         {L"meaning", w.meaning},
         {L"type", w.type},
     };

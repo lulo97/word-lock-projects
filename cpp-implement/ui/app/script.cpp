@@ -144,21 +144,23 @@ void ScriptRunner::assertCmd(const std::vector<std::wstring>& t) {
     const std::wstring& k0 = t[1];
     bool negate = (k0 == L"not");
     const std::wstring& kind = negate ? t[2] : k0;
+    // With `not` the #id argument shifts one token right: [assert, not, kind, #id, ...].
+    const size_t a = negate ? 3 : 2;
 
     if (kind == L"exists") {
-        if (t.size() < 3) { fail(L"assert: need #id"); return; }
+        if (t.size() <= a) { fail(L"assert: need #id"); return; }
         if (!doc_) { fail(L"assert exists: no window bound"); return; }
-        Element* e = doc_->byId(t[2].substr(t[2][0] == L'#' ? 1 : 0));
+        Element* e = doc_->byId(t[a].substr(t[a][0] == L'#' ? 1 : 0));
         bool ok = !!e;
         if (negate) ok = !ok;
-        if (!ok) fail(t[2] + L" " + (negate ? L"exists (expected absent)"
+        if (!ok) fail(t[a] + L" " + (negate ? L"exists (expected absent)"
                                            : L"does not exist (expected present)"));
         return;
     }
 
     if (kind == L"visible") {
-        if (t.size() < 3) { fail(L"assert: need #id"); return; }
-        Element* e = need(t[2]);
+        if (t.size() <= a) { fail(L"assert: need #id"); return; }
+        Element* e = need(t[a]);
         if (!e) return;
         layout();
         bool vis = true;
@@ -166,8 +168,15 @@ void ScriptRunner::assertCmd(const std::vector<std::wstring>& t) {
             if (p->style.display == Display::None) { vis = false; break; }
         if (vis && e->box.borderRect.w <= 0) vis = false;
         if (negate) vis = !vis;
-        if (!vis) fail(t[2] + L" " + (negate ? L"visible (expected hidden)"
+        if (!vis) fail(t[a] + L" " + (negate ? L"visible (expected hidden)"
                                              : L"not visible (expected visible)"));
+        return;
+    }
+
+    if (negate) {
+        // Negation only makes sense for existence/visibility; equality,
+        // caret and rect checks are not invertible.
+        fail(L"assert not " + kind + L": 'not' is only supported for exists/visible");
         return;
     }
 

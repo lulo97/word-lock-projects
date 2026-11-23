@@ -34,6 +34,11 @@ public:
         // so each test is self-contained and deterministic.
         std::wstring configPath;
         std::wstring progressPath;
+        // M5 audio backend. app_test installs a fake that only records the
+        // request, so feature tests never produce sound. Empty -> real
+        // play_audio()/stop_audio().
+        std::function<bool(const std::wstring&, float)> playAudio;
+        std::function<void()> stopAudio;
     } hooks;
 
     KotobaCppApp();
@@ -96,6 +101,27 @@ private:
     std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
     std::vector<WordData> extraWords_;       // `app add-word` test seam (M4)
     int dbRejected_ = 0;                     // words rejected by the light check
+
+    // ----- audio (M5) -----
+    std::wstring audioLast_;                 // JSON path of the last clip
+    bool audioStarted_ = false;              // a backend accepted the last play
+    int audioReady_ = 0;                     // playable buttons on the info screen
+    int audioDisabled_ = 0;                  // greyed buttons (missing audio)
+    std::wstring audioAnimId_;               // button currently showing "Speaking..."
+    std::wstring audioAnimLabel_;            // its normal label to restore
+    int audioAnimStep_ = 0;                  // 0..3, dots shown
+
+    bool audioPlaying() const;
+    void playAudioClip(const std::wstring& relative, const std::wstring& buttonId);
+    void stopAudio();
+    // Build the info screen's audio buttons from currentWord_ (speak + one
+    // listen per example). Rows are cloned from <template id="example-row">.
+    void populateInfoAudio();
+    // Numbers the tag chips from currentWord_.tags, or hides #tags when empty.
+    void populateInfoTags();
+    // "Speaking." / ".." / "..." animation on the button being played.
+    void startAudioAnimation(const std::wstring& id);
+    void onAudioAnimationTick();
 
     // Pick the next word with the even picker (M1) and record the pick in
     // progress. start_countdown() and tray-open both go through here.

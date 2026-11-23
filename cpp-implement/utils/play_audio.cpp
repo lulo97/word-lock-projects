@@ -87,14 +87,20 @@ std::wstring make_temp_wav_path() {
 
 bool run_ffmpeg(
     const std::wstring& inputPath,
-    const std::wstring& outputPath
+    const std::wstring& outputPath,
+    float volume
 ) {
     // Quote paths; Windows file names cannot contain double quotes.
+    std::wstring filter = L"volume=";
+    wchar_t gain[32]{};
+    swprintf(gain, 32, L"%g", static_cast<double>(volume));
+    filter += gain;
+
     std::wstring commandLine =
         L"ffmpeg.exe -hide_banner -loglevel error -y -i \"" +
         inputPath +
-        L"\" -vn -f wav -acodec pcm_s16le \"" +
-        outputPath + L"\"";
+        L"\" -vn -af \"" + filter +
+        L"\" -f wav -acodec pcm_s16le \"" + outputPath + L"\"";
 
     std::vector<wchar_t> command(
         commandLine.begin(), commandLine.end()
@@ -234,7 +240,7 @@ void playback_worker(
 
 } // namespace
 
-bool play_audio(const std::wstring& filePath, bool wait) {
+bool play_audio(const std::wstring& filePath, bool wait, float volume) {
     std::wstring inputPath = absolute_path(filePath);
 
     DWORD attributes = GetFileAttributesW(inputPath.c_str());
@@ -249,15 +255,18 @@ bool play_audio(const std::wstring& filePath, bool wait) {
     std::wstring playbackPath = inputPath;
     std::wstring tempFile;
 
-    // MCI's waveaudio device only handles WAV, so transcode everything else
-    // (including .ogg) through ffmpeg.
-    if (!has_wav_extension(inputPath)) {
+    // MCI's waveaudio device only handles WAV and cannot reliably change the
+    // volume, so transcode anything else (including .ogg) and non-unity gain
+    // through ffmpeg into a temporary WAV.
+    const bool needsGain = volume < 0.999f || volume > 1.001f;
+
+    if (!has_wav_extension(inputPath) || needsGain) {
         tempFile = make_temp_wav_path();
 
         if (tempFile.empty())
             return false;
 
-        if (!run_ffmpeg(inputPath, tempFile)) {
+        if (!run_ffmpeg(inputPath, tempFile, volume)) {
             DeleteFileW(tempFile.c_str());
             return false;
         }

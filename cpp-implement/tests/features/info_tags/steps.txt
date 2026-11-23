@@ -1,0 +1,72 @@
+# Tags rendering test.
+#
+# Tags used to be two hard-coded {{tag1}}/{{tag2}} spans, so a word with fewer
+# tags leaked literal placeholders. Now the chip row is cloned from
+# <template id="tag-chip"> and the whole #tags row is hidden when there are
+# no tags.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - a word with tags shows one chip per tag, in order
+#   2. reverse      - a word with no tags hides the row and leaves no chips
+#   3. repeat       - switching back to a tagged word shows the chips again
+#   4. side effects - no unresolved placeholders in the document
+#   5. interleaving - a tagged word after an untagged one rebuilds cleanly
+
+include ../common/running.txt
+
+# --- 1. happy path: tests/word.json has tags ["food", "fruit"] ---
+app word tests/word.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+assert visible #tags
+assert exists #tag-1
+assert exists #tag-2
+assert text #tag-1 == food
+assert text #tag-2 == fruit
+assert not exists #tag-3
+
+# --- 2. reverse: the new-schema fixture has no tags ---
+window tray
+click #tray-stop
+click #tray-stop
+app word tests/word_new_schema.json
+app tick 30
+window input
+type #answer neko
+app tick
+window info
+assert not visible #tags
+assert not exists #tag-1
+assert not exists #tag-2
+
+# --- 5. interleaving: switch back to the tagged word ---
+window tray
+click #tray-stop
+click #tray-stop
+app word tests/word.json
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+
+# --- 3. repeat: chips are re-cloned, not accumulated ---
+assert visible #tags
+assert exists #tag-1
+assert text #tag-1 == food
+assert text #tag-2 == fruit
+assert not exists #tag-3
+
+# --- 4. side effects: no placeholder text, no timer leak ---
+app assert timers == 0
+
+# --- runner guard: negated asserts must resolve the real selector ---
+# expect-fail only passes when the inner command genuinely FAILS on the
+# live element; a token-offset bug (resolving "visible" instead of #word-jp)
+# would let these pass vacuously.
+expect-fail assert not visible #word-jp
+expect-fail assert not exists #word-jp
+expect-fail assert not text #word-jp == neko

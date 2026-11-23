@@ -4,11 +4,13 @@
 // (app_test) can drive it without a message loop. See kotoba_app.h for the
 // test seams (init/tick/window/isVisible/stateJson/hooks).
 
-#include "kotoba_app.h"
+#include "utils/kotoba_app.h"
 
 #include "app/script.h"
 #include "core/utf.h"
+#include "dom/tree_ops.h"
 #include "utils/debug_log.h"
+#include "utils/play_audio.h"
 #include "utils/set_tray.h"
 #include "utils/window_helpers.h"
 
@@ -19,6 +21,35 @@ namespace {
 constexpr UINT_PTR TIMER_COUNTDOWN = 100;
 constexpr UINT_PTR TIMER_TRANSITION = 101;
 constexpr UINT_PTR TIMER_INPUT_DONE = 102;
+constexpr UINT_PTR TIMER_AUDIO_ANIM = 103;
+constexpr UINT AudioAnimIntervalMs = 350;
+
+// Greyed button styling for a clip that is missing from the database.
+const wchar_t* kSpeakDisabledClasses =
+    L"px-6 py-1.5 bg-[#0f172a] border border-[#1e293b] text-gray-600 text-sm rounded-sm";
+const wchar_t* kListenDisabledClasses =
+    L"px-4 py-1 bg-[#0f172a] border border-[#1e293b] text-gray-600 text-xs "
+    L"font-semibold rounded-sm mt-1";
+
+ui::Element* find_by_class(ui::Element& root, const std::wstring& cls) {
+    ui::Element* found = nullptr;
+    ui::walk(root, [&](ui::Element& el) {
+        if (found)
+            return true;
+        for (const auto& name : el.classList) {
+            if (name == cls) {
+                found = &el;
+                return false;
+            }
+        }
+        return true;
+    });
+    return found;
+}
+
+std::wstring first_non_empty(const std::wstring& a, const std::wstring& b) {
+    return a.empty() ? b : a;
+}
 
 } // namespace
 
@@ -31,6 +62,7 @@ KotobaCppApp::KotobaCppApp() {
 }
 
 KotobaCppApp::~KotobaCppApp() {
+    stopAudio();
     if (countdown_ && countdown_->hwnd())
         remove_tray(countdown_->hwnd());
 }
@@ -164,7 +196,194 @@ nlohmann::json KotobaCppApp::stateJson() {
     j["picked"] = (int)recentPicks_.size();
     j["wordCount"] = count_words() + (int)extraWords_.size();
     j["dbRejected"] = dbRejected_;
+    j["audio"] = audioPlaying() ? "playing" : "idle";
+    j["audio_last"] = audioLast_.empty() ? "none" : ui::wideToUtf8(audioLast_);
+    j["audio_ready"] = audioReady_;
+    j["audio_disabled"] = audioDisabled_;
     return j;
+}
+
+// ----- audio (M5) -----
+
+bool KotobaCppApp::audioPlaying() const {
+    if (hooks.playAudio)
+        return audioStarted_;
+    return audioStarted_ && is_audio_playing();
+}
+
+void KotobaCppApp::stopAudio() {
+    if (info_) {
+        info_->killTimer(TIMER_AUDIO_ANIM);
+        if (!audioAnimId_.empty()) {
+            info_->document().setText(audioAnimId_, audioAnimLabel_);
+            info_->document().invalidatePaint();
+        }
+    }
+    audioAnimId_.clear();
+    audioAnimLabel_.clear();
+    audioAnimStep_ = 0;
+
+    if (hooks.stopAudio)
+        hooks.stopAudio();
+    else if (!hooks.playAudio)
+        stop_audio();
+    audioStarted_ = false;
+}
+
+void KotobaCppApp::startAudioAnimation(const std::wstring& id) {
+    if (!info_ || id.empty())
+        return;
+
+    ui::Element* button = info_->document().byId(id);
+    if (!button)
+        return;
+
+    // Remember the normal label ("Listen" / "Speak") so stopAudio() can
+    // restore it, then start the dot animation immediately.
+    audioAnimId_ = id;
+    audioAnimLabel_ = ui::textContent(*button);
+    audioAnimStep_ = 0;
+
+    onAudioAnimationTick();
+}
+
+void KotobaCppApp::onAudioAnimationTick() {
+    if (!info_ || audioAnimId_.empty())
+        return;
+
+    // The clip may have finished naturally since the last tick.
+    if (!audioPlaying()) {
+        stopAudio();
+        return;
+    }
+
+    audioAnimStep_ = audioAnimStep_ % 3 + 1;
+    info_->document().setText(
+        audioAnimId_,
+        L"Speaking" + std::wstring(static_cast<size_t>(audioAnimStep_), L'.')
+    );
+    info_->document().invalidatePaint();
+
+    // One-shot chain (not a repeating timer): app_test's `app tick` advances
+    // the animation deterministically, one step per simulated pump pass.
+    info_->setTimer(
+        TIMER_AUDIO_ANIM,
+        AudioAnimIntervalMs,
+        [this] { onAudioAnimationTick(); },
+        /*oneShot=*/true
+    );
+}
+
+void KotobaCppApp::playAudioClip(const std::wstring& relative,
+                                 const std::wstring& buttonId) {
+    if (relative.empty() || !audio_asset_exists(relative))
+        return;
+
+    // One clip at a time: a new button press stops (and un-animates) the
+    // previous one. Rapid clicks just restart; nothing stacks up.
+    stopAudio();
+
+    if (hooks.playAudio) {
+        if (hooks.playAudio(relative, config_.get().volume)) {
+            audioLast_ = relative;
+            audioStarted_ = true;
+            startAudioAnimation(buttonId);
+        }
+        return;
+    }
+
+    const std::wstring file = prepare_audio_asset(relative);
+    if (file.empty()) {
+        UI_LOG("app", L"audio missing at runtime: %s", relative.c_str());
+        return;
+    }
+
+    if (play_audio(file, false, config_.get().volume)) {
+        audioLast_ = relative;
+        audioStarted_ = true;
+        startAudioAnimation(buttonId);
+    } else {
+        UI_LOG("app", L"audio failed to play: %s", relative.c_str());
+    }
+}
+
+void KotobaCppApp::populateInfoAudio() {
+    audioReady_ = 0;
+    audioDisabled_ = 0;
+    if (!info_)
+        return;
+
+    ui::Document& document = info_->document();
+
+    auto wire = [&](const std::wstring& id, const std::wstring& relative,
+                    const wchar_t* disabledClasses) {
+        ui::Element* button = document.byId(id);
+        if (!button)
+            return;
+        if (relative.empty() || !audio_asset_exists(relative)) {
+            // Missing file: grey the button out, bind nothing, never error.
+            document.setClass(id, disabledClasses);
+            ++audioDisabled_;
+            return;
+        }
+        document.onClick(id, [this, relative, id] {
+            playAudioClip(relative, id);
+        });
+        ++audioReady_;
+    };
+
+    wire(L"speak", currentWord_.audio, kSpeakDisabledClasses);
+
+    document.clearChildren(L"examples");
+
+    int index = 0;
+    for (const auto& example : currentWord_.examples) {
+        ++index;
+        ui::Element* row = document.cloneTemplate(L"example-row", L"examples", {});
+        if (!row)
+            break;
+
+        if (ui::Element* el = find_by_class(*row, L"jp"))
+            ui::setText(*el, L"• " + first_non_empty(example.jp, example.ja));
+        if (ui::Element* el = find_by_class(*row, L"romaji"))
+            ui::setText(*el, first_non_empty(example.romaji, example.reading));
+        if (ui::Element* el = find_by_class(*row, L"en"))
+            ui::setText(*el, first_non_empty(example.en, example.vi));
+
+        ui::Element* listen = find_by_class(*row, L"listen");
+        if (!listen)
+            continue;
+
+        const std::wstring id = L"listen-" + std::to_wstring(index);
+        listen->id = id;
+        wire(id, example.audio, kListenDisabledClasses);
+    }
+}
+
+void KotobaCppApp::populateInfoTags() {
+    if (!info_)
+        return;
+
+    ui::Document& document = info_->document();
+    document.clearChildren(L"tags-list");
+
+    if (currentWord_.tags.empty()) {
+        // No tags: hide the whole row instead of leaving literal placeholders.
+        document.setVisible(L"tags", false);
+        return;
+    }
+
+    document.setVisible(L"tags", true);
+
+    int index = 0;
+    for (const auto& tag : currentWord_.tags) {
+        ++index;
+        ui::Element* chip = document.cloneTemplate(L"tag-chip", L"tags-list", {});
+        if (!chip)
+            break;
+        chip->id = L"tag-" + std::to_wstring(index);
+        ui::setText(*chip, tag);
+    }
 }
 
 void KotobaCppApp::pick_word() {
@@ -288,6 +507,7 @@ bool KotobaCppApp::create_settings() {
 // the new currentWord_ on next show.
 void KotobaCppApp::reset_word_windows() {
     UI_LOG("app", L"reset_word_windows word=%s", currentWord_.romaji.c_str());
+    stopAudio();
     if (input_) {
         input_->show(false);
         input_.reset();
@@ -296,6 +516,8 @@ void KotobaCppApp::reset_word_windows() {
         info_->show(false);
         info_.reset();
     }
+    audioReady_ = 0;
+    audioDisabled_ = 0;
 }
 
 bool KotobaCppApp::ensure_input() {
@@ -342,8 +564,17 @@ bool KotobaCppApp::ensure_info() {
     if (!create_host(info_, options, L"info.html", &currentWord_))
         return false;
 
+    // Wire the word + example buttons before the screen is first shown.
+    populateInfoTags();
+    populateInfoAudio();
+
+    info_->onClose = [this] {
+        stopAudio();
+    };
+
     info_->onKeyDown = [this](UINT key) {
         if (key == VK_RETURN) {
+            stopAudio();
             info_->show(false);
             start_countdown();
             return true;
@@ -398,6 +629,7 @@ void KotobaCppApp::start_countdown() {
 // "Start app"; clicking it again runs start_countdown() as usual.
 void KotobaCppApp::stop_app() {
     stopped_ = true;
+    stopAudio();
     countdown_->killTimer(TIMER_COUNTDOWN);
     countdown_->killTimer(TIMER_TRANSITION);
     if (input_) input_->killTimer(TIMER_INPUT_DONE);
@@ -445,6 +677,7 @@ void KotobaCppApp::show_input() {
         return;
 
     UI_LOG("app", L"show_input word=%s", currentWord_.romaji.c_str());
+    stopAudio();
     // Opening input cancels any in-flight countdown: kill its timers so a
     // background tick can't reset the answer mid-typing. A real double-click
     // delivers UP, DBLCLK, UP, and the trailing UP would re-toggle the tray
@@ -498,6 +731,7 @@ void KotobaCppApp::show_info() {
         return;
 
     UI_LOG("app", L"show_info word=%s", currentWord_.romaji.c_str());
+    stopAudio();
     if (input_) input_->show(false);
 
     info_->show(true);
@@ -574,6 +808,7 @@ void KotobaCppApp::hide_tray_menu() {
 }
 
 void KotobaCppApp::quit() {
+    stopAudio();
     if (countdown_ && countdown_->hwnd())
         remove_tray(countdown_->hwnd());
 

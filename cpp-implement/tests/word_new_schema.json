@@ -1,0 +1,24 @@
+{
+  "word": "猫",
+  "reading": "ねこ",
+  "romaji": "neko",
+  "meaning": "cat",
+  "type": "noun",
+  "audio": "",
+  "examples": [
+    {
+      "jp": "猫が窓から外を眺めている。",
+      "reading": "ねこがまどからそとをながめている。",
+      "romaji": "neko ga mado kara soto o nagamete iru.",
+      "en": "The cat is looking outside from the window.",
+      "audio": ""
+    },
+    {
+      "jp": "私の家の猫はとても賢い。",
+      "reading": "わたしのいえのねこはとてもかしこい。",
+      "romaji": "watashi no ie no neko wa totemo kashikoi.",
+      "en": "My cat is very smart.",
+      "audio": ""
+    }
+  ]
+}

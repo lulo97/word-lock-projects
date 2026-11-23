@@ -1,0 +1,63 @@
+# Word "Listen" button feature test (M5).
+#
+# The info screen's #speak button plays the word clip through the shared audio
+# backend. Headless runs install a fake backend (app_test.cpp), so no sound is
+# produced; the app still tracks playing/idle and the last requested clip.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - click #speak -> playing, last clip is the word file
+#   2. reverse      - stopping the app hides info and returns audio to idle
+#   3. repeat       - start + open info again -> the same button still works
+#   4. side effects - idle before any click, no pending timers afterwards
+#   5. interleaving - clicking #speak twice restarts the clip cleanly
+
+include ../common/running.txt
+
+# --- setup: pin a word that HAS audio, walk to the info screen ---
+app word tests/word_audio.json
+app tick 30
+app assert visible input == true
+window input
+type #answer ringo
+app tick
+app assert visible info == true
+window info
+
+# --- 4. side effects: nothing played yet ---
+app assert audio == idle
+app assert audio_last == none
+app assert audio_ready == 3
+app assert audio_disabled == 0
+
+# --- 1. happy path: the word button plays the word clip ---
+click #speak
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+
+# --- 5. interleaving: pressing it again stops + restarts (no stacked clips) ---
+click #speak
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+
+# --- 2. reverse: hiding info (stop app) must stop playback ---
+window tray
+click #tray-stop
+app assert stopped == true
+app assert visible info == false
+app assert audio == idle
+
+# --- 3. repeat: start again, reopen the info screen, play again ---
+click #tray-stop
+app word tests/word_audio.json
+app assert stopped == false
+app tick 30
+window input
+type #answer ringo
+app tick
+window info
+click #speak
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+# the "Speaking..." animation is a one-shot timer chain, so exactly one
+# timer is pending while the clip plays (proof it did not stack up).
+app assert timers == 1

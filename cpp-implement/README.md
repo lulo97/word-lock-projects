@@ -21,13 +21,15 @@ Configures CMake, builds the Release configuration, produces `build\app.exe`
 and the test tools, and launches the app.
 
 - `app.cpp` is the main source; `ui/*.cpp` and `utils/*.cpp` are the framework.
+  The app proper lives in `utils/kotoba_app.{h,cpp}` (driven headlessly by
+  `tests/app_test.cpp`).
 - `htmls/*` and `database/words/*` are embedded as assets (`cmake/EmbedAssets.cmake`).
 - `third_party/json.hpp` is nlohmann/json, used for the word database.
 
 ## Layout
 
 ```
-app.cpp            the app: countdown / tray / settings / input / info windows
+app.cpp            entry point; the app proper is utils/kotoba_app.{h,cpp}
 ui/                HTML/CSS engine
   core/            shared types (Color, RectF, Length), utf helpers
   dom/             node tree + tree operations
@@ -46,8 +48,8 @@ database/words.txt user word list, one Japanese word per line
 database/words/    word JSON files, one per word (embedded)
 database/audio/    generated OGG audio (embedded when present)
 tests/             regression pipeline (see below)
-ui_test.cpp        headless script runner (console entry point)
-app_test.cpp       headless feature-test runner (drives KotobaCppApp)
+tests/ui_test.cpp  headless script runner (console entry point)
+tests/app_test.cpp headless feature-test runner (drives KotobaCppApp)
 imgs/              browser-based Tailwind design references for the screens
 ```
 
@@ -71,9 +73,10 @@ imgs/              browser-based Tailwind design references for the screens
 ```
 
 `input.html` / `info.html` reference these fields as `{{kanji}}`,
-`{{romaji}}`, `{{example1_ja}}`, ... placeholders, filled in at window
-creation. `{{key}}` placeholders that have no matching field are left literal
-and reported by the logger/validator.
+`{{romaji}}`, ... placeholders, filled in at window creation. Example rows on
+the info screen are cloned from `<template id="example-row">` and filled from
+`examples[]` at runtime. `{{key}}` placeholders that have no matching field are
+left literal and reported by the logger/validator.
 
 The generator writes a newer schema (`word`, `reading`, `romaji`, `meaning`,
 `type`, `audio`, `examples[]` with `jp`/`reading`/`romaji`/`en`/`audio`). The
@@ -96,6 +99,9 @@ The generators are manual Python tools; the app never runs them.
   updates the JSON paths, skips existing non-empty files (`--force`), and
   loudness-normalizes every clip. `--word-mode carrier` synthesizes a single
   word inside a short phrase and trims the middle segment.
+- The info screen's `#speak` and per-example `listen-N` buttons play those
+  clips (`utils/play_audio.cpp` transcodes OGG and applies `config.volume`).
+  Missing files grey the button out instead of failing.
 - `validate_db.py` exits non-zero on any invalid file and writes
   `database/validate_db.errors.log`. At runtime the C++ app applies a light
   check of its own: a broken word is logged (`dbg::log("db", ...)`) and
@@ -114,7 +120,7 @@ Built for agent-driven debugging: every tool produces files an agent can read.
 - **`Document::validate()`** — structural invariants: duplicate ids, dangling
   `EventState` pointers, NaN/negative rects, out-of-range scroll, unresolved
   placeholders.
-- **`kotoba_debug.log`** — file logger with categories, enabled by
+- **`logs/kotoba_debug.log`** — file logger with categories, enabled by
   `KOTOBA_LOG=all` (or a comma list). Hooked into style resolution, clicks,
   timers, missing HTML, unresolved placeholders, app state transitions,
   chrome freeze/resume. Each line is flushed, so it survives crashes.
@@ -172,8 +178,8 @@ app init / tick [n] / word <file> / add-word <file> / state
 app assert <key> == <value>   # key in stateJson(), incl. `visible <window>`,
                                # config <key>, attempts <word>, attemptsTotal,
                                # attemptsMax, picked_unique <n> (== true|false),
-                               # dbRejected, wordCount; prints full state on
-                               # failure
+                               # dbRejected, wordCount, audio (playing|idle),
+                               # audio_last <path>, audio_ready, audio_disabled
 app config <key> <value>      # set + persist (countdownSeconds, volume, ...)
 app config reload             # re-read from disk (persistence check)
 app progress reset            # clear attempt counts
@@ -236,7 +242,7 @@ checklist template into `tests/features/<name>/steps.txt` and prints the
 
 | Variable | Effect |
 |---|---|
-| `KOTOBA_LOG=all` (or `app,event,style,timer`) | enables `kotoba_debug.log` categories |
+| `KOTOBA_LOG=all` (or `app,event,style,timer`) | enables `logs/kotoba_debug.log` categories |
 | `KOTOBA_DEBUG=1` (or `--debug`) | command-file polling, 10 ms countdown tick |
 | `KOTOBA_WORD_ID=database/words/<name>.json` | fixed word instead of random pick |
 | `KOTOBA_SEED=N` | deterministic random pick |

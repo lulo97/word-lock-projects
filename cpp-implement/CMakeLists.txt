@@ -52,12 +52,19 @@ file(GLOB_RECURSE DB_ASSETS CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/database/*"
 )
 
+# Data-only UI styles (M7): assets/themes/<name>/{input,info}.html plus the
+# registry/contract text files. Adding a style needs no CMake or C++ change.
+file(GLOB_RECURSE THEME_ASSETS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/themes/*"
+)
+
 # Embed into the executable with a path-based lookup table.
 target_embed_assets(MyApp
     NAMESPACE assets
     BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
     ${HTML_ASSETS}
     ${DB_ASSETS}
+    ${THEME_ASSETS}
 )
 
 # nlohmann/json for parsing word JSON files.

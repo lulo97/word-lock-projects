@@ -1,0 +1,10 @@
+# Element ids every UI style must provide (M7).
+#
+# input.html : #word-jp #word-reading #word-romaji #answer #feedback
+#              #speak #hint
+# info.html  : #word-jp #word-reading #word-romaji #word-meaning
+#              #speak #examples #close #tags #tags-list
+#              template#example-row  (with .jp .romaji .en .listen)
+#              template#tag-chip
+#
+# Bindings are written against these ids only, so a new style is pure data.

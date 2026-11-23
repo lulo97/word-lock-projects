@@ -52,6 +52,97 @@ std::wstring first_non_empty(const std::wstring& a, const std::wstring& b) {
     return a.empty() ? b : a;
 }
 
+// A fully populated word, so contract validation never trips over an
+// unresolved {{placeholder}} in a theme that uses a field the test fixture
+// happens not to define.
+WordData contract_sample_word() {
+    WordData w;
+    w.kanji = L"猫";
+    w.hiragana = L"ねこ";
+    w.romaji = L"neko";
+    w.pos = L"noun";
+    w.meaning_ja = L"cat";
+    w.meaning_ja_romaji = L"neko";
+    w.meaning_vi = L"mèo";
+    w.word = w.kanji;
+    w.reading = w.hiragana;
+    w.meaning = L"cat";
+    w.type = w.pos;
+    w.audio = L"audio/neko/word.wav";
+    w.examples.push_back({L"猫が好き", L"neko ga suki", L"mèo dễ thương",
+                          L"猫が好き", L"ねこがすき", L"I like cats",
+                          L"audio/neko/ex_1.wav"});
+    w.tags = {L"animal", L"common"};
+    return w;
+}
+
+bool has_class(const ui::Element& el, const std::wstring& cls) {
+    for (const auto& name : el.classList)
+        if (name == cls)
+            return true;
+    return false;
+}
+
+// Structural check for every enabled style (theme_contract feature).
+std::vector<std::wstring> theme_contract_problems(const std::wstring& theme) {
+    std::vector<std::wstring> problems;
+    const WordData sample = contract_sample_word();
+
+    auto check_page = [&](const wchar_t* page, const std::vector<const wchar_t*>& ids) {
+        std::wstring html = load_theme_html(theme, page);
+        if (html.empty()) {
+            problems.push_back(L"missing " + std::wstring(page) + L" for " + theme);
+            return;
+        }
+
+        ui::Document doc;
+        if (!doc.load(fill_template(html, sample))) {
+            problems.push_back(L"cannot parse " + std::wstring(page) + L" for " + theme);
+            return;
+        }
+
+        for (const auto& issue : doc.validate())
+            problems.push_back(theme + L"/" + page + L": " + issue);
+
+        for (const wchar_t* id : ids)
+            if (!doc.byId(id))
+                problems.push_back(theme + L"/" + page + L": missing #" + id);
+    };
+
+    check_page(L"input.html",
+               {L"word-jp", L"word-reading", L"word-romaji", L"answer",
+                L"feedback", L"speak", L"hint"});
+    check_page(L"info.html",
+               {L"word-jp", L"word-reading", L"word-romaji", L"word-meaning",
+                L"speak", L"examples", L"close", L"tags", L"tags-list",
+                L"example-row", L"tag-chip"});
+
+    // The examples row is cloned by class, so ids alone are not enough.
+    std::wstring infoHtml = load_theme_html(theme, L"info.html");
+    if (!infoHtml.empty()) {
+        ui::Document doc;
+        if (doc.load(fill_template(infoHtml, sample))) {
+            ui::Element* row = doc.byId(L"example-row");
+            if (row && row->tag == L"template") {
+                bool jp = false, romaji = false, en = false, listen = false;
+                ui::walk(*row, [&](ui::Element& el) {
+                    jp |= has_class(el, L"jp");
+                    romaji |= has_class(el, L"romaji");
+                    en |= has_class(el, L"en");
+                    listen |= has_class(el, L"listen");
+                    return true;
+                });
+                if (!jp)     problems.push_back(theme + L"/info.html: template #example-row missing .jp");
+                if (!romaji) problems.push_back(theme + L"/info.html: template #example-row missing .romaji");
+                if (!en)     problems.push_back(theme + L"/info.html: template #example-row missing .en");
+                if (!listen) problems.push_back(theme + L"/info.html: template #example-row missing .listen");
+            }
+        }
+    }
+
+    return problems;
+}
+
 } // namespace
 
 KotobaCppApp::KotobaCppApp() {
@@ -211,6 +302,9 @@ nlohmann::json KotobaCppApp::stateJson() {
     j["startupRegistry"] = startupRegistry_ && startupRegistry_->isEnabled();
     j["startupCommand"] =
         startupRegistry_ ? ui::wideToUtf8(startupRegistry_->command()) : "";
+    j["theme"] = ui::wideToUtf8(currentTheme_);
+    j["themeCount"] = (int)themes_.names().size();
+    j["themeChanged"] = themeChanged_;
     return j;
 }
 
@@ -590,10 +684,32 @@ bool KotobaCppApp::create_settings() {
 
 // ----- word windows -----
 
+std::wstring KotobaCppApp::word_page_html(const wchar_t* legacyName) const {
+    if (!currentTheme_.empty()) {
+        std::wstring themed = load_theme_html(currentTheme_, legacyName);
+        if (!themed.empty())
+            return themed;
+        UI_LOG("app", L"theme %s missing %s; using legacy page",
+               currentTheme_.c_str(), legacyName);
+    }
+    return load_embedded_html(legacyName);
+}
+
 // Destroy cached input/info windows so they are recreated with
 // the new currentWord_ on next show.
 void KotobaCppApp::reset_word_windows() {
     UI_LOG("app", L"reset_word_windows word=%s", currentWord_.romaji.c_str());
+
+    if (!themes_.empty()) {
+        const std::wstring next = config_.get().randomUi
+                                      ? themes_.pick(currentTheme_)
+                                      : themes_.first();
+        themeChanged_ = next != currentTheme_;
+        currentTheme_ = next;
+        UI_LOG("app", L"theme %s (changed=%d)", currentTheme_.c_str(),
+               themeChanged_ ? 1 : 0);
+    }
+
     stopAudio();
     if (input_) {
         input_->show(false);
@@ -618,7 +734,8 @@ bool KotobaCppApp::ensure_input() {
     options.centered = true;
     options.visible = false;
 
-    if (!create_host(input_, options, L"input.html", &currentWord_))
+    if (!create_host_from_html(input_, options, word_page_html(L"input.html"),
+                               &currentWord_))
         return false;
 
     input_->document().onInput(
@@ -648,12 +765,21 @@ bool KotobaCppApp::ensure_info() {
     options.centered = true;
     options.visible = false;
 
-    if (!create_host(info_, options, L"info.html", &currentWord_))
+    if (!create_host_from_html(info_, options, word_page_html(L"info.html"),
+                               &currentWord_))
         return false;
 
     // Wire the word + example buttons before the screen is first shown.
     populateInfoTags();
     populateInfoAudio();
+
+    // Themes provide a #close button; legacy info.html does not, so this is
+    // inert there.
+    info_->document().onClick(L"close", [this] {
+        stopAudio();
+        if (info_) info_->show(false);
+        start_countdown();
+    });
 
     info_->onClose = [this] {
         stopAudio();
@@ -1036,6 +1162,51 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
         int n = t.size() > 2 ? _wtoi(t[2].c_str()) : 1;
         for (int i = 0; i < n; ++i)
             pick_word();
+    }
+    else if (sub == L"theme") {
+        // M7 seams: list enabled styles, exercise the non-repeat picker, or
+        // validate every style against the element contract.
+        if (t.size() < 3) {
+            runner.fail(L"app theme: need <list|pick <n>|contract>");
+            return;
+        }
+
+        if (t[2] == L"list") {
+            std::wstring joined;
+            for (const auto& name : themes_.names())
+                joined += (joined.empty() ? L"" : L", ") + name;
+            runner.note(L"themes " + joined);
+        } else if (t[2] == L"pick") {
+            const int n = t.size() > 3 ? _wtoi(t[3].c_str()) : 1;
+            if (themes_.empty()) { runner.fail(L"app theme pick: registry is empty"); return; }
+            std::wstring last = currentTheme_.empty() ? themes_.first() : currentTheme_;
+            std::wstring seq = last;
+            for (int i = 0; i < n; ++i) {
+                const std::wstring next = themes_.pick(last);
+                if (next.empty() || next == last) {
+                    runner.fail(L"app theme pick: repeated or empty style after " + last);
+                    return;
+                }
+                seq += L" -> " + next;
+                last = next;
+            }
+            currentTheme_ = last;
+            themeChanged_ = true;
+            runner.note(L"theme picks " + seq);
+        } else if (t[2] == L"contract") {
+            if (themes_.empty()) { runner.fail(L"app theme contract: registry is empty"); return; }
+            if (load_asset_bytes("assets/themes/_contract.txt").empty())
+                runner.fail(L"app theme contract: missing assets/themes/_contract.txt");
+            int checked = 0;
+            for (const auto& name : themes_.names()) {
+                for (const auto& problem : theme_contract_problems(name))
+                    runner.fail(L"theme contract: " + problem);
+                ++checked;
+            }
+            runner.note(L"themes checked " + std::to_wstring(checked));
+        } else {
+            runner.fail(L"unknown app theme command " + t[2]);
+        }
     }
     else if (sub == L"tray-event") {
         if (t.size() < 3) { runner.fail(L"app tray-event: need <double-click|left-click|right-click>"); return; }

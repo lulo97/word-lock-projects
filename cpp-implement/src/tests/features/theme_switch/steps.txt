@@ -1,0 +1,55 @@
+# Random UI style switching feature test (M7).
+#
+# Covers the per-feature checklist:
+#   1. happy path   - a style is active and the picker never repeats
+#   2. reverse      - randomUi off always uses the first style in registry.txt
+#   3. repeat       - deterministic mode keeps the same style across starts
+#   4. side effects - starting/stopping leaves exactly the countdown timer
+#   5. interleaving - style switching still works around the input screen
+#
+# Styles are data-only: assets/themes/<name>/{input,info}.html, listed in
+# assets/themes/registry.txt. The fixture registry is ink, sunrise.
+
+include ../common/running.txt
+
+# --- 1. happy path: the registry drives a real style ---
+app assert themeCount == 2
+app theme list
+app theme pick 30
+
+# --- 2. reverse: fixed style when randomUi is off ---
+app config randomUi false
+window tray
+click #tray-stop
+click #tray-stop
+app assert theme == ink
+app assert config randomUi == false
+
+# --- 3. repeat: deterministic mode stays on the first style ---
+window tray
+click #tray-stop
+click #tray-stop
+app assert theme == ink
+
+# --- 4. side effects: one countdown timer, none after a stop ---
+app assert timers == 1
+window tray
+click #tray-stop
+app assert timers == 0
+
+# --- 5. interleaving: random switching around the input screen ---
+app config randomUi true
+window tray
+click #tray-stop
+click #tray-stop
+app assert themeChanged == true
+click #tray-open
+window input
+app assert visible input == true
+assert visible #word-jp
+app assert themeChanged == true
+window tray
+click #tray-stop
+click #tray-stop
+app assert themeChanged == true
+app assert timers == 0

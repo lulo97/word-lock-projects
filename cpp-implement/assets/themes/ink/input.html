@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ja">
+  <!-- ink: calm, minimal, dark. Study at night. -->
+  <body class="bg-slate-900 min-h-screen flex items-center justify-center antialiased text-slate-100">
+    <div class="w-[680px] px-16 py-20 flex flex-col items-center space-y-8 rounded-md border border-slate-700">
+      <p class="text-indigo-400 text-[12px] tracking-[0.35em] uppercase font-light">
+        Kotoba Lock
+      </p>
+
+      <h1 id="word-jp" class="text-6xl font-light tracking-widest text-slate-100">{{kanji}}</h1>
+
+      <h3 id="word-reading" class="text-2xl font-light tracking-wide text-indigo-400">{{hiragana}}</h3>
+
+      <p id="word-romaji" class="text-slate-400 text-[13px] tracking-widest">Romaji: {{romaji}}</p>
+
+      <div class="w-full pt-4">
+        <input
+          id="answer"
+          type="text"
+          spellcheck="false"
+          autofocus
+          class="w-full h-14 bg-transparent border-0 border-b border-indigo-400 outline-none px-2 text-slate-100 text-lg tracking-widest"
+        />
+        <p id="feedback" class="text-emerald-400 text-sm mt-3 h-5"></p>
+        <p id="hint" class="text-slate-500 text-xs mt-1 tracking-wide">Type the romaji — correct answers unlock automatically</p>
+      </div>
+
+      <button id="speak" class="mt-4 px-6 py-2 bg-transparent border border-slate-700 text-indigo-400 text-sm tracking-wide hover:border-indigo-400">Listen</button>
+    </div>
+  </body>
+</html>

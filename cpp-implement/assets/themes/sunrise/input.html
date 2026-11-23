@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+  <!-- sunrise: warm, bright, rounded, playful. -->
+  <body class="bg-orange-50 min-h-screen flex items-center justify-center antialiased text-stone-800 p-6">
+    <div class="w-[680px] px-14 py-16 flex flex-col items-center space-y-7 bg-white rounded-3xl border-2 border-amber-300 shadow-xl">
+      <div class="w-full flex items-center justify-between">
+        <p class="text-rose-500 text-[12px] tracking-[0.25em] uppercase font-extrabold">
+          Kotoba Lock
+        </p>
+        <span class="bg-amber-300 text-stone-800 text-[11px] font-bold px-3 py-1 rounded-3xl">
+          study time
+        </span>
+      </div>
+
+      <h1 id="word-jp" class="text-5xl font-extrabold tracking-wide text-stone-800">{{kanji}}</h1>
+
+      <h3 id="word-reading" class="text-2xl font-bold text-rose-500">{{hiragana}}</h3>
+
+      <p id="word-romaji" class="text-stone-500 text-[13px] tracking-wide font-semibold">Romaji: {{romaji}}</p>
+
+      <div class="w-full">
+        <input
+          id="answer"
+          type="text"
+          spellcheck="false"
+          autofocus
+          class="w-full h-16 bg-orange-50 border-2 border-rose-500 rounded-3xl outline-none px-6 text-stone-800 text-lg tracking-wide"
+        />
+        <p id="feedback" class="text-emerald-600 text-sm mt-3 h-5 font-bold px-2"></p>
+        <p id="hint" class="text-stone-500 text-xs mt-1 px-2">Type the romaji — correct answers unlock automatically</p>
+      </div>
+
+      <button id="speak" class="mt-3 px-8 py-3 bg-rose-500 text-white text-sm font-bold rounded-3xl shadow-xl hover:bg-rose-600">Listen</button>
+    </div>
+  </body>
+</html>

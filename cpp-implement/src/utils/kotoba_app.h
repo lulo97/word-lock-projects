@@ -11,6 +11,7 @@
 #include "utils/config.h"
 #include "utils/progress.h"
 #include "utils/startup_registry.h"
+#include "utils/theme_registry.h"
 #include "utils/word_db.h"
 #include "json.hpp"
 
@@ -108,6 +109,9 @@ private:
     ConfigStore config_;
     ProgressStore progress_;
     std::shared_ptr<StartupRegistry> startupRegistry_;   // set in init()
+    ThemeRegistry themes_;                   // embedded assets/themes/registry.txt
+    std::wstring currentTheme_;              // input/info style for this word
+    bool themeChanged_ = false;              // last reset picked a different style
     std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
     std::vector<WordData> extraWords_;       // `app add-word` test seam (M4)
     int dbRejected_ = 0;                     // words rejected by the light check
@@ -143,6 +147,9 @@ private:
     bool create_settings();
 
     // ----- word windows -----
+    // Theme page for the current style, or the legacy assets/htmls page when
+    // no theme is active.
+    std::wstring word_page_html(const wchar_t* legacyName) const;
     void reset_word_windows();
     bool ensure_input();
     bool ensure_info();

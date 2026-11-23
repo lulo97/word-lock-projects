@@ -1,0 +1,32 @@
+# UI style contract test (M7).
+#
+# Every style listed in assets/themes/registry.txt must:
+#   - load as HTML and pass Document::validate() (no duplicate ids, bad
+#     parents, unresolved placeholders, NaN rects)
+#   - provide the ids the app binds to (see assets/themes/_contract.txt)
+#   - provide template#example-row with .jp/.romaji/.en/.listen
+#
+# `app theme contract` iterates the registry, so adding a style needs no new
+# test: add the folder + one registry line and this feature covers it.
+#
+# Covers the per-feature checklist:
+#   1. happy path   - every enabled style satisfies the contract
+#   2. repeat       - running the check twice is stable
+#   3. side effects - the check leaves the app running normally
+
+include ../common/running.txt
+
+# --- 1. happy path ---
+app theme list
+app theme contract
+
+# --- 2. repeat ---
+app theme contract
+
+# --- 3. side effects: the app is untouched and still counting down ---
+app assert timers == 1
+window tray
+click #tray-stop
+app assert timers == 0
+click #tray-stop
+app assert timers == 1

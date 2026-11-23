@@ -21,6 +21,14 @@ bool create_host(
     const WordData* word = nullptr
 );
 
+// Same, but from an HTML string already loaded from any asset (themes).
+bool create_host_from_html(
+    std::unique_ptr<ui::WindowHost>& host,
+    const ui::WindowOptions& options,
+    const std::wstring& html,
+    const WordData* word = nullptr
+);
+
 // Position a window at the bottom-right of the work area with a margin.
 void position_bottom_right(ui::WindowHost& host, float marginLogical);
 

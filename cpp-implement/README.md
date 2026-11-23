@@ -45,6 +45,8 @@ src/utils/         word database + even picker, config/progress stores,
                      window helpers, tray, debug logger, ...
 database/*.py      manual Python generators (words, audio, validation)
 assets/htmls/      the five screens (countdown, tray_menu, settings, input, info)
+assets/themes/     UI styles for input/info (registry.txt, _contract.txt,
+                     ink/{input,info}.html, sunrise/{input,info}.html)
 database/words.txt user word list, one Japanese word per line
 database/words/    word JSON files, one per word (embedded)
 database/audio/    generated OGG audio (embedded when present)
@@ -107,6 +109,27 @@ The generators are manual Python tools; the app never runs them.
   `database/validate_db.errors.log`. At runtime the C++ app applies a light
   check of its own: a broken word is logged (`dbg::log("db", ...)`) and
   excluded from the picker instead of crashing the app.
+
+## Adding a UI style
+
+The input and info screens are styled by a per-word UI style. A style is pure
+data: a folder `assets/themes/<name>/` with `input.html` and `info.html`,
+listed one per line in `assets/themes/registry.txt`. There is no C++ per
+style: bindings are written only against the element ids in
+`assets/themes/_contract.txt` (`#word-jp`, `#answer`, `#speak`,
+`template#example-row` with `.jp`/`.romaji`/`.en`/`.listen`, ...).
+
+```
+1. cp -r assets/themes/ink assets/themes/<new>      (then restyle the classes)
+2. add <new> to assets/themes/registry.txt
+3. reconfigure CMake (assets are embedded at configure time) and rebuild
+4. powershell -File src\tests\run.ps1 -Filter theme_contract   (must pass)
+```
+
+With `config.randomUi` on, each new word gets a random style that never
+repeats the previous one; with it off, the first style in `registry.txt` is
+used. The `theme_contract` feature iterates the whole registry, so a new
+style is verified by the existing test with no new steps file.
 
 ## Debug tooling
 

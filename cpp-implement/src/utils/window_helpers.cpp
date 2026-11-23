@@ -28,6 +28,25 @@ std::wstring missing_html_page(const wchar_t* name) {
     return html;
 }
 
+bool create_host_from_html(
+    std::unique_ptr<ui::WindowHost>& host,
+    const ui::WindowOptions& options,
+    const std::wstring& html,
+    const WordData* word
+) {
+    std::wstring page = html;
+    if (word)
+        page = fill_template(page, *word);
+
+    auto document = std::make_shared<ui::Document>();
+
+    if (!document->load(page))
+        return false;
+
+    host = std::make_unique<ui::WindowHost>();
+    return host->create(options, document);
+}
+
 bool create_host(
     std::unique_ptr<ui::WindowHost>& host,
     const ui::WindowOptions& options,
@@ -41,16 +60,7 @@ bool create_host(
         html = missing_html_page(htmlName);
     }
 
-    if (word)
-        html = fill_template(html, *word);
-
-    auto document = std::make_shared<ui::Document>();
-
-    if (!document->load(html))
-        return false;
-
-    host = std::make_unique<ui::WindowHost>();
-    return host->create(options, document);
+    return create_host_from_html(host, options, html, word);
 }
 
 void position_bottom_right(ui::WindowHost& host, float marginLogical) {

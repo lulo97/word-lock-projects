@@ -1,18 +1,18 @@
-# tests/smoke.ps1
+# src/tests/smoke.ps1
 #
 # The ONE real-process smoke test. Its only job: prove app.exe starts and the
 # tray icon registers. Everything else is covered by headless feature tests
-# (tests/features/*) and engine tests (tests/cases/*), which need no launched
+# (src/tests/features/*) and engine tests (src/tests/cases/*), which need no launched
 # process.
 #
 # Written in PowerShell (not batch) to avoid the `timeout` PATH collision and
 # working-directory problems. Uses Start-Process / Start-Sleep / Stop-Process.
 #
-# Usage:  powershell -ExecutionPolicy Bypass -File tests\smoke.ps1
+# Usage:  powershell -ExecutionPolicy Bypass -File src\tests\smoke.ps1
 # Exit:    0 if the app launched and its state is readable, 1 otherwise.
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot        # project root (tests\.. )
+$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)   # project root (src\tests\.. )
 $exe  = Join-Path $root "build\app.exe"
 
 # Clean up stale instances and generated files first.

@@ -1,15 +1,15 @@
-# tests/run.ps1
+# src/tests/run.ps1
 #
 # The single test driver. Replaces run_tests.bat: it discovers every test,
 # runs it, and prints a failure summary at the end. PowerShell (not batch)
 # to avoid the `timeout` PATH collision and working-directory problems.
 #
 # Usage:
-#   powershell -ExecutionPolicy Bypass -File tests\run.ps1                # everything
-#   powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Filter stop    # fast inner loop
-#   powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Update         # re-record goldens
-#   powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Seed 42        # fixed fuzz seed
-#   powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Seed random    # nightly fuzz
+#   powershell -ExecutionPolicy Bypass -File src\tests\run.ps1                # everything
+#   powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Filter stop    # fast inner loop
+#   powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Update         # re-record goldens
+#   powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Seed 42        # fixed fuzz seed
+#   powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Seed random    # nightly fuzz
 #
 #   -Filter runs only tests whose path matches the pattern (substring).
 #   -Update sets UPDATE_GOLDEN=1 so `golden` rewrites the baseline instead
@@ -18,7 +18,7 @@
 #   seed line is in the report so the case is replayable).
 #
 # Exit: 0 only if every test passes and every script/exe exists.
-# Report: tests\out\report.txt
+# Report: src\tests\out\report.txt
 
 param(
     [string]$Filter = "",
@@ -27,13 +27,13 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot          # project root (tests\.. )
-Set-Location $root                                 # exes read tests/word.json etc. from CWD
+$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)   # project root (src\tests\.. )
+Set-Location $root                                 # exes read src/tests/word.json etc. from CWD
 
 if ($Update) { $env:UPDATE_GOLDEN = "1" } else { Remove-Item Env:\UPDATE_GOLDEN -ErrorAction SilentlyContinue }
 if ($Seed -eq "random") { $Seed = (Get-Random -Minimum 1 -Maximum 2147483647).ToString() }
 
-$reportDir = Join-Path $root "tests\out"
+$reportDir = Join-Path $root "src\tests\out"
 New-Item -ItemType Directory -Force $reportDir | Out-Null
 $report = Join-Path $reportDir "report.txt"
 Set-Content $report ""
@@ -59,13 +59,13 @@ function Match-Filter($path) {
 }
 
 # ---- discover ----
-$caseScripts  = @(Get-ChildItem "tests\cases\*\steps*.txt"  | Sort-Object FullName)
-$featureScripts = @(Get-ChildItem "tests\features\*\steps.txt" | Sort-Object FullName)
+$caseScripts  = @(Get-ChildItem "src\tests\cases\*\steps*.txt"  | Sort-Object FullName)
+$featureScripts = @(Get-ChildItem "src\tests\features\*\steps.txt" | Sort-Object FullName)
 
 # A discovery that comes up empty is a failure, not a silent pass
 # (e.g. a typo'd case folder would otherwise vanish from the suite).
-if ($caseScripts.Count -eq 0)   { $script:failed += "discovery: no tests\cases\*\steps*.txt" }
-if ($featureScripts.Count -eq 0) { $script:failed += "discovery: no tests\features\*\steps.txt" }
+if ($caseScripts.Count -eq 0)   { $script:failed += "discovery: no src\tests\cases\*\steps*.txt" }
+if ($featureScripts.Count -eq 0) { $script:failed += "discovery: no src\tests\features\*\steps.txt" }
 
 # ---- unit tests ----
 if (Match-Filter "unit") {
@@ -76,7 +76,7 @@ if (Match-Filter "unit") {
 foreach ($s in $caseScripts) {
     if (Match-Filter $s.FullName) {
         Invoke-Test ("case " + $s.Directory.Name + " " + $s.Name) "build\ui_test.exe" `
-            @("--word", "tests\word.json", "--script", $s.FullName)
+            @("--word", "src\tests\word.json", "--script", $s.FullName)
     }
 }
 
@@ -85,7 +85,7 @@ foreach ($s in $caseScripts) {
     $page = Join-Path $s.Directory.FullName "page.html"
     if ((Test-Path $page) -and (Match-Filter $s.FullName)) {
         Invoke-Test ("dpi matrix " + $s.Directory.Name) "build\ui_test.exe" `
-            @("--word", "tests\word.json", "--dpi-matrix", $page)
+            @("--word", "src\tests\word.json", "--dpi-matrix", $page)
     }
 }
 
@@ -106,7 +106,7 @@ if (Match-Filter "fuzz") {
 if (Match-Filter "smoke") {
     # powershell is a command, not a file path, so Test-Path can't check it.
     Add-Content $report "=== smoke ==="
-    & powershell -ExecutionPolicy Bypass -File (Join-Path $root "tests\smoke.ps1") 2>&1 | ForEach-Object { Add-Content $report $_ }
+    & powershell -ExecutionPolicy Bypass -File (Join-Path $root "src\tests\smoke.ps1") 2>&1 | ForEach-Object { Add-Content $report $_ }
     if ($LASTEXITCODE -ne 0) { $script:failed += "smoke" }
 }
 

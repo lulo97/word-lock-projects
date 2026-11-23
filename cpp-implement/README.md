@@ -4,9 +4,9 @@ A Win32 tray app for Japanese word study. It shows a countdown, then an input
 screen where you type the romaji of a randomly picked Japanese word, then an
 info screen with the word's details.
 
-The UI is not a browser: it is a small in-process HTML/CSS engine (`ui/`) that
+The UI is not a browser: it is a small in-process HTML/CSS engine (`src/ui/`) that
 parses a Tailwind-style subset of HTML, resolves styles, lays out the tree and
-paints it with GDI+. The five screens are plain HTML files (`htmls/`) that are
+paints it with GDI+. The five screens are plain HTML files (`assets/htmls/`) that are
 embedded into the executable at build time, so the app is a single `.exe`.
 
 ## Building
@@ -20,17 +20,18 @@ build.bat
 Configures CMake, builds the Release configuration, produces `build\app.exe`
 and the test tools, and launches the app.
 
-- `app.cpp` is the main source; `ui/*.cpp` and `utils/*.cpp` are the framework.
-  The app proper lives in `utils/kotoba_app.{h,cpp}` (driven headlessly by
-  `tests/app_test.cpp`).
-- `htmls/*` and `database/words/*` are embedded as assets (`cmake/EmbedAssets.cmake`).
-- `third_party/json.hpp` is nlohmann/json, used for the word database.
+- `app.cpp` is the main source; `src/ui/*.cpp` and `src/utils/*.cpp` are the
+  framework. The app proper lives in `src/utils/kotoba_app.{h,cpp}` (driven
+  headlessly by `src/tests/app_test.cpp`).
+- `assets/htmls/*` and `database/words/*` are embedded as assets
+  (`cmake/EmbedAssets.cmake`).
+- `src/third_party/json.hpp` is nlohmann/json, used for the word database.
 
 ## Layout
 
 ```
-app.cpp            entry point; the app proper is utils/kotoba_app.{h,cpp}
-ui/                HTML/CSS engine
+app.cpp            entry point; the app proper is src/utils/kotoba_app.{h,cpp}
+src/ui/            HTML/CSS engine
   core/            shared types (Color, RectF, Length), utf helpers
   dom/             node tree + tree operations
   parser/          HTML parser
@@ -40,17 +41,17 @@ ui/                HTML/CSS engine
   svg/             path parsing for vector shapes
   controls/        TextInput, TextArea, RangeInput, Checkbox
   app/             Document (tree+style+layout+events), WindowHost, ScriptRunner
-utils/             word database + even picker, config/progress stores,
+src/utils/         word database + even picker, config/progress stores,
                      window helpers, tray, debug logger, ...
-tools/             manual Python generators (words, audio, validation)
-htmls/             the five screens (countdown, tray_menu, settings, input, info)
+database/*.py      manual Python generators (words, audio, validation)
+assets/htmls/      the five screens (countdown, tray_menu, settings, input, info)
 database/words.txt user word list, one Japanese word per line
 database/words/    word JSON files, one per word (embedded)
 database/audio/    generated OGG audio (embedded when present)
-tests/             regression pipeline (see below)
-tests/ui_test.cpp  headless script runner (console entry point)
-tests/app_test.cpp headless feature-test runner (drives KotobaCppApp)
-imgs/              browser-based Tailwind design references for the screens
+src/tests/         regression pipeline (see below)
+src/tests/ui_test.cpp  headless script runner (console entry point)
+src/tests/app_test.cpp headless feature-test runner (drives KotobaCppApp)
+assets/imgs/       browser-based Tailwind design references for the screens
 ```
 
 ## Word format
@@ -100,7 +101,7 @@ The generators are manual Python tools; the app never runs them.
   loudness-normalizes every clip. `--word-mode carrier` synthesizes a single
   word inside a short phrase and trims the middle segment.
 - The info screen's `#speak` and per-example `listen-N` buttons play those
-  clips (`utils/play_audio.cpp` transcodes OGG and applies `config.volume`).
+  clips (`src/utils/play_audio.cpp` transcodes OGG and applies `config.volume`).
   Missing files grey the button out instead of failing.
 - `validate_db.py` exits non-zero on any invalid file and writes
   `database/validate_db.errors.log`. At runtime the C++ app applies a light
@@ -134,7 +135,7 @@ Built for agent-driven debugging: every tool produces files an agent can read.
   one-shot timers), `app word <file>`, `app assert <key> == <value>` (keys in
   `stateJson()`, incl. `visible <window>`), `app tray-event double-click|
   left-click|right-click` (real tray-icon events). One folder per feature
-  under `tests/features/`; every feature ships a `steps.txt` that fails
+  under `src/tests/features/`; every feature ships a `steps.txt` that fails
   before the change and passes after.
 - **Command-file control of the running app** — with `--debug` or
   `KOTOBA_DEBUG=1`, the app polls `debug_cmd.txt` every 250 ms, runs the same
@@ -144,7 +145,7 @@ Built for agent-driven debugging: every tool produces files an agent can read.
 
 ### Script language
 
-One command registry (`ui/app/script.cpp`), shared by `ui_test.exe`,
+One command registry (`src/ui/app/script.cpp`), shared by `ui_test.exe`,
 `app_test.exe` and the running-app poller: the built-in document commands
 plus the `app`/`window` commands registered by
 `KotobaCppApp::registerCommands()`. Unknown commands, unknown assert kinds,
@@ -171,7 +172,7 @@ assert caret #id == N
 assert rect #id w>0             # x/y/w/h with < > <= >= == (== has 0.5 px slack)
 golden expected.layout.json [update]   # compact layout snapshot
 include <path>                # run another script (relative to this one);
-                               # shared setups live in tests/features/common/
+                               # shared setups live in src/tests/features/common/
 expect-fail <command>         # passes only if the inner command FAILS
                                # (guards against vacuous assertions)
 app init / tick [n] / word <file> / add-word <file> / state
@@ -197,45 +198,45 @@ directory, so a case folder is self-contained.
 
 ## Tests
 
-`tests/run.ps1` is the single test driver (PowerShell, not batch): it
-discovers every test, runs it, and writes `tests/out/report.txt` with a
+`src/tests/run.ps1` is the single test driver (PowerShell, not batch): it
+discovers every test, runs it, and writes `src/tests/out/report.txt` with a
 failure summary at the bottom; exit code is nonzero on any failure or any
 missing script/exe.
 
 ```
-powershell -ExecutionPolicy Bypass -File tests\run.ps1                # everything
-powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Filter stop   # fast inner loop
-powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Update        # re-record goldens
-powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Seed random   # nightly fuzz
+powershell -ExecutionPolicy Bypass -File src\tests\run.ps1                # everything
+powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Filter stop   # fast inner loop
+powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Update        # re-record goldens
+powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Seed random   # nightly fuzz
 ```
 
-Discovery: `tests/cases/*/steps*.txt` (every script in a case folder runs,
-not just `steps.txt`), `tests/features/*/steps.txt`, unit tests, the DPI
+Discovery: `src/tests/cases/*/steps*.txt` (every script in a case folder runs,
+not just `steps.txt`), `src/tests/features/*/steps.txt`, unit tests, the DPI
 matrix, fuzz and the one real-process `smoke.ps1`.
 
 | Layer | What it catches | Where |
 |---|---|---|
-| Golden layout snapshots | layout/style/parser regressions | `tests/cases/*/` (8 cases: flex center/row/column/grow, absolute, padding/margin, overflow, input caret) |
-| Feature tests | app state-machine regressions (stop/start toggle, tray events) | `tests/features/*/` via `app_test.exe` |
+| Golden layout snapshots | layout/style/parser regressions | `src/tests/cases/*/` (8 cases: flex center/row/column/grow, absolute, padding/margin, overflow, input caret) |
+| Feature tests | app state-machine regressions (stop/start toggle, tray events) | `src/tests/features/*/` via `app_test.exe` |
 | Metamorphic DPI check | any code path that ignores scale | `ui_test.exe --dpi-matrix <page>` over every case |
-| Unit tests | pure functions (spacing, palette, classes, utf, parser, path, template) | `tests/unit/unit_tests.cpp` |
-| Seeded fuzz + `validate()` | crashes, hangs, dangling pointers | `tests/fuzz/fuzz.cpp` (parser fuzz + event storm) |
+| Unit tests | pure functions (spacing, palette, classes, utf, parser, path, template) | `src/tests/unit/unit_tests.cpp` |
+| Seeded fuzz + `validate()` | crashes, hangs, dangling pointers | `src/tests/fuzz/fuzz.cpp` (parser fuzz + event storm) |
 
 Usage:
 
 ```
-build\ui_test.exe --word tests\word.json --script tests\cases\flex_center\steps.txt
+build\ui_test.exe --word src\tests\word.json --script src\tests\cases\flex_center\steps.txt
 build\unit_tests.exe
 build\fuzz.exe --seed 1 --iters 2000
 ```
 
 Convention: after any engine change, run `run.ps1`, read
-`tests/out/report.txt`, and on a failing case open the case's `shot`/dump
+`src/tests/out/report.txt`, and on a failing case open the case's `shot`/dump
 files. Never run with `-Update` (blessing a baseline) unless a human has
 checked the screenshot.
 
-Scaffolding: `powershell -File tests\new_feature.ps1 <name>` copies the
-checklist template into `tests/features/<name>/steps.txt` and prints the
+Scaffolding: `powershell -File src\tests\new_feature.ps1 <name>` copies the
+checklist template into `src/tests/features/<name>/steps.txt` and prints the
 `run.ps1 -Filter <name>` command to watch it fail first.
 
 ## Environment variables

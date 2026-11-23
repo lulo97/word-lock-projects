@@ -13,8 +13,8 @@
 
 include ../common/running.txt
 
-# --- setup: tests/word.json has no audio on the word or its examples ---
-app word tests/word.json
+# --- setup: src/tests/word.json has no audio on the word or its examples ---
+app word src/tests/word.json
 app tick 30
 window input
 type #answer ringo
@@ -43,7 +43,7 @@ app assert timers == 0
 window tray
 click #tray-stop
 click #tray-stop
-app word tests/word_audio.json
+app word src/tests/word_audio.json
 app tick 30
 window input
 type #answer ringo
@@ -60,7 +60,7 @@ window tray
 click #tray-stop
 app assert audio == idle
 click #tray-stop
-app word tests/word.json
+app word src/tests/word.json
 app tick 30
 window input
 type #answer ringo

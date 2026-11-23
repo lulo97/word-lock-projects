@@ -14,8 +14,8 @@
 
 include ../common/running.txt
 
-# --- 1. happy path: tests/word.json has tags ["food", "fruit"] ---
-app word tests/word.json
+# --- 1. happy path: src/tests/word.json has tags ["food", "fruit"] ---
+app word src/tests/word.json
 app tick 30
 window input
 type #answer ringo
@@ -32,7 +32,7 @@ assert not exists #tag-3
 window tray
 click #tray-stop
 click #tray-stop
-app word tests/word_new_schema.json
+app word src/tests/word_new_schema.json
 app tick 30
 window input
 type #answer neko
@@ -46,7 +46,7 @@ assert not exists #tag-2
 window tray
 click #tray-stop
 click #tray-stop
-app word tests/word.json
+app word src/tests/word.json
 app tick 30
 window input
 type #answer ringo

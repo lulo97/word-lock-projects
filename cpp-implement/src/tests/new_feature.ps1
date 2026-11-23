@@ -1,13 +1,13 @@
-# tests/new_feature.ps1
+# src/tests/new_feature.ps1
 #
 # Scaffold a new feature test: copies the checklist template into
-# tests/features/<name>/steps.txt and prints the command to watch it fail
+# src/tests/features/<name>/steps.txt and prints the command to watch it fail
 # first. Every feature test then has the same shape; the checklist stops
 # living only in your head.
 #
-# Usage:  powershell -ExecutionPolicy Bypass -File tests\new_feature.ps1 tray_open
+# Usage:  powershell -ExecutionPolicy Bypass -File src\tests\new_feature.ps1 tray_open
 #
-# For bug regressions, use the same shape under tests\regress\<bug_name>\
+# For bug regressions, use the same shape under src\tests\regress\<bug_name>\
 # steps.txt (mirrors the "one test per bug" unit convention).
 
 param(
@@ -16,15 +16,15 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot
+$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 if ($Name -notmatch '^[a-z0-9_]+$') {
     Write-Error "name must be lowercase letters/digits/underscore: $Name"
     exit 1
 }
-$dir = Join-Path $root "tests\features\$Name"
+$dir = Join-Path $root "src\tests\features\$Name"
 if (Test-Path $dir) {
-    Write-Error "tests\features\$Name already exists"
+    Write-Error "src\tests\features\$Name already exists"
     exit 1
 }
 New-Item -ItemType Directory -Force $dir | Out-Null
@@ -67,4 +67,4 @@ Set-Content $steps ($template -replace "<feature>", $Name)
 Write-Host "Created $steps"
 Write-Host ""
 Write-Host "Implement the feature, then watch the test fail first:"
-Write-Host "  powershell -ExecutionPolicy Bypass -File tests\run.ps1 -Filter $Name"
+Write-Host "  powershell -ExecutionPolicy Bypass -File src\tests\run.ps1 -Filter $Name"

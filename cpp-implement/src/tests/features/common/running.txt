@@ -1,4 +1,4 @@
-# Shared feature-test setup: app running, word pinned to tests/word.json.
+# Shared feature-test setup: app running, word pinned to src/tests/word.json.
 #
 # Included from tests/features/*/steps.txt via `include ../common/running.txt`
 # (path relative to the including script's directory). Pinning the word and
@@ -13,7 +13,7 @@ app config countdownSeconds 30
 # 600 s default)
 window tray
 click #tray-show
-app word tests/word.json
+app word src/tests/word.json
 app assert word == ringo
 app assert stopped == false
 app assert countdown == 30

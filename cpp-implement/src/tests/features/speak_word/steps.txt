@@ -14,7 +14,7 @@
 include ../common/running.txt
 
 # --- setup: pin a word that HAS audio, walk to the info screen ---
-app word tests/word_audio.json
+app word src/tests/word_audio.json
 app tick 30
 app assert visible input == true
 window input
@@ -48,7 +48,7 @@ app assert audio == idle
 
 # --- 3. repeat: start again, reopen the info screen, play again ---
 click #tray-stop
-app word tests/word_audio.json
+app word src/tests/word_audio.json
 app assert stopped == false
 app tick 30
 window input

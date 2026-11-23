@@ -64,10 +64,10 @@ int wmain(int argc, wchar_t** argv) {
     // resolved before fuzzing (raw templates would trip validate()).
     // Both reads must succeed: an empty file would fuzz a blank page and
     // report a misleading "OK".
-    std::string wordJson = readFile(L"tests/word.json");
-    if (wordJson.empty()) { std::wcout << L"cannot read tests/word.json (run from the project root)\n"; return 1; }
-    std::wstring baseHtml = readHtml(L"htmls/input.html");
-    if (baseHtml.empty()) { std::wcout << L"cannot read htmls/input.html (run from the project root)\n"; return 1; }
+    std::string wordJson = readFile(L"src/tests/word.json");
+    if (wordJson.empty()) { std::wcout << L"cannot read src/tests/word.json (run from the project root)\n"; return 1; }
+    std::wstring baseHtml = readHtml(L"assets/htmls/input.html");
+    if (baseHtml.empty()) { std::wcout << L"cannot read assets/htmls/input.html (run from the project root)\n"; return 1; }
     std::wstring base = fill_template(baseHtml, parse_word_json(wordJson));
 
     // ---- 1. Parser fuzz: random mutations of a real page ----

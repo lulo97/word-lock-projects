@@ -14,7 +14,7 @@
 include ../common/running.txt
 
 # --- setup: word with word + example audio, open info ---
-app word tests/word_audio.json
+app word src/tests/word_audio.json
 app tick 30
 window input
 type #answer ringo
@@ -85,7 +85,7 @@ assert text #listen-2 == "Speak"
 window tray
 click #tray-stop
 app assert stopped == false
-app word tests/word_audio.json
+app word src/tests/word_audio.json
 app tick 30
 window input
 type #answer ringo

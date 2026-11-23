@@ -10,7 +10,7 @@
 
 std::wstring load_embedded_html(const wchar_t* name) {
     std::string utf8Name = ui::wideToUtf8(name);
-    std::string path = "htmls/" + utf8Name;
+    std::string path = "assets/htmls/" + utf8Name;
     std::string bytes = load_asset_bytes(path);
 
     if (bytes.empty())

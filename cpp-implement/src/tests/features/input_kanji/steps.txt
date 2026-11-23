@@ -14,7 +14,7 @@
 include ../common/running.txt
 
 # --- 1. happy path: new-schema word on the input screen ---
-app word tests/word_new_schema.json
+app word src/tests/word_new_schema.json
 app tick 30
 app assert visible input == true
 window input
@@ -36,7 +36,7 @@ assert text #word-romaji == "romaji: neko"
 window tray
 click #tray-stop
 click #tray-stop
-app word tests/word_new_schema.json
+app word src/tests/word_new_schema.json
 app tick 30
 window input
 assert text #word-jp == 猫
@@ -54,7 +54,7 @@ app assert timers == 0
 window tray
 click #tray-stop
 click #tray-stop
-app word tests/word.json
+app word src/tests/word.json
 app tick 30
 window input
 assert text #word-jp == りんご

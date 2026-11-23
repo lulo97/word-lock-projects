@@ -14,7 +14,7 @@
 include ../common/running.txt
 
 # --- setup: pin a word with example audio, open info ---
-app word tests/word_audio.json
+app word src/tests/word_audio.json
 app tick 30
 window input
 type #answer ringo

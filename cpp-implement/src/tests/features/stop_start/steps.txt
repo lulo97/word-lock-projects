@@ -58,7 +58,7 @@ click #tray-stop
 app assert stopped == false
 # start_countdown() just picked a random word; pin the fixture again so the
 # typed answer below matches and arms the input-done timer.
-app word tests/word.json
+app word src/tests/word.json
 app assert word == ringo
 app tick 30
 app assert visible input == true

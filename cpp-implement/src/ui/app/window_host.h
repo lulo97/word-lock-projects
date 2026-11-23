@@ -65,6 +65,7 @@ public:
     // Callback when window closes / loses focus (context menu dismissal).
     std::function<void()> onClose;
     std::function<void()> onDeactivate;
+    std::function<void()> onEndSession;   // WM_ENDSESSION (logoff/shutdown)
     std::function<bool(UINT)> onKeyDown;  // return true to consume the key
 
     // Call once in main: enable per-monitor DPI v2 awareness.

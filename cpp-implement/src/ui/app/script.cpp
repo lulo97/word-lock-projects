@@ -23,8 +23,10 @@ ScriptRunner::ScriptRunner(Document& doc, int w, int h, float scale) : ScriptRun
     bind(doc, w, h, scale);
 }
 
-void ScriptRunner::bind(Document& doc, int w, int h, float scale) {
+void ScriptRunner::bind(Document& doc, int w, int h, float scale,
+                        std::function<bool()> alive) {
     doc_ = &doc;
+    alive_ = std::move(alive);
     W_ = w;
     H_ = h;
     scale_ = scale;
@@ -32,6 +34,7 @@ void ScriptRunner::bind(Document& doc, int w, int h, float scale) {
 
 void ScriptRunner::unbind() {
     doc_ = nullptr;
+    alive_ = nullptr;
     W_ = H_ = 0;
     scale_ = 1.f;
 }
@@ -432,9 +435,17 @@ void ScriptRunner::run(const std::wstring& line) {
     if (t.size() - 1 < c.minArgs) { fail(it->first + L": " + c.usage); return; }
     c.fn(t, line);
 
-    if (doc_)
-        for (auto& p : doc_->validate())
-            fail(L"validate: " + p);
+    if (doc_) {
+        // The step may have destroyed the host that owns the bound document
+        // (e.g. info #close -> start_countdown -> reset_word_windows):
+        // unbind and skip validation of a dead document instead of running
+        // against freed memory.
+        if (alive_ && !alive_())
+            unbind();
+        else
+            for (auto& p : doc_->validate())
+                fail(L"validate: " + p);
+    }
 }
 
 } // namespace ui

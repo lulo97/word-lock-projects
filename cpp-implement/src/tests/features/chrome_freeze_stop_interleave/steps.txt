@@ -1,0 +1,48 @@
+# Chrome freeze must never leak: stop while input is showing (M9).
+#
+#   1. happy path   - input shows -> frozen
+#   2. reverse      - stop while frozen -> resumed
+#   3. repeat       - restart, freeze, stop again
+#   4. side effects - no timer leak after the stop
+#   5. interleaving - pending input-done timer at stop time; double-click
+#                      while stopped freezes (pause, not quit)
+#
+# The fake freezer in app_test only counts calls; the real freeze_chrome()
+# is never touched.
+
+include ../common/running.txt
+app config freezeChrome true
+app assert chromeFrozen == false
+
+app word src/tests/word.json
+app tick 30
+app assert visible input == true
+app assert chromeFrozen == true
+
+# --- 5. interleaving: pending input-done timer, then stop ---
+window input
+type #answer ringo
+app assert inputDone == true
+app assert timers == 1
+window tray
+click #tray-stop
+app assert stopped == true
+app assert chromeFrozen == false
+app assert timers == 0
+app tick
+app assert chromeFrozen == false
+app assert visible info == false
+
+# --- 2/3. reverse + repeat: restart, freeze, stop again ---
+click #tray-stop
+app tick 30
+app assert chromeFrozen == true
+click #tray-stop
+app assert chromeFrozen == false
+
+# double-click while stopped freezes (pause, not quit); restart resumes
+app tray-event double-click
+app assert chromeFrozen == true
+window tray
+click #tray-stop
+app assert chromeFrozen == false

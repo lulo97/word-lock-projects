@@ -17,7 +17,6 @@ struct Config {
     bool randomUi = true;
     bool startWithWindows = false;
     bool freezeChrome = true;
-    int maxFreezeMinutes = 10;
 };
 
 class ConfigStore {

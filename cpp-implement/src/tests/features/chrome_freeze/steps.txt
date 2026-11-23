@@ -1,0 +1,68 @@
+# Chrome freeze while the input/info screens are active (M9).
+#   1. happy path   - input shows -> frozen; info keeps it frozen
+#   2. reverse      - closing info -> resumed
+#   3. repeat       - freeze/resume again; calls stay balanced
+#   4. side effects - no pending timers; one freeze per show
+#   5. config off   - freezeChrome=false never freezes; turning it off
+#                      while frozen resumes immediately
+#
+# The fake freezer in app_test only counts calls; the real freeze_chrome()
+# is never touched. The folder's config.json persists between runs, which
+# is why the test sets freezeChrome true at the start and end.
+
+include ../common/running.txt
+app config freezeChrome true
+app assert chromeFrozen == false
+
+# --- 1. happy path: input shows -> frozen ---
+app word src/tests/word.json
+app tick 30
+app assert visible input == true
+app assert chromeFrozen == true
+app assert freezeCalls == 1
+
+# info keeps the freeze
+window input
+type #answer ringo
+app tick
+app assert visible info == true
+app assert chromeFrozen == true
+
+# --- 2. reverse: close info -> start_countdown -> resume ---
+window info
+click #close
+app assert visible info == false
+app assert chromeFrozen == false
+app assert resumeCalls == 1
+app assert countdown == 30
+
+# --- 3. repeat: freeze/resume again ---
+app word src/tests/word.json
+app tick 30
+app assert chromeFrozen == true
+window input
+type #answer ringo
+app tick
+window info
+click #close
+app assert chromeFrozen == false
+app assert freezeCalls == 2
+app assert resumeCalls == 2
+
+# --- 4. side effects: exactly the countdown timer remains ---
+app assert timers == 1
+
+# --- 5. config off: freezeChrome=false never freezes ---
+app config freezeChrome false
+app tick 30
+app assert visible input == true
+app assert chromeFrozen == false
+app assert freezeCalls == 2
+
+# turning it off while frozen resumes right away
+app config freezeChrome true
+app tray-event double-click
+app assert chromeFrozen == true
+app config freezeChrome false
+app assert chromeFrozen == false
+app config freezeChrome true

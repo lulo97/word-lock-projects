@@ -10,9 +10,22 @@
 // kotoba_app.h / kotoba_app.cpp so headless feature tests (app_test)
 // can drive KotobaCppApp without a message loop.
 
+#include "utils/freeze_chrome.h"
 #include "utils/kotoba_app.h"
 
+// M9 safety net: if the app dies from an unhandled exception, Chrome must
+// not be left frozen. The filter runs before the process goes.
+static LONG WINAPI onCrash(EXCEPTION_POINTERS*) {
+    resume_chrome();
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmd, int) {
+    // M9 startup recovery: thaw any Chrome a previous (crashed or killed)
+    // run left frozen. Safe no-op when nothing is suspended.
+    resume_all_chrome();
+    SetUnhandledExceptionFilter(onCrash);
+
     KotobaCppApp app;
     if (cmd && wcsstr(cmd, L"--debug"))
         app.setDebug(true);

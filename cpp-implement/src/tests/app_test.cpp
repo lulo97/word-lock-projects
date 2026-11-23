@@ -56,6 +56,10 @@ int wmain(int argc, wchar_t** argv) {
     // Headless: never touch the user's HKCU Run key (M8). Feature tests see
     // the in-memory backend through `app assert startupRegistry == ...`.
     app.hooks.startupRegistry = std::make_shared<FakeStartupRegistry>();
+    // Headless: never touch a real Chrome process (M9). The fakes only flip
+    // the app's chromeFrozen_ bookkeeping through the wrapper counters.
+    app.hooks.freezeChrome = [] { return 0; };
+    app.hooks.resumeChrome = [] { return 0; };
     ScriptRunner runner;             // built-in commands
     app.registerCommands(runner);   // + `app` and `window`
     runner.setScriptDir(scriptDirOf(script));

@@ -11,6 +11,7 @@
 #include "core/utf.h"
 #include "dom/tree_ops.h"
 #include "utils/debug_log.h"
+#include "utils/freeze_chrome.h"
 #include "utils/play_audio.h"
 #include "utils/set_tray.h"
 #include "utils/window_helpers.h"
@@ -154,6 +155,10 @@ KotobaCppApp::KotobaCppApp() {
 }
 
 KotobaCppApp::~KotobaCppApp() {
+    // M9: never leave Chrome frozen behind us (covers any exit path that
+    // skips quit()).
+    reap_windows();
+    chrome_resume();
     stopAudio();
     if (countdown_ && countdown_->hwnd())
         remove_tray(countdown_->hwnd());
@@ -197,6 +202,10 @@ bool KotobaCppApp::init() {
             on_tray_click(lParam);
         }
     );
+
+    // M9: the OS shuts the session down (lock/logoff/shutdown) - resume
+    // Chrome before the process goes.
+    countdown_->onEndSession = [this] { chrome_resume(); };
 
     start_countdown();
 
@@ -251,14 +260,19 @@ void KotobaCppApp::trayEvent(UINT event) {
 void KotobaCppApp::registerCommands(ui::ScriptRunner& runner) {
     runner.addCommand(L"window", 1, L"window <countdown|tray|input|info|settings>",
         [this, &runner](const auto& t, const auto&) {
-            if (ui::WindowHost* h = window(t[1])) {
+            const std::wstring name = t[1];
+            if (ui::WindowHost* h = window(name)) {
                 RECT rc; GetClientRect(h->hwnd(), &rc);
-                runner.bind(h->document(), rc.right, rc.bottom, h->dpiScale());
+                // Liveness probe: app actions can destroy a bound host
+                // (info #close / X / app word all run reset_word_windows),
+                // so the runner must not validate a dead document.
+                runner.bind(h->document(), rc.right, rc.bottom, h->dpiScale(),
+                            [this, name, h]() { return window(name) == h; });
             } else {
                 // Unbind so later commands fail clearly instead of running
                 // against a stale document.
                 runner.unbind();
-                runner.fail(L"window not created: " + t[1]);
+                runner.fail(L"window not created: " + name);
             }
         });
     runner.addCommand(L"app", 1,
@@ -290,6 +304,7 @@ nlohmann::json KotobaCppApp::stateJson() {
     j["inputWin"] = !!input_;
     j["infoWin"] = !!info_;
     j["timers"] = pendingTimerCount();
+    j["chromeFrozen"] = chromeFrozen_;
     j["freezeCalls"] = hooks.freezeCalls;
     j["resumeCalls"] = hooks.resumeCalls;
     j["picked"] = (int)recentPicks_.size();
@@ -663,6 +678,9 @@ bool KotobaCppApp::create_settings() {
                     // M8: the checkbox owns the HKCU Run entry too.
                     if (flag == &Config::startWithWindows)
                         applyStartup(v);
+                    // M9: turning the toggle off while frozen thaws Chrome.
+                    if (flag == &Config::freezeChrome && !v)
+                        chrome_resume();
                 };
                 // Fires onChange only when the HTML attr differs from config.
                 check->setChecked(config_.get().*flag);
@@ -713,11 +731,17 @@ void KotobaCppApp::reset_word_windows() {
     stopAudio();
     if (input_) {
         input_->show(false);
-        input_.reset();
+        // Do NOT destroy here: this function is reachable from the info/input
+        // windows' own handlers (info #close -> start_countdown, Enter key ->
+        // start_countdown, input X -> start_countdown). Destroying the host
+        // synchronously frees its Document/EventState while the handler stack
+        // (EventState::onMouseUp, ScriptRunner::settle, Document::handleMessage)
+        // still writes through it.
+        graveyard_.push_back(std::move(input_));   // input_ becomes null
     }
     if (info_) {
         info_->show(false);
-        info_.reset();
+        graveyard_.push_back(std::move(info_));    // info_ becomes null
     }
     audioReady_ = 0;
     audioDisabled_ = 0;
@@ -726,6 +750,9 @@ void KotobaCppApp::reset_word_windows() {
 bool KotobaCppApp::ensure_input() {
     if (input_)
         return true;
+
+    // safe: no graveyard-window handler is on the stack here
+    reap_windows();
 
     ui::WindowOptions options;
     options.title = L"Kotoba Lock";
@@ -758,6 +785,8 @@ bool KotobaCppApp::ensure_info() {
     if (info_)
         return true;
 
+    reap_windows();
+
     ui::WindowOptions options;
     options.title = L"Kotoba Lock";
     options.width = 1200;
@@ -783,6 +812,9 @@ bool KotobaCppApp::ensure_info() {
 
     info_->onClose = [this] {
         stopAudio();
+        // The X destroys the window without restarting the countdown, so
+        // resume here (M9).
+        chrome_resume();
     };
 
     info_->onKeyDown = [this](UINT key) {
@@ -798,9 +830,33 @@ bool KotobaCppApp::ensure_info() {
     return true;
 }
 
+// ----- chrome freeze (M9) -----
+
+void KotobaCppApp::chrome_freeze() {
+    if (!config_.get().freezeChrome)
+        return;
+    ++hooks.freezeCalls;
+    if (hooks.freezeChrome) hooks.freezeChrome();
+    else freeze_chrome();          // idempotent: already-tracked pids skipped
+    chromeFrozen_ = true;
+}
+
+void KotobaCppApp::chrome_resume() {
+    if (!chromeFrozen_)
+        return;
+    chromeFrozen_ = false;         // clear first: never double-resume
+    ++hooks.resumeCalls;
+    if (hooks.resumeChrome) hooks.resumeChrome();
+    else resume_chrome();
+}
+
 // ----- countdown -----
 
 void KotobaCppApp::start_countdown() {
+    // M9: a new countdown means the input/info screens are gone, so Chrome
+    // comes back to life. Covers the info #close button, the Enter key, and
+    // the input window's X close.
+    chrome_resume();
     countdownSeconds_ = config_.get().countdownSeconds;
     inputDone_ = false;
     stopped_ = false;
@@ -850,6 +906,7 @@ void KotobaCppApp::start_countdown() {
 void KotobaCppApp::stop_app() {
     stopped_ = true;
     stopAudio();
+    chrome_resume();
     countdown_->killTimer(TIMER_COUNTDOWN);
     countdown_->killTimer(TIMER_TRANSITION);
     if (input_) input_->killTimer(TIMER_INPUT_DONE);
@@ -898,6 +955,7 @@ void KotobaCppApp::show_input() {
 
     UI_LOG("app", L"show_input word=%s", currentWord_.romaji.c_str());
     stopAudio();
+    chrome_freeze();
     // Opening input cancels any in-flight countdown: kill its timers so a
     // background tick can't reset the answer mid-typing. A real double-click
     // delivers UP, DBLCLK, UP, and the trailing UP would re-toggle the tray
@@ -1060,6 +1118,7 @@ void KotobaCppApp::hide_tray_menu() {
 
 void KotobaCppApp::quit() {
     stopAudio();
+    chrome_resume();
     if (countdown_ && countdown_->hwnd())
         remove_tray(countdown_->hwnd());
 
@@ -1143,13 +1202,15 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
         else if (key == L"randomUi") c.randomUi = value == L"true" || value == L"1";
         else if (key == L"startWithWindows") c.startWithWindows = value == L"true" || value == L"1";
         else if (key == L"freezeChrome") c.freezeChrome = value == L"true" || value == L"1";
-        else if (key == L"maxFreezeMinutes") c.maxFreezeMinutes = _wtoi(value.c_str());
         else { runner.fail(L"app config: unknown key " + key); return; }
         config_.set(c);
         if (!config_.save()) runner.fail(L"app config: save failed");
         // Keep the test/agent seam consistent with the settings checkbox.
         if (key == L"startWithWindows")
             applyStartup(c.startWithWindows);
+        // M9: turning the option off while frozen resumes Chrome right away.
+        if (key == L"freezeChrome" && !c.freezeChrome)
+            chrome_resume();
     }
     else if (sub == L"progress") {
         if (t.size() < 3) { runner.fail(L"app progress: need <reset>"); return; }
@@ -1239,7 +1300,6 @@ void KotobaCppApp::appCmd(const std::vector<std::wstring>& t, ui::ScriptRunner& 
             else if (ck == L"randomUi") actual = c.randomUi ? L"true" : L"false";
             else if (ck == L"startWithWindows") actual = c.startWithWindows ? L"true" : L"false";
             else if (ck == L"freezeChrome") actual = c.freezeChrome ? L"true" : L"false";
-            else if (ck == L"maxFreezeMinutes") actual = std::to_wstring(c.maxFreezeMinutes);
             else { runner.fail(L"app assert config: unknown key " + ck); return; }
         }
         else if (key == L"attempts") {

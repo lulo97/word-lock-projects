@@ -37,7 +37,13 @@ public:
     ScriptRunner(Document& doc, int w, int h, float scale);
 
     // (Re)bind to a document + viewport. In: doc, W, H px, dpi scale.
-    void bind(Document& doc, int w, int h, float scale);
+    // Optional liveness probe: when it reports false, the host that owns
+    // the document was destroyed by an app action (e.g. the info window's
+    // #close runs start_countdown, which destroys the host). The runner
+    // then unbinds and skips post-step validation instead of running
+    // against a dead document.
+    void bind(Document& doc, int w, int h, float scale,
+              std::function<bool()> alive = nullptr);
 
     // Forget the bound document. Subsequent document commands fail with a
     // clear message instead of running against a stale document (e.g. a
@@ -96,6 +102,7 @@ public:
 
 private:
     Document* doc_ = nullptr;
+    std::function<bool()> alive_;
     int W_ = 0, H_ = 0;
     float scale_ = 1.f;
     int failures_ = 0;

@@ -27,8 +27,11 @@ class KotobaCppApp {
 public:
     // Test seams: swap app internals for deterministic fakes.
     struct Hooks {
-        std::function<void()> freezeChrome = [] {};             // no-op default
-        std::function<void()> resumeChrome = [] {};             // no-op default
+        // M9 Chrome freeze backend. Null -> the real freeze_chrome() /
+        // resume_chrome(); app_test installs fakes that only count calls,
+        // so feature tests never touch a real Chrome process.
+        std::function<int()> freezeChrome;
+        std::function<int()> resumeChrome;
         int freezeCalls = 0;
         int resumeCalls = 0;
         // Config/progress file paths. Empty -> default %USERPROFILE%\kotoba
@@ -99,6 +102,15 @@ private:
     std::unique_ptr<ui::WindowHost> input_;
     std::unique_ptr<ui::WindowHost> info_;
 
+    // M9 crash fix: hosts retired by reset_word_windows() while a handler of
+    // theirs may still be on the stack. They are parked here and destroyed at
+    // a safe point (ensure_input / ensure_info / dtor) where no handler of the
+    // retired window can be running. This prevents the use-after-free in
+    // EventState::onMouseUp / ScriptRunner::settle / Document::handleMessage
+    // that caused the intermittent 0xC0000005 in chrome_freeze.
+    std::vector<std::unique_ptr<ui::WindowHost>> graveyard_;
+    void reap_windows() { graveyard_.clear(); }
+    
     int countdownSeconds_ = 30;
     bool inputDone_ = false;
     bool debug_ = false;
@@ -115,6 +127,7 @@ private:
     std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
     std::vector<WordData> extraWords_;       // `app add-word` test seam (M4)
     int dbRejected_ = 0;                     // words rejected by the light check
+    bool chromeFrozen_ = false;               // M9: Chrome suspended by us
 
     // ----- audio (M5) -----
     std::wstring audioLast_;                 // JSON path of the last clip
@@ -158,6 +171,12 @@ private:
     void start_countdown();
     void stop_app();
     void on_countdown_tick();
+
+    // ----- chrome freeze (M9) -----
+    // Idempotent, gated on config.freezeChrome. resume clears the flag
+    // before calling the backend so it never double-resumes.
+    void chrome_freeze();
+    void chrome_resume();
 
     // ----- input / info -----
     void show_input();

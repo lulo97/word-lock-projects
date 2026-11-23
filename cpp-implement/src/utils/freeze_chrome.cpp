@@ -199,3 +199,24 @@ bool is_chrome_frozen() {
     std::lock_guard<std::mutex> lock(g_mutex);
     return !g_suspended.empty();
 }
+
+int resume_all_chrome() {
+    NtProcessFunction resumeProcess =
+        load_nt_process_function("NtResumeProcess");
+
+    if (!resumeProcess)
+        return -1;
+
+    int n = 0;
+    for (DWORD pid : find_chrome_processes()) {
+        HANDLE p = OpenProcess(PROCESS_SUSPEND_RESUME, FALSE, pid);
+        if (!p)
+            continue;
+        if (resumeProcess(p) >= 0)
+            ++n;
+        CloseHandle(p);
+    }
+
+    UI_LOG("app", L"resume_all_chrome resumed %d process(es)", n);
+    return n;
+}

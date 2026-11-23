@@ -69,7 +69,6 @@ bool ConfigStore::load() {
     config_.randomUi = j.value("randomUi", true);
     config_.startWithWindows = j.value("startWithWindows", false);
     config_.freezeChrome = j.value("freezeChrome", true);
-    config_.maxFreezeMinutes = j.value("maxFreezeMinutes", 10);
     if (j.contains("ignoreWords") && j["ignoreWords"].is_array())
         for (const auto& w : j["ignoreWords"])
             if (w.is_string())
@@ -92,7 +91,6 @@ bool ConfigStore::save() const {
     j["randomUi"] = config_.randomUi;
     j["startWithWindows"] = config_.startWithWindows;
     j["freezeChrome"] = config_.freezeChrome;
-    j["maxFreezeMinutes"] = config_.maxFreezeMinutes;
 
     // Atomic: temp file + rename. A crash mid-write can never leave a
     // half-written config.

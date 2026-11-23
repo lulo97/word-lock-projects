@@ -310,6 +310,11 @@ LRESULT WindowHost::handle(UINT msg, WPARAM wp, LPARAM lp) {
         handle_tray_message(hwnd_, lp);
         return 0;
 
+    case WM_ENDSESSION:
+        if (wp && onEndSession)
+            onEndSession();
+        break;
+
     case WM_CLOSE:
         if (onClose)
             onClose();

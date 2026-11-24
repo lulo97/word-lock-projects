@@ -4,6 +4,20 @@
 Input:  database/words.txt          (one Japanese word per line)
 Output: database/words/<word>.json  (strict JSON, see ROADMAP §2.1)
 
+Schema (per entry):
+    {
+      "kanji": str,
+      "hiragana": str,
+      "romaji": str,
+      "pos": str,
+      "meaning_ja": str,
+      "meaning_ja_romaji": str,
+      "meaning_vi": str,
+      "examples": [{"ja": str, "romaji": str, "vi": str, "audio": str}],
+      "tags": [str, ...],
+      "audio": str
+    }
+
 The script is a manual, offline tool. It is not imported or tested by the C++
 app; the app only reads the JSON files it produces.
 
@@ -52,6 +66,8 @@ JAPANESE_RE = re.compile(
 INVALID_FILENAME_RE = re.compile(r'[\\/:*?"<>|\x00-\x1f]')
 # Hepburn romaji must stay ASCII: "dōbutsu" is not usable by the app.
 ROMAJI_ALLOWED_RE = re.compile(r"[A-Za-z0-9 .,'\-]+")
+# Tags are short lowercase English descriptors: "food", "fruit", "on-yomi".
+TAG_RE = re.compile(r"[a-z0-9][a-z0-9\-]*")
 
 
 class GenerateError(Exception):
@@ -99,17 +115,17 @@ def entry_is_valid(data) -> bool:
     """Light validity gate for the skip check (full check: validate_db.py)."""
     if not isinstance(data, dict):
         return False
-    key = data.get("word") or data.get("kanji")
+    kanji = data.get("kanji")
     romaji = data.get("romaji")
     return (
-        isinstance(key, str) and bool(key.strip())
+        isinstance(kanji, str) and bool(kanji.strip())
         and isinstance(romaji, str) and bool(romaji.strip())
         and not has_japanese(romaji)
     )
 
 
 def load_existing() -> dict[str, Path]:
-    """Map normalized word key -> file for every valid existing entry."""
+    """Map normalized kanji key -> file for every valid existing entry."""
     existing: dict[str, Path] = {}
     for path in word_files():
         try:
@@ -118,7 +134,7 @@ def load_existing() -> dict[str, Path]:
             continue
         if not entry_is_valid(data):
             continue
-        key = normalize_word(str(data.get("word") or data.get("kanji") or ""))
+        key = normalize_word(str(data.get("kanji") or ""))
         if key:
             existing.setdefault(key, path)
     return existing
@@ -126,6 +142,14 @@ def load_existing() -> dict[str, Path]:
 
 def target_path_for(word: str) -> Path:
     return WORDS_DIR / f"{word}.json"
+
+
+def audio_path_for_word(word: str) -> str:
+    return f"audio/{word}/word.ogg"
+
+
+def audio_path_for_example(word: str, index: int) -> str:
+    return f"audio/{word}/ex_{index}.ogg"
 
 
 def check_romaji(value: str, where: str) -> None:
@@ -143,20 +167,34 @@ def validate_entry(entry, word: str) -> dict:
     if not isinstance(entry, dict):
         raise GenerateError("model output is not a JSON object")
 
-    returned = normalize_word(str(entry.get("word", "")))
+    returned = normalize_word(str(entry.get("kanji", "")))
     if returned != word:
         raise GenerateError(
-            f"returned word {returned!r}, expected {word!r}"
+            f"returned kanji {returned!r}, expected {word!r}"
         )
 
-    result = {"word": word}
-    for key in ("reading", "romaji", "meaning", "type"):
+    result: dict = {"kanji": word}
+    for key in (
+        "hiragana",
+        "romaji",
+        "pos",
+        "meaning_ja",
+        "meaning_ja_romaji",
+        "meaning_vi",
+    ):
         value = entry.get(key)
         if not isinstance(value, str) or not value.strip():
             raise GenerateError(f"{key} must be a non-empty string")
         result[key] = value.strip()
 
     check_romaji(result["romaji"], "romaji")
+    check_romaji(result["meaning_ja_romaji"], "meaning_ja_romaji")
+
+    if not result["pos"][:1].isupper():
+        raise GenerateError(
+            f"pos must be capitalized (e.g. Noun, Verb, I-Adjective): "
+            f"{result['pos']!r}"
+        )
 
     raw_examples = entry.get("examples")
     if not isinstance(raw_examples, list) or not raw_examples:
@@ -166,8 +204,8 @@ def validate_entry(entry, word: str) -> dict:
     for index, raw in enumerate(raw_examples):
         if not isinstance(raw, dict):
             raise GenerateError(f"examples[{index}] must be an object")
-        example = {}
-        for key in ("jp", "reading", "romaji", "en"):
+        example: dict = {}
+        for key in ("ja", "romaji", "vi"):
             value = raw.get(key)
             if not isinstance(value, str) or not value.strip():
                 raise GenerateError(
@@ -175,11 +213,29 @@ def validate_entry(entry, word: str) -> dict:
                 )
             example[key] = value.strip()
         check_romaji(example["romaji"], f"examples[{index}].romaji")
-        example["audio"] = ""
+        example["audio"] = audio_path_for_example(word, index + 1)
         examples.append(example)
 
-    result["audio"] = ""
+    raw_tags = entry.get("tags")
+    if not isinstance(raw_tags, list) or not raw_tags:
+        raise GenerateError("tags must be a non-empty array of strings")
+    tags: list[str] = []
+    for index, tag in enumerate(raw_tags):
+        if not isinstance(tag, str) or not tag.strip():
+            raise GenerateError(
+                f"tags[{index}] must be a non-empty string"
+            )
+        cleaned = tag.strip()
+        if not TAG_RE.fullmatch(cleaned):
+            raise GenerateError(
+                f"tags[{index}] must be a short lowercase English tag "
+                f"(e.g. food, fruit, on-yomi): {cleaned!r}"
+            )
+        tags.append(cleaned)
+
     result["examples"] = examples
+    result["tags"] = tags
+    result["audio"] = audio_path_for_word(word)
     return result
 
 
@@ -278,45 +334,53 @@ def run(args: argparse.Namespace) -> int:
         args.retries = 0
 
     prompt_template = """
-You generate one Japanese study-dictionary entry for a Japanese learner.
+You generate one Japanese study-dictionary entry for a Vietnamese learner of
+Japanese.
 
 Return exactly one valid JSON object and nothing else: no markdown fences, no
 comments, no explanation before or after it.
 
 Schema:
 {
-  "word": string,
-  "reading": string,
+  "kanji": string,
+  "hiragana": string,
   "romaji": string,
-  "meaning": string,
-  "type": string,
-  "audio": "",
+  "pos": string,
+  "meaning_ja": string,
+  "meaning_ja_romaji": string,
+  "meaning_vi": string,
   "examples": [
     {
-      "jp": string,
-      "reading": string,
+      "ja": string,
       "romaji": string,
-      "en": string,
-      "audio": ""
+      "vi": string,
+      "audio": string
     }
-  ]
+  ],
+  "tags": [string, ...],
+  "audio": string
 }
 
 Rules:
-- "word" must be exactly the requested Japanese word, unchanged.
-- "reading" is the full hiragana reading (katakana words are written in
+- "kanji" must be exactly the requested Japanese word, unchanged. If the word
+  is written in kana, "kanji" is that kana form.
+- "hiragana" is the full hiragana reading (katakana words are written in
   hiragana).
-- "romaji" is lowercase Hepburn romaji of "reading". Use only ASCII letters,
+- "romaji" is lowercase Hepburn romaji of "hiragana". Use only ASCII letters,
   spaces, apostrophes, hyphens and periods. Never put Japanese characters,
   macrons or other accents in "romaji".
-- "meaning" is one short, natural English definition.
-- "type" is the part of speech in lower case, e.g. "noun", "i-adjective",
-  "na-adjective", "verb", "adverb", "expression".
+- "pos" is the part of speech, capitalized, e.g. "Noun", "Verb",
+  "I-Adjective", "Na-Adjective", "Adverb", "Expression".
+- "meaning_ja" is one short natural Japanese definition.
+- "meaning_ja_romaji" is lowercase Hepburn romaji of "meaning_ja" (ASCII only).
+- "meaning_vi" is one short natural Vietnamese translation.
 - Give exactly two natural Japanese example sentences. For each example:
-  "jp" is the Japanese sentence, "reading" its full hiragana reading,
-  "romaji" its lowercase Hepburn romaji (ASCII only), and "en" its natural
-  English translation.
-- Keep "audio" as an empty string everywhere; audio is generated later.
+  "ja" is the Japanese sentence, "romaji" its lowercase Hepburn romaji
+  (ASCII only), and "vi" its natural Vietnamese translation. The "audio"
+  field may be an empty string; the tool fills it in.
+- "tags" is a non-empty array of short lowercase English tags describing the
+  word (e.g. "food", "fruit", "on-yomi").
+- The top-level "audio" field may be an empty string; the tool fills it in.
 - Do not add extra top-level keys or extra keys inside examples.
 
 Japanese word: {{word}}

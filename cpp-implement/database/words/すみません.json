@@ -1,0 +1,30 @@
+{
+  "kanji": "すみません",
+  "hiragana": "すみません",
+  "romaji": "sumimasen",
+  "pos": "Expression",
+  "meaning_ja": "謝罪や感謝、呼びかけなど様々な場面で使う丁寧な言葉。",
+  "meaning_ja_romaji": "shazai ya kansha, yobikake nado samazama na bamen de tsukau teinei na kotoba.",
+  "meaning_vi": "Xin lỗi, cảm ơn (dùng để thu hút sự chú ý hoặc xin lỗi).",
+  "examples": [
+    {
+      "ja": "すみません、この道はどちらですか。",
+      "romaji": "sumimasen, kono michi wa dochira desu ka.",
+      "vi": "Xin lỗi, đường này đi đâu ạ?",
+      "audio": "audio/すみません/ex_1.ogg"
+    },
+    {
+      "ja": "すみません、少し手伝っていただけますか。",
+      "romaji": "sumimasen, sukoshi tetsudatte itadakemasu ka.",
+      "vi": "Xin lỗi, bạn có thể giúp tôi một chút được không?",
+      "audio": "audio/すみません/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "polite",
+    "apology",
+    "thanks",
+    "calling"
+  ],
+  "audio": "audio/すみません/word.ogg"
+}

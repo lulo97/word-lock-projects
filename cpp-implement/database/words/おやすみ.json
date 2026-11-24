@@ -1,0 +1,29 @@
+{
+  "kanji": "おやすみ",
+  "hiragana": "おやすみ",
+  "romaji": "oyasumi",
+  "pos": "Expression",
+  "meaning_ja": "おやすみなさいという挨拶",
+  "meaning_ja_romaji": "oyasumi nasai to iu aisatsu",
+  "meaning_vi": "Chúc ngủ ngon",
+  "examples": [
+    {
+      "ja": "もう遅いから、おやすみ。",
+      "romaji": "mou osoi kara, oyasumi.",
+      "vi": "Đã muộn rồi, chúc ngủ ngon.",
+      "audio": "audio/おやすみ/ex_1.ogg"
+    },
+    {
+      "ja": "明日またね。おやすみ。",
+      "romaji": "ashita mata ne. oyasumi.",
+      "vi": "Hẹn gặp lại ngày mai. Chúc ngủ ngon.",
+      "audio": "audio/おやすみ/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "greeting",
+    "goodbye",
+    "night"
+  ],
+  "audio": "audio/おやすみ/word.ogg"
+}

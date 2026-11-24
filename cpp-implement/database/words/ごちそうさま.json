@@ -1,0 +1,29 @@
+{
+  "kanji": "ごちそうさま",
+  "hiragana": "ごちそうさま",
+  "romaji": "gochisousama",
+  "pos": "Expression",
+  "meaning_ja": "食事を終えた際のお礼の言葉",
+  "meaning_ja_romaji": "shokuji o oeta sai no oreino kotoba",
+  "meaning_vi": "Cảm ơn vì bữa ăn",
+  "examples": [
+    {
+      "ja": "ごちそうさまでした。とても美味しかったです。",
+      "romaji": "gochisousama deshita. totemo oishikatta desu.",
+      "vi": "Cảm ơn vì bữa ăn. Nó rất ngon.",
+      "audio": "audio/ごちそうさま/ex_1.ogg"
+    },
+    {
+      "ja": "ごちそうさまでした。お腹いっぱいになりました。",
+      "romaji": "gochisousama deshita. onaka ippai ni narimashita.",
+      "vi": "Cảm ơn vì bữa ăn. Tôi đã no bụng rồi.",
+      "audio": "audio/ごちそうさま/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "thanks",
+    "meal",
+    "polite"
+  ],
+  "audio": "audio/ごちそうさま/word.ogg"
+}

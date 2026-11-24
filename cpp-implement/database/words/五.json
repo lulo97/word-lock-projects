@@ -1,0 +1,29 @@
+{
+  "kanji": "五",
+  "hiragana": "ご",
+  "romaji": "go",
+  "pos": "Noun",
+  "meaning_ja": "数の一つ",
+  "meaning_ja_romaji": "kazu no hitotsu",
+  "meaning_vi": "Số năm",
+  "examples": [
+    {
+      "ja": "五つください。",
+      "romaji": "itsutsu kudasai.",
+      "vi": "Cho tôi năm cái.",
+      "audio": "audio/五/ex_1.ogg"
+    },
+    {
+      "ja": "五月は梅が咲く季節です。",
+      "romaji": "gogatsu wa ume ga saku kisetsu desu.",
+      "vi": "Tháng năm là mùa hoa mơ nở.",
+      "audio": "audio/五/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "number",
+    "kanji",
+    "counting"
+  ],
+  "audio": "audio/五/word.ogg"
+}

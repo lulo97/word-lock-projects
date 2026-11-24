@@ -1,0 +1,29 @@
+{
+  "kanji": "お願いします",
+  "hiragana": "おねがいします",
+  "romaji": "onegaishimasu",
+  "pos": "Expression",
+  "meaning_ja": "頼むときや、相手に何かをしてもらうときの丁寧な言い方。",
+  "meaning_ja_romaji": "tanomu toki ya, aite ni nanika o shite morau toki no teinei na iikata.",
+  "meaning_vi": "Xin vui lòng/Làm ơn (cách nói lịch sự).",
+  "examples": [
+    {
+      "ja": "この書類を明日までに仕上げていただけますか。お願いします。",
+      "romaji": "kono shorui o ashita made ni shiagete itadakemasu ka. onegaishimasu.",
+      "vi": "Bạn có thể hoàn thành tài liệu này trước ngày mai được không? Xin vui lòng.",
+      "audio": "audio/お願いします/ex_1.ogg"
+    },
+    {
+      "ja": "道に迷ったので、駅まで案内をお願いします。",
+      "romaji": "michi ni mayotta node, eki made annai o onegaishimasu.",
+      "vi": "Tôi bị lạc đường, xin vui lòng chỉ đường đến ga.",
+      "audio": "audio/お願いします/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "polite",
+    "request",
+    "expression"
+  ],
+  "audio": "audio/お願いします/word.ogg"
+}

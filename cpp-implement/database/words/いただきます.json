@@ -1,0 +1,30 @@
+{
+  "kanji": "いただきます",
+  "hiragana": "いただきます",
+  "romaji": "itadakimasu",
+  "pos": "Expression",
+  "meaning_ja": "食事を始める前に感謝の気持ちを表す言葉。",
+  "meaning_ja_romaji": "shokuji o hajimeru mae ni kansha no kimochi o arawasu kotoba.",
+  "meaning_vi": "Lời nói bày tỏ lòng biết ơn trước khi bắt đầu bữa ăn.",
+  "examples": [
+    {
+      "ja": "さあ、いただきます。",
+      "romaji": "saa, itadakimasu.",
+      "vi": "Nào, chúng ta bắt đầu ăn thôi.",
+      "audio": "audio/いただきます/ex_1.ogg"
+    },
+    {
+      "ja": "皆で一緒にいただきます。",
+      "romaji": "mina de issho ni itadakimasu.",
+      "vi": "Mọi người cùng bắt đầu ăn nhé.",
+      "audio": "audio/いただきます/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "greeting",
+    "meal",
+    "gratitude",
+    "expression"
+  ],
+  "audio": "audio/いただきます/word.ogg"
+}

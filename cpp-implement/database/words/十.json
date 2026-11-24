@@ -1,0 +1,29 @@
+{
+  "kanji": "十",
+  "hiragana": "じゅう",
+  "romaji": "juu",
+  "pos": "Noun",
+  "meaning_ja": "数や順序を表す数字の十",
+  "meaning_ja_romaji": "kazu ya junjo o arawasu suuji no juu",
+  "meaning_vi": "Số mười",
+  "examples": [
+    {
+      "ja": "十人の友達とパーティーを開いた。",
+      "romaji": "juunin no tomodachi to paatii o hiraita.",
+      "vi": "Tôi đã tổ chức một bữa tiệc với mười người bạn.",
+      "audio": "audio/十/ex_1.ogg"
+    },
+    {
+      "ja": "十進法は最も一般的な数え方だ。",
+      "romaji": "juushinhou wa mottomo ippan-teki na kazoekata da.",
+      "vi": "Hệ thập phân là cách đếm phổ biến nhất.",
+      "audio": "audio/十/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "number",
+    "kanji",
+    "counting"
+  ],
+  "audio": "audio/十/word.ogg"
+}

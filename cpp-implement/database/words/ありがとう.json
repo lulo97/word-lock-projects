@@ -1,0 +1,29 @@
+{
+  "kanji": "ありがとう",
+  "hiragana": "ありがとう",
+  "romaji": "arigatou",
+  "pos": "Expression",
+  "meaning_ja": "感謝の気持ちを伝える言葉",
+  "meaning_ja_romaji": "kansha no kimochi o tsutaeru kotoba",
+  "meaning_vi": "Lời cảm ơn",
+  "examples": [
+    {
+      "ja": "手伝ってくれてありがとう。",
+      "romaji": "tetsudatte kurete arigatou.",
+      "vi": "Cảm ơn bạn đã giúp tôi.",
+      "audio": "audio/ありがとう/ex_1.ogg"
+    },
+    {
+      "ja": "いつもありがとう。",
+      "romaji": "itsumo arigatou.",
+      "vi": "Cảm ơn bạn luôn.",
+      "audio": "audio/ありがとう/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "greeting",
+    "thanks",
+    "polite"
+  ],
+  "audio": "audio/ありがとう/word.ogg"
+}

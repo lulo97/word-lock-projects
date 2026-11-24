@@ -1,0 +1,29 @@
+{
+  "kanji": "二",
+  "hiragana": "に",
+  "romaji": "ni",
+  "pos": "Noun",
+  "meaning_ja": "数や順序を表す数字の二",
+  "meaning_ja_romaji": "kazu ya junjo o arawasu suuji no ni",
+  "meaning_vi": "Số hai",
+  "examples": [
+    {
+      "ja": "二人の友達が公園で遊んでいる。",
+      "romaji": "ninin no tomodachi ga kouen de asonde iru.",
+      "vi": "Hai người bạn đang chơi trong công viên.",
+      "audio": "audio/二/ex_1.ogg"
+    },
+    {
+      "ja": "二つ目の質問をお願いします。",
+      "romaji": "futatsume no shitsumon o onegai shimasu.",
+      "vi": "Xin hỏi câu hỏi thứ hai.",
+      "audio": "audio/二/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "number",
+    "kanji",
+    "counter"
+  ],
+  "audio": "audio/二/word.ogg"
+}

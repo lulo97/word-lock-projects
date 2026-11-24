@@ -1,0 +1,28 @@
+{
+  "kanji": "いつ",
+  "hiragana": "いつ",
+  "romaji": "itsu",
+  "pos": "Adverb",
+  "meaning_ja": "いつか、どの時",
+  "meaning_ja_romaji": "itsuka, dono toki",
+  "meaning_vi": "khi nào, lúc nào",
+  "examples": [
+    {
+      "ja": "いつ日本へ行きたいですか。",
+      "romaji": "itsu nihon e ikitai desu ka",
+      "vi": "Bạn muốn đi Nhật Bản khi nào?",
+      "audio": "audio/いつ/ex_1.ogg"
+    },
+    {
+      "ja": "いつまで待てますか。",
+      "romaji": "itsumade matemasu ka",
+      "vi": "Bạn có thể đợi đến khi nào?",
+      "audio": "audio/いつ/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "time",
+    "question"
+  ],
+  "audio": "audio/いつ/word.ogg"
+}

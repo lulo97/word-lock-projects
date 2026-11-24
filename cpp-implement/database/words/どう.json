@@ -1,0 +1,28 @@
+{
+  "kanji": "どう",
+  "hiragana": "どう",
+  "romaji": "dou",
+  "pos": "Adverb",
+  "meaning_ja": "どのような様子か",
+  "meaning_ja_romaji": "dono you na yousu ka",
+  "meaning_vi": "như thế nào",
+  "examples": [
+    {
+      "ja": "どうですか、この本は。",
+      "romaji": "dou desu ka, kono hon wa.",
+      "vi": "Cuốn sách này thế nào?",
+      "audio": "audio/どう/ex_1.ogg"
+    },
+    {
+      "ja": "どうなるのか、心配です。",
+      "romaji": "dou naru no ka, shinpai desu.",
+      "vi": "Tôi lo lắng không biết mọi chuyện sẽ ra sao.",
+      "audio": "audio/どう/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "question",
+    "adverb"
+  ],
+  "audio": "audio/どう/word.ogg"
+}

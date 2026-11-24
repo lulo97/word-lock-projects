@@ -5,6 +5,14 @@ project(MyApp LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Release switch: -DAPP_ONLY=ON builds only the app, named KotobaCppApp.exe.
+option(APP_ONLY "Build only the app (release), skip test tools" OFF)
+if(APP_ONLY)
+    set(APP_OUTPUT_NAME "KotobaCppApp")
+else()
+    set(APP_OUTPUT_NAME "app")
+endif()
+
 # MSVC options equivalent to /EHsc /MP and Release /O2
 if (MSVC)
     add_compile_options(/EHsc /MP)
@@ -101,13 +109,14 @@ set_target_properties(MyApp PROPERTIES
 # For Visual Studio multi-config generators, set per-config output directories
 # if you want build/app.exe instead of build/Release/app.exe.
 set_target_properties(MyApp PROPERTIES
-    OUTPUT_NAME "app"
+    OUTPUT_NAME "${APP_OUTPUT_NAME}"
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}"
 )
 
+if(NOT APP_ONLY)
 # Console test tools. Same framework sources as MyApp, with a console entry
 # point instead of app.cpp.
 function(add_console_ui_target target_name main_source)
@@ -153,3 +162,4 @@ if(UI_ENABLE_ASAN AND MSVC)
     target_compile_options(fuzz PRIVATE /fsanitize=address)
     target_link_options(fuzz PRIVATE /fsanitize=address)
 endif()
+endif()  # NOT APP_ONLY

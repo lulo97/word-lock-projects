@@ -1,0 +1,29 @@
+{
+  "kanji": "先生",
+  "hiragana": "せんせい",
+  "romaji": "sensei",
+  "pos": "Noun",
+  "meaning_ja": "学校や専門分野で教える人",
+  "meaning_ja_romaji": "gakkou ya senmon bunya de oshieru hito",
+  "meaning_vi": "giáo viên",
+  "examples": [
+    {
+      "ja": "数学の先生に質問しました。",
+      "romaji": "sugaku no sensei ni shitsumon shimashita.",
+      "vi": "Tôi đã hỏi giáo viên toán.",
+      "audio": "audio/先生/ex_1.ogg"
+    },
+    {
+      "ja": "彼は素晴らしい先生です。",
+      "romaji": "kare wa subarashii sensei desu.",
+      "vi": "Ông ấy là một giáo viên tuyệt vời.",
+      "audio": "audio/先生/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "person",
+    "teacher",
+    "noun"
+  ],
+  "audio": "audio/先生/word.ogg"
+}

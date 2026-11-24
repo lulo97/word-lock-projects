@@ -1,24 +1,28 @@
 {
-  "word": "猫",
-  "reading": "ねこ",
+  "kanji": "猫",
+  "hiragana": "ねこ",
   "romaji": "neko",
-  "meaning": "cat",
-  "type": "noun",
-  "audio": "audio/猫/word.ogg",
+  "pos": "Noun",
+  "meaning_ja": "ネコ",
+  "meaning_ja_romaji": "neko",
+  "meaning_vi": "con mèo",
   "examples": [
     {
-      "jp": "猫が窓から外を眺めている。",
-      "reading": "ねこがまどからそとをながめている。",
+      "ja": "猫が窓から外を眺めている。",
       "romaji": "neko ga mado kara soto o nagamete iru.",
-      "en": "The cat is looking outside from the window.",
+      "vi": "Con mèo đang nhìn ra ngoài từ cửa sổ.",
       "audio": "audio/猫/ex_1.ogg"
     },
     {
-      "jp": "私の家の猫はとても賢い。",
-      "reading": "わたしのいえのねこはとてもかしこい。",
-      "romaji": "watashi no ie no neko wa totemo kashikoi.",
-      "en": "My cat is very smart.",
+      "ja": "私の家の猫はとてもかわいい。",
+      "romaji": "watashi no ie no neko wa totemo kawaii.",
+      "vi": "Con mèo nhà tôi rất dễ thương.",
       "audio": "audio/猫/ex_2.ogg"
     }
-  ]
+  ],
+  "tags": [
+    "animal",
+    "noun"
+  ],
+  "audio": "audio/猫/word.ogg"
 }

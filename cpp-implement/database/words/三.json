@@ -1,0 +1,28 @@
+{
+  "kanji": "三",
+  "hiragana": "さん",
+  "romaji": "san",
+  "pos": "Noun",
+  "meaning_ja": "数詞の三",
+  "meaning_ja_romaji": "suushi no san",
+  "meaning_vi": "Số ba",
+  "examples": [
+    {
+      "ja": "三人の友達と映画を見ました。",
+      "romaji": "sannin no tomodachi to eiga o mimashita.",
+      "vi": "Tôi đã xem phim với ba người bạn.",
+      "audio": "audio/三/ex_1.ogg"
+    },
+    {
+      "ja": "三日後に会いましょう。",
+      "romaji": "mikka go ni aimashou.",
+      "vi": "Chúng ta hãy gặp nhau sau ba ngày.",
+      "audio": "audio/三/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "number",
+    "counter"
+  ],
+  "audio": "audio/三/word.ogg"
+}

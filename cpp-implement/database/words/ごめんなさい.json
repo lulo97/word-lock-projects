@@ -1,0 +1,28 @@
+{
+  "kanji": "ごめんなさい",
+  "hiragana": "ごめんなさい",
+  "romaji": "gomennasai",
+  "pos": "Expression",
+  "meaning_ja": "謝罪の言葉",
+  "meaning_ja_romaji": "shazai no kotoba",
+  "meaning_vi": "Xin lỗi",
+  "examples": [
+    {
+      "ja": "遅れてごめんなさい。",
+      "romaji": "okurete gomennasai.",
+      "vi": "Xin lỗi vì đã đến muộn.",
+      "audio": "audio/ごめんなさい/ex_1.ogg"
+    },
+    {
+      "ja": "私のせいでごめんなさい。",
+      "romaji": "watashi no sei de gomennasai.",
+      "vi": "Xin lỗi vì lỗi của tôi.",
+      "audio": "audio/ごめんなさい/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "apology",
+    "polite"
+  ],
+  "audio": "audio/ごめんなさい/word.ogg"
+}

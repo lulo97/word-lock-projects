@@ -1,0 +1,29 @@
+{
+  "kanji": "友達",
+  "hiragana": "ともだち",
+  "romaji": "tomodachi",
+  "pos": "Noun",
+  "meaning_ja": "親しい関係にある人",
+  "meaning_ja_romaji": "shitashii kankei ni aru hito",
+  "meaning_vi": "bạn bè",
+  "examples": [
+    {
+      "ja": "私にはたくさんの友達がいる。",
+      "romaji": "watashi ni wa takusan no tomodachi ga iru.",
+      "vi": "Tôi có rất nhiều bạn bè.",
+      "audio": "audio/友達/ex_1.ogg"
+    },
+    {
+      "ja": "彼は私の大切な友達だ。",
+      "romaji": "kare wa watashi no taisetsu na tomodachi da.",
+      "vi": "Anh ấy là một người bạn quan trọng của tôi.",
+      "audio": "audio/友達/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "person",
+    "friend",
+    "noun"
+  ],
+  "audio": "audio/友達/word.ogg"
+}

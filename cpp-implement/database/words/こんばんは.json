@@ -1,0 +1,29 @@
+{
+  "kanji": "こんばんは",
+  "hiragana": "こんばんは",
+  "romaji": "konbanwa",
+  "pos": "Expression",
+  "meaning_ja": "こんばんは。夜の挨拶。",
+  "meaning_ja_romaji": "konbanwa. yoru no aisatsu.",
+  "meaning_vi": "Chào buổi tối.",
+  "examples": [
+    {
+      "ja": "こんばんは。お元気ですか。",
+      "romaji": "konbanwa. ogenki desu ka.",
+      "vi": "Chào buổi tối. Bạn có khỏe không?",
+      "audio": "audio/こんばんは/ex_1.ogg"
+    },
+    {
+      "ja": "こんばんは、今から映画を見に行きます。",
+      "romaji": "konbanwa, ima kara eiga o mi ni ikimasu.",
+      "vi": "Chào buổi tối, tôi sẽ đi xem phim từ bây giờ.",
+      "audio": "audio/こんばんは/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "greeting",
+    "evening",
+    "phrase"
+  ],
+  "audio": "audio/こんばんは/word.ogg"
+}

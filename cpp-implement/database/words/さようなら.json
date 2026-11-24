@@ -1,0 +1,29 @@
+{
+  "kanji": "さようなら",
+  "hiragana": "さようなら",
+  "romaji": "sayounara",
+  "pos": "Interjection",
+  "meaning_ja": "別れの挨拶",
+  "meaning_ja_romaji": "wakare no aisatsu",
+  "meaning_vi": "Tạm biệt",
+  "examples": [
+    {
+      "ja": "さようなら、また明日。",
+      "romaji": "sayounara, mata ashita.",
+      "vi": "Tạm biệt, hẹn gặp lại ngày mai.",
+      "audio": "audio/さようなら/ex_1.ogg"
+    },
+    {
+      "ja": "長い間会わなかったけど、さようなら。",
+      "romaji": "nagai aida awanakatta kedo, sayounara.",
+      "vi": "Dù đã lâu không gặp, tạm biệt nhé.",
+      "audio": "audio/さようなら/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "greeting",
+    "farewell",
+    "interjection"
+  ],
+  "audio": "audio/さようなら/word.ogg"
+}

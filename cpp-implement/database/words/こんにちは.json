@@ -1,0 +1,29 @@
+{
+  "kanji": "こんにちは",
+  "hiragana": "こんにちは",
+  "romaji": "konnichiwa",
+  "pos": "Expression",
+  "meaning_ja": "こんにちはという挨拶",
+  "meaning_ja_romaji": "konnichiwa to iu aisatsu",
+  "meaning_vi": "Xin chào",
+  "examples": [
+    {
+      "ja": "こんにちは、お元気ですか。",
+      "romaji": "konnichiwa, ogenki desu ka.",
+      "vi": "Xin chào, bạn có khỏe không?",
+      "audio": "audio/こんにちは/ex_1.ogg"
+    },
+    {
+      "ja": "こんにちは。今日はいい天気ですね。",
+      "romaji": "konnichiwa. kyou wa ii tenki desu ne.",
+      "vi": "Xin chào. Hôm nay thời tiết đẹp nhỉ.",
+      "audio": "audio/こんにちは/ex_2.ogg"
+    }
+  ],
+  "tags": [
+    "greeting",
+    "common",
+    "phrase"
+  ],
+  "audio": "audio/こんにちは/word.ogg"
+}

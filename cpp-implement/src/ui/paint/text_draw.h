@@ -13,6 +13,10 @@ struct TextRun {
     float fontPx = 16;
     int weight = 400;
     bool italic = false;
+    // Keep the font chosen for the whole run even for sub-runs that contain no
+    // CJK themselves (spaces, Latin words in a mixed Japanese sentence). Keeps
+    // per-token measurement identical to the whole-run maxContent.
+    bool forceCjk = false;
     float letterSpacing = 0;
     Color color;
     float x = 0, y = 0;       // top-left after layout

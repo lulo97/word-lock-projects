@@ -45,8 +45,9 @@ src/utils/         word database + even picker, config/progress stores,
                      window helpers, tray, debug logger, ...
 database/*.py      manual Python generators (words, audio, validation)
 assets/htmls/      the five screens (countdown, tray_menu, settings, input, info)
-assets/themes/     UI styles for input/info (registry.txt, _contract.txt,
-                     ink/{input,info}.html, sunrise/{input,info}.html)
+assets/themes/     UI styles for all five screens (registry.txt, _contract.txt,
+                     ink/{countdown,settings,tray_menu,input,info}.html,
+                     sunrise/{countdown,settings,tray_menu,input,info}.html)
 database/words.txt user word list, one Japanese word per line
 database/words/    word JSON files, one per word (embedded)
 database/audio/    generated OGG audio (embedded when present)
@@ -112,12 +113,14 @@ The generators are manual Python tools; the app never runs them.
 
 ## Adding a UI style
 
-The input and info screens are styled by a per-word UI style. A style is pure
-data: a folder `assets/themes/<name>/` with `input.html` and `info.html`,
-listed one per line in `assets/themes/registry.txt`. There is no C++ per
-style: bindings are written only against the element ids in
-`assets/themes/_contract.txt` (`#word-jp`, `#answer`, `#speak`,
-`template#example-row` with `.jp`/`.romaji`/`.en`/`.listen`, ...).
+The five screens are styled by a per-word UI style. A style is pure data: a
+folder `assets/themes/<name>/` with `countdown.html`, `settings.html`,
+`tray_menu.html`, `input.html` and `info.html`, listed one per line in
+`assets/themes/registry.txt`. There is no C++ per style: bindings are written
+only against the element ids in `assets/themes/_contract.txt` (`#countdown`,
+`#tray-stop`, `#volume`, `#word-jp`, `#answer`, `#speak`,
+`template#example-row` with `.jp`/`.romaji`/`.en`/`.listen`, ...). A page
+missing from a style folder falls back to the matching `assets/htmls/` page.
 
 ```
 1. cp -r assets/themes/ink assets/themes/<new>      (then restyle the classes)

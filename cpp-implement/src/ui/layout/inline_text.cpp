@@ -47,11 +47,12 @@ LineBox newLine() {
     return line;
 }
 
-TextRun subRun(const TextRun& run, const std::wstring& text) {
+TextRun subRun(const TextRun& run, const std::wstring& text, bool forceCjk) {
     TextRun out = run;
     out.text = text;
     out.width = 0;
     out.height = 0;
+    out.forceCjk = forceCjk;
     return out;
 }
 
@@ -67,6 +68,17 @@ void finishLine(std::vector<LineBox>& lines, LineBox& line) {
     lines.push_back(line);
     line = newLine();
 }
+
+bool hasCjkText(const std::wstring& text) {
+    for (wchar_t c : text)
+        if (isCjk(c))
+            return true;
+    return false;
+}
+
+// Whole-run and per-token GDI measurements are rounded independently, so a
+// line can overflow maxContent by a fraction of a pixel. Treat that as "fits".
+constexpr float kWrapTolerancePx = 0.5f;
 
 } // namespace
 
@@ -93,6 +105,7 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
     };
 
     for (const TextRun& original : runs) {
+        const bool runHasCjk = hasCjkText(original.text);
         std::vector<float> offsets = charOffsets(original);
 
         if (offsets.size() != original.text.size() + 1) {
@@ -116,7 +129,7 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
                 if (!line.runs.empty())
                     pendingSpace = true;
 
-                spaceRun = subRun(original, L" ");
+                spaceRun = subRun(original, L" ", runHasCjk);
                 spaceRun.x = 0;
                 measureRun(spaceRun);
                 ++i;
@@ -134,29 +147,34 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
             }
 
             std::wstring tokenText = original.text.substr(i, end - i);
-            TextRun token = subRun(original, tokenText);
+            TextRun token = subRun(original, tokenText, runHasCjk);
             measureRun(token);
 
             float spaceWidth = pendingSpace ? spaceRun.width : 0.f;
             float needed = (line.runs.empty() ? 0.f : spaceWidth) + token.width;
 
-            if (maxWidth > 0 && x + needed > maxWidth && !line.runs.empty()) {
+            // A CJK line must not start with closing punctuation (。、」…):
+            // let it hang past the edge instead of wrapping it alone.
+            const bool forbiddenStart = isLineStartForbidden(c);
+
+            if (maxWidth > 0 && x + needed > maxWidth + kWrapTolerancePx &&
+                !line.runs.empty() && !forbiddenStart) {
                 flush();
                 spaceWidth = 0;
             }
 
-            if (maxWidth > 0 && x + spaceWidth + token.width > maxWidth &&
+            if (maxWidth > 0 && x + spaceWidth + token.width > maxWidth + kWrapTolerancePx &&
                 line.runs.empty() && token.width > maxWidth) {
                 // Overlong single word: split by character.
                 std::wstring chunk;
 
                 for (size_t k = i; k < end; ++k) {
                     std::wstring next = chunk + original.text[k];
-                    TextRun test = subRun(original, next);
+                    TextRun test = subRun(original, next, runHasCjk);
                     measureRun(test);
 
                     if (maxWidth > 0 && test.width > maxWidth && !chunk.empty()) {
-                        TextRun segment = subRun(original, chunk);
+                        TextRun segment = subRun(original, chunk, runHasCjk);
                         measureRun(segment);
                         segment.x = x;
                         line.runs.push_back(segment);
@@ -170,7 +188,7 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
                 }
 
                 if (!chunk.empty()) {
-                    TextRun segment = subRun(original, chunk);
+                    TextRun segment = subRun(original, chunk, runHasCjk);
                     measureRun(segment);
                     segment.x = x;
                     line.runs.push_back(segment);

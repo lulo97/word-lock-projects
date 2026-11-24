@@ -122,8 +122,13 @@ private:
     ProgressStore progress_;
     std::shared_ptr<StartupRegistry> startupRegistry_;   // set in init()
     ThemeRegistry themes_;                   // embedded assets/themes/registry.txt
-    std::wstring currentTheme_;              // input/info style for this word
+    std::wstring currentTheme_;              // active style for this word
     bool themeChanged_ = false;              // last reset picked a different style
+    // Style each chrome window was built with, so a theme change can rebuild
+    // it lazily without touching a window whose handler is on the stack.
+    std::wstring countdownTheme_;
+    std::wstring trayTheme_;
+    std::wstring settingsTheme_;
     std::deque<std::wstring> recentPicks_;   // wordKey of each pick (newest last)
     std::vector<WordData> extraWords_;       // `app add-word` test seam (M4)
     int dbRejected_ = 0;                     // words rejected by the light check
@@ -158,11 +163,23 @@ private:
     bool create_countdown();
     bool create_tray_menu();
     bool create_settings();
+    void register_countdown();
+    void wire_tray_menu();
+    void wire_settings();
+
+    // Rebuild a chrome window when the active style changed. The tray menu is
+    // only rebuilt when it is shown (a click handler may still be running);
+    // settings likewise. The countdown is rebuilt before a new countdown
+    // starts, where its timers are re-armed anyway.
+    void ensure_countdown_theme();
+    void ensure_tray_theme();
+    void ensure_settings_theme();
 
     // ----- word windows -----
     // Theme page for the current style, or the legacy assets/htmls page when
-    // no theme is active.
-    std::wstring word_page_html(const wchar_t* legacyName) const;
+    // no theme is active. Used by all five windows, so a style can restyle
+    // the countdown, settings and tray menu as well as input/info.
+    std::wstring themed_page_html(const wchar_t* legacyName) const;
     void reset_word_windows();
     bool ensure_input();
     bool ensure_info();

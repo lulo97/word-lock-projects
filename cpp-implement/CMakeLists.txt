@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # MSVC options equivalent to /EHsc /MP and Release /O2
 if (MSVC)
     add_compile_options(/EHsc /MP)
+    # Source files are UTF-8 (Japanese/Vietnamese literals, "•"). Without
+    # /utf-8 MSVC reads them as the system code page and mangles non-ASCII.
+    add_compile_options(/utf-8)
     add_compile_options($<$<CONFIG:Release>:/O2>)
 endif()
 

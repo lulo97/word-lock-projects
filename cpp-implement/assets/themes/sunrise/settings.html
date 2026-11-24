@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <!-- sunrise: settings as one warm card with rose and amber accents. -->
+  <body
+    class="bg-[#fff7ed] min-h-screen flex items-center justify-center font-sans antialiased"
+  >
+    <div
+      class="w-[540px] h-[640px] bg-white flex flex-col shadow-xl border-2 border-[#fcd34d] rounded-2xl overflow-hidden text-sm"
+    >
+      <div class="flex-1 p-6 flex flex-col gap-5 overflow-y-auto">
+        <div>
+          <h1 class="text-[#f43f5e] font-extrabold text-[15px] tracking-wider mb-3">
+            SETTINGS
+          </h1>
+          <p class="text-[#78716c] text-[12px] font-mono">
+            %USERPROFILE%\kotobacpp\config.json
+          </p>
+          <p class="text-[#57534e] text-[13px] mt-1">
+            Every change is saved immediately.
+          </p>
+        </div>
+
+        <div>
+          <label class="text-[#292524] font-bold tracking-wide text-[13px]"
+            >COUNTDOWN_SECONDS</label
+          >
+          <input
+            type="text"
+            id="countdown"
+            class="w-full mt-2.5 p-2.5 bg-[#fff7ed] border-2 border-[#fcd34d] rounded-lg text-[#292524] outline-none font-mono text-sm"
+          />
+          <p class="text-[#78716c] text-[12px] mt-2.5">
+            Seconds before the word gate opens. 60 = 1 minute, 600 = 10 minutes.
+          </p>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center">
+            <label class="text-[#292524] font-bold tracking-wide text-[13px]"
+              >SOUND_VOLUME</label
+            >
+            <span id="volume-value" class="text-[#f43f5e] font-bold text-[13px]">x0</span>
+          </div>
+          <div class="mt-4">
+            <input
+              type="range"
+              id="volume"
+              min="0"
+              max="10"
+              step="0.5"
+              value="0"
+              class="w-full h-1 bg-transparent rounded-lg appearance-none cursor-pointer z-10"
+            />
+          </div>
+          <p class="text-[#78716c] text-[12px] mt-3">
+            Playback gain relative to the Windows master volume. 2 = twice as
+            loud.
+          </p>
+        </div>
+
+        <div>
+          <label class="text-[#292524] font-bold tracking-wide text-[13px]"
+            >RANDOM_UI</label
+          >
+          <div class="flex items-start gap-3 mt-2.5">
+            <input type="checkbox" id="random-ui" class="w-[18px] h-[18px] mt-0.5 shrink-0" />
+            <span class="text-[#44403c] text-[14px]"
+              >Pick a new UI style after each completed word</span
+            >
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[#292524] font-bold tracking-wide text-[13px]"
+            >START_WITH_WINDOWS</label
+          >
+          <div class="flex items-start gap-3 mt-2.5">
+            <input type="checkbox" id="start-with-windows" class="w-[18px] h-[18px] mt-0.5 shrink-0" />
+            <span class="text-[#44403c] text-[14px]"
+              >Launch Kotoba Lock when I sign in to Windows</span
+            >
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[#292524] font-bold tracking-wide text-[13px]"
+            >FREEZE_CHROME</label
+          >
+          <div class="flex items-start gap-3 mt-2.5">
+            <input type="checkbox" id="freeze-chrome" class="w-[18px] h-[18px] mt-0.5 shrink-0" />
+            <span class="text-[#44403c] text-[14px]"
+              >Freeze Chrome tabs while a word is being studied</span
+            >
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[#292524] font-bold tracking-wide text-[13px]"
+            >IGNORE_WORDS</label
+          >
+          <p class="text-[#78716c] text-[12px] mt-1">
+            One word per line, or separate with commas. These words will never
+            be shown.
+          </p>
+          <textarea
+            id="ignore-words"
+            class="w-full h-28 mt-3 p-3 bg-[#fff7ed] border-2 border-[#fcd34d] rounded-lg text-[#292524] outline-none resize-none text-[13px]"
+          ></textarea>
+        </div>
+
+        <div class="flex-1"></div>
+
+        <div class="flex justify-end mt-2">
+          <button
+            id="close"
+            class="px-10 py-2.5 bg-[#f43f5e] text-white font-bold rounded-full hover:bg-[#e11d48] text-[14px]"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

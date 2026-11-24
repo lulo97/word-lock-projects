@@ -117,6 +117,14 @@ std::vector<std::wstring> theme_contract_problems(const std::wstring& theme) {
                {L"word-jp", L"word-reading", L"word-romaji", L"word-meaning",
                 L"speak", L"examples", L"close", L"tags", L"tags-list",
                 L"example-row", L"tag-chip"});
+    check_page(L"countdown.html", {L"countdown"});
+    check_page(L"settings.html",
+               {L"countdown", L"volume", L"volume-value", L"random-ui",
+                L"start-with-windows", L"freeze-chrome", L"ignore-words",
+                L"close"});
+    check_page(L"tray_menu.html",
+               {L"tray-open", L"tray-next", L"tray-settings", L"tray-stop",
+                L"tray-show", L"tray-exit"});
 
     // The examples row is cloned by class, so ids alone are not enough.
     std::wstring infoHtml = load_theme_html(theme, L"info.html");
@@ -194,25 +202,11 @@ bool KotobaCppApp::init() {
     if (!create_settings())
         return false;
 
-    set_tray(countdown_->hwnd(), nullptr, L"Kotoba Lock");
-
-    set_tray_click_callback(
-        countdown_->hwnd(),
-        [this](HWND, LPARAM lParam) {
-            on_tray_click(lParam);
-        }
-    );
-
-    // M9: the OS shuts the session down (lock/logoff/shutdown) - resume
-    // Chrome before the process goes.
-    countdown_->onEndSession = [this] { chrome_resume(); };
+    // Tray icon, tray clicks, session end and the debug poll all live on the
+    // countdown host. Re-applied after a theme rebuild (register_countdown).
+    register_countdown();
 
     start_countdown();
-
-    if (debug_) {
-        // Poll debug_cmd.txt every 250 ms while the app runs.
-        countdown_->setTimer(200, 250, [this] { poll_debug_commands(); });
-    }
 
     return true;
 }
@@ -548,11 +542,53 @@ bool KotobaCppApp::create_countdown() {
     options.centered = false;
     options.visible = true;
 
-    if (!create_host(countdown_, options, L"countdown.html"))
+    if (!create_host_from_html(countdown_, options,
+                               themed_page_html(L"countdown.html")))
         return false;
 
+    countdownTheme_ = currentTheme_;
     position_bottom_right(*countdown_, 20);
     return true;
+}
+
+void KotobaCppApp::register_countdown() {
+    if (!countdown_ || !countdown_->hwnd())
+        return;
+
+    set_tray(countdown_->hwnd(), nullptr, L"Kotoba Lock");
+
+    set_tray_click_callback(
+        countdown_->hwnd(),
+        [this](HWND, LPARAM lParam) {
+            on_tray_click(lParam);
+        }
+    );
+
+    // M9: the OS shuts the session down (lock/logoff/shutdown) - resume
+    // Chrome before the process goes.
+    countdown_->onEndSession = [this] { chrome_resume(); };
+
+    if (debug_) {
+        // Poll debug_cmd.txt every 250 ms while the app runs.
+        countdown_->setTimer(200, 250, [this] { poll_debug_commands(); });
+    }
+}
+
+void KotobaCppApp::ensure_countdown_theme() {
+    if (countdownTheme_ == currentTheme_)
+        return;
+
+    if (countdown_) {
+        if (countdown_->hwnd())
+            remove_tray(countdown_->hwnd());
+        countdown_->killTimer(TIMER_COUNTDOWN);
+        countdown_->killTimer(TIMER_TRANSITION);
+        countdown_.reset();
+    }
+
+    countdownTheme_ = currentTheme_;
+    if (create_countdown())
+        register_countdown();
 }
 
 bool KotobaCppApp::create_tray_menu() {
@@ -565,8 +601,18 @@ bool KotobaCppApp::create_tray_menu() {
     options.centered = false;
     options.visible = false;
 
-    if (!create_host(trayMenu_, options, L"tray_menu.html"))
+    if (!create_host_from_html(trayMenu_, options,
+                               themed_page_html(L"tray_menu.html")))
         return false;
+
+    trayTheme_ = currentTheme_;
+    wire_tray_menu();
+    return true;
+}
+
+void KotobaCppApp::wire_tray_menu() {
+    if (!trayMenu_)
+        return;
 
     ui::Document& document = trayMenu_->document();
 
@@ -607,7 +653,18 @@ bool KotobaCppApp::create_tray_menu() {
         hide_tray_menu();
     };
 
-    return true;
+    document.setText(L"tray-stop", stopped_ ? L"Start app" : L"Stop app");
+}
+
+void KotobaCppApp::ensure_tray_theme() {
+    if (trayTheme_ == currentTheme_)
+        return;
+
+    // Called from show_tray_menu(), never from a tray-menu click handler, so
+    // the old host can be destroyed synchronously.
+    trayMenu_.reset();
+    trayTheme_ = currentTheme_;
+    create_tray_menu();
 }
 
 bool KotobaCppApp::create_settings() {
@@ -618,8 +675,18 @@ bool KotobaCppApp::create_settings() {
     options.centered = true;
     options.visible = false;
 
-    if (!create_host(settings_, options, L"settings.html"))
+    if (!create_host_from_html(settings_, options,
+                               themed_page_html(L"settings.html")))
         return false;
+
+    settingsTheme_ = currentTheme_;
+    wire_settings();
+    return true;
+}
+
+void KotobaCppApp::wire_settings() {
+    if (!settings_)
+        return;
 
     // M6: every control persists immediately through Config::save().
     ui::Document& doc = settings_->document();
@@ -696,13 +763,21 @@ bool KotobaCppApp::create_settings() {
     // value (idempotent); the volume handler also refreshes the label.
     doc.setValue(L"countdown", std::to_wstring(c.countdownSeconds));
     doc.setValue(L"volume", std::to_wstring(c.volume));
+}
 
-    return true;
+void KotobaCppApp::ensure_settings_theme() {
+    if (settingsTheme_ == currentTheme_)
+        return;
+
+    // Called from show_settings(), never from a settings handler.
+    settings_.reset();
+    settingsTheme_ = currentTheme_;
+    create_settings();
 }
 
 // ----- word windows -----
 
-std::wstring KotobaCppApp::word_page_html(const wchar_t* legacyName) const {
+std::wstring KotobaCppApp::themed_page_html(const wchar_t* legacyName) const {
     if (!currentTheme_.empty()) {
         std::wstring themed = load_theme_html(currentTheme_, legacyName);
         if (!themed.empty())
@@ -761,7 +836,7 @@ bool KotobaCppApp::ensure_input() {
     options.centered = true;
     options.visible = false;
 
-    if (!create_host_from_html(input_, options, word_page_html(L"input.html"),
+    if (!create_host_from_html(input_, options, themed_page_html(L"input.html"),
                                &currentWord_))
         return false;
 
@@ -794,7 +869,7 @@ bool KotobaCppApp::ensure_info() {
     options.centered = true;
     options.visible = false;
 
-    if (!create_host_from_html(info_, options, word_page_html(L"info.html"),
+    if (!create_host_from_html(info_, options, themed_page_html(L"info.html"),
                                &currentWord_))
         return false;
 
@@ -864,6 +939,10 @@ void KotobaCppApp::start_countdown() {
     UI_LOG("app", L"start_countdown word=%s seconds=%d",
            currentWord_.romaji.c_str(), countdownSeconds_);
     reset_word_windows();
+
+    // Keep the countdown chrome in the same style as input/info. Done before
+    // the timers are armed below, so the rebuild cannot leave stray timers.
+    ensure_countdown_theme();
 
     if (trayMenu_)
         trayMenu_->document().setText(L"tray-stop", L"Stop app");
@@ -1019,6 +1098,8 @@ void KotobaCppApp::show_info() {
 // ----- settings / tray -----
 
 void KotobaCppApp::show_settings() {
+    ensure_settings_theme();
+
     if (!settings_)
         return;
 
@@ -1088,6 +1169,8 @@ void KotobaCppApp::on_tray_click(LPARAM lParam) {
 }
 
 void KotobaCppApp::show_tray_menu() {
+    ensure_tray_theme();
+
     if (!trayMenu_)
         return;
 

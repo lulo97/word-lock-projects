@@ -1,5 +1,6 @@
 # Ordered list of enabled UI styles (M7).
-# Adding a style: create assets/themes/<name>/{input.html,info.html},
-# add one line here, and run the theme_contract feature test.
+# Adding a style: create assets/themes/<name>/ with countdown.html,
+# tray_menu.html, settings.html, input.html, info.html, add one line here,
+# and run the theme_contract feature test.
 ink
 sunrise

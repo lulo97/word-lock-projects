@@ -22,7 +22,7 @@ bool hasCjk(const std::wstring& text) {
 
 HFONT fontForRun(const TextRun& run) {
     FontKey key;
-    key.family = hasCjk(run.text) ? L"Yu Gothic UI" : run.family;
+    key.family = (run.forceCjk || hasCjk(run.text)) ? L"Yu Gothic UI" : run.family;
     key.px = std::max(1, static_cast<int>(run.fontPx + 0.5f));
     key.weight = run.weight;
     key.italic = run.italic;

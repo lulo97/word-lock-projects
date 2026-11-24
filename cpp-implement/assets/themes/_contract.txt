@@ -1,10 +1,19 @@
 # Element ids every UI style must provide (M7).
 #
-# input.html : #word-jp #word-reading #word-romaji #answer #feedback
-#              #speak #hint
-# info.html  : #word-jp #word-reading #word-romaji #word-meaning
-#              #speak #examples #close #tags #tags-list
-#              template#example-row  (with .jp .romaji .en .listen)
-#              template#tag-chip
+# A style folder contains the five pages below; a page that is missing falls
+# back to assets/htmls/<page> at runtime, but the theme_contract feature
+# requires every page and id in this list.
+#
+# countdown.html : #countdown
+# tray_menu.html : #tray-open #tray-next #tray-settings #tray-stop
+#                  #tray-show #tray-exit
+# settings.html  : #countdown #volume #volume-value #random-ui
+#                  #start-with-windows #freeze-chrome #ignore-words #close
+# input.html     : #word-jp #word-reading #word-romaji #answer #feedback
+#                  #speak #hint
+# info.html      : #word-jp #word-reading #word-romaji #word-meaning
+#                  #speak #examples #close #tags #tags-list
+#                  template#example-row  (with .jp .romaji .en .listen)
+#                  template#tag-chip
 #
 # Bindings are written against these ids only, so a new style is pure data.

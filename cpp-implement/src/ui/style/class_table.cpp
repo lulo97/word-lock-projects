@@ -292,6 +292,12 @@ bool isIgnoredClass(const std::wstring& input) {
            cls == L"appearance-none" ||
            cls == L"resize-none" ||
            cls == L"resize" ||
+           // Semantic markers used by the info screen (template#example-row
+           // binds .jp/.romaji/.en/.listen). They are hooks, not styles.
+           cls == L"jp" ||
+           cls == L"romaji" ||
+           cls == L"en" ||
+           cls == L"listen" ||
            cls.rfind(L"transition", 0) == 0 ||
            cls.rfind(L"duration-", 0) == 0 ||
            cls.rfind(L"ease-", 0) == 0 ||

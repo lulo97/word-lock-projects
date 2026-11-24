@@ -196,6 +196,14 @@ void ScriptRunner::assertCmd(const std::vector<std::wstring>& t) {
         if (t[3] != L"==") { fail(L"assert " + kind + L": operator must be ==, got " + t[3]); return; }
         layout();
         std::wstring actual = kind == L"text" ? textContent(*e) : doc_->getValue(e->id);
+        if (kind == L"text") {
+            // Trim the HTML indentation whitespace: an element's visible
+            // text is what the user sees, and reformatting the HTML
+            // (prettier) must not break exact-text assertions.
+            size_t b = actual.find_first_not_of(L" \t\r\n");
+            size_t e2 = actual.find_last_not_of(L" \t\r\n");
+            actual = (b == std::wstring::npos) ? L"" : actual.substr(b, e2 - b + 1);
+        }
         if (actual != t[4]) fail(t[2] + L" " + kind + L" = '" + actual + L"' expected '" + t[4] + L"'");
         return;
     }

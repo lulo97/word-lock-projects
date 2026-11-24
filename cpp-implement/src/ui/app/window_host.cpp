@@ -198,12 +198,21 @@ void WindowHost::killTimer(UINT_PTR id) {
         KillTimer(hwnd_, id);
 }
 
-void WindowHost::fireOneShotTimers() {
-    // Collect ids first: a callback kills its own timer (mutating the maps)
-    // and may enqueue further one-shot timers, which fire on the next tick.
+std::vector<UINT_PTR> WindowHost::pendingOneShotIds() const {
     std::vector<UINT_PTR> ids(oneShotTimers_.begin(), oneShotTimers_.end());
     std::sort(ids.begin(), ids.end());
+    return ids;
+}
 
+void WindowHost::fireOneShotTimers() {
+    // Snapshot at call time: see fireOneShotTimers(snapshot).
+    fireOneShotTimers(pendingOneShotIds());
+}
+
+void WindowHost::fireOneShotTimers(const std::vector<UINT_PTR>& ids) {
+    // The ids were collected (possibly before any callback ran): a callback
+    // kills its own timer (mutating the maps) and may enqueue further
+    // one-shot timers, which fire on the next tick, like the real pump.
     for (UINT_PTR id : ids) {
         if (auto it = timers_.find(id); it != timers_.end()) {
             UI_LOG("timer", L"hwnd=%p id=%llu fired (test)", hwnd_, (unsigned long long)id);

@@ -23,13 +23,13 @@ app tick
 app assert visible info == true
 window info
 
-# --- 4. side effects: nothing played yet ---
-app assert audio == idle
-app assert audio_last == none
+# --- 4. side effects: opening the info screen auto-plays the word clip ---
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
 app assert audio_ready == 3
 app assert audio_disabled == 0
 
-# --- 1. happy path: the word button plays the word clip ---
+# --- 1. happy path: the word button (re)plays the word clip ---
 click #speak
 app assert audio == playing
 app assert audio_last == audio/りんご/word.ogg

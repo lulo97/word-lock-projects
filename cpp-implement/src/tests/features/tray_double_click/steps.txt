@@ -69,14 +69,22 @@ app assert visible tray == true
 window tray
 click #tray-open
 
-# --- 4. side effects: no stale timers, only expected windows ---
+# --- 4. side effects: no stale timers, only expected windows. tray-open
+# re-picks a word and rebuilds the word windows, so the old info host is
+# parked in the graveyard (not left alive). ---
 app assert timers == 0
 app assert inputWin == true
-app assert infoWin == true
+app assert infoWin == false
 app assert stopped == false
 
 # --- 5. interleaving: arm the input-done timer, then stop; a later tick
-# must not bring the info window back ---
+# must not bring the info window back. tray-open re-picked a random word, so
+# pin the fixture word again and drive the countdown to input. ---
+window tray
+click #tray-stop
+click #tray-stop
+app word src/tests/word.json
+app tick 30
 window input
 type #answer ringo
 app assert inputDone == true

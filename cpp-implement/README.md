@@ -20,6 +20,8 @@ build.bat
 Configures CMake, builds the Release configuration, produces `build\app.exe`
 and the test tools, and launches the app.
 
+- `build-release.bat` is the release-only variant (`-DAPP_ONLY=ON`): builds
+  just the app as `build-release\KotobaCppApp.exe`, no test tools.
 - `app.cpp` is the main source; `src/ui/*.cpp` and `src/utils/*.cpp` are the
   framework. The app proper lives in `src/utils/kotoba_app.{h,cpp}` (driven
   headlessly by `src/tests/app_test.cpp`).
@@ -105,7 +107,8 @@ The generators are manual Python tools; the app never runs them.
   word inside a short phrase and trims the middle segment.
 - The info screen's `#speak` and per-example `listen-N` buttons play those
   clips (`src/utils/play_audio.cpp` transcodes OGG and applies `config.volume`).
-  Missing files grey the button out instead of failing.
+  Missing files grey the button out instead of failing. The word clip also
+  auto-plays once when the info screen opens.
 - `validate_db.py` exits non-zero on any invalid file and writes
   `database/validate_db.errors.log`. At runtime the C++ app applies a light
   check of its own: a broken word is logged (`dbg::log("db", ...)`) and
@@ -202,6 +205,8 @@ include <path>                # run another script (relative to this one);
 expect-fail <command>         # passes only if the inner command FAILS
                                # (guards against vacuous assertions)
 app init / tick [n] / word <file> / add-word <file> / state
+app theme list / pick <n> / contract   # M7: registry list, non-repeat pick,
+                               # full contract validation of every style
 app assert <key> == <value>   # key in stateJson(), incl. `visible <window>`,
                                # config <key>, attempts <word>, attemptsTotal,
                                # attemptsMax, picked_unique <n> (== true|false),

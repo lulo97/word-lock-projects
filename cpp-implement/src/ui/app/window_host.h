@@ -55,6 +55,15 @@ public:
     // are not fired (the app drives those via its own ticks).
     void fireOneShotTimers();
 
+    // Fire only the ids in this pre-taken snapshot: a timer armed during the
+    // pass (e.g. by a callback that ran in this pass) fires on the NEXT
+    // pass, exactly like the real message pump. tick() in the app uses this
+    // so one host's callback cannot advance another host's timers.
+    void fireOneShotTimers(const std::vector<UINT_PTR>& snapshot);
+
+    // Snapshot of the pending one-shot ids (sorted).
+    std::vector<UINT_PTR> pendingOneShotIds() const;
+
     // Number of pending timers (for `app assert timers == N`).
     size_t pendingTimers() const { return timers_.size(); }
 

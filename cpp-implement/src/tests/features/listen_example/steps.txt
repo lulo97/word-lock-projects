@@ -21,14 +21,17 @@ type #answer ringo
 app tick
 window info
 
-# --- 4. side effects: template produced one row per example ---
+# --- 4. side effects: template produced one row per example; opening the
+# info screen auto-plays the word clip (one animation timer pending) ---
 assert exists #listen-1
 assert exists #listen-2
 assert text #listen-1 == "Speak"
 assert text #listen-2 == "Speak"
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
 app assert audio_ready == 3
 app assert audio_disabled == 0
-app assert timers == 0
+app assert timers == 1
 
 # --- 1. happy path: first example ---
 click #listen-1

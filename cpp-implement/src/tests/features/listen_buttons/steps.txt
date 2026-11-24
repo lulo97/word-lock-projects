@@ -21,8 +21,13 @@ type #answer ringo
 app tick
 window info
 
-# --- 1. happy path: pressing #speak starts the animation ---
-assert text #speak == "Listen"
+# --- 0. side effects: opening the info screen auto-plays the word clip,
+# so #speak is already animating before any click ---
+app assert audio == playing
+app assert audio_last == audio/りんご/word.ogg
+assert text #speak == "Speaking."
+
+# --- 1. happy path: pressing #speak restarts the clip ---
 click #speak
 app assert audio == playing
 app assert audio_last == audio/りんご/word.ogg

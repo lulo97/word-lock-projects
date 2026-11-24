@@ -233,15 +233,22 @@ void KotobaCppApp::tick(int n) {
         if (countdown_ && countdown_->hasTimer(TIMER_COUNTDOWN))
             on_countdown_tick();
 
-    // Simulate one pass of the message pump: fire any one-shot timers that
+    // Simulate one pass of the message pump: fire the one-shot timers that
     // became pending during the ticks (transition -> show_input,
-    // input-done -> show_info). Repeating timers (countdown, debug poll) are
-    // driven by the ticks above, so they are not fired here.
-    if (countdown_) countdown_->fireOneShotTimers();
-    if (trayMenu_)   trayMenu_->fireOneShotTimers();
-    if (input_)      input_->fireOneShotTimers();
-    if (info_)       info_->fireOneShotTimers();
-    if (settings_)   settings_->fireOneShotTimers();
+    // input-done -> show_info). Repeating timers (countdown, debug poll)
+    // are driven by the ticks above, so they are not fired here.
+    // Snapshot every host BEFORE firing anything: a timer armed by a
+    // callback in this pass (e.g. the audio animation armed by show_info)
+    // fires on the NEXT pass, exactly like the real pump - per-host
+    // snapshots would let one host see timers armed by an earlier one.
+    const ui::WindowHost* hosts[] = { countdown_.get(), trayMenu_.get(),
+                                      input_.get(), info_.get(),
+                                      settings_.get() };
+    std::vector<std::pair<ui::WindowHost*, std::vector<UINT_PTR>>> shots;
+    for (const ui::WindowHost* h : hosts)
+        if (h) shots.push_back({const_cast<ui::WindowHost*>(h), h->pendingOneShotIds()});
+    for (auto& [h, ids] : shots)
+        h->fireOneShotTimers(ids);
 }
 
 // Test seam: deliver a tray-icon event through the exact same path as the

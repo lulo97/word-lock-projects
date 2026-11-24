@@ -1,3 +1,15 @@
+# Write a file only when its content differs, so an unchanged file keeps its
+# timestamp and the compiler does not rebuild it.
+function(embed_write_if_different path content)
+    if(EXISTS "${path}")
+        file(READ "${path}" existing)
+        if(existing STREQUAL content)
+            return()
+        endif()
+    endif()
+    file(WRITE "${path}" "${content}")
+endfunction()
+
 function(target_embed_assets target_name)
     cmake_parse_arguments(ARG "" "OUT_DIR;NAMESPACE;BASE_DIR" "" ${ARGN})
 
@@ -114,8 +126,8 @@ const EmbeddedAsset* find_asset(std::string_view relative_path) {
 } // namespace ${ARG_NAMESPACE}
 ")
 
-    file(WRITE "${HEADER_FILE}" "${HEADER_CONTENT}")
-    file(WRITE "${SOURCE_FILE}" "${SOURCE_CONTENT}")
+    embed_write_if_different("${HEADER_FILE}" "${HEADER_CONTENT}")
+    embed_write_if_different("${SOURCE_FILE}" "${SOURCE_CONTENT}")
 
     target_sources("${target_name}" PRIVATE "${SOURCE_FILE}")
     target_include_directories("${target_name}" PRIVATE "${ARG_OUT_DIR}")

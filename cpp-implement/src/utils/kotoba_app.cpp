@@ -830,6 +830,8 @@ void KotobaCppApp::reset_word_windows() {
 }
 
 bool KotobaCppApp::ensure_input() {
+    if (input_ && !input_->hwnd())
+        graveyard_.push_back(std::move(input_));
     if (input_)
         return true;
 
@@ -864,6 +866,8 @@ bool KotobaCppApp::ensure_input() {
 }
 
 bool KotobaCppApp::ensure_info() {
+    if (info_ && !info_->hwnd())
+        graveyard_.push_back(std::move(info_));
     if (info_)
         return true;
 
@@ -894,9 +898,11 @@ bool KotobaCppApp::ensure_info() {
 
     info_->onClose = [this] {
         stopAudio();
-        // The X destroys the window without restarting the countdown, so
-        // resume here (M9).
         chrome_resume();
+        // The window is about to be destroyed: bring the countdown back.
+        // start_countdown() parks info_ in the graveyard, so it is not left dead.
+        if (!stopped_)
+            start_countdown();
     };
 
     info_->onKeyDown = [this](UINT key) {

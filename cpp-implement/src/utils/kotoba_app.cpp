@@ -642,6 +642,7 @@ void KotobaCppApp::wire_tray_menu() {
 
     document.onClick(L"tray-next", [this] {
         hide_tray_menu();
+        next_theme();
     });
 
     document.onClick(L"tray-exit", [this] {
@@ -795,9 +796,14 @@ void KotobaCppApp::reset_word_windows() {
     UI_LOG("app", L"reset_word_windows word=%s", currentWord_.romaji.c_str());
 
     if (!themes_.empty()) {
-        const std::wstring next = config_.get().randomUi
-                                      ? themes_.pick(currentTheme_)
-                                      : themes_.first();
+        std::wstring next;
+        if (!pendingTheme_.empty()) {
+            next = pendingTheme_;       // forced by the "next style" button
+            pendingTheme_.clear();
+        } else {
+            next = config_.get().randomUi ? themes_.pick(currentTheme_)
+                                          : themes_.first();
+        }
         themeChanged_ = next != currentTheme_;
         currentTheme_ = next;
         UI_LOG("app", L"theme %s (changed=%d)", currentTheme_.c_str(),
@@ -1113,6 +1119,24 @@ void KotobaCppApp::show_settings() {
 
     settings_->show(true);
     SetForegroundWindow(settings_->hwnd());
+}
+
+// Tray "next style": cycle to the next theme in registry order, then restart
+// the countdown from the full time in that style.
+void KotobaCppApp::next_theme() {
+    const auto names = themes_.names();
+    if (names.empty())
+        return;
+
+    size_t next = 0;
+    for (size_t i = 0; i < names.size(); ++i)
+        if (names[i] == currentTheme_) {
+            next = (i + 1) % names.size();
+            break;
+        }
+
+    pendingTheme_ = names[next];
+    start_countdown();
 }
 
 // Confirm button. Every setting is already saved the moment it changes, so

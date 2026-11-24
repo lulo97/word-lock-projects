@@ -123,6 +123,7 @@ private:
     std::shared_ptr<StartupRegistry> startupRegistry_;   // set in init()
     ThemeRegistry themes_;                   // embedded assets/themes/registry.txt
     std::wstring currentTheme_;              // active style for this word
+    std::wstring pendingTheme_;              // forced style for the next reset
     bool themeChanged_ = false;              // last reset picked a different style
     // Style each chrome window was built with, so a theme change can rebuild
     // it lazily without touching a window whose handler is on the stack.
@@ -203,6 +204,7 @@ private:
     // ----- settings / tray -----
     void show_settings();
     void apply_settings();
+    void next_theme();
     // Make the Run key match `enabled`, rewriting a moved/renamed exe path.
     void syncStartupRegistry(bool enabled);
     void applyStartup(bool enabled);

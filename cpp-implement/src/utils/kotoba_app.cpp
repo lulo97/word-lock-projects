@@ -1108,6 +1108,10 @@ void KotobaCppApp::show_info() {
     info_->show(true);
     ShowWindow(info_->hwnd(), SW_MAXIMIZE);
     bring_to_front(*info_);
+    
+    // Auto-play the word audio once.
+    if (!currentWord_.audio.empty())
+        playAudioClip(currentWord_.audio, L"speak");
 }
 
 // ----- settings / tray -----

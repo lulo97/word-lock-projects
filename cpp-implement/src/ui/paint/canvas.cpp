@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <stack>
+#include <vector>
 
 namespace ui {
 
@@ -109,7 +110,24 @@ struct Canvas::Impl {
     Gdiplus::Graphics* graphics = nullptr;
     HDC hdc = nullptr;
     std::stack<Gdiplus::GraphicsState> states;
-    std::stack<int> gdiStates;
+    std::vector<RECT> clipRects;   // intersected GDI clip rects, innermost last
+
+    // Make the HDC clip match our own stack, so GDI text is never clipped by
+    // whatever state GDI+ left behind.
+    void applyGdiClip() {
+        if (!hdc)
+            return;
+
+        if (clipRects.empty()) {
+            SelectClipRgn(hdc, nullptr);
+            return;
+        }
+
+        const RECT& r = clipRects.back();
+        HRGN rgn = CreateRectRgn(r.left, r.top, r.right, r.bottom);
+        SelectClipRgn(hdc, rgn);
+        DeleteObject(rgn);
+    }
     std::stack<std::pair<float, float>> translations;
     float offsetX = 0, offsetY = 0;
     float opacity = 1.0f;
@@ -255,17 +273,26 @@ void Canvas::pushClip(const RectF& r, const CornerRadii& radii) {
     addRoundRect(path, sr, radii);
     impl_->graphics->SetClip(&path, Gdiplus::CombineModeIntersect);
 
-    if (impl_->hdc) {
-        int saved = SaveDC(impl_->hdc);
-        IntersectClipRect(
-            impl_->hdc,
-            static_cast<int>(std::floor(sr.x)),
-            static_cast<int>(std::floor(sr.y)),
-            static_cast<int>(std::ceil(sr.right())),
-            static_cast<int>(std::ceil(sr.bottom()))
-        );
-        impl_->gdiStates.push(saved);
+    RECT rc {
+        static_cast<LONG>(std::floor(sr.x)),
+        static_cast<LONG>(std::floor(sr.y)),
+        static_cast<LONG>(std::ceil(sr.right())),
+        static_cast<LONG>(std::ceil(sr.bottom()))
+    };
+
+    if (!impl_->clipRects.empty()) {
+        const RECT& prev = impl_->clipRects.back();
+        rc.left   = std::max(rc.left, prev.left);
+        rc.top    = std::max(rc.top, prev.top);
+        rc.right  = std::min(rc.right, prev.right);
+        rc.bottom = std::min(rc.bottom, prev.bottom);
+
+        if (rc.right < rc.left) rc.right = rc.left;
+        if (rc.bottom < rc.top) rc.bottom = rc.top;
     }
+
+    impl_->clipRects.push_back(rc);
+    impl_->applyGdiClip();
 }
 
 void Canvas::popClip() {
@@ -275,10 +302,10 @@ void Canvas::popClip() {
     impl_->graphics->Restore(impl_->states.top());
     impl_->states.pop();
 
-    if (impl_->hdc && !impl_->gdiStates.empty()) {
-        RestoreDC(impl_->hdc, impl_->gdiStates.top());
-        impl_->gdiStates.pop();
-    }
+    if (!impl_->clipRects.empty())
+        impl_->clipRects.pop_back();
+
+    impl_->applyGdiClip();
 }
 
 void Canvas::drawPath(
@@ -360,6 +387,7 @@ HDC Canvas::hdc() const {
         return nullptr;
 
     impl_->graphics->Flush(Gdiplus::FlushIntentionSync);
+    impl_->applyGdiClip();   // GDI+ may have changed the HDC clip
     return impl_->hdc;
 }
 

@@ -50,15 +50,24 @@ window input
 assert value #answer == ""
 
 # --- 3b. real tray sequence: a real double-click delivers UP, DBLCLK, UP.
-# The first UP opened the tray menu, the trailing UP would re-toggle it;
-# show_input() closing the menu keeps the outcome deterministic (menu
-# closed, input visible). ---
+# Left clicks no longer open the tray menu (only right-click does), so the
+# menu must never appear anywhere in this sequence. ---
 app tray-event left-click
-app assert visible tray == true
+app assert visible tray == false
+app assert visible input == true
+app tray-event double-click
+app assert visible tray == false
 app assert visible input == true
 app tray-event left-click
 app assert visible tray == false
 app assert visible input == true
+
+# --- 3c. right-click is the only way to open the tray menu ---
+app tray-event right-click
+app assert visible tray == true
+
+window tray
+click #tray-open
 
 # --- 4. side effects: no stale timers, only expected windows ---
 app assert timers == 0

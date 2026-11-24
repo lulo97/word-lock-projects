@@ -182,9 +182,16 @@ float layoutBlockChildren(
 }
 
 float layoutElement(Element& el, float x, float y, const Constraints& input, float scale) {
+    eraseLines(el);   // drop this element's old text lines; layoutInline re-adds them
     const ComputedStyle& style = el.style;
 
+    // Remember the scroll position: resetting the box must not reset scrolling.
+    const float keepScrollX = el.box.scrollX;
+    const float keepScrollY = el.box.scrollY;
+
     el.box = LayoutBox{};
+    el.box.scrollX = keepScrollX;
+    el.box.scrollY = keepScrollY;
     el.box.margin = scaledEdges(style.margin, scale);
     el.box.border = scaledEdges(style.borderWidth, scale);
     el.box.padding = scaledEdges(style.padding, scale);
@@ -274,7 +281,6 @@ float layoutElement(Element& el, float x, float y, const Constraints& input, flo
 
 void layoutDocument(Element& root, float viewportW, float viewportH, float scale) {
     clearMeasureCache();
-    clearLineCache();
     g_viewportW = viewportW;
     g_viewportH = viewportH;
 

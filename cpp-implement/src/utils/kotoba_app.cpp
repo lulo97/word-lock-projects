@@ -121,7 +121,7 @@ std::vector<std::wstring> theme_contract_problems(const std::wstring& theme) {
     check_page(L"settings.html",
                {L"countdown", L"volume", L"volume-value", L"random-ui",
                 L"start-with-windows", L"freeze-chrome", L"ignore-words",
-                L"close"});
+                L"close", L"confirm"});
     check_page(L"tray_menu.html",
                {L"tray-open", L"tray-next", L"tray-settings", L"tray-stop",
                 L"tray-show", L"tray-exit"});
@@ -758,6 +758,7 @@ void KotobaCppApp::wire_settings() {
     wire_check(L"freeze-chrome", &Config::freezeChrome);
 
     doc.onClick(L"close", [this] { settings_->show(false); });
+    doc.onClick(L"confirm", [this] { apply_settings(); });
 
     // Initial values. setValue fires onChange, which re-persists the same
     // value (idempotent); the volume handler also refreshes the label.
@@ -1114,6 +1115,22 @@ void KotobaCppApp::show_settings() {
     SetForegroundWindow(settings_->hwnd());
 }
 
+// Confirm button. Every setting is already saved the moment it changes, so
+// Confirm only has to make the new countdown take effect right now
+// (e.g. 90s -> 60s): close the window and restart the countdown.
+// If the app is stopped, just save and close; "Start app" will use the new value.
+void KotobaCppApp::apply_settings() {
+    config_.save();
+
+    if (settings_)
+        settings_->show(false);
+
+    if (stopped_)
+        return;
+
+    start_countdown();
+}
+
 // Keep HKCU\...\Run in sync with the config flag. Writes only when the stored
 // command differs, so a normal start with the option on does not churn the
 // registry; a moved/renamed exe is corrected on the next launch.
@@ -1156,11 +1173,12 @@ void KotobaCppApp::on_tray_click(LPARAM lParam) {
         show_input();
         break;
 
-    // Left click: toggle.
+    // Left click: do nothing. A double-click arrives as click + click, so
+    // reacting to a single click would flash the tray menu before the
+    // double-click opens the input screen. The menu is right-click only.
     case NIN_SELECT:
     case NIN_KEYSELECT:
     case WM_LBUTTONUP:
-        toggle_tray_menu();
         break;
 
     default:

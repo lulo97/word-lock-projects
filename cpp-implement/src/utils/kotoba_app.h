@@ -202,6 +202,7 @@ private:
 
     // ----- settings / tray -----
     void show_settings();
+    void apply_settings();
     // Make the Run key match `enabled`, rewriting a moved/renamed exe path.
     void syncStartupRegistry(bool enabled);
     void applyStartup(bool enabled);

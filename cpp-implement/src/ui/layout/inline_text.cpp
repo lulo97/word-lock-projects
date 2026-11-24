@@ -329,4 +329,8 @@ void clearLineCache() {
     g_lines.clear();
 }
 
+void eraseLines(const Element& el) {
+    g_lines.erase(&el);
+}
+
 } // namespace ui

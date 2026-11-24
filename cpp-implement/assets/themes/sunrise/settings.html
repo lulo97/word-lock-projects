@@ -107,18 +107,23 @@
             class="w-full h-28 mt-3 p-3 bg-[#fff7ed] border-2 border-[#fcd34d] rounded-lg text-[#292524] outline-none resize-none text-[13px]"
           ></textarea>
         </div>
+      </div>  <!-- end of the overflow-y-auto div -->
 
-        <div class="flex-1"></div>
-
-        <div class="flex justify-end mt-2">
-          <button
-            id="close"
-            class="px-10 py-2.5 bg-[#f43f5e] text-white font-bold rounded-full hover:bg-[#e11d48] text-[14px]"
-          >
-            Done
-          </button>
-        </div>
+      <!-- fixed footer: always visible -->
+      <div class="flex justify-end gap-3 px-6 py-4">
+        <button
+          id="confirm"
+          class="px-8 py-2.5 bg-white border-2 border-[#fcd34d] text-[#292524] font-bold rounded-full hover:bg-[#fff7ed] text-[14px]"
+        >
+          Confirm
+        </button>
+        <button
+          id="close"
+          class="px-10 py-2.5 bg-[#f43f5e] text-white font-bold rounded-full hover:bg-[#e11d48] text-[14px]"
+        >
+          Done
+        </button>
       </div>
-    </div>
+    </div>  <!-- end of the card -->
   </body>
 </html>

@@ -9,6 +9,7 @@
 #                  #tray-show #tray-exit
 # settings.html  : #countdown #volume #volume-value #random-ui
 #                  #start-with-windows #freeze-chrome #ignore-words #close
+#                  #confirm
 # input.html     : #word-jp #word-reading #word-romaji #answer #feedback
 #                  #speak #hint
 # info.html      : #word-jp #word-reading #word-romaji #word-meaning

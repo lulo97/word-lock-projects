@@ -35,5 +35,5 @@ const std::vector<LineBox>& getLines(const Element& el);
 
 // Drop cached line boxes for a new layout pass.
 void clearLineCache();
-
+void eraseLines(const Element& el);
 } // namespace ui

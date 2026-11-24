@@ -61,3 +61,14 @@ app assert timers == 1
 window tray
 click #tray-stop
 app assert timers == 0
+
+# --- 6. confirm: closes settings and restarts the countdown right away ---
+window tray
+click #tray-stop
+window settings
+focus #countdown
+key Ctrl+A
+type #countdown 60
+click #confirm
+app assert countdown == 60
+app assert visible settings == false

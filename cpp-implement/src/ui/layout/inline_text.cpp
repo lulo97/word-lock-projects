@@ -4,6 +4,8 @@
 #include "paint/text_draw.h"
 
 #include <algorithm>
+#include <cstdlib>
+#include <cstdio>
 #include <map>
 
 namespace ui {
@@ -149,6 +151,11 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
             std::wstring tokenText = original.text.substr(i, end - i);
             TextRun token = subRun(original, tokenText, runHasCjk);
             measureRun(token);
+            if (_wgetenv(L"WRAP_DBG")) {
+                fwprintf(stderr, L"DBG token='%ls' w=%.1f x=%.1f max=%.1f empty=%d\n",
+                          tokenText.c_str(), token.width, x, maxWidth,
+                          (int)line.runs.empty());
+            }
 
             float spaceWidth = pendingSpace ? spaceRun.width : 0.f;
             float needed = (line.runs.empty() ? 0.f : spaceWidth) + token.width;

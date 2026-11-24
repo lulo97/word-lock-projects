@@ -5,86 +5,120 @@
 # (src/tests/features/*) and engine tests (src/tests/cases/*), which need no launched
 # process.
 #
-# Written in PowerShell (not batch) to avoid the `timeout` PATH collision and
-# working-directory problems. Uses Start-Process / Start-Sleep / Stop-Process.
-#
 # Usage:  powershell -ExecutionPolicy Bypass -File src\tests\smoke.ps1
 # Exit:    0 if the app launched and its state is readable, 1 otherwise.
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)   # project root (src\tests\.. )
-$exe  = Join-Path $root "build\app.exe"
+$root    = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)   # project root
+$exe     = Join-Path $root "build\app.exe"
+$cmdFile = Join-Path $root "debug_cmd.txt"
+$outFile = Join-Path $root "debug_out.txt"
+$totalSw = [Diagnostics.Stopwatch]::StartNew()
 
-# Clean up stale instances and generated files first.
-Get-Process -Name app -ErrorAction SilentlyContinue | Stop-Process -Force
-Remove-Item (Join-Path $root "debug_cmd.txt") -ErrorAction SilentlyContinue
-Remove-Item (Join-Path $root "debug_out.txt") -ErrorAction SilentlyContinue
+function Log([string]$msg) {
+    Write-Host ("  [{0,6:n2}s] {1}" -f $totalSw.Elapsed.TotalSeconds, $msg) -ForegroundColor DarkGray
+}
+
+function Unfreeze {
+    # Thaw any Chrome left suspended. Launched hidden and waited on with a
+    # timeout, never piped, so it cannot hang the script.
+    if (-not (Test-Path $exe)) { return }
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    $p = Start-Process -FilePath $exe -ArgumentList "--unfreeze" `
+         -WindowStyle Hidden -PassThru
+    if (-not $p.WaitForExit(8000)) { try { $p.Kill() } catch {} }
+    Log ("unfreeze took {0:n2}s" -f $sw.Elapsed.TotalSeconds)
+}
+
+function Get-AppState([int]$timeoutMs = 5000) {
+    # Ask the running app for its state and wait (polling) for the answer.
+    Remove-Item $outFile -ErrorAction SilentlyContinue
+    Set-Content -Path $cmdFile -Value "app state" -Encoding ASCII
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    while ($sw.ElapsedMilliseconds -lt $timeoutMs) {
+        if ($proc.HasExited) { throw "app.exe exited (code $($proc.ExitCode))" }
+        if (Test-Path $outFile) {
+            try {
+                $txt = Get-Content $outFile -Raw
+                if ($txt -and $txt -match '"countdown"') { return $txt }
+            } catch { }   # file still being written; retry
+        }
+        Start-Sleep -Milliseconds 25
+    }
+    throw "debug_out.txt not produced within ${timeoutMs}ms; app did not poll the command file"
+}
 
 if (-not (Test-Path $exe)) {
-    Write-Error "app.exe not found at $exe (run build.bat first)"
+    Write-Host "app.exe not found at $exe (run build.bat first)"
     exit 1
 }
 
-# Launch the app in debug mode (it polls debug_cmd.txt so we can query state).
-# Pin the working directory so the debug files land in the project root no
-# matter where this script is invoked from.
-$proc = Start-Process -FilePath $exe -ArgumentList "--debug" `
-         -WorkingDirectory $root -PassThru
+# Clean up stale instances and generated files first.
+Get-Process -Name app -ErrorAction SilentlyContinue | Stop-Process -Force
+Unfreeze
+Remove-Item $cmdFile -ErrorAction SilentlyContinue
+Remove-Item $outFile -ErrorAction SilentlyContinue
 
+$ok = $false
+$proc = $null
 try {
-    # Give it time to create its windows + register the tray icon.
-    Start-Sleep -Seconds 2
+    # Launch in debug mode (it polls debug_cmd.txt so we can query state).
+    # Working directory is pinned so the debug files land in the project root.
+    $proc = Start-Process -FilePath $exe -ArgumentList "--debug" `
+            -WorkingDirectory $root -PassThru
+    Log "app launched (pid $($proc.Id))"
 
-    if ($proc.HasExited) {
-        Write-Error "app.exe exited immediately (code $($proc.ExitCode))"
-        exit 1
-    }
-
-    # Query the running app's state through its debug command file.
-    Set-Content -Path (Join-Path $root "debug_cmd.txt") -Value "app state" -Encoding ASCII
-    Start-Sleep -Milliseconds 750
-
-    $outFile = Join-Path $root "debug_out.txt"
-    if (-not (Test-Path $outFile)) {
-        Write-Error "debug_out.txt not produced; app did not poll the command file"
-        exit 1
-    }
-    $state = Get-Content $outFile -Raw
+    # First poll: waits as long as the app needs to create windows + tray.
+    $state = Get-AppState 8000
+    Log "first state received"
     Write-Host "app state: $state"
 
-    # stateJson() dumps bools as true/false, ints as digits.
     if ($state -notmatch '"stopped":false') {
-        Write-Error "app state missing 'stopped:false' (tray/countdown not running)"
-        exit 1
+        throw "app state missing 'stopped:false' (tray/countdown not running)"
     }
 
-    # Prove the countdown timer is live: it must decrease between two polls
-    # (debug mode ticks at 10 ms, so ~1.5 s is plenty for any configured
-    # countdown). If it already completed before the first poll (a very
-    # short configured countdown), accept the post-countdown state instead:
-    # countdown=0 plus the input window created by the transition timer.
+    # Prove the countdown timer is live: it must decrease between polls
+    # (debug mode ticks at 10 ms). If it already completed, accept the
+    # post-countdown state: countdown=0 plus the input window.
     $c1 = $null
     if ($state -match '"countdown":(\d+)') { $c1 = [int]$Matches[1] }
-    Set-Content -Path (Join-Path $root "debug_cmd.txt") -Value "app state" -Encoding ASCII
-    Start-Sleep -Milliseconds 1500
-    $state2 = Get-Content $outFile -Raw
-    $c2 = $null
-    if ($state2 -match '"countdown":(\d+)') { $c2 = [int]$Matches[1] }
-    $completed = ($c1 -eq 0) -and ($state2 -match '"inputWin":true')
-    if ($null -eq $c1 -or $null -eq $c2 -or (($c2 -ge $c1) -and -not $completed)) {
-        Write-Error "countdown not decreasing between polls (c1=$c1 c2=$c2); timer not live"
-        exit 1
+    if ($null -eq $c1) { throw "no countdown value in state" }
+
+    $live = $false
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    while ($sw.ElapsedMilliseconds -lt 3000) {
+        $state2 = Get-AppState 3000
+        $c2 = $null
+        if ($state2 -match '"countdown":(\d+)') { $c2 = [int]$Matches[1] }
+        $completed = ($c1 -eq 0) -and ($state2 -match '"inputWin":true')
+        if ($null -ne $c2 -and (($c2 -lt $c1) -or $completed)) {
+            $live = $true
+            break
+        }
+        Start-Sleep -Milliseconds 100
     }
-    Write-Host "countdown live: $c1 -> $c2"
+    if (-not $live) {
+        throw "countdown not decreasing between polls (c1=$c1 c2=$c2); timer not live"
+    }
+    Log "countdown live: $c1 -> $c2"
+    $ok = $true
+}
+catch {
+    Write-Host "SMOKE FAIL: $($_.Exception.Message)"
 }
 finally {
-    # Always clean up: kill the app and remove the generated files.
+    # Always clean up. Order matters: kill the app first (Stop-Process does
+    # not run its own cleanup), THEN thaw Chrome.
     if ($proc -and -not $proc.HasExited) {
-        Stop-Process -Id $proc.Id -Force
+        Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
     }
-    Remove-Item (Join-Path $root "debug_cmd.txt") -ErrorAction SilentlyContinue
-    Remove-Item (Join-Path $root "debug_out.txt") -ErrorAction SilentlyContinue
+    Remove-Item $cmdFile -ErrorAction SilentlyContinue
+    Remove-Item $outFile -ErrorAction SilentlyContinue
+    Unfreeze
 }
 
-Write-Host "SMOKE OK: app.exe launched, tray registered, state readable"
-exit 0
+if ($ok) {
+    Write-Host "SMOKE OK: app.exe launched, tray registered, state readable"
+    exit 0
+}
+exit 1

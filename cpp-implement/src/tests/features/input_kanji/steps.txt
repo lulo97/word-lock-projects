@@ -30,7 +30,7 @@ app assert visible info == true
 window info
 assert text #word-jp == 猫
 assert text #word-reading == ねこ
-assert text #word-romaji == "romaji: neko"
+assert text #word-romaji == "Romaji: neko"
 
 # --- 3. repeat: close + reopen the info screen ---
 window tray

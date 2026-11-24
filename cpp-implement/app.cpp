@@ -25,7 +25,11 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR cmd, int) {
     // run left frozen. Safe no-op when nothing is suspended.
     resume_all_chrome();
     SetUnhandledExceptionFilter(onCrash);
-
+    
+    // Test/agent seam: thaw Chrome left frozen by a crashed/killed run and exit.
+        if (cmd && wcsstr(cmd, L"--unfreeze"))
+            return 0;
+            
     KotobaCppApp app;
     if (cmd && wcsstr(cmd, L"--debug"))
         app.setDebug(true);

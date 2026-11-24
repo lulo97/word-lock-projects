@@ -9,23 +9,25 @@
   "smartExcludes": [
     "build",
     "README.md",
-    "out"
+    "out",
+    "__pycache__"
   ],
   "smartExcludesOff": [],
   "excludedFileTypes": [
-    ".json",
     ".bat",
     ".rc",
-    ".txt",
-    ".html",
     ".cmake",
-    ".h",
     ".hpp",
     ".md",
     ".ps1",
-    ".js"
+    ".js",
+    ".py",
+    ".json"
   ],
-  "manualExcludes": [],
+  "manualExcludes": [
+    "build-release",
+    "imgs"
+  ],
   "manualIncludes": [],
   "contentSearch": "",
   "searchMode": "OR",

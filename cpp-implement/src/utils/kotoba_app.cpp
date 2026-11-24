@@ -1064,6 +1064,7 @@ void KotobaCppApp::show_input() {
 
     input_->show(true);
     ShowWindow(input_->hwnd(), SW_MAXIMIZE);
+    bring_to_front(*input_);
 
     if (ui::Element* answer = input_->document().byId(L"answer"))
         input_->document().events().setFocus(answer);
@@ -1106,6 +1107,7 @@ void KotobaCppApp::show_info() {
 
     info_->show(true);
     ShowWindow(info_->hwnd(), SW_MAXIMIZE);
+    bring_to_front(*info_);
 }
 
 // ----- settings / tray -----

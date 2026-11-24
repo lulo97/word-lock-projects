@@ -5,6 +5,8 @@
 #include "app/window_host.h"
 #include "word_db.h"
 
+void bring_to_front(ui::WindowHost& host);
+
 // Load an embedded HTML file by name (e.g. L"countdown.html").
 // Returns empty wstring if not found.
 std::wstring load_embedded_html(const wchar_t* name);

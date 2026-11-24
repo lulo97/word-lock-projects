@@ -8,6 +8,32 @@
 
 #include <windows.h>
 
+void bring_to_front(ui::WindowHost& host) {
+    HWND hwnd = host.hwnd();
+    if (!hwnd)
+        return;
+
+    if (IsIconic(hwnd))
+        ShowWindow(hwnd, SW_RESTORE);
+
+    HWND fg = GetForegroundWindow();
+    DWORD fgThread = fg ? GetWindowThreadProcessId(fg, nullptr) : 0;
+    DWORD myThread = GetCurrentThreadId();
+
+    // Attach to the foreground thread so Windows allows the focus change.
+    bool attached = fgThread && fgThread != myThread &&
+                    AttachThreadInput(myThread, fgThread, TRUE);
+
+    SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    BringWindowToTop(hwnd);
+    SetForegroundWindow(hwnd);
+    SetFocus(hwnd);
+
+    if (attached)
+        AttachThreadInput(myThread, fgThread, FALSE);
+}
+
 std::wstring load_embedded_html(const wchar_t* name) {
     std::string utf8Name = ui::wideToUtf8(name);
     std::string path = "assets/htmls/" + utf8Name;

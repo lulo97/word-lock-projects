@@ -1,62 +1,109 @@
 <!doctype html>
 <html lang="ja">
   <!-- sunrise: card layout, header band, examples as tinted cards. -->
-  <body class="bg-[#fff7ed] min-h-screen flex items-center justify-center antialiased text-[#292524] p-8">
-    <div class="w-full max-w-5xl bg-white rounded-2xl border-2 border-[#fcd34d] shadow-xl overflow-hidden">
-      <header class="bg-[#fcd34d] px-10 py-6 flex flex-row justify-between items-center">
-        <div class="flex flex-row items-end gap-5">
-          <h1 id="word-jp" class="text-5xl font-extrabold text-[#292524]">{{kanji}}</h1>
-          <div class="pb-1 space-y-1">
-            <h2 id="word-reading" class="text-xl font-bold text-[#292524]">{{hiragana}}</h2>
-            <p id="word-romaji" class="text-[#57534e] text-[13px] font-semibold">romaji: {{romaji}}</p>
-          </div>
-        </div>
-
-        <div class="flex flex-row items-center gap-3">
-          <button id="speak" class="px-6 py-2.5 bg-[#f43f5e] text-white text-sm font-bold rounded-full shadow-lg hover:bg-[#e11d48]">Listen</button>
-          <button id="close" class="px-6 py-2.5 bg-white text-[#292524] text-sm font-bold rounded-full border-2 border-[#292524] hover:bg-[#fff7ed]">Close</button>
-        </div>
-      </header>
-
-      <div class="px-10 py-8 space-y-8">
-        <section class="flex flex-row items-start gap-6">
-          <span class="bg-[#f43f5e] text-white text-[11px] font-extrabold tracking-wide uppercase px-4 py-1.5 rounded-full">
-            Meaning
-          </span>
-          <div class="space-y-1">
-            <p id="word-meaning" class="text-[#292524] text-2xl font-extrabold">{{meaning_ja}}</p>
-            <p class="text-[#78716c] italic text-sm">{{meaning_ja_romaji}}</p>
-            <p class="text-[#44403c] text-base font-bold">{{meaning_vi}}</p>
-          </div>
-        </section>
-
-        <section>
-          <p class="text-[#78716c] text-[11px] font-extrabold tracking-wider uppercase mb-3">
-            Examples
-          </p>
-
-          <div id="examples" class="space-y-4"></div>
-
-          <template id="example-row">
-            <div class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4">
-              <div class="space-y-1">
-                <p class="jp text-[#292524] text-[17px] font-bold"></p>
-                <p class="romaji text-[#78716c] italic text-[13px] ml-4"></p>
-                <p class="en text-[#57534e] text-[14px] ml-4"></p>
-              </div>
-              <button class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1">Speak</button>
+  <body
+    class="bg-[#fff7ed] h-screen overflow-y-auto antialiased text-[#292524]"
+  >
+    <div class="flex justify-center px-8 py-8">
+      <div
+        class="w-full max-w-5xl bg-white rounded-2xl border-2 border-[#fcd34d] shadow-xl overflow-hidden"
+      >
+        <header
+          class="bg-[#fcd34d] px-10 py-6 flex flex-row justify-between items-center"
+        >
+          <div class="flex flex-row items-end gap-5">
+            <h1 id="word-jp" class="text-5xl font-extrabold text-[#292524]">
+              {{kanji}}
+            </h1>
+            <div class="pb-1 space-y-1">
+              <h2 id="word-reading" class="text-xl font-bold text-[#292524]">
+                {{hiragana}}
+              </h2>
+              <p
+                id="word-romaji"
+                class="text-[#57534e] text-[13px] font-semibold"
+              >
+                romaji: {{romaji}}
+              </p>
             </div>
+          </div>
+
+          <div class="flex flex-row items-center gap-3">
+            <button
+              id="speak"
+              class="px-6 py-2.5 bg-[#f43f5e] text-white text-sm font-bold rounded-full shadow-lg hover:bg-[#e11d48]"
+            >
+              Listen
+            </button>
+            <button
+              id="close"
+              class="px-6 py-2.5 bg-white text-[#292524] text-sm font-bold rounded-full border-2 border-[#292524] hover:bg-[#fff7ed]"
+            >
+              Close
+            </button>
+          </div>
+        </header>
+
+        <div class="px-10 py-8 space-y-8">
+          <section class="flex flex-row items-start gap-6">
+            <span
+              class="bg-[#f43f5e] text-white text-[11px] font-extrabold tracking-wide uppercase px-4 py-1.5 rounded-full"
+            >
+              Meaning
+            </span>
+            <div class="space-y-1">
+              <p
+                id="word-meaning"
+                class="text-[#292524] text-2xl font-extrabold"
+              >
+                {{meaning_ja}}
+              </p>
+              <p class="text-[#78716c] italic text-sm">{{meaning_ja_romaji}}</p>
+              <p class="text-[#44403c] text-base font-bold">{{meaning_vi}}</p>
+            </div>
+          </section>
+
+          <section>
+            <p
+              class="text-[#78716c] text-[11px] font-extrabold tracking-wider uppercase mb-3"
+            >
+              Examples
+            </p>
+
+            <div id="examples" class="space-y-4"></div>
+
+            <template id="example-row">
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold"></p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4"></p>
+                  <p class="en text-[#57534e] text-[14px] ml-4"></p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+            </template>
+          </section>
+
+          <div id="tags" class="flex flex-row items-center gap-2">
+            <span
+              class="text-[#78716c] text-[11px] font-extrabold tracking-wider uppercase"
+              >Tags:</span
+            >
+            <div id="tags-list" class="flex flex-row items-center gap-2"></div>
+          </div>
+
+          <template id="tag-chip">
+            <span
+              class="bg-[#fcd34d] text-[#292524] px-3 py-1 text-[11px] font-bold rounded-full"
+            ></span>
           </template>
-        </section>
-
-        <div id="tags" class="flex flex-row items-center gap-2">
-          <span class="text-[#78716c] text-[11px] font-extrabold tracking-wider uppercase">Tags:</span>
-          <div id="tags-list" class="flex flex-row items-center gap-2"></div>
         </div>
-
-        <template id="tag-chip">
-          <span class="bg-[#fcd34d] text-[#292524] px-3 py-1 text-[11px] font-bold rounded-full"></span>
-        </template>
       </div>
     </div>
   </body>

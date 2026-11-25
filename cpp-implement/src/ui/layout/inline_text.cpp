@@ -80,7 +80,7 @@ bool hasCjkText(const std::wstring& text) {
 
 // Whole-run and per-token GDI measurements are rounded independently, so a
 // line can overflow maxContent by a fraction of a pixel. Treat that as "fits".
-constexpr float kWrapTolerancePx = 0.5f;
+constexpr float kWrapTolerancePx = 1.0f;
 
 } // namespace
 
@@ -171,7 +171,7 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
             }
 
             if (maxWidth > 0 && x + spaceWidth + token.width > maxWidth + kWrapTolerancePx &&
-                line.runs.empty() && token.width > maxWidth) {
+                line.runs.empty() && token.width > maxWidth + kWrapTolerancePx) {
                 // Overlong single word: split by character.
                 std::wstring chunk;
 
@@ -180,7 +180,7 @@ std::vector<LineBox> breakLines(const std::vector<TextRun>& runs, float maxWidth
                     TextRun test = subRun(original, next, runHasCjk);
                     measureRun(test);
 
-                    if (maxWidth > 0 && test.width > maxWidth && !chunk.empty()) {
+                    if (maxWidth > 0 && test.width > maxWidth + kWrapTolerancePx && !chunk.empty()) {
                         TextRun segment = subRun(original, chunk, runHasCjk);
                         measureRun(segment);
                         segment.x = x;

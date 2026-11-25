@@ -1,101 +1,191 @@
 <!doctype html>
 <html lang="ja">
-  <!-- ink: calm, minimal, dark. Single column, hairline rules. -->
+  <!-- sunrise: card layout, header band, examples as tinted cards. -->
   <body
-    class="bg-slate-900 h-screen overflow-y-auto flex flex-col justify-center antialiased text-slate-100"
+    class="bg-[#fff7ed] h-screen overflow-y-auto flex flex-col justify-center relative antialiased text-[#292524]"
   >
-    <div class="flex justify-center px-10 py-10">
+    <div class="flex justify-center px-8 py-4">
       <div
-        class="w-full max-w-4xl px-14 py-12 rounded-md border border-slate-700 bg-[#0e1726]"
+        class="w-full max-w-5xl bg-white rounded-2xl border-2 border-[#fcd34d] shadow-xl overflow-y-auto max-h-[90vh]"
       >
         <header
-          class="flex justify-between items-start pb-8 border-b border-slate-700"
+          class="bg-[#fcd34d] px-10 py-6 flex flex-row justify-between items-center"
         >
-          <div class="space-y-2">
-            <h1
-              id="word-jp"
-              class="text-6xl font-light tracking-widest text-slate-100"
-            >
-              {{kanji}}
+          <div class="flex flex-row items-end gap-5">
+            <h1 id="word-jp" class="text-5xl font-extrabold text-[#292524]">
+              家族
             </h1>
-            <h2
-              id="word-reading"
-              class="text-xl font-light tracking-wide text-[#818cf8]"
-            >
-              {{hiragana}}
-            </h2>
-            <p
-              id="word-romaji"
-              class="text-slate-400 text-[13px] tracking-widest"
-            >
-              Romaji: {{romaji}}
-            </p>
+            <div class="pb-1 space-y-1">
+              <h2 id="word-reading" class="text-xl font-bold text-[#292524]">
+                かぞく
+              </h2>
+              <p
+                id="word-romaji"
+                class="text-[#57534e] text-[13px] font-semibold"
+              >
+                Romaji: kazoku
+              </p>
+            </div>
           </div>
 
-          <div class="flex items-center gap-3 pt-2">
+          <div class="flex flex-row items-center gap-3">
             <button
               id="speak"
-              class="px-5 py-2 bg-[#0e1726] border border-slate-700 text-[#818cf8] text-sm tracking-wide hover:border-[#818cf8]"
+              class="px-6 py-2.5 bg-[#f43f5e] text-white text-sm font-bold rounded-full shadow-lg hover:bg-[#e11d48]"
             >
               Listen
             </button>
             <button
               id="close"
-              class="px-5 py-2 bg-[#0e1726] border border-slate-700 text-slate-400 text-sm tracking-wide hover:border-slate-400"
+              class="px-6 py-2.5 bg-white text-[#292524] text-sm font-bold rounded-full border-2 border-[#292524] hover:bg-[#fff7ed]"
             >
               Close
             </button>
           </div>
         </header>
 
-        <section class="pt-8 space-y-3">
-          <p class="text-[#818cf8] text-[11px] tracking-widest uppercase">
-            Meaning
-          </p>
-          <p id="word-meaning" class="text-slate-100 text-2xl font-light">
-            {{meaning_ja}}
-          </p>
-          <p class="text-slate-400 italic text-sm">{{meaning_ja_romaji}}</p>
-          <p class="text-slate-300 text-base font-light">{{meaning_vi}}</p>
-        </section>
-
-        <section class="pt-10">
-          <p class="text-[#818cf8] text-[11px] tracking-widest uppercase mb-4">
-            Examples
-          </p>
-
-          <div id="examples"></div>
-
-          <template id="example-row">
-            <div
-              class="flex justify-between items-start py-4 border-b border-slate-800"
+        <div class="px-10 py-8 space-y-8">
+          <section class="flex flex-row items-start gap-6">
+            <span
+              class="bg-[#f43f5e] text-white text-[11px] font-extrabold tracking-wide uppercase px-4 py-1.5 rounded-full"
             >
-              <div class="space-y-1">
-                <p class="jp text-slate-100 text-[17px] font-light"></p>
-                <p class="romaji text-slate-500 italic text-[13px] ml-3"></p>
-                <p class="en text-slate-400 text-[14px] ml-3"></p>
-              </div>
-              <button
-                class="listen px-4 py-1 bg-[#0e1726] border border-slate-700 text-[#818cf8] text-xs tracking-wide hover:border-[#818cf8] mt-1"
+              Meaning
+            </span>
+            <div class="space-y-1">
+              <p
+                id="word-meaning"
+                class="text-[#292524] text-2xl font-extrabold"
               >
-                Speak
-              </button>
+                血縁のある人々
+              </p>
+              <p class="text-[#78716c] italic text-sm">ketsuen no aru hitobito</p>
+              <p class="text-[#44403c] text-base font-bold">gia đình</p>
             </div>
+          </section>
+
+          <section>
+            <p
+              class="text-[#78716c] text-[11px] font-extrabold tracking-wider uppercase mb-3"
+            >
+              Examples
+            </p>
+
+            <div id="examples" class="space-y-4">
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold">私の家族は四人です。</p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4">watashi no kazoku wa yonin desu.</p>
+                  <p class="en text-[#57534e] text-[14px] ml-4">Gia đình tôi có bốn người.</p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold">家族で旅行に行くのが好きです。</p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4">kazoku de ryokou ni iku no ga suki desu.</p>
+                  <p class="en text-[#57534e] text-[14px] ml-4">Tôi thích đi du lịch cùng gia đình.</p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold">毎週末、家族全員が集まって一緒に夕食を作りながら、最近あった出来事について話し合うのが私たちの大切な習慣になっています。</p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4">maishuumatsu, kazoku zen'in ga atsumatte issho ni yuushoku o tsukurinagara, saikin atta dekigoto ni tsuite hanashiau no ga watashitachi no taisetsu na shuukan ni natte imasu.</p>
+                  <p class="en text-[#57534e] text-[14px] ml-4">Mỗi cuối tuần, cả gia đình tôi quây quần nấu bữa tối cùng nhau và trò chuyện về những việc xảy ra gần đây, đó đã trở thành thói quen quan trọng của chúng tôi.</p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold">家族の支えがあったからこそ、困難な状況でも諦めずに前に進むことができたのだと思います。</p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4">kazoku no sasae ga atta kara koso, konnan na joukyou demo akiramezu ni mae ni susumu koto ga dekita no da to omoimasu.</p>
+                  <p class="en text-[#57534e] text-[14px] ml-4">Chính nhờ có sự ủng hộ của gia đình mà tôi nghĩ mình đã có thể tiếp tục tiến về phía trước mà không bỏ cuộc ngay cả trong hoàn cảnh khó khăn.</p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold">彼は仕事で忙しくても、家族との時間を何よりも大切にして、子供たちの学校行事には必ず参加するようにしています。</p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4">kare wa shigoto de isogashikutemo, kazoku to no jikan o nani yori mo taisetsu ni shite, kodomotachi no gakkou gyouji ni wa kanarazu sanka suru you ni shite imasu.</p>
+                  <p class="en text-[#57534e] text-[14px] ml-4">Dù bận rộn với công việc, anh ấy vẫn coi thời gian bên gia đình là quan trọng hơn hết và luôn cố gắng tham gia mọi sự kiện ở trường của các con.</p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+            </div>
+
+            <template id="example-row">
+              <div
+                class="flex flex-row justify-between items-start bg-[#fff7ed] border-2 border-[#fcd34d] rounded-2xl px-6 py-4"
+              >
+                <div class="space-y-1">
+                  <p class="jp text-[#292524] text-[17px] font-bold"></p>
+                  <p class="romaji text-[#78716c] italic text-[13px] ml-4"></p>
+                  <p class="en text-[#57534e] text-[14px] ml-4"></p>
+                </div>
+                <button
+                  class="listen px-5 py-2 bg-[#f43f5e] text-white text-xs font-bold rounded-full shadow-lg hover:bg-[#e11d48] mt-1"
+                >
+                  Speak
+                </button>
+              </div>
+            </template>
+          </section>
+
+          <div id="tags" class="flex flex-row items-center gap-2">
+            <span
+              class="text-[#78716c] text-[11px] font-extrabold tracking-wider uppercase"
+              >Tags:</span
+            >
+            <div id="tags-list" class="flex flex-row items-center gap-2">
+              <span
+                class="bg-[#fcd34d] text-[#292524] px-3 py-1 text-[11px] font-bold rounded-full"
+              >noun</span>
+              <span
+                class="bg-[#fcd34d] text-[#292524] px-3 py-1 text-[11px] font-bold rounded-full"
+              >family</span>
+            </div>
+          </div>
+
+          <template id="tag-chip">
+            <span
+              class="bg-[#fcd34d] text-[#292524] px-3 py-1 text-[11px] font-bold rounded-full"
+            ></span>
           </template>
-        </section>
 
-        <div id="tags" class="flex items-center gap-2 pt-8">
-          <span class="text-slate-500 text-[11px] tracking-widest uppercase"
-            >Tags:</span
-          >
-          <div id="tags-list" class="flex items-center gap-2"></div>
+          <p class="pt-4 text-center text-[#78716c] text-[12px] tracking-wide">
+            Enter to exit app
+          </p>
         </div>
-
-        <template id="tag-chip">
-          <span
-            class="bg-[#0e1726] border border-slate-700 text-slate-400 px-2 py-0.5 text-[11px] tracking-wide rounded-md"
-          ></span>
-        </template>
       </div>
     </div>
   </body>

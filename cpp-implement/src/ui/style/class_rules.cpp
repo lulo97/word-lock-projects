@@ -369,6 +369,23 @@ bool ruleSizing(const std::wstring& cls, Declarations& out) {
             }
         }
 
+        std::wstring inner;
+        if (arbitrary(key, inner)) {
+            std::wstring t = trim(inner);
+            for (wchar_t& c : t) if (c == L'_') c = L' ';
+            t = trim(t);
+            if (t.size() > 2 && t.substr(t.size() - 2) == L"vh") {
+                float n = 0;
+                if (parseFloat(t.substr(0, t.size() - 2), n)) {
+                    Length screenLength;
+                    screenLength.unit = Length::Unit::Screen;
+                    screenLength.value = n;
+                    out.push_back(len(p.prop, screenLength));
+                    return true;
+                }
+            }
+        }
+
         Length value;
 
         if (!lengthToken(key, value))

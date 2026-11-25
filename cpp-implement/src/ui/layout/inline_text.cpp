@@ -332,6 +332,22 @@ const std::vector<LineBox>& getLines(const Element& el) {
     return it == g_lines.end() ? empty : it->second;
 }
 
+void translateLines(Element& el, float dx, float dy) {
+    auto it = g_lines.find(&el);
+
+    if (it == g_lines.end())
+        return;
+
+    for (LineBox& line : it->second) {
+        line.y += dy;
+
+        for (TextRun& run : line.runs) {
+            run.x += dx;
+            run.y += dy;
+        }
+    }
+}
+
 void clearLineCache() {
     g_lines.clear();
 }

@@ -1,23 +1,28 @@
 {
-  "kanji": "りんご",
-  "hiragana": "りんご",
-  "romaji": "ringo",
+  "kanji": "家族",
+  "hiragana": "かぞく",
+  "romaji": "kazoku",
   "pos": "Noun",
-  "meaning_ja": "リンゴ属の落葉広葉樹、またはその実。",
-  "meaning_ja_romaji": "ringo zoku no rakuhyou kouyoku, mata wa sono mi.",
-  "meaning_vi": "Quả táo.",
+  "meaning_ja": "血縁のある人々",
+  "meaning_ja_romaji": "ketsuen no aru hitobito",
+  "meaning_vi": "gia đình",
   "examples": [
     {
-      "ja": "りんごを食べました。",
-      "romaji": "ringo o tabemashita.",
-      "vi": "Tôi đã ăn một quả táo."
+      "ja": "私の家族は四人です。",
+      "romaji": "watashi no kazoku wa yonin desu.",
+      "vi": "Gia đình tôi có bốn người.",
+      "audio": "audio/家族/ex_1.ogg"
     },
     {
-      "ja": "赤いりんごが好きです。",
-      "romaji": "akai ringo ga suki desu.",
-      "vi": "Tôi thích táo đỏ."
+      "ja": "家族で旅行に行くのが好きです。",
+      "romaji": "kazoku de ryokou ni iku no ga suki desu.",
+      "vi": "Tôi thích đi du lịch cùng gia đình.",
+      "audio": "audio/家族/ex_2.ogg"
     }
   ],
-  "tags": ["food", "fruit"],
-  "audio": ""
+  "tags": [
+    "noun",
+    "family"
+  ],
+  "audio": "audio/家族/word.ogg"
 }

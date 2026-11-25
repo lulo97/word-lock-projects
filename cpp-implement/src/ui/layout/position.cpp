@@ -1,5 +1,6 @@
 #include "layout/position.h"
 
+#include "layout/inline_text.h"
 #include "layout/layout.h"
 #include "layout/measure.h"
 
@@ -99,10 +100,13 @@ void layoutAbsolute(Element& el, const RectF& containingRect, float scale) {
 
     float y = containingRect.y;
 
+    // With only `bottom` set, the element's height is not known until after
+    // layout, so position it provisionally at the containing block's top and
+    // align its bottom edge once the box has been laid out.
+    const bool bottomOnly = hasBottom && !hasTop;
+
     if (hasTop)
         y += top + marginTop;
-    else if (hasBottom)
-        y += containingRect.h - bottom - marginBottom;
 
     Constraints c;
     c.availWidth = width;
@@ -113,6 +117,14 @@ void layoutAbsolute(Element& el, const RectF& containingRect, float scale) {
     c.viewportHeight = containingRect.h;
 
     layoutElement(el, x, y, c, scale);
+
+    if (bottomOnly) {
+        float targetBottom = containingRect.y + containingRect.h - bottom - marginBottom;
+        float alignDy = targetBottom - el.box.borderRect.bottom();
+
+        if (alignDy != 0)
+            translateSubtree(el, 0, alignDy);
+    }
 
     float dx = el.box.borderRect.w * style.translateXPct / 100.0f;
     float dy = el.box.borderRect.h * style.translateYPct / 100.0f;
@@ -180,6 +192,7 @@ std::vector<Element*> paintOrderChildren(Element& el) {
 void translateSubtree(Element& el, float dx, float dy) {
     el.box.borderRect.x += dx;
     el.box.borderRect.y += dy;
+    translateLines(el, dx, dy);
 
     for (auto& childPtr : el.children) {
         Element* child = dynamic_cast<Element*>(childPtr.get());

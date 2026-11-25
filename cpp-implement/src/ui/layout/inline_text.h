@@ -33,6 +33,9 @@ bool hasInlineContent(const Element& el);
 // Fetch cached lines computed by layoutInline for painting. Out: lines or empty.
 const std::vector<LineBox>& getLines(const Element& el);
 
+// Shift cached line boxes (used when an element is moved after layout).
+void translateLines(Element& el, float dx, float dy);
+
 // Drop cached line boxes for a new layout pass.
 void clearLineCache();
 void eraseLines(const Element& el);

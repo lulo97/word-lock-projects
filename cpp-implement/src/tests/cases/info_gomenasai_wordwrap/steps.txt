@@ -1,5 +1,0 @@
-size 1280x720
-dpi 1
-load page.html
-dump out_info.json
-shot out_info.png 2

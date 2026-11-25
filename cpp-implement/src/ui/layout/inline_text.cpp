@@ -36,6 +36,7 @@ void collectFrom(Element& el, const ComputedStyle& textStyle, float scale,
         if (child->style.display == Display::None ||
             child->style.display == Display::Block ||
             child->style.display == Display::Flex ||
+            child->style.display == Display::InlineBlock ||
             child->style.position == Position::Absolute)
             continue;
 
@@ -261,11 +262,13 @@ bool hasInlineContent(const Element& el) {
         if (child->style.position == Position::Absolute ||
             child->style.display == Display::None)
             continue;
+        // Atomic/replaced elements have their own box; they can't be flattened into runs.
         if (child->tag == L"svg" || child->tag == L"img" ||
             child->tag == L"input" || child->tag == L"textarea")
             return false;
         if (child->style.display == Display::Block ||
-            child->style.display == Display::Flex)
+            child->style.display == Display::Flex ||
+            child->style.display == Display::InlineBlock)
             return false;
         hasInline = true;
     }

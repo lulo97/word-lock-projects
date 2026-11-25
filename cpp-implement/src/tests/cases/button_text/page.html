@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ja">
+  <!-- sakura: soft pink card, plum accents. -->
+  <body class="bg-[#fdf2f8] h-screen overflow-y-auto flex flex-col justify-center relative antialiased text-[#500724]">
+    <div class="flex justify-center px-8 py-4">
+      <div class="w-full max-w-5xl bg-white rounded-2xl border-2 border-[#fbcfe8] shadow-xl overflow-y-auto max-h-[90vh]">
+        <header class="bg-[#fbcfe8] px-10 py-6 flex flex-row justify-between items-center">
+          <div class="flex flex-row items-center gap-5 shrink-0">
+            <h1 id="word-jp" class="shrink-0 text-5xl font-medium text-[#500724]">ごちそうさま</h1>
+            <div class="pb-1 space-y-1">
+              <h2 id="word-reading" class="text-xl font-light text-[#831843]">ごちそうさま</h2>
+              <p id="word-romaji" class="text-[#9d174d] text-[13px] font-medium">Romaji: gochisousama</p>
+            </div>
+          </div>
+          <div class="flex flex-row items-center gap-3">
+            <button id="speak" class="px-6 py-2.5 bg-[#db2777] text-white text-sm font-medium rounded-full shadow-lg hover:bg-[#be185d]">Listen</button>
+            <button id="close" class="px-6 py-2.5 bg-white text-[#500724] text-sm font-medium rounded-full border-2 border-[#fbcfe8] hover:bg-[#fdf2f8]">Close</button>
+          </div>
+        </header>
+        <div class="px-10 py-8 space-y-8">
+          <section class="flex flex-row items-start gap-6">
+            <span class="bg-[#db2777] text-white text-[11px] font-medium tracking-wide uppercase px-4 py-1.5 rounded-full">Meaning</span>
+            <div class="space-y-1">
+              <p id="word-meaning" class="text-[#500724] text-2xl font-medium">食事を終えた際のお礼の言葉</p>
+              <p class="text-[#9d174d] italic text-sm">shokuji o oeta sai no oreino kotoba</p>
+              <p class="text-[#831843] text-base font-medium">Cảm ơn vì bữa ăn</p>
+            </div>
+          </section>
+          <section>
+            <p class="text-[#9d174d] text-[11px] font-medium tracking-wider uppercase mb-3">Examples</p>
+            <div id="examples" class="space-y-4">
+              <div class="flex flex-row justify-between items-start bg-[#fdf2f8] border-2 border-[#fbcfe8] rounded-2xl px-6 py-4">
+                <div class="space-y-1">
+                  <p class="jp text-[#500724] text-[17px] font-medium">ごちそうさまでした。とても美味しかったです。</p>
+                  <p class="romaji text-[#9d174d] italic text-[13px] ml-4">gochisousama deshita. totemo oishikatta desu.</p>
+                  <p class="en text-[#831843] text-[14px] ml-4">Cảm ơn vì bữa ăn. Nó rất ngon.</p>
+                </div>
+                <button class="listen px-5 py-2 bg-[#db2777] text-white text-xs font-medium rounded-full shadow-lg hover:bg-[#be185d] mt-1">Speak</button>
+              </div>
+              <div class="flex flex-row justify-between items-start bg-[#fdf2f8] border-2 border-[#fbcfe8] rounded-2xl px-6 py-4">
+                <div class="space-y-1">
+                  <p class="jp text-[#500724] text-[17px] font-medium">ごちそうさまでした。お腹いっぱいになりました。</p>
+                  <p class="romaji text-[#9d174d] italic text-[13px] ml-4">gochisousama deshita. onaka ippai ni narimashita.</p>
+                  <p class="en text-[#831843] text-[14px] ml-4">Cảm ơn vì bữa ăn. Tôi đã no bụng rồi.</p>
+                </div>
+                <button class="listen px-5 py-2 bg-[#db2777] text-white text-xs font-medium rounded-full shadow-lg hover:bg-[#be185d] mt-1">Speak</button>
+              </div>
+            </div>
+            <template id="example-row">
+              <div class="flex flex-row justify-between items-start bg-[#fdf2f8] border-2 border-[#fbcfe8] rounded-2xl px-6 py-4">
+                <div class="space-y-1">
+                  <p class="jp text-[#500724] text-[17px] font-medium"></p>
+                  <p class="romaji text-[#9d174d] italic text-[13px] ml-4"></p>
+                  <p class="en text-[#831843] text-[14px] ml-4"></p>
+                </div>
+                <button class="listen px-5 py-2 bg-[#db2777] text-white text-xs font-medium rounded-full shadow-lg hover:bg-[#be185d] mt-1">Speak</button>
+              </div>
+            </template>
+          </section>
+          <div id="tags" class="flex flex-row items-center gap-2">
+            <span class="text-[#9d174d] text-[11px] font-medium tracking-wider uppercase">Tags:</span>
+            <div id="tags-list" class="flex flex-row items-center gap-2">
+              <span class="bg-[#fbcfe8] text-[#831843] px-3 py-1 text-[11px] font-medium rounded-full">thanks</span>
+              <span class="bg-[#fbcfe8] text-[#831843] px-3 py-1 text-[11px] font-medium rounded-full">meal</span>
+              <span class="bg-[#fbcfe8] text-[#831843] px-3 py-1 text-[11px] font-medium rounded-full">polite</span>
+            </div>
+          </div>
+          <template id="tag-chip">
+            <span class="bg-[#fbcfe8] text-[#831843] px-3 py-1 text-[11px] font-medium rounded-full"></span>
+          </template>
+          <p class="pt-4 text-center text-[#9d174d] text-[12px] tracking-wide">Enter to exit app</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

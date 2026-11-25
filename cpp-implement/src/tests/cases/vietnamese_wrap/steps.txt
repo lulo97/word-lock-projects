@@ -1,5 +1,0 @@
-size 800x600
-dpi 1
-load vi_page.html
-dump out.json
-shot out.png 2

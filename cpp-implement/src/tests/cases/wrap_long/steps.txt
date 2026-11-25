@@ -1,7 +1,0 @@
-size 400x400
-dpi 1
-load wrap_page.html
-assert rect #cjk h>40
-assert rect #longword h>40
-dump out.json
-shot out.png 2

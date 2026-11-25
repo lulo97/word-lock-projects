@@ -8,12 +8,12 @@
 #   5. interleaving - style switching still works around the input screen
 #
 # Styles are data-only: assets/themes/<name>/{input,info}.html, listed in
-# assets/themes/registry.txt. The fixture registry is ink, sunrise.
+# assets/themes/registry.txt. The registry lists enabled styles in order.
 
 include ../common/running.txt
 
 # --- 1. happy path: the registry drives a real style ---
-app assert themeCount == 2
+app assert themeCount == 7
 app theme list
 app theme pick 30
 

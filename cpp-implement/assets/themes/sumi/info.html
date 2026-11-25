@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+  <!-- sumi: washi paper, hairline rules, seal red accent. -->
+  <body class="bg-[#f5f0e6] h-screen overflow-y-auto flex flex-col justify-center relative antialiased text-[#0c0a09]">
+    <div class="flex justify-center px-10 py-4">
+      <div class="w-full max-w-4xl px-14 py-12 border border-[#d6cfc0] bg-[#fffdf7] rounded-none">
+        <header class="flex justify-between items-start pb-8 border-b border-[#e7e1d3]">
+          <div class="space-y-2 shrink-0">
+            <h1 id="word-jp" class="shrink-0 text-6xl font-light tracking-[0.2em] text-[#0c0a09]">{{kanji}}</h1>
+            <h2 id="word-reading" class="text-xl font-light tracking-wide text-[#b93b2e]">{{hiragana}}</h2>
+            <p id="word-romaji" class="text-[#57534e] text-[13px] tracking-widest">Romaji: {{romaji}}</p>
+          </div>
+          <div class="flex items-center gap-3 pt-2">
+            <button id="speak" class="px-5 py-2 bg-[#fffdf7] border border-[#d6cfc0] text-[#b93b2e] text-sm tracking-wide hover:border-[#b93b2e]">Listen</button>
+            <button id="close" class="px-5 py-2 bg-[#fffdf7] border border-[#d6cfc0] text-[#57534e] text-sm tracking-wide hover:border-[#57534e]">Close</button>
+          </div>
+        </header>
+        <section class="pt-8 space-y-3">
+          <p class="text-[#b93b2e] text-[11px] tracking-[0.2em] uppercase">Meaning</p>
+          <p id="word-meaning" class="text-[#0c0a09] text-2xl font-light">{{meaning_ja}}</p>
+          <p class="text-[#57534e] italic text-sm">{{meaning_ja_romaji}}</p>
+          <p class="text-[#1c1917] text-base font-light">{{meaning_vi}}</p>
+        </section>
+        <section class="pt-10">
+          <p class="text-[#b93b2e] text-[11px] tracking-[0.2em] uppercase mb-4">Examples</p>
+          <div id="examples"></div>
+          <template id="example-row">
+            <div class="flex justify-between items-start py-4 border-b border-[#e7e1d3]">
+              <div class="space-y-1">
+                <p class="jp text-[#0c0a09] text-[17px] font-light"></p>
+                <p class="romaji text-[#57534e] italic text-[13px] ml-3"></p>
+                <p class="en text-[#57534e] text-[14px] ml-3"></p>
+              </div>
+              <button class="listen px-4 py-1 bg-[#fffdf7] border border-[#d6cfc0] text-[#b93b2e] text-xs tracking-wide hover:border-[#b93b2e] mt-1">Speak</button>
+            </div>
+          </template>
+        </section>
+        <div id="tags" class="flex items-center gap-2 pt-8">
+          <span class="text-[#57534e] text-[11px] tracking-[0.2em] uppercase">Tags:</span>
+          <div id="tags-list" class="flex items-center gap-2"></div>
+        </div>
+        <template id="tag-chip">
+          <span class="bg-[#faf6ec] border border-[#d6cfc0] text-[#57534e] px-2 py-0.5 text-[11px] tracking-wide rounded-none"></span>
+        </template>
+        <p class="pt-8 text-center text-[#57534e] text-[12px] tracking-wide">Enter to exit app</p>
+      </div>
+    </div>
+  </body>
+</html>

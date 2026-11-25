@@ -4,3 +4,8 @@
 # and run the theme_contract feature test.
 ink
 sunrise
+sumi
+sakura
+matcha
+taisho
+yoru

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+  <!-- taisho: retro teal/gold info card. -->
+  <body class="bg-[#f5efe1] h-screen overflow-y-auto flex flex-col justify-center relative antialiased text-[#1c1917]">
+    <div class="flex justify-center px-8 py-4">
+      <div class="w-full max-w-5xl bg-[#fffaf0] rounded-md border-2 border-[#0f4c4c] shadow-xl overflow-y-auto max-h-[90vh]">
+        <header class="bg-[#0f4c4c] px-10 py-6 flex flex-row justify-between items-center">
+          <div class="flex flex-row items-center gap-5 shrink-0">
+            <h1 id="word-jp" class="shrink-0 text-5xl font-semibold text-[#fffaf0]">{{kanji}}</h1>
+            <div class="pb-1 space-y-1">
+              <h2 id="word-reading" class="text-xl font-semibold text-[#fcd34d]">{{hiragana}}</h2>
+              <p id="word-romaji" class="text-[#f5efe1] text-[13px] font-semibold">Romaji: {{romaji}}</p>
+            </div>
+          </div>
+          <div class="flex flex-row items-center gap-3">
+            <button id="speak" class="px-6 py-2.5 bg-[#b45309] text-[#fffaf0] text-sm font-semibold rounded-sm shadow-lg hover:bg-[#92400e]">Listen</button>
+            <button id="close" class="px-6 py-2.5 bg-[#fffaf0] text-[#0f4c4c] text-sm font-semibold rounded-sm border-2 border-[#b45309] hover:bg-[#f5efe1]">Close</button>
+          </div>
+        </header>
+        <div class="px-10 py-8 space-y-8">
+          <section class="flex flex-row items-start gap-6">
+            <span class="bg-[#7f1d1d] text-[#fffaf0] text-[11px] font-semibold tracking-wide uppercase px-4 py-1.5 rounded-sm">Meaning</span>
+            <div class="space-y-1">
+              <p id="word-meaning" class="text-[#1c1917] text-2xl font-semibold">{{meaning_ja}}</p>
+              <p class="text-[#57534e] italic text-sm">{{meaning_ja_romaji}}</p>
+              <p class="text-[#1c1917] text-base font-semibold">{{meaning_vi}}</p>
+            </div>
+          </section>
+          <section>
+            <p class="text-[#0f4c4c] text-[11px] font-semibold tracking-wider uppercase mb-3">Examples</p>
+            <div id="examples" class="space-y-4"></div>
+            <template id="example-row">
+              <div class="flex flex-row justify-between items-start bg-[#f5efe1] border-2 border-[#b45309] rounded-md px-6 py-4">
+                <div class="space-y-1">
+                  <p class="jp text-[#1c1917] text-[17px] font-semibold"></p>
+                  <p class="romaji text-[#57534e] italic text-[13px] ml-4"></p>
+                  <p class="en text-[#57534e] text-[14px] ml-4"></p>
+                </div>
+                <button class="listen px-5 py-2 bg-[#0f4c4c] text-[#fffaf0] text-xs font-semibold rounded-sm shadow-lg hover:bg-[#115e59] mt-1">Speak</button>
+              </div>
+            </template>
+          </section>
+          <div id="tags" class="flex flex-row items-center gap-2">
+            <span class="text-[#0f4c4c] text-[11px] font-semibold tracking-wider uppercase">Tags:</span>
+            <div id="tags-list" class="flex flex-row items-center gap-2"></div>
+          </div>
+          <template id="tag-chip">
+            <span class="bg-[#fffaf0] border border-[#b45309] text-[#0f4c4c] px-3 py-1 text-[11px] font-semibold rounded-sm"></span>
+          </template>
+          <p class="pt-4 text-center text-[#57534e] text-[12px] tracking-wide">Enter to exit app</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

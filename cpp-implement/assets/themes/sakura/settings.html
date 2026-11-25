@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <!-- sakura: settings as a soft pink card. -->
+  <body class="bg-[#fdf2f8] min-h-screen flex items-center justify-center font-sans antialiased">
+    <div class="w-[540px] h-[640px] bg-white flex flex-col shadow-xl border-2 border-[#fbcfe8] rounded-2xl overflow-hidden text-sm">
+      <div class="flex-1 p-6 flex flex-col gap-5 overflow-y-auto">
+        <div>
+          <h1 class="text-[#db2777] font-medium text-[15px] tracking-wider mb-3">SETTINGS</h1>
+          <p class="text-[#9d174d] text-[12px] font-mono">%USERPROFILE%\kotobacpp\config.json</p>
+          <p class="text-[#831843] text-[13px] mt-1">Every change is saved immediately.</p>
+        </div>
+        <div>
+          <label class="text-[#500724] font-medium tracking-wide text-[13px]">COUNTDOWN_SECONDS</label>
+          <input type="text" id="countdown" class="w-full mt-2.5 p-2.5 bg-[#fdf2f8] border-2 border-[#fbcfe8] rounded-xl text-[#500724] outline-none font-mono text-sm"/>
+          <p class="text-[#9d174d] text-[12px] mt-2.5">Seconds before the word gate opens. 60 = 1 minute, 600 = 10 minutes.</p>
+        </div>
+        <div>
+          <div class="flex justify-between items-center">
+            <label class="text-[#500724] font-medium tracking-wide text-[13px]">SOUND_VOLUME</label>
+            <span id="volume-value" class="text-[#db2777] font-medium text-[13px]">x0</span>
+          </div>
+          <div class="mt-4"><input type="range" id="volume" min="0" max="10" step="0.5" value="0" class="w-full h-1 bg-transparent rounded-lg appearance-none cursor-pointer z-10"/></div>
+          <p class="text-[#9d174d] text-[12px] mt-3">Playback gain relative to the Windows master volume. 2 = twice as loud.</p>
+        </div>
+        <div>
+          <label class="text-[#500724] font-medium tracking-wide text-[13px]">RANDOM_UI</label>
+          <div class="flex items-start gap-3 mt-2.5"><input type="checkbox" id="random-ui" class="w-[18px] h-[18px] mt-0.5 shrink-0"/><span class="text-[#831843] text-[14px]">Pick a new UI style after each completed word</span></div>
+        </div>
+        <div>
+          <label class="text-[#500724] font-medium tracking-wide text-[13px]">START_WITH_WINDOWS</label>
+          <div class="flex items-start gap-3 mt-2.5"><input type="checkbox" id="start-with-windows" class="w-[18px] h-[18px] mt-0.5 shrink-0"/><span class="text-[#831843] text-[14px]">Launch Kotoba Lock when I sign in to Windows</span></div>
+        </div>
+        <div>
+          <label class="text-[#500724] font-medium tracking-wide text-[13px]">FREEZE_CHROME</label>
+          <div class="flex items-start gap-3 mt-2.5"><input type="checkbox" id="freeze-chrome" class="w-[18px] h-[18px] mt-0.5 shrink-0"/><span class="text-[#831843] text-[14px]">Freeze Chrome tabs while a word is being studied</span></div>
+        </div>
+        <div>
+          <label class="text-[#500724] font-medium tracking-wide text-[13px]">IGNORE_WORDS</label>
+          <p class="text-[#9d174d] text-[12px] mt-1">One word per line, or separate with commas. These words will never be shown.</p>
+          <textarea id="ignore-words" class="w-full h-28 mt-3 p-3 bg-[#fdf2f8] border-2 border-[#fbcfe8] rounded-xl text-[#500724] outline-none resize-none text-[13px]"></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 px-6 py-4 border-t border-[#fce7f3]">
+        <button id="confirm" class="px-8 py-2.5 bg-white border-2 border-[#fbcfe8] text-[#500724] font-medium rounded-full hover:bg-[#fdf2f8] text-[14px]">Confirm</button>
+        <button id="close" class="px-10 py-2.5 bg-[#db2777] text-white font-medium rounded-full hover:bg-[#be185d] text-[14px]">Done</button>
+      </div>
+    </div>
+  </body>
+</html>

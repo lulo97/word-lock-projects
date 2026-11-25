@@ -80,7 +80,7 @@ bool hasCjkText(const std::wstring& text) {
 
 // Whole-run and per-token GDI measurements are rounded independently, so a
 // line can overflow maxContent by a fraction of a pixel. Treat that as "fits".
-constexpr float kWrapTolerancePx = 1.0f;
+constexpr float kWrapTolerancePx = 3.0f;
 
 } // namespace
 

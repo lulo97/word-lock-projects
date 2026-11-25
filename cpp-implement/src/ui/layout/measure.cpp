@@ -106,7 +106,12 @@ Measure measureElement(Element& el, float scale) {
                 bool fixedBox = !child->style.width.isAuto() &&
                     (child->style.width.unit == Length::Unit::Px ||
                      child->style.width.unit == Length::Unit::Screen);
-                float extra = fixedBox ? 0.f : horizontalBox(child->style, scale);
+                // A child's margin is part of its outer contribution to the
+                // parent's intrinsic width. Omitting it (e.g. a block with
+                // ml-4 under a shrink-to-fit flex item) makes the parent a few
+                // pixels too narrow, so its text wraps early.
+                float marginH = (child->style.margin.left + child->style.margin.right) * scale;
+                float extra = marginH + (fixedBox ? 0.f : horizontalBox(child->style, scale));
 
                 if (el.style.display == Display::Flex &&
                     el.style.dir == FlexDirection::Row) {

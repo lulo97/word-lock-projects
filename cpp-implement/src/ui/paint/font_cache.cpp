@@ -4,13 +4,25 @@
 
 #include <map>
 #include <mutex>
+#include <utility>
 
 namespace ui {
 
 namespace {
 
-std::mutex g_mutex;
+std::recursive_mutex g_mutex;
 std::map<FontKey, HFONT> g_fonts;
+std::map<FontKey, FontMetrics> g_metrics;
+
+HDC measureDc() {
+    static HDC dc = [] {
+        HDC screen = GetDC(nullptr);
+        HDC mem = CreateCompatibleDC(screen);
+        ReleaseDC(nullptr, screen);
+        return mem;
+    }();
+    return dc;
+}
 
 bool keyLess(const FontKey& a, const FontKey& b) {
     if (a.family != b.family) return a.family < b.family;
@@ -43,7 +55,7 @@ bool FontKey::operator<(const FontKey& o) const {
 }
 
 HFONT getFont(const FontKey& key) {
-    std::lock_guard<std::mutex> lock(g_mutex);
+    std::lock_guard<std::recursive_mutex> lock(g_mutex);
 
     auto it = g_fonts.find(key);
 
@@ -108,8 +120,50 @@ std::wstring pickFamilyForChar(const std::vector<std::wstring>& chain, wchar_t c
     return chooseFamily(chain.front(), c);
 }
 
+const FontMetrics& getFontMetrics(const FontKey& key) {
+    HFONT font = getFont(key); // takes lock itself (recursive)
+    std::lock_guard<std::recursive_mutex> lock(g_mutex);
+
+    auto it = g_metrics.find(key);
+    if (it != g_metrics.end())
+        return it->second;
+
+    FontMetrics fm;
+    fm.font = font;
+    HDC dc = measureDc();
+    HGDIOBJ old = SelectObject(dc, font);
+    TEXTMETRICW tm{};
+    GetTextMetricsW(dc, &tm);
+    SelectObject(dc, old);
+    fm.height = tm.tmHeight;
+    fm.ascent = tm.tmAscent;
+    fm.descent = tm.tmDescent;
+    fm.internalLeading = tm.tmInternalLeading;
+    fm.externalLeading = tm.tmExternalLeading;
+    return g_metrics.emplace(key, std::move(fm)).first->second;
+}
+
+int FontMetrics::advance(wchar_t c) const {
+    std::lock_guard<std::recursive_mutex> lock(g_mutex);
+    auto it = cache.find(c);
+    if (it != cache.end())
+        return it->second;
+
+    HDC dc = measureDc();
+    HGDIOBJ old = SelectObject(dc, font);
+    int w = 0;
+    if (!GetCharWidth32W(dc, c, c, &w)) {
+        SIZE s{};
+        GetTextExtentPoint32W(dc, &c, 1, &s);
+        w = s.cx;
+    }
+    SelectObject(dc, old);
+    cache[c] = w;
+    return w;
+}
+
 void clearFontCache() {
-    std::lock_guard<std::mutex> lock(g_mutex);
+    std::lock_guard<std::recursive_mutex> lock(g_mutex);
 
     for (auto& entry : g_fonts) {
         if (entry.second &&
@@ -118,6 +172,7 @@ void clearFontCache() {
     }
 
     g_fonts.clear();
+    g_metrics.clear();
 }
 
 } // namespace ui

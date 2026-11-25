@@ -7,7 +7,9 @@
 #include "controls/text_input.h"
 #include "core/utf.h"
 #include "dom/tree_ops.h"
+#include "layout/inline_text.h"
 #include "layout/layout.h"
+#include "layout/layout_units.h"
 #include "paint/canvas.h"
 #include "paint/paint.h"
 #include "parser/html_parser.h"
@@ -613,6 +615,32 @@ std::vector<std::wstring> Document::validate() {
             if (ch->kind == Node::Kind::Text &&
                 static_cast<TextNode*>(ch.get())->text.find(L"{{") != std::wstring::npos)
                 p.push_back(L"unresolved placeholder in text of " + name(el));
+
+        const std::vector<LineBox>& lbs = getLines(el);
+        if (!lbs.empty()) {
+            const RectF content = el.box.contentRect();
+            const bool clipY = el.style.overflowY != Overflow::Visible;
+            const bool clipX = el.style.overflowX != Overflow::Visible;
+            bool lineShort = false, overT = false, overB = false, overR = false;
+
+            for (const LineBox& ln : lbs)
+                for (const TextRun& tr : ln.runs) {
+                    // Em box = glyph-holding part of GDI cell (excludes internal leading).
+                    const float emTop = tr.y + tr.internalLeading;
+                    const float emBottom = tr.y + tr.height;
+                    const float right = tr.x + tr.width;
+
+                    if (toUnits(tr.fontPx) > toUnits(ln.height)) lineShort = true;
+                    if (!clipY && toUnits(emTop) < toUnits(content.y)) overT = true;
+                    if (!clipY && toUnits(emBottom) > toUnits(content.bottom())) overB = true;
+                    if (!clipX && !tr.hanging && toUnits(right) > toUnits(content.right())) overR = true;
+                }
+
+            if (lineShort) p.push_back(L"line-height smaller than font size: " + name(el));
+            if (overT)     p.push_back(L"text overflows content box (top): " + name(el));
+            if (overB)     p.push_back(L"text overflows content box (bottom): " + name(el));
+            if (overR)     p.push_back(L"text overflows content box (right): " + name(el));
+        }
         return true;
     });
 
@@ -868,6 +896,55 @@ nlohmann::json toJson(Element& el, EventState& ev, Element& root, int depth, int
     for (auto& ch : el.children)
         if (ch->kind == Node::Kind::Text) txt += static_cast<TextNode*>(ch.get())->text;
     if (!txt.empty()) j["text"] = wideToUtf8(txt.substr(0, 80));
+
+    const std::vector<LineBox>& lineBoxes = getLines(el);
+    if (!lineBoxes.empty()) {
+        J lines = J::array();
+        float maxEmBottom = -1e9f;
+        float maxRunRight = -1e9f;
+        bool fontLargerThanLine = false;
+        const RectF contentR = el.box.contentRect();
+        for (const LineBox& ln : lineBoxes) {
+            J jl;
+            jl["x"] = contentR.x;
+            jl["y"] = ln.y;
+            jl["w"] = ln.width;
+            jl["h"] = ln.height;
+            jl["baseline"] = ln.baseline;
+            J runs = J::array();
+            for (const TextRun& tr : ln.runs) {
+                float emTop = tr.y + tr.internalLeading;
+                float emBottom = tr.y + tr.height;
+                float drawRight = tr.x + tr.width;
+                maxEmBottom = std::max(maxEmBottom, emBottom);
+                maxRunRight = std::max(maxRunRight, drawRight);
+                if (toUnits(tr.fontPx) > toUnits(ln.height)) fontLargerThanLine = true;
+                runs.push_back({
+                    {"text", wideToUtf8(tr.text.substr(0, 40))},
+                    {"rect", { tr.x, tr.y, tr.width, tr.height }},
+                    {"fontPx", tr.fontPx},
+                    {"lineHeightPx", tr.lineHeightPx},
+                    {"family", wideToUtf8(tr.family)},
+                    {"forceCjk", tr.forceCjk},
+                    {"hanging", tr.hanging},
+                    {"ascent", tr.ascent},
+                    {"descent", tr.descent},
+                    {"intLeading", tr.internalLeading},
+                    {"extLeading", tr.externalLeading},
+                    {"emTop", emTop},
+                    {"emBottom", emBottom},
+                    {"drawBottom", emBottom},
+                    {"lineBottom", ln.y + ln.height}
+                });
+            }
+            jl["runs"] = runs;
+            lines.push_back(jl);
+        }
+        j["lines"] = lines;
+        j["textOverflowBottom"] = maxEmBottom - contentR.bottom();
+        j["textOverflowRight"] = maxRunRight - contentR.right();
+        j["fontLargerThanLine"] = fontLargerThanLine;
+    }
 
     if (depth < maxDepth) {
         J kids = J::array();

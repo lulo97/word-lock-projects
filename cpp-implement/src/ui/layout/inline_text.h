@@ -13,8 +13,12 @@ struct LineBox {
 };
 
 // Collect inline items from an element's children (text nodes, span, label) into styled runs.
-// In: el. Out: list of (text, style) items in document order.
-std::vector<TextRun> collectInlineRuns(Element& el);
+// In: el, scale. Out: list of (text, style) items in document order.
+std::vector<TextRun> collectInlineRuns(Element& el, float scale = 1.f);
+
+struct InlineExtent { float minContent = 0, maxContent = 0; };
+// Intrinsic widths computed by the SAME tokenizer/breaker that lays the text out.
+InlineExtent measureInline(Element& el, float scale);
 
 // Break runs into lines. Breaks at spaces, between CJK chars (respect isLineStartForbidden),
 // and inside overlong words. In: runs, maxWidth, scale. Out: lines (positions relative to content box).

@@ -3,6 +3,7 @@
 #include "controls/control.h"
 #include "dom/tree_ops.h"
 #include "layout/inline_text.h"
+#include "layout/layout_units.h"
 #include "layout/position.h"
 #include "paint/scrollbar.h"
 #include "paint/shadow.h"
@@ -11,6 +12,9 @@
 #include "svg/svg_paint.h"
 
 #include <algorithm>
+#include <cstdlib>
+#include <functional>
+#include <string>
 
 namespace ui {
 
@@ -108,15 +112,71 @@ void paintElement(Canvas& canvas, Element& el, float scale) {
 }
 
 void paintDebugOverlay(Canvas& canvas, Element& root, const Element* hovered) {
-    auto outline = [&](Element& el) {
-        Color color = el.style.display == Display::None
-            ? Color::rgba(255, 0, 0, 100)
-            : Color::rgba(0, 180, 255, 180);
+    auto hasLayer = [](const char* name) {
+        const char* env = std::getenv("KOTOBA_OVERLAY");
+        if (!env || !*env) return true; // default: all basic layers
+        std::string s(env);
+        return s.find(name) != std::string::npos || s.find("all") != std::string::npos;
+    };
+    const bool showBoxes = hasLayer("boxes");
+    const bool showContent = hasLayer("content");
+    const bool showLines = hasLayer("lines");
+    const bool showRuns = hasLayer("runs");
+    const bool showBaseline = hasLayer("baseline");
 
+    std::function<void(Element&)> drawEl;
+    drawEl = [&](Element& el) {
         RectF r = el.box.borderRect;
-        Edges widths { 1, 1, 1, 1 };
-        Color colors[4] = { color, color, color, color };
-        canvas.strokeBorders(r, {}, widths, colors);
+        if (showBoxes) {
+            Color color = el.style.display == Display::None
+                ? Color::rgba(255, 0, 0, 100)
+                : Color::rgba(0, 180, 255, 180);
+            Edges widths { 1, 1, 1, 1 };
+            Color colors[4] = { color, color, color, color };
+            canvas.strokeBorders(r, {}, widths, colors);
+        }
+
+        if (showContent) {
+            RectF c = el.box.contentRect();
+            Color cc = Color::rgba(120, 120, 120, 120);
+            Edges cw{1,1,1,1}; Color ccs[4]={cc,cc,cc,cc};
+            canvas.strokeBorders(c, {}, cw, ccs);
+        }
+
+        const auto& lbs = getLines(el);
+        if (!lbs.empty()) {
+            const RectF contentR = el.box.contentRect();
+            const bool clipY = el.style.overflowY != Overflow::Visible;
+            const bool clipX = el.style.overflowX != Overflow::Visible;
+            for (const LineBox& ln : lbs) {
+                if (showLines) {
+                    RectF lr{contentR.x, ln.y, std::max(0.f, ln.width), std::max(0.f, ln.height)};
+                    Color lc = Color::rgba(0, 200, 0, 160);
+                    Edges lw{1,1,1,1}; Color lcs[4]={lc,lc,lc,lc};
+                    canvas.strokeBorders(lr, {}, lw, lcs);
+                }
+                for (const TextRun& tr : ln.runs) {
+                    const float emTop = tr.y + tr.internalLeading;
+                    const float emBottom = tr.y + tr.height;
+                    const float right = tr.x + tr.width;
+                    bool overT = !clipY && toUnits(emTop) < toUnits(contentR.y);
+                    bool overB = !clipY && toUnits(emBottom) > toUnits(contentR.bottom());
+                    bool overR = !clipX && !tr.hanging && toUnits(right) > toUnits(contentR.right());
+                    bool over = overT || overB || overR || toUnits(tr.fontPx) > toUnits(ln.height);
+                    if (showRuns) {
+                        RectF rr{tr.x, tr.y, tr.width, tr.height};
+                        Color rc = over ? Color::rgba(255, 0, 0, 220) : Color::rgba(220, 0, 220, 160);
+                        Edges rw{1,1,1,1}; Color rcs[4]={rc,rc,rc,rc};
+                        canvas.strokeBorders(rr, {}, rw, rcs);
+                    }
+                    if (showBaseline) {
+                        float by = tr.y + tr.ascent;
+                        Color bc = Color::rgba(255, 180, 0, 200);
+                        canvas.drawLine({tr.x, by}, {tr.x + tr.width, by}, 1.f, bc);
+                    }
+                }
+            }
+        }
 
         if (&el == hovered) {
             Color hot = Color::rgba(255, 220, 0, 220);
@@ -124,12 +184,23 @@ void paintDebugOverlay(Canvas& canvas, Element& root, const Element* hovered) {
             Color hotColors[4] = { hot, hot, hot, hot };
             canvas.strokeBorders(r, {}, hotWidths, hotColors);
         }
+
+        const bool clipped = el.style.overflowX != Overflow::Visible ||
+                             el.style.overflowY != Overflow::Visible;
+        if (clipped) {
+            canvas.pushClip(r, {});
+            canvas.pushTranslate(-el.box.scrollX, -el.box.scrollY);
+        }
+        for (auto& ch : el.children)
+            if (ch->kind == Node::Kind::Element)
+                drawEl(*static_cast<Element*>(ch.get()));
+        if (clipped) {
+            canvas.popTranslate();
+            canvas.popClip();
+        }
     };
 
-    walk(root, [&](Element& el) {
-        outline(el);
-        return true;
-    });
+    drawEl(root);
 }
 
 } // namespace ui

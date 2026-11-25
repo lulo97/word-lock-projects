@@ -5,7 +5,9 @@
 #include "paint/font_cache.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cwctype>
+#include <vector>
 
 namespace ui {
 
@@ -16,17 +18,16 @@ bool hasCjk(const std::wstring& text) {
         if (isCjk(c))
             return true;
     }
-
     return false;
 }
 
-HFONT fontForRun(const TextRun& run) {
-    FontKey key;
-    key.family = (run.forceCjk || hasCjk(run.text)) ? L"Yu Gothic UI" : run.family;
-    key.px = std::max(1, static_cast<int>(run.fontPx + 0.5f));
-    key.weight = run.weight;
-    key.italic = run.italic;
-    return getFont(key);
+FontKey keyFor(const TextRun& run) {
+    FontKey k;
+    k.family = run.family.empty() ? L"Segoe UI" : run.family;
+    k.px = std::max(1, static_cast<int>(std::lround(run.fontPx)));
+    k.weight = run.weight;
+    k.italic = run.italic;
+    return k;
 }
 
 } // namespace
@@ -44,47 +45,41 @@ TextRun makeRun(const std::wstring& input, const ComputedStyle& style, float sca
             c = static_cast<wchar_t>(towlower(c));
     }
 
-    run.family = style.fontFamily;
-    run.fontPx = std::max(1.f, style.fontSize * scale);
+    // Family decided once from the whole text, so tokens/sub-runs never pick a
+    // different font than measuring/drawing the line.
+    run.family = hasCjk(run.text) ? L"Yu Gothic UI" : style.fontFamily;
+
+    const int px = std::max(1, static_cast<int>(std::lround(style.fontSize * scale)));
+    run.fontPx = static_cast<float>(px); // snapped once
     run.weight = style.fontWeight;
     run.italic = style.italic;
     run.letterSpacing = style.letterSpacing * scale;
     run.color = style.color;
     run.lineHeightPx = style.lineHeightIsPx
         ? style.lineHeight * scale
-        : style.fontSize * scale * style.lineHeight;
+        : static_cast<float>(px) * style.lineHeight;
     return run;
 }
 
 void measureRun(TextRun& run) {
-    HDC hdc = GetDC(nullptr);
+    const FontMetrics& fm = getFontMetrics(keyFor(run));
+    float w = 0;
+    for (wchar_t c : run.text)
+        w += static_cast<float>(fm.advance(c)) + run.letterSpacing;
+    run.width = w;
+    run.height = static_cast<float>(fm.height);
+    run.ascent = static_cast<float>(fm.ascent);
+    run.descent = static_cast<float>(fm.descent);
+    run.internalLeading = static_cast<float>(fm.internalLeading);
+    run.externalLeading = static_cast<float>(fm.externalLeading);
+}
 
-    if (!hdc) {
-        run.width = static_cast<float>(run.text.size()) * run.fontPx * 0.55f;
-        run.height = run.fontPx * 1.2f;
-        return;
-    }
-
-    HFONT font = fontForRun(run);
-    HGDIOBJ old = SelectObject(hdc, font);
-
-    SIZE size{};
-    GetTextExtentPoint32W(
-        hdc,
-        run.text.c_str(),
-        static_cast<int>(run.text.size()),
-        &size
-    );
-
-    TEXTMETRICW tm{};
-    GetTextMetricsW(hdc, &tm);
-
-    run.width = static_cast<float>(size.cx) +
-                run.letterSpacing * std::max<int>(0, static_cast<int>(run.text.size()) - 1);
-    run.height = static_cast<float>(tm.tmHeight);
-
-    SelectObject(hdc, old);
-    ReleaseDC(nullptr, hdc);
+TextRun sliceRun(const TextRun& src, const std::wstring& text) {
+    TextRun out = src;
+    out.text = text;
+    out.hanging = false;
+    measureRun(out);
+    return out;
 }
 
 void drawRun(Canvas& canvas, const TextRun& run) {
@@ -92,35 +87,27 @@ void drawRun(Canvas& canvas, const TextRun& run) {
         return;
 
     HDC hdc = canvas.hdc();
-
     if (!hdc)
         return;
 
-    HFONT font = fontForRun(run);
-    HGDIOBJ oldFont = SelectObject(hdc, font);
+    const FontMetrics& fm = getFontMetrics(keyFor(run));
+    HGDIOBJ oldFont = SelectObject(hdc, fm.font);
     int oldMode = SetBkMode(hdc, TRANSPARENT);
     COLORREF oldColor = SetTextColor(hdc, run.color.toColorRef());
 
-    if (run.letterSpacing != 0) {
-        float x = run.x;
-
-        for (wchar_t c : run.text) {
-            TextOutW(hdc, static_cast<int>(x + 0.5f), static_cast<int>(run.y), &c, 1);
-
-            SIZE size{};
-            GetTextExtentPoint32W(hdc, &c, 1, &size);
-            x += size.cx + run.letterSpacing;
-        }
+    // Hand GDI our advances so glyph positions come from the same numbers layout used.
+    std::vector<INT> dx(run.text.size());
+    float cum = 0;
+    int prev = 0;
+    for (size_t i = 0; i < run.text.size(); ++i) {
+        cum += static_cast<float>(fm.advance(run.text[i])) + run.letterSpacing;
+        int cur = static_cast<int>(std::lround(cum));
+        dx[i] = cur - prev;
+        prev = cur;
     }
-    else {
-        TextOutW(
-            hdc,
-            static_cast<int>(run.x),
-            static_cast<int>(run.y),
-            run.text.c_str(),
-            static_cast<int>(run.text.size())
-        );
-    }
+
+    ExtTextOutW(hdc, snapPx(run.x), snapPx(run.y), 0, nullptr,
+                run.text.c_str(), static_cast<UINT>(run.text.size()), dx.data());
 
     SetTextColor(hdc, oldColor);
     SetBkMode(hdc, oldMode);
@@ -128,31 +115,11 @@ void drawRun(Canvas& canvas, const TextRun& run) {
 }
 
 std::vector<float> charOffsets(const TextRun& run) {
-    std::vector<float> offsets(run.text.size() + 1, 0.f);
-
-    HDC hdc = GetDC(nullptr);
-
-    if (!hdc) {
-        for (size_t i = 0; i <= run.text.size(); ++i)
-            offsets[i] = static_cast<float>(i) * run.fontPx * 0.55f;
-
-        return offsets;
-    }
-
-    HFONT font = fontForRun(run);
-    HGDIOBJ old = SelectObject(hdc, font);
-
-    for (size_t i = 1; i <= run.text.size(); ++i) {
-        SIZE size{};
-        GetTextExtentPoint32W(hdc, run.text.c_str(), static_cast<int>(i), &size);
-        offsets[i] = static_cast<float>(size.cx) +
-                     run.letterSpacing * static_cast<float>(i - 1);
-    }
-
-    SelectObject(hdc, old);
-    ReleaseDC(nullptr, hdc);
-
-    return offsets;
+    const FontMetrics& fm = getFontMetrics(keyFor(run));
+    std::vector<float> o(run.text.size() + 1, 0.f);
+    for (size_t i = 0; i < run.text.size(); ++i)
+        o[i + 1] = o[i] + static_cast<float>(fm.advance(run.text[i])) + run.letterSpacing;
+    return o;
 }
 
 } // namespace ui

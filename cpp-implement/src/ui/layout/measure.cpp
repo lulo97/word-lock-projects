@@ -2,6 +2,7 @@
 
 #include "core/utf.h"
 #include "dom/tree_ops.h"
+#include "layout/inline_text.h"
 #include "paint/text_draw.h"
 
 #include <algorithm>
@@ -19,31 +20,7 @@ float horizontalBox(const ComputedStyle& style, float scale) {
             style.borderWidth.left + style.borderWidth.right) * scale;
 }
 
-Measure textMeasure(const std::wstring& rawText, const ComputedStyle& style, float scale) {
-    Measure out;
-    std::wstring text = trim(collapseWhitespace(rawText));
-    TextRun run = makeRun(text, style, scale);
-    measureRun(run);
-    out.maxContent = run.width;
-
-    float longest = 0;
-    size_t start = 0;
-
-    for (size_t i = 0; i <= text.size(); ++i) {
-        if (i == text.size() || iswspace(text[i])) {
-            if (i > start) {
-                TextRun word = makeRun(text.substr(start, i - start), style, scale);
-                measureRun(word);
-                longest = std::max(longest, word.width);
-            }
-
-            start = i + 1;
-        }
-    }
-
-    out.minContent = longest;
-    return out;
-}
+// textMeasure removed: measureInline() uses the same tokenizer/breaker as layout.
 
 } // namespace
 
@@ -78,17 +55,12 @@ Measure measureElement(Element& el, float scale) {
 
     if (!el.children.empty()) {
         bool onlyText = true;
-
         for (const auto& child : el.children) {
-            if (child->kind != Node::Kind::Text) {
-                onlyText = false;
-                break;
-            }
+            if (child->kind != Node::Kind::Text) { onlyText = false; break; }
         }
 
-        if (onlyText) {
-            Measure text = textMeasure(textContent(el), el.style, scale);
-
+        if (onlyText || hasInlineContent(el)) {
+            InlineExtent text = measureInline(el, scale);
             if (el.style.width.isAuto()) {
                 result.minContent = std::max(result.minContent, text.minContent);
                 result.maxContent = std::max(result.maxContent, text.maxContent);

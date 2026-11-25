@@ -49,6 +49,10 @@ list(APPEND SOURCES ${EXTRA_SOURCES})
 # Resource file
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
     list(APPEND SOURCES "app.rc")
+    set_source_files_properties(app.rc PROPERTIES 
+        OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.ico")
+else()
+    message(WARNING "app.rc not found: the exe will have no embedded icon")
 endif()
 
 include(cmake/EmbedAssets.cmake)

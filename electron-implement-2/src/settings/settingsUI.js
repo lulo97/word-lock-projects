@@ -1,11 +1,15 @@
 const englishWordEl = document.getElementById('englishWord');
 const multipleChoiceEl = document.getElementById('multipleChoice');
+const japaneseWordEl = document.getElementById('japaneseWord');
+const cancelEl = document.getElementById('cancel');
+const confirmEl = document.getElementById('confirm');
 
-function saveSettings() {
-  window.electronAPI.setSettings({
+function readSettings() {
+  return {
     englishWord: englishWordEl.checked,
     multipleChoice: multipleChoiceEl.checked,
-  });
+    japaneseWord: japaneseWordEl.checked,
+  };
 }
 
 async function loadSettings() {
@@ -13,9 +17,15 @@ async function loadSettings() {
 
   englishWordEl.checked = settings.englishWord;
   multipleChoiceEl.checked = settings.multipleChoice;
+  japaneseWordEl.checked = settings.japaneseWord;
 }
 
-englishWordEl.addEventListener('change', saveSettings);
-multipleChoiceEl.addEventListener('change', saveSettings);
+cancelEl.addEventListener('click', () => {
+  window.electronAPI.closeSettings();
+});
+
+confirmEl.addEventListener('click', () => {
+  window.electronAPI.confirmSettings(readSettings());
+});
 
 loadSettings();

@@ -8,6 +8,7 @@ const settingsPath = path.join(dataDir, 'settings.json');
 const defaults = {
   englishWord: true,
   multipleChoice: true,
+  japaneseWord: true,
 };
 
 function load() {
@@ -34,6 +35,7 @@ function setSettings(next) {
   settings = {
     englishWord: Boolean(next.englishWord),
     multipleChoice: Boolean(next.multipleChoice),
+    japaneseWord: Boolean(next.japaneseWord),
   };
   nextTaskIndex = 0;
   save();
@@ -44,6 +46,7 @@ function getNextTaskType() {
 
   if (settings.englishWord) enabled.push('word');
   if (settings.multipleChoice) enabled.push('mcq');
+  if (settings.japaneseWord) enabled.push('japanese');
 
   if (enabled.length === 0) return 'word';
 

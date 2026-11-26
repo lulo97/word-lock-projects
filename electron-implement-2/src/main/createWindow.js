@@ -7,6 +7,7 @@ const { getNextTaskType } = require('../settings/settings');
 const taskFiles = {
   word: path.join(__dirname, '..', 'index.html'),
   mcq: path.join(__dirname, '..', 'mcq', 'mcq.html'),
+  japanese: path.join(__dirname, '..', 'japanese', 'japanese.html'),
 };
 
 let mainWindow = null;

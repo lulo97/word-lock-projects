@@ -11,7 +11,7 @@ function addField(label, value) {
   detailsEl.appendChild(row);
 }
 
-function addExamples(examples) {
+function addExamples(examples, translations) {
   const label = document.createElement('div');
   label.className = 'font-semibold';
   label.textContent = 'examples:';
@@ -20,11 +20,19 @@ function addExamples(examples) {
   const list = document.createElement('ol');
   list.className = 'list-inside list-decimal';
 
-  for (const example of examples) {
+  examples.forEach((example, index) => {
     const item = document.createElement('li');
     item.textContent = example;
+
+    for (const [name, values] of translations) {
+      const translation = document.createElement('div');
+      translation.className = 'ml-6 text-base text-gray-600';
+      translation.textContent = `${name}: ${values[index] ?? ''}`;
+      item.appendChild(translation);
+    }
+
     list.appendChild(item);
-  }
+  });
 
   detailsEl.appendChild(list);
 }
@@ -41,7 +49,7 @@ async function loadDetails() {
   addField('id', row.id);
   addField('word', row.word);
   addField('meaning_vi', row.meaning_vi);
-  addExamples(row.examples);
+  addExamples(row.examples, [['examples_vi', row.examples_vi]]);
 }
 
 window.addEventListener('keydown', (event) => {

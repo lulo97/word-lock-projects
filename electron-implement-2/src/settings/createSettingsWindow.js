@@ -11,7 +11,7 @@ function createSettingsWindow() {
 
   settingsWindow = new BrowserWindow({
     width: 420,
-    height: 260,
+    height: 300,
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
@@ -28,4 +28,10 @@ function createSettingsWindow() {
   return settingsWindow;
 }
 
-module.exports = { createSettingsWindow };
+function closeSettingsWindow() {
+  if (settingsWindow && !settingsWindow.isDestroyed()) {
+    settingsWindow.close();
+  }
+}
+
+module.exports = { createSettingsWindow, closeSettingsWindow };

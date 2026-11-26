@@ -253,6 +253,9 @@ test('checks the japanese word, opens its info screen, and Enter restarts the co
 
     const wordPage = app.windows().find((window) => window.url().endsWith('japanese.html'));
     await expect(wordPage.locator('#word')).toHaveText('桜');
+    await expect(wordPage.locator('#hiragana')).toHaveText('さくら');
+    await expect(wordPage.locator('#katakana')).toHaveText('サクラ');
+    await expect(wordPage.locator('#romaji')).toHaveText('sakura');
 
     await wordPage.locator('#answer').fill('sakura');
     await expect(wordPage.locator('#feedback')).toHaveText('Correct');

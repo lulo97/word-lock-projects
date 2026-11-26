@@ -1,4 +1,7 @@
 const wordEl = document.getElementById('word');
+const hiraganaEl = document.getElementById('hiragana');
+const katakanaEl = document.getElementById('katakana');
+const romajiEl = document.getElementById('romaji');
 const answerEl = document.getElementById('answer');
 const feedbackEl = document.getElementById('feedback');
 
@@ -14,6 +17,9 @@ async function loadWord() {
   }
 
   wordEl.textContent = currentWord.kanji;
+  hiraganaEl.textContent = currentWord.hiragana;
+  katakanaEl.textContent = currentWord.katakana;
+  romajiEl.textContent = currentWord.romaji;
   answerEl.focus();
 }
 

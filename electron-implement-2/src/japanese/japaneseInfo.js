@@ -40,6 +40,7 @@ async function loadDetails() {
   renderList('examples', row.examples, 'ja');
   renderList('examples_en', row.examples_en);
   renderList('examples_vi', row.examples_vi);
+  window.speakUI.speak(row.kanji, 'ja', document.getElementById('speak-kanji'));
 }
 
 window.speakUI.bindSpeakButton('speak-kanji', () => document.getElementById('kanji').textContent, 'ja');

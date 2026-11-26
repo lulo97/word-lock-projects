@@ -36,6 +36,7 @@ async function loadDetails() {
   setText('meaning_vi', row.meaning_vi);
   renderList('examples', row.examples, 'en');
   renderList('examples_vi', row.examples_vi);
+  window.speakUI.speak(row.word, 'en', document.getElementById('speak-word'));
 }
 
 window.speakUI.bindSpeakButton('speak-word', () => document.getElementById('word').textContent, 'en');

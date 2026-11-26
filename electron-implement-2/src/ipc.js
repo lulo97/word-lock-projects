@@ -16,6 +16,7 @@ const {
   closeIgnoreWordsWindow,
 } = require('./settings/createIgnoreWordsWindow');
 const { synthesize } = require('./tts/tts');
+const { syncChromeFreeze } = require('./chromeFreeze/chromeFreezeManager');
 
 function registerIpcHandlers() {
   ipcMain.handle('word:getRandom', () => getRandomWord());
@@ -25,9 +26,13 @@ function registerIpcHandlers() {
   ipcMain.handle('japanese:getRandom', () => getRandomJapaneseWord());
   ipcMain.handle('japanese:get', (_event, id) => getJapaneseWord(id));
   ipcMain.handle('settings:get', () => getSettings());
-  ipcMain.handle('settings:set', (_event, values) => setSettings(values));
+  ipcMain.handle('settings:set', (_event, values) => {
+    setSettings(values);
+    syncChromeFreeze();
+  });
   ipcMain.handle('settings:confirm', (_event, values) => {
     setSettings(values);
+    syncChromeFreeze();
     hideMainWindow();
     closeSettingsWindow();
   });

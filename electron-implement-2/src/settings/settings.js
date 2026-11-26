@@ -13,6 +13,7 @@ const defaults = {
   japaneseWord: true,
   dumbbellWorkout: true,
   masterVolume: 1,
+  chromeFreeze: false,
   ignoreWords: { english: [], japanese: [] },
 };
 
@@ -74,6 +75,7 @@ function load() {
     return {
       ...saved,
       masterVolume: normalizeVolume(saved.masterVolume),
+      chromeFreeze: Boolean(saved.chromeFreeze),
       ignoreWords: normalizeStoredIgnoreWords(saved.ignoreWords),
     };
   } catch {
@@ -122,6 +124,8 @@ function setSettings(next) {
     dumbbellWorkout: Boolean(next.dumbbellWorkout),
     masterVolume:
       next.masterVolume === undefined ? settings.masterVolume : normalizeVolume(next.masterVolume),
+    chromeFreeze:
+      next.chromeFreeze === undefined ? settings.chromeFreeze : Boolean(next.chromeFreeze),
     ignoreWords: getIgnoreWords(),
   };
   nextTaskIndex = 0;

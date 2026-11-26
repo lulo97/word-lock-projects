@@ -85,3 +85,9 @@ cpp-implement/out_input.json
 neutralinojs-implement/bin
 neutralinojs-implement/dist
 neutralinojs-implement/.tmp
+electron-implement-2/vendor
+electron-implement-2/assets/tailwind.css
+electron-implement-2/test-results/
+electron-implement-2/playwright-report/
+electron-implement-2/blob-report/
+electron-implement-2/playwright/.cache/

@@ -2,7 +2,7 @@
   "name": "electron-implement-2",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "build": "npm run build:tailwind && npm run build:vendor",
     "build:tailwind": "tailwindcss -i ./tailwind.input.css -o ./assets/tailwind.css --minify",

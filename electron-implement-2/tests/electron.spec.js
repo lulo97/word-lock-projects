@@ -6,7 +6,7 @@ const projectDir = path.join(__dirname, '..');
 async function launchApp() {
   return electron.launch({
     executablePath: require('electron'),
-    args: [path.join(projectDir, 'main.js')],
+    args: [path.join(projectDir, 'src', 'main.js')],
   });
 }
 
@@ -23,7 +23,7 @@ async function callMainWindow(app, method) {
     (_electron, { modulePath, name }) => {
       process.mainModule.require(modulePath)[name]();
     },
-    { modulePath: path.join(projectDir, 'src', 'createWindow.js'), name: method },
+    { modulePath: path.join(projectDir, 'src', 'main', 'createWindow.js'), name: method },
   );
 }
 

@@ -1,12 +1,12 @@
 const { app } = require('electron');
 
-const { createWindow, showMainWindow, hideMainWindow } = require('./src/createWindow');
-const { createCountdownWindow } = require('./src/createCountdownWindow');
-const { createTray } = require('./src/createTray');
+const { createWindow, showMainWindow, hideMainWindow } = require('./main/createWindow');
+const { createCountdownWindow } = require('./countdown/createCountdownWindow');
+const { createTray } = require('./tray/createTray');
 
 app.whenReady().then(() => {
-  require('./src/database');
-  require('./src/ipc').registerIpcHandlers();
+  require('./database/database');
+  require('./ipc').registerIpcHandlers();
 
   const mainWindow = createWindow();
   mainWindow.hide();

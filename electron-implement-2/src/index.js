@@ -27,7 +27,7 @@ answerEl.addEventListener('input', () => {
     feedbackEl.className = 'text-xl font-semibold text-green-600';
 
     setTimeout(() => {
-      window.location.href = `info.html?id=${encodeURIComponent(currentWord.id)}`;
+      window.location.href = `info/info.html?id=${encodeURIComponent(currentWord.id)}`;
     }, 300);
   } else {
     feedbackEl.textContent = '';

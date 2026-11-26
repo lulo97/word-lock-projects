@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron');
 
-const { getEnglishWord, getRandomWord } = require('./database');
-const { hideMainWindow } = require('./createWindow');
+const { getEnglishWord, getRandomWord } = require('./database/database');
+const { hideMainWindow } = require('./main/createWindow');
 
 function registerIpcHandlers() {
   ipcMain.handle('word:getRandom', () => getRandomWord());

@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 
-const { createCountdownWindow, closeCountdownWindow } = require('./createCountdownWindow');
+const { createCountdownWindow, closeCountdownWindow } = require('../countdown/createCountdownWindow');
 
 let mainWindow = null;
 
@@ -17,7 +17,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile(path.join(__dirname, '..', 'index.html'));
 
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
@@ -45,7 +45,7 @@ function hideMainWindow() {
 
   if (!app.isQuitting) {
     createCountdownWindow();
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile(path.join(__dirname, '..', 'index.html'));
   }
 }
 

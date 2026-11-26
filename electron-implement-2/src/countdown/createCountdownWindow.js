@@ -25,7 +25,7 @@ function createCountdownWindow() {
     },
   });
 
-  countdownWindow.loadFile('countdown.html');
+  countdownWindow.loadFile(path.join(__dirname, 'countdown.html'));
   countdownWindow.setAlwaysOnTop(true, 'screen-saver');
 
   countdownWindow.on('closed', () => {

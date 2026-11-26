@@ -72,7 +72,9 @@ async function openSettings(app) {
     .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
     .toBe(true);
 
-  return app.windows().find((window) => window.url().endsWith('settings.html'));
+  const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+  await expect(settingsPage.locator('body')).toHaveAttribute('data-settings-loaded', 'true');
+  return settingsPage;
 }
 
 test('first launch unfreezes Chrome as a cleanup check', async () => {

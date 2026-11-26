@@ -50,7 +50,9 @@ async function openSettings(app) {
   await expect
     .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
     .toBe(true);
-  return app.windows().find((window) => window.url().endsWith('settings.html'));
+  const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+  await expect(settingsPage.locator('body')).toHaveAttribute('data-settings-loaded', 'true');
+  return settingsPage;
 }
 
 async function openIgnoreWords(app, settingsPage) {
@@ -62,6 +64,14 @@ async function openIgnoreWords(app, settingsPage) {
 }
 
 async function insertRows(app) {
+  // The hidden startup task page runs a query while it loads. Wait for it to
+  // finish before writing to the same in-memory SQLite connection.
+  await expect.poll(async () => {
+    const page = app.windows().find((window) => window.url().endsWith('english.html'));
+    if (!page) return null;
+    return page.locator('#word').textContent().catch(() => null);
+  }).toBe('apple');
+
   await app.evaluate((_electron, modulePath) => {
     const { db } = process.mainModule.require(modulePath);
 

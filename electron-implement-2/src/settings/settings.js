@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { app } = require('electron');
-const { THEME_IDS, DEFAULT_THEME } = require('../themes/registry');
+const { THEME_IDS, DEFAULT_THEME, nextThemeId } = require('../themes/registry');
 
 // Playwright runs with WORDLOCK_USE_TEST_DATA=1. In that mode settings live
 // only in memory, so tests never read or write the user's real settings.json.
@@ -23,6 +23,7 @@ const defaults = {
   countdownSeconds: 60,
   chromeFreeze: false,
   autoStart: false,
+  autoTheme: false,
   theme: DEFAULT_THEME,
   ignoreWords: { english: [], japanese: [] },
 };
@@ -105,6 +106,7 @@ function load() {
       countdownSeconds: normalizeCountdownSeconds(saved.countdownSeconds),
       chromeFreeze: Boolean(saved.chromeFreeze),
       autoStart: Boolean(saved.autoStart),
+      autoTheme: Boolean(saved.autoTheme),
       theme: normalizeTheme(saved.theme),
       ignoreWords: normalizeStoredIgnoreWords(saved.ignoreWords),
     };
@@ -162,11 +164,21 @@ function setSettings(next) {
     chromeFreeze:
       next.chromeFreeze === undefined ? settings.chromeFreeze : Boolean(next.chromeFreeze),
     autoStart: next.autoStart === undefined ? settings.autoStart : Boolean(next.autoStart),
+    autoTheme: next.autoTheme === undefined ? settings.autoTheme : Boolean(next.autoTheme),
     theme: next.theme === undefined ? settings.theme : normalizeTheme(next.theme),
     ignoreWords: getIgnoreWords(),
   };
   nextTaskIndex = 0;
   save();
+}
+
+// Advance the skin one step through the registry and persist it, so the next
+// countdown (and every other open window) uses the new look.
+function advanceTheme() {
+  const theme = nextThemeId(settings.theme);
+  settings = { ...settings, theme };
+  save();
+  return theme;
 }
 
 function getNextTaskType() {
@@ -188,6 +200,7 @@ function getNextTaskType() {
 module.exports = {
   getSettings,
   setSettings,
+  advanceTheme,
   getNextTaskType,
   getIgnoreWords,
   setIgnoreWords,

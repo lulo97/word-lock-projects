@@ -4,6 +4,7 @@ const japaneseWordEl = document.getElementById('japaneseWord');
 const dumbbellWorkoutEl = document.getElementById('dumbbellWorkout');
 const chromeFreezeEl = document.getElementById('chromeFreeze');
 const autoStartEl = document.getElementById('autoStart');
+const autoThemeEl = document.getElementById('autoTheme');
 const masterVolumeEl = document.getElementById('masterVolume');
 const volumeValueEl = document.getElementById('volumeValue');
 const countdownSecondsEl = document.getElementById('countdownSeconds');
@@ -55,6 +56,7 @@ function readSettings() {
     dumbbellWorkout: dumbbellWorkoutEl.checked,
     chromeFreeze: chromeFreezeEl.checked,
     autoStart: autoStartEl.checked,
+    autoTheme: autoThemeEl.checked,
     masterVolume: Number(masterVolumeEl.value),
     countdownSeconds: Number(countdownSecondsEl.value),
     theme: selectedTheme,
@@ -76,12 +78,14 @@ async function loadSettings() {
   dumbbellWorkoutEl.checked = settings.dumbbellWorkout;
   chromeFreezeEl.checked = settings.chromeFreeze;
   autoStartEl.checked = settings.autoStart;
+  autoThemeEl.checked = settings.autoTheme;
   masterVolumeEl.value = settings.masterVolume;
   countdownSecondsEl.value = settings.countdownSeconds;
   renderVolume();
 
   selectedTheme = settings.theme;
   renderThemeCards(await window.electronAPI.listThemes());
+  document.body.dataset.settingsLoaded = 'true';
 }
 
 openIgnoreWordsEl.addEventListener('click', () => {

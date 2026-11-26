@@ -14,6 +14,7 @@ const { showMainWindow, hideMainWindow } = require('./main/createWindow');
 const {
   getSettings,
   setSettings,
+  advanceTheme,
   getIgnoreWords,
   setIgnoreWords,
   normalizeTheme,
@@ -70,7 +71,14 @@ function registerIpcHandlers() {
   });
   ipcMain.on('ignoreWords:close', () => closeIgnoreWordsWindow());
   ipcMain.on('countdown:finished', () => showMainWindow());
-  ipcMain.on('app:exitInfo', () => hideMainWindow());
+  ipcMain.on('app:exitInfo', () => {
+    // A task just finished: move to the next skin before the new countdown
+    // window is created, so its first paint already uses the new theme.
+    if (getSettings().autoTheme) {
+      broadcastTheme(advanceTheme());
+    }
+    hideMainWindow();
+  });
   ipcMain.handle('tts:speak', async (_event, text, lang) => {
     try {
       return { ok: true, wav: await synthesize(text, lang) };

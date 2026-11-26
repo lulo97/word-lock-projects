@@ -19,6 +19,16 @@ async function closeApp(app) {
   await app.close();
 }
 
+async function waitForSettingsLoaded(page) {
+  await expect(page.locator('body')).toHaveAttribute('data-settings-loaded', 'true');
+}
+
+async function clickSettingsButton(page, id) {
+  // Clicking Cancel/Confirm closes the window synchronously; a normal Playwright
+  // click can then report the target closed. Dispatch from inside the page.
+  await page.locator(`#${id}`).evaluate((element) => element.click());
+}
+
 async function callMainWindow(app, method) {
   await app.evaluate(
     (_electron, { modulePath, name }) => {
@@ -201,6 +211,7 @@ test('opens the settings window with all task checkboxes', async () => {
       .toBe(true);
 
     const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    await waitForSettingsLoaded(settingsPage);
     await expect(settingsPage.getByRole('heading', { name: 'Tasks' })).toBeVisible();
     await expect(settingsPage.locator('#englishWord')).toBeVisible();
     await expect(settingsPage.locator('#multipleChoice')).toBeVisible();
@@ -212,6 +223,8 @@ test('opens the settings window with all task checkboxes', async () => {
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('min', '0');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('max', '4');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('step', '0.5');
+    await expect(settingsPage.locator('#autoTheme')).toBeVisible();
+    await expect(settingsPage.locator('#autoTheme')).not.toBeChecked();
     await expect(settingsPage.getByRole('button', { name: 'Ignore words…' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Confirm' })).toBeVisible();
@@ -330,8 +343,9 @@ test('confirm applies settings and restarts the countdown', async () => {
       .toBe(true);
 
     const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    await waitForSettingsLoaded(settingsPage);
     await settingsPage.locator('#englishWord').uncheck();
-    await settingsPage.getByRole('button', { name: 'Confirm' }).click();
+    await clickSettingsButton(settingsPage, 'confirm');
 
     await expect.poll(async () => (await getSettings(app)).englishWord).toBe(false);
     await expect
@@ -361,6 +375,7 @@ test('saves master volume from the settings slider', async () => {
       .toBe(true);
 
     let settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    await waitForSettingsLoaded(settingsPage);
     initialVolume = Number(await settingsPage.locator('#masterVolume').inputValue());
     const target = initialVolume === 0.5 ? 2.5 : 0.5;
 
@@ -370,17 +385,16 @@ test('saves master volume from the settings slider', async () => {
     }, String(target));
     await expect(settingsPage.locator('#volumeValue')).toHaveText(`${target}×`);
 
-    await settingsPage.getByRole('button', { name: 'Confirm' }).click();
+    await clickSettingsButton(settingsPage, 'confirm');
     await expect.poll(async () => (await getSettings(app)).masterVolume).toBe(target);
 
     await callSettingsWindow(app);
     await expect
-      .poll(async () => {
-        const pages = app.windows().filter((window) => window.url().endsWith('settings.html'));
-        if (!pages.length) return null;
-        return pages[0].locator('#masterVolume').inputValue().catch(() => null);
-      })
-      .toBe(String(target));
+      .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
+      .toBe(true);
+    settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    await waitForSettingsLoaded(settingsPage);
+    await expect(settingsPage.locator('#masterVolume')).toHaveValue(String(target));
   } finally {
     await app.evaluate(
       (_electron, { modulePath, volume }) => {
@@ -405,9 +419,10 @@ test('saves a custom countdown and applies it when settings are confirmed', asyn
       .toBe(true);
 
     const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    await waitForSettingsLoaded(settingsPage);
     initialCountdown = Number(await settingsPage.locator('#countdownSeconds').inputValue());
     await settingsPage.locator('#countdownSeconds').fill('120');
-    await settingsPage.getByRole('button', { name: 'Confirm' }).click();
+    await clickSettingsButton(settingsPage, 'confirm');
 
     await expect.poll(async () => (await getSettings(app)).countdownSeconds).toBe(120);
     await expect
@@ -440,8 +455,9 @@ test('cancel discards settings changes', async () => {
       .toBe(true);
 
     const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    await waitForSettingsLoaded(settingsPage);
     await settingsPage.locator('#englishWord').uncheck();
-    await settingsPage.getByRole('button', { name: 'Cancel' }).click();
+    await clickSettingsButton(settingsPage, 'cancel');
 
     await expect.poll(async () => (await getSettings(app)).englishWord).toBe(true);
     await expect

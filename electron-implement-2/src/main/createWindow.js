@@ -5,7 +5,7 @@ const { createCountdownWindow, closeCountdownWindow } = require('../countdown/cr
 const { getNextTaskType } = require('../settings/settings');
 
 const taskFiles = {
-  word: path.join(__dirname, '..', 'index.html'),
+  english: path.join(__dirname, '..', 'english', 'english.html'),
   mcq: path.join(__dirname, '..', 'mcq', 'mcq.html'),
   japanese: path.join(__dirname, '..', 'japanese', 'japanese.html'),
 };
@@ -24,7 +24,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile(path.join(__dirname, '..', 'index.html'));
+  mainWindow.loadFile(taskFiles.english);
 
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
@@ -48,6 +48,10 @@ function showMainWindow() {
 
 function hideMainWindow() {
   if (!mainWindow) return;
+
+  if (!mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('app:hide');
+  }
 
   mainWindow.hide();
 

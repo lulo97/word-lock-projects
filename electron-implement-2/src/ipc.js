@@ -11,6 +11,7 @@ const {
 const { showMainWindow, hideMainWindow } = require('./main/createWindow');
 const { getSettings, setSettings } = require('./settings/settings');
 const { closeSettingsWindow } = require('./settings/createSettingsWindow');
+const { synthesize } = require('./tts/tts');
 
 function registerIpcHandlers() {
   ipcMain.handle('word:getRandom', () => getRandomWord());
@@ -29,6 +30,7 @@ function registerIpcHandlers() {
   ipcMain.on('settings:close', () => closeSettingsWindow());
   ipcMain.on('countdown:finished', () => showMainWindow());
   ipcMain.on('app:exitInfo', () => hideMainWindow());
+  ipcMain.handle('tts:speak', (_event, text, lang) => synthesize(text, lang));
 }
 
 module.exports = { registerIpcHandlers };

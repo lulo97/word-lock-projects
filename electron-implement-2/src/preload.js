@@ -13,4 +13,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closeSettings: () => ipcRenderer.send('settings:close'),
   countdownFinished: () => ipcRenderer.send('countdown:finished'),
   exitInfo: () => ipcRenderer.send('app:exitInfo'),
+  speak: (text, lang) => ipcRenderer.invoke('tts:speak', text, lang),
+  onHide: (callback) => ipcRenderer.on('app:hide', callback),
 });

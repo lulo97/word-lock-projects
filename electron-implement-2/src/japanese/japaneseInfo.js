@@ -1,40 +1,25 @@
-const detailsEl = document.getElementById('details');
-
-function addField(label, value) {
-  const row = document.createElement('div');
-
-  const labelEl = document.createElement('span');
-  labelEl.className = 'font-semibold';
-  labelEl.textContent = `${label}: `;
-
-  row.append(labelEl, document.createTextNode(String(value)));
-  detailsEl.appendChild(row);
+function setText(id, value) {
+  document.getElementById(id).textContent = String(value);
 }
 
-function addExamples(examples, translations) {
-  const label = document.createElement('div');
-  label.className = 'font-semibold';
-  label.textContent = 'examples:';
-  detailsEl.appendChild(label);
+function renderList(id, values, lang) {
+  const list = document.getElementById(id);
+  list.replaceChildren();
 
-  const list = document.createElement('ol');
-  list.className = 'list-inside list-decimal';
-
-  examples.forEach((example, index) => {
+  for (const value of values ?? []) {
     const item = document.createElement('li');
-    item.textContent = example;
+    item.className = 'flex items-center gap-2';
 
-    for (const [name, values] of translations) {
-      const translation = document.createElement('div');
-      translation.className = 'ml-6 text-base text-gray-600';
-      translation.textContent = `${name}: ${values[index] ?? ''}`;
-      item.appendChild(translation);
+    const text = document.createElement('span');
+    text.textContent = value;
+    item.appendChild(text);
+
+    if (lang) {
+      item.appendChild(window.speakUI.createSpeakButton(value, lang));
     }
 
     list.appendChild(item);
-  });
-
-  detailsEl.appendChild(list);
+  }
 }
 
 async function loadDetails() {
@@ -42,21 +27,24 @@ async function loadDetails() {
   const row = await window.electronAPI.getJapaneseWord(id);
 
   if (!row) {
-    detailsEl.textContent = 'Word not found';
+    setText('kanji', 'Word not found');
     return;
   }
 
-  addField('id', row.id);
-  addField('kanji', row.kanji);
-  addField('hiragana', row.hiragana);
-  addField('katakana', row.katakana);
-  addField('romaji', row.romaji);
-  addField('meaning_en', row.meaning_en);
-  addExamples(row.examples, [
-    ['examples_en', row.examples_en],
-    ['examples_vi', row.examples_vi],
-  ]);
+  setText('id', row.id);
+  setText('kanji', row.kanji);
+  setText('hiragana', row.hiragana);
+  setText('katakana', row.katakana);
+  setText('romaji', row.romaji);
+  setText('meaning_en', row.meaning_en);
+  renderList('examples', row.examples, 'ja');
+  renderList('examples_en', row.examples_en);
+  renderList('examples_vi', row.examples_vi);
 }
+
+window.speakUI.bindSpeakButton('speak-kanji', () => document.getElementById('kanji').textContent, 'ja');
+window.speakUI.bindSpeakButton('speak-hiragana', () => document.getElementById('hiragana').textContent, 'ja');
+window.speakUI.bindSpeakButton('speak-katakana', () => document.getElementById('katakana').textContent, 'ja');
 
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {

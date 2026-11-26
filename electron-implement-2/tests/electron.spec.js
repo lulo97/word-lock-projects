@@ -84,7 +84,7 @@ test('closes the countdown window for the maximized main window and restores it 
     await expect
       .poll(() =>
         app.evaluate(({ BrowserWindow }) => {
-          const win = BrowserWindow.getAllWindows().find((w) => w.getURL().endsWith('index.html'));
+          const win = BrowserWindow.getAllWindows().find((w) => w.getURL().endsWith('english.html'));
           return {
             visible: win.isVisible(),
             maximized: win.isMaximized(),
@@ -114,7 +114,7 @@ test('checks the word, opens InfoScreen, and Enter restarts the countdown', asyn
     await setTasks(app, { englishWord: true, multipleChoice: false, japaneseWord: false });
     await callMainWindow(app, 'showMainWindow');
 
-    const wordPage = app.windows().find((window) => window.url().endsWith('index.html'));
+    const wordPage = app.windows().find((window) => window.url().endsWith('english.html'));
     await expect(wordPage.locator('#word')).toHaveText('apple');
 
     await wordPage.locator('#answer').fill('apple');
@@ -122,14 +122,17 @@ test('checks the word, opens InfoScreen, and Enter restarts the countdown', asyn
     await expect(wordPage.locator('#feedback')).toHaveClass(/text-green-600/);
 
     await expect
-      .poll(() => app.windows().some((window) => window.url().includes('info.html')))
+      .poll(() => app.windows().some((window) => window.url().includes('englishInfo.html')))
       .toBe(true);
 
-    const infoPage = app.windows().find((window) => window.url().includes('info.html'));
-    await expect(infoPage.locator('#details')).toContainText('apple');
-    await expect(infoPage.locator('#details')).toContainText('quả táo');
-    await expect(infoPage.locator('#details')).toContainText('an apple a day keep the doctor away');
-    await expect(infoPage.locator('#details')).toContainText('anh ấy có một quả táo');
+    const infoPage = app.windows().find((window) => window.url().includes('englishInfo.html'));
+    await expect(infoPage.locator('#word')).toHaveText('apple');
+    await expect(infoPage.locator('#meaning_vi')).toHaveText('quả táo');
+    await expect(infoPage.locator('#examples')).toContainText('an apple a day keep the doctor away');
+    await expect(infoPage.locator('#examples_vi')).toContainText('anh ấy có một quả táo');
+    await expect(infoPage.locator('#speak-word')).toBeVisible();
+    await expect(infoPage.locator('#examples .speak-button')).toHaveCount(3);
+    await expect(infoPage.locator('#examples_vi .speak-button')).toHaveCount(0);
     await expect(infoPage.getByText('Enter to exit')).toBeVisible();
 
     await infoPage.keyboard.press('Enter');
@@ -215,7 +218,7 @@ test('cycles word, mcq, and japanese tasks with round robin', async () => {
 
     await callMainWindow(app, 'showMainWindow');
     await expect
-      .poll(() => app.windows().some((window) => window.url().endsWith('index.html')))
+      .poll(() => app.windows().some((window) => window.url().endsWith('english.html')))
       .toBe(true);
 
     await callMainWindow(app, 'hideMainWindow');
@@ -233,7 +236,7 @@ test('cycles word, mcq, and japanese tasks with round robin', async () => {
     await callMainWindow(app, 'hideMainWindow');
     await callMainWindow(app, 'showMainWindow');
     await expect
-      .poll(() => app.windows().some((window) => window.url().endsWith('index.html')))
+      .poll(() => app.windows().some((window) => window.url().endsWith('english.html')))
       .toBe(true);
   } finally {
     await closeApp(app);
@@ -265,13 +268,20 @@ test('checks the japanese word, opens its info screen, and Enter restarts the co
       .toBe(true);
 
     const infoPage = app.windows().find((window) => window.url().includes('japaneseInfo.html'));
-    await expect(infoPage.locator('#details')).toContainText('さくら');
-    await expect(infoPage.locator('#details')).toContainText('サクラ');
-    await expect(infoPage.locator('#details')).toContainText('sakura');
-    await expect(infoPage.locator('#details')).toContainText('cherry blossom');
-    await expect(infoPage.locator('#details')).toContainText('桜が咲きました。');
-    await expect(infoPage.locator('#details')).toContainText('The cherry blossoms bloomed.');
-    await expect(infoPage.locator('#details')).toContainText('Hoa anh đào đã nở.');
+    await expect(infoPage.locator('#kanji')).toHaveText('桜');
+    await expect(infoPage.locator('#hiragana')).toHaveText('さくら');
+    await expect(infoPage.locator('#katakana')).toHaveText('サクラ');
+    await expect(infoPage.locator('#romaji')).toHaveText('sakura');
+    await expect(infoPage.locator('#meaning_en')).toHaveText('cherry blossom');
+    await expect(infoPage.locator('#examples')).toContainText('桜が咲きました。');
+    await expect(infoPage.locator('#examples_en')).toContainText('The cherry blossoms bloomed.');
+    await expect(infoPage.locator('#examples_vi')).toContainText('Hoa anh đào đã nở.');
+    await expect(infoPage.locator('#speak-kanji')).toBeVisible();
+    await expect(infoPage.locator('#speak-hiragana')).toBeVisible();
+    await expect(infoPage.locator('#speak-katakana')).toBeVisible();
+    await expect(infoPage.locator('#examples .speak-button')).toHaveCount(2);
+    await expect(infoPage.locator('#examples_en .speak-button')).toHaveCount(0);
+    await expect(infoPage.locator('#examples_vi .speak-button')).toHaveCount(0);
     await expect(infoPage.getByText('Enter to exit')).toBeVisible();
 
     await infoPage.keyboard.press('Enter');

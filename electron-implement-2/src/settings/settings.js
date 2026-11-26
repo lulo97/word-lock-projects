@@ -44,11 +44,11 @@ function setSettings(next) {
 function getNextTaskType() {
   const enabled = [];
 
-  if (settings.englishWord) enabled.push('word');
+  if (settings.englishWord) enabled.push('english');
   if (settings.multipleChoice) enabled.push('mcq');
   if (settings.japaneseWord) enabled.push('japanese');
 
-  if (enabled.length === 0) return 'word';
+  if (enabled.length === 0) return 'english';
 
   const task = enabled[nextTaskIndex % enabled.length];
   nextTaskIndex += 1;

@@ -1,16 +1,15 @@
 @import "tailwindcss";
 
-@source "./src/index.html";
-@source "./src/info/info.html";
+@source "./src/english/*.html";
 @source "./src/countdown/countdown.html";
 @source "./src/mcq/*.html";
 @source "./src/japanese/*.html";
 @source "./src/settings/*.html";
-@source "./src/index.js";
-@source "./src/info/info.js";
+@source "./src/english/*.js";
 @source "./src/countdown/countdown.js";
 @source "./src/mcq/*.js";
 @source "./src/japanese/*.js";
 @source "./src/settings/*.js";
+@source "./src/tts/*.js";
 @source "./src/main.js";
 @source not "./vendor/**/*";

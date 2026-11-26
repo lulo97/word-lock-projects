@@ -1,26 +1,18 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('node:path');
+const { app } = require('electron');
 
-function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  });
-
-  mainWindow.loadFile('index.html');
-}
+const { createWindow } = require('./src/createWindow');
+const { createCountdownWindow } = require('./src/createCountdownWindow');
+const { createTray } = require('./src/createTray');
 
 app.whenReady().then(() => {
-  createWindow();
+  const mainWindow = createWindow();
+  mainWindow.hide();
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
+  const countdownWindow = createCountdownWindow();
+  createTray(countdownWindow);
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+// Prevent app exit when all windows are closed while running in tray
+app.on('window-all-closed', (event) => {
+  event.preventDefault();
 });

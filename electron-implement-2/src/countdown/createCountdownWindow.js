@@ -1,5 +1,6 @@
 const { BrowserWindow, screen } = require('electron');
 const path = require('node:path');
+const { iconPath } = require('../appIcon');
 
 const WIDTH = 100;
 const HEIGHT = 50;
@@ -20,6 +21,7 @@ function createCountdownWindow() {
     roundedCorners: false,
     alwaysOnTop: true,
     opacity: 0.5,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
     },

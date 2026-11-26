@@ -2,6 +2,7 @@ const { BrowserWindow } = require('electron');
 const path = require('node:path');
 const { broadcastTheme } = require('../themes/broadcast');
 const { getSettings } = require('./settings');
+const { iconPath } = require('../appIcon');
 
 let settingsWindow = null;
 
@@ -15,6 +16,7 @@ function createSettingsWindow() {
     width: 460,
     height: 720,
     resizable: false,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
     },

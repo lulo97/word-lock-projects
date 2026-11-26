@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const { createCountdownWindow, closeCountdownWindow } = require('../countdown/createCountdownWindow');
 const { getNextTaskType } = require('../settings/settings');
+const { iconPath } = require('../appIcon');
 
 const taskFiles = {
   english: path.join(__dirname, '..', 'english', 'english.html'),
@@ -33,6 +34,7 @@ function createWindow() {
     show: false,
     frame: true,
     fullscreenable: false,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
     },

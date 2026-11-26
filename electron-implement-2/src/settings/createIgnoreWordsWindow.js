@@ -1,5 +1,6 @@
 const { BrowserWindow } = require('electron');
 const path = require('node:path');
+const { iconPath } = require('../appIcon');
 
 let ignoreWordsWindow = null;
 
@@ -13,6 +14,7 @@ function createIgnoreWordsWindow() {
     width: 560,
     height: 460,
     resizable: false,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
     },

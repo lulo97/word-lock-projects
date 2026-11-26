@@ -2,6 +2,11 @@ const { app, session, protocol, net } = require('electron');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
+const { iconPath } = require('./appIcon');
+
+// Group all windows under the same taskbar icon instead of the generic Electron one.
+app.setAppUserModelId('com.wordlock.app');
+
 const { createWindow, showMainWindow, hideMainWindow } = require('./main/createWindow');
 const { createCountdownWindow } = require('./countdown/createCountdownWindow');
 const { createTray } = require('./tray/createTray');

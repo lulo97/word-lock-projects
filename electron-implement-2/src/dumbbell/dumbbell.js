@@ -1,4 +1,5 @@
 const STAGES = ['hold dumbbell', 'up dumbbell', 'down dumbbell'];
+const STAGE_KEYS = ['hold', 'up', 'down'];
 const SET_COUNT = 5;
 const TOTAL_STEPS = SET_COUNT * STAGES.length;
 const REQUIRED_MATCHES = 3;
@@ -130,7 +131,8 @@ async function analyzeFrame() {
   const startedAt = Date.now();
 
   try {
-    const result = await window.electronAPI.analyzeFrame(dataUrl);
+    const stage = STAGE_KEYS[stepIndex % STAGE_KEYS.length];
+    const result = await window.electronAPI.analyzeFrame(dataUrl, stage);
     totalDurationMs += Date.now() - startedAt;
 
     const seen = result.raw || '(no text)';

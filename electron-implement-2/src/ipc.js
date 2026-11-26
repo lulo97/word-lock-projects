@@ -34,7 +34,7 @@ function registerIpcHandlers() {
   ipcMain.on('countdown:finished', () => showMainWindow());
   ipcMain.on('app:exitInfo', () => hideMainWindow());
   ipcMain.handle('tts:speak', (_event, text, lang) => synthesize(text, lang));
-  ipcMain.handle('vision:analyze', (_event, dataUrl) => vision.analyzeFrame(dataUrl));
+  ipcMain.handle('vision:analyze', (_event, dataUrl, stage) => vision.analyzeFrame(dataUrl, stage));
   ipcMain.handle('vision:status', () => vision.getStatus());
   ipcMain.handle('vision:config', () => ({
     frameIntervalMs: Number(process.env.DUMBBELL_FRAME_MS) || 1000,

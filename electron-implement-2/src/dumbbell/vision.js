@@ -11,15 +11,68 @@ const LABELS = {
   none: 'no hold dumbbell',
 };
 
-const SYSTEM_PROMPT = [
-  'You classify a dumbbell workout webcam frame.',
-  'Reply with exactly one of these labels and nothing else:',
-  '"hold dumbbell", "up dumbbell", "down dumbbell", "no hold dumbbell".',
-  '"hold dumbbell" = the person holds a dumbbell down at the starting position.',
-  '"up dumbbell" = the dumbbell is lifted up.',
-  '"down dumbbell" = the dumbbell is lowered back down while still held.',
-  '"no hold dumbbell" = the person is not holding a dumbbell.',
-].join(' ');
+const SYSTEM_PROMPT_HOLD = `
+Analyze the input webcam frame.
+1. Check if a person is visible in the frame.
+2. If a person is visible, check if they are holding a dumbbell.
+
+Respond with a valid JSON object only, with no markdown or extra text:
+{"status": "NONE" | "HOLD", "message": "string"}
+
+Examples:
+- {"status": "NONE", "message": "No person visible in the frame."}
+- {"status": "NONE", "message": "Person is visible, but not holding a dumbbell."}
+- {"status": "HOLD", "message": "Person is holding a dumbbell."}
+`;
+
+const SYSTEM_PROMPT_UP = `
+Analyze the input webcam frame.
+1. Check if a person is visible in the frame.
+2. If a person is visible, check if they are holding a dumbbell.
+3. If holding a dumbbell, determine its vertical position:
+   - "UP": The dumbbell is raised to shoulder height or higher (near the shoulders or head).
+   - "DOWN": The dumbbell is lowered below shoulder height (near the chest, waist, hips, or legs).
+
+Respond with a valid JSON object only, with no markdown or extra text:
+{"status": "NONE" | "UP" | "DOWN", "message": "string"}
+
+Examples:
+- {"status": "NONE", "message": "No person visible in the frame."}
+- {"status": "NONE", "message": "Person is visible, but not holding a dumbbell."}
+- {"status": "DOWN", "message": "Person is holding a dumbbell in the low position."}
+- {"status": "UP", "message": "Person is holding a dumbbell in the high position."}
+`;
+
+const SYSTEM_PROMPT_DOWN = `
+Analyze the input webcam frame.
+1. Check if a person is visible in the frame.
+2. If a person is visible, check if they are holding a dumbbell.
+3. If holding a dumbbell, determine its vertical position:
+   - "UP": The dumbbell is raised to shoulder height or higher (near the shoulders or head).
+   - "DOWN": The dumbbell is lowered below shoulder height (near the chest, waist, hips, or legs).
+
+Respond with a valid JSON object only, with no markdown or extra text:
+{"status": "NONE" | "UP" | "DOWN", "message": "string"}
+
+Examples:
+- {"status": "NONE", "message": "No person visible in the frame."}
+- {"status": "NONE", "message": "Person is visible, but not holding a dumbbell."}
+- {"status": "DOWN", "message": "Person is holding a dumbbell in the low position."}
+- {"status": "UP", "message": "Person is holding a dumbbell in the high position."}
+`;
+
+const PROMPTS = {
+  hold: SYSTEM_PROMPT_HOLD,
+  up: SYSTEM_PROMPT_UP,
+  down: SYSTEM_PROMPT_DOWN,
+};
+
+const STATUS_LABELS = {
+  NONE: LABELS.none,
+  HOLD: LABELS.hold,
+  UP: LABELS.up,
+  DOWN: LABELS.down,
+};
 
 function normalizeLabel(content) {
   const text = String(content).toLowerCase().trim();
@@ -34,11 +87,58 @@ function normalizeLabel(content) {
   return '';
 }
 
-function analyzeFrame(dataUrl) {
+function parseJsonContent(content) {
+  const text = String(content ?? '').trim();
+  const candidates = [text];
+
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced) candidates.push(fenced[1].trim());
+
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    candidates.push(text.slice(firstBrace, lastBrace + 1));
+  }
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    try {
+      const parsed = JSON.parse(candidate);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Try the next candidate.
+    }
+  }
+
+  return null;
+}
+
+function parseVisionResponse(content) {
+  const text = String(content ?? '').trim();
+  const json = parseJsonContent(text);
+
+  if (json) {
+    const status = String(json.status ?? '').trim().toUpperCase();
+    const message = String(json.message ?? json.status ?? '').trim();
+
+    return {
+      status,
+      message,
+      label: STATUS_LABELS[status] ?? normalizeLabel(message || text),
+    };
+  }
+
+  return { status: '', message: text, label: normalizeLabel(text) };
+}
+
+function analyzeFrame(dataUrl, stage = 'hold') {
+  const systemPrompt = PROMPTS[stage] ?? SYSTEM_PROMPT_HOLD;
   const body = JSON.stringify({
     model: 'LFM3-Omni-2B-Q8_0.gguf',
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: systemPrompt },
       {
         role: 'user',
         content: [
@@ -47,8 +147,6 @@ function analyzeFrame(dataUrl) {
         ],
       },
     ],
-    max_tokens: 32,
-    temperature: 0,
   });
 
   return new Promise((resolve, reject) => {
@@ -75,8 +173,9 @@ function analyzeFrame(dataUrl) {
         response.on('end', () => {
           try {
             const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-            const raw = payload.choices?.[0]?.message?.content ?? '';
-            resolve({ raw, label: normalizeLabel(raw) });
+            const content = payload.choices?.[0]?.message?.content ?? '';
+            const { message, label, status } = parseVisionResponse(content);
+            resolve({ raw: message, label, status });
           } catch (error) {
             reject(error);
           }
@@ -105,4 +204,4 @@ function getStatus() {
   });
 }
 
-module.exports = { analyzeFrame, getStatus, LABELS, normalizeLabel };
+module.exports = { analyzeFrame, getStatus, LABELS, normalizeLabel, parseVisionResponse };

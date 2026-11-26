@@ -9,7 +9,6 @@ function synthesize(text, lang = 'en') {
     input: text,
     lang,
     voice: 'female',
-    n_predict: 128,
   });
 
   return new Promise((resolve, reject) => {

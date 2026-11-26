@@ -1,31 +1,33 @@
-const { LABELS } = require('./vision');
+const { LABELS, parseVisionResponse } = require('./vision');
 
 const queue = [];
+const stages = [];
 
 function setOutputs(outputs) {
   queue.length = 0;
   queue.push(...outputs);
+  stages.length = 0;
 }
 
 function getRemaining() {
   return [...queue];
 }
 
-async function analyzeFrame(_dataUrl) {
+function getStages() {
+  return [...stages];
+}
+
+async function analyzeFrame(_dataUrl, stage = '') {
+  stages.push(stage);
+
   const raw = queue.length ? queue.shift() : LABELS.none;
-  const text = String(raw).toLowerCase().trim();
+  const { message, label, status } = parseVisionResponse(raw);
 
-  let label = '';
-  if (text.includes('no hold') || text.includes('not hold')) label = LABELS.none;
-  else if (text.includes('down')) label = LABELS.down;
-  else if (text.includes('up')) label = LABELS.up;
-  else if (text.includes('hold')) label = LABELS.hold;
-
-  return { raw, label };
+  return { raw: message, label, status };
 }
 
 async function getStatus() {
   return true;
 }
 
-module.exports = { analyzeFrame, getStatus, setOutputs, getRemaining, LABELS };
+module.exports = { analyzeFrame, getStatus, setOutputs, getRemaining, getStages, LABELS };

@@ -1,6 +1,6 @@
 const { app } = require('electron');
 
-const { createWindow } = require('./src/createWindow');
+const { createWindow, showMainWindow, hideMainWindow } = require('./src/createWindow');
 const { createCountdownWindow } = require('./src/createCountdownWindow');
 const { createTray } = require('./src/createTray');
 
@@ -8,8 +8,8 @@ app.whenReady().then(() => {
   const mainWindow = createWindow();
   mainWindow.hide();
 
-  const countdownWindow = createCountdownWindow();
-  createTray(countdownWindow);
+  createCountdownWindow();
+  createTray(mainWindow, showMainWindow, hideMainWindow);
 });
 
 // Prevent app exit when all windows are closed while running in tray

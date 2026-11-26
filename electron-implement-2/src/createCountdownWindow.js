@@ -7,6 +7,8 @@ const HEIGHT = 50;
 let countdownWindow = null;
 
 function createCountdownWindow() {
+  if (countdownWindow) return countdownWindow;
+
   const { x, y, width, height } = screen.getPrimaryDisplay().workArea;
 
   countdownWindow = new BrowserWindow({
@@ -26,7 +28,18 @@ function createCountdownWindow() {
   countdownWindow.loadFile('countdown.html');
   countdownWindow.setAlwaysOnTop(true, 'screen-saver');
 
+  countdownWindow.on('closed', () => {
+    countdownWindow = null;
+  });
+
   return countdownWindow;
 }
 
-module.exports = { createCountdownWindow };
+function closeCountdownWindow() {
+  if (!countdownWindow) return;
+
+  countdownWindow.destroy();
+  countdownWindow = null;
+}
+
+module.exports = { createCountdownWindow, closeCountdownWindow };

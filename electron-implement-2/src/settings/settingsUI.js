@@ -2,6 +2,8 @@ const englishWordEl = document.getElementById('englishWord');
 const multipleChoiceEl = document.getElementById('multipleChoice');
 const japaneseWordEl = document.getElementById('japaneseWord');
 const dumbbellWorkoutEl = document.getElementById('dumbbellWorkout');
+const masterVolumeEl = document.getElementById('masterVolume');
+const volumeValueEl = document.getElementById('volumeValue');
 const cancelEl = document.getElementById('cancel');
 const confirmEl = document.getElementById('confirm');
 
@@ -11,8 +13,15 @@ function readSettings() {
     multipleChoice: multipleChoiceEl.checked,
     japaneseWord: japaneseWordEl.checked,
     dumbbellWorkout: dumbbellWorkoutEl.checked,
+    masterVolume: Number(masterVolumeEl.value),
   };
 }
+
+function renderVolume() {
+  volumeValueEl.textContent = `${Number(masterVolumeEl.value)}×`;
+}
+
+masterVolumeEl.addEventListener('input', renderVolume);
 
 async function loadSettings() {
   const settings = await window.electronAPI.getSettings();
@@ -21,6 +30,8 @@ async function loadSettings() {
   multipleChoiceEl.checked = settings.multipleChoice;
   japaneseWordEl.checked = settings.japaneseWord;
   dumbbellWorkoutEl.checked = settings.dumbbellWorkout;
+  masterVolumeEl.value = settings.masterVolume;
+  renderVolume();
 }
 
 cancelEl.addEventListener('click', () => {

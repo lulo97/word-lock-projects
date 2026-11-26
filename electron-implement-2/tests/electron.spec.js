@@ -2,6 +2,7 @@ const path = require('node:path');
 const { test, expect, _electron: electron } = require('@playwright/test');
 
 const projectDir = path.join(__dirname, '..');
+const settingsPath = path.join(projectDir, 'src', 'settings', 'settings.js');
 
 async function launchApp() {
   return electron.launch({
@@ -204,6 +205,10 @@ test('opens the settings window with all task checkboxes', async () => {
     await expect(settingsPage.locator('#multipleChoice')).toBeVisible();
     await expect(settingsPage.locator('#japaneseWord')).toBeVisible();
     await expect(settingsPage.locator('#dumbbellWorkout')).toBeVisible();
+    await expect(settingsPage.locator('#masterVolume')).toBeVisible();
+    await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('min', '0');
+    await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('max', '4');
+    await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('step', '0.5');
     await expect(settingsPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Confirm' })).toBeVisible();
   } finally {
@@ -327,6 +332,50 @@ test('confirm applies settings and restarts the countdown', async () => {
       .toBe(false);
   } finally {
     await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true });
+    await closeApp(app);
+  }
+});
+
+test('saves master volume from the settings slider', async () => {
+  const app = await launchApp();
+  let initialVolume = 1;
+
+  try {
+    await callSettingsWindow(app);
+
+    await expect
+      .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
+      .toBe(true);
+
+    let settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    initialVolume = Number(await settingsPage.locator('#masterVolume').inputValue());
+    const target = initialVolume === 0.5 ? 2.5 : 0.5;
+
+    await settingsPage.locator('#masterVolume').evaluate((element, value) => {
+      element.value = value;
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+    }, String(target));
+    await expect(settingsPage.locator('#volumeValue')).toHaveText(`${target}×`);
+
+    await settingsPage.getByRole('button', { name: 'Confirm' }).click();
+    await expect.poll(async () => (await getSettings(app)).masterVolume).toBe(target);
+
+    await callSettingsWindow(app);
+    await expect
+      .poll(async () => {
+        const pages = app.windows().filter((window) => window.url().endsWith('settings.html'));
+        if (!pages.length) return null;
+        return pages[0].locator('#masterVolume').inputValue().catch(() => null);
+      })
+      .toBe(String(target));
+  } finally {
+    await app.evaluate(
+      (_electron, { modulePath, volume }) => {
+        const settings = process.mainModule.require(modulePath);
+        settings.setSettings({ ...settings.getSettings(), masterVolume: volume });
+      },
+      { modulePath: settingsPath, volume: initialVolume },
+    );
     await closeApp(app);
   }
 });

@@ -10,11 +10,19 @@ const defaults = {
   multipleChoice: true,
   japaneseWord: true,
   dumbbellWorkout: true,
+  masterVolume: 1,
 };
+
+function normalizeVolume(value) {
+  const volume = Number(value);
+  if (!Number.isFinite(volume)) return defaults.masterVolume;
+  return Math.min(4, Math.max(0, Math.round(volume * 2) / 2));
+}
 
 function load() {
   try {
-    return { ...defaults, ...JSON.parse(fs.readFileSync(settingsPath, 'utf8')) };
+    const saved = { ...defaults, ...JSON.parse(fs.readFileSync(settingsPath, 'utf8')) };
+    return { ...saved, masterVolume: normalizeVolume(saved.masterVolume) };
   } catch {
     return { ...defaults };
   }
@@ -38,6 +46,8 @@ function setSettings(next) {
     multipleChoice: Boolean(next.multipleChoice),
     japaneseWord: Boolean(next.japaneseWord),
     dumbbellWorkout: Boolean(next.dumbbellWorkout),
+    masterVolume:
+      next.masterVolume === undefined ? settings.masterVolume : normalizeVolume(next.masterVolume),
   };
   nextTaskIndex = 0;
   save();
@@ -59,4 +69,4 @@ function getNextTaskType() {
   return task;
 }
 
-module.exports = { getSettings, setSettings, getNextTaskType, settingsPath };
+module.exports = { getSettings, setSettings, getNextTaskType, normalizeVolume, settingsPath };

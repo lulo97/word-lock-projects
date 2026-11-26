@@ -24,6 +24,17 @@
       <input id="dumbbellWorkout" type="checkbox" class="h-4 w-4" />
       Dumbbell workout task
     </label>
+    <label class="flex flex-col gap-1 text-base">
+      <span class="flex items-baseline justify-between">
+        <span class="font-semibold">Master volume</span>
+        <span id="volumeValue">1×</span>
+      </span>
+      <input id="masterVolume" type="range" min="0" max="4" step="0.5" class="w-full" />
+      <span class="flex justify-between text-xs text-gray-600">
+        <span>0 (mute)</span>
+        <span>4 (max)</span>
+      </span>
+    </label>
     <div class="mt-auto flex w-full justify-between">
       <button
         id="cancel"

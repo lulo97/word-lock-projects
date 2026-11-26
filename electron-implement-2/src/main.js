@@ -1,11 +1,39 @@
-const { app, session } = require('electron');
+const { app, session, protocol, net } = require('electron');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 
 const { createWindow, showMainWindow, hideMainWindow } = require('./main/createWindow');
 const { createCountdownWindow } = require('./countdown/createCountdownWindow');
 const { createTray } = require('./tray/createTray');
 const { createSettingsWindow } = require('./settings/createSettingsWindow');
 
+// MediaPipe fetches its .wasm and .task files. file:// blocks fetch(), so the
+// dumbbell page is served from app:// instead. Register before app is ready.
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'app',
+    privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true },
+  },
+]);
+
+const appRoot = path.resolve(__dirname, '..');
+
+function registerAppProtocol() {
+  protocol.handle('app', (request) => {
+    const { pathname } = new URL(request.url);
+    const target = path.resolve(appRoot, `.${decodeURIComponent(pathname)}`);
+
+    if (target !== appRoot && !target.startsWith(appRoot + path.sep)) {
+      return new Response('Forbidden', { status: 403 });
+    }
+
+    return net.fetch(pathToFileURL(target).toString());
+  });
+}
+
 app.whenReady().then(() => {
+  registerAppProtocol();
+
   session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) => {
     callback(permission === 'media');
   });

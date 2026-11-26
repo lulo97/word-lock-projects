@@ -91,3 +91,5 @@ electron-implement-2/test-results/
 electron-implement-2/playwright-report/
 electron-implement-2/blob-report/
 electron-implement-2/playwright/.cache/
+electron-implement-2/assets/pose_landmarker_heavy.task
+electron-implement-2/assets/app.py

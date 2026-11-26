@@ -1,211 +1,133 @@
-const STAGES = ['hold dumbbell', 'up dumbbell', 'down dumbbell'];
-const STAGE_KEYS = ['hold', 'up', 'down'];
-const SET_COUNT = 5;
-const TOTAL_STEPS = SET_COUNT * STAGES.length;
-const REQUIRED_MATCHES = 3;
+import { createPoseTracker, RepCounter } from './pose-tracker.js';
+import { drawArms } from './overlay.js';
 
-const videoEl = document.getElementById('camera');
-const canvasEl = document.getElementById('frame');
-const setsEl = document.getElementById('sets');
-const overallEl = document.getElementById('overall');
-const seenEl = document.getElementById('seen');
-const requiredEl = document.getElementById('required');
-const streakEl = document.getElementById('streak');
-const doneEl = document.getElementById('done');
-const connectionEl = document.getElementById('connection');
-const requestsEl = document.getElementById('requests');
-const avgEl = document.getElementById('avg');
-const recentEl = document.getElementById('recent');
+const TARGET_REPS = 10;
+const SIDES = ['left', 'right'];
+const SEG_ON = 'h-3 flex-1 rounded-sm bg-green-600';
+const SEG_OFF = 'h-3 flex-1 rounded-sm bg-gray-300';
+
+const $ = (id) => document.getElementById(id);
+const videoEl = $('camera');
+const overlayEl = $('overlay');
+const statusEl = $('status');
+const doneEl = $('done');
+const overallEl = $('overall');
+
+const arms = { left: new RepCounter(TARGET_REPS), right: new RepCounter(TARGET_REPS) };
 
 let stream = null;
-let timer = null;
-let statusTimer = null;
-let frameIntervalMs = 1000;
-let stepIndex = 0;
-let streak = 0;
+let pose = null;
 let finished = false;
-let connected = false;
-let requestCount = 0;
-let totalDurationMs = 0;
-let recent = [];
+let testPaused = false;
 
-function renderProgress() {
-  overallEl.textContent = `Step ${Math.min(stepIndex + 1, TOTAL_STEPS)} / ${TOTAL_STEPS}`;
-  setsEl.replaceChildren();
+function processPose(result, now = performance.now()) {
+  arms.left.update(result.left?.angle ?? null, now);
+  arms.right.update(result.right?.angle ?? null, now);
 
-  for (let set = 0; set < SET_COUNT; set += 1) {
-    const setEl = document.createElement('div');
-    setEl.className = 'flex flex-col gap-1';
+  drawArms(overlayEl, videoEl, result);
+  renderReps();
 
-    const title = document.createElement('p');
-    title.className = 'whitespace-nowrap text-sm font-bold';
-    title.textContent = `Set ${set + 1} / ${SET_COUNT}`;
-    setEl.appendChild(title);
-
-    const row = document.createElement('div');
-    row.className = 'flex w-full flex-nowrap gap-1';
-
-    for (let rep = 0; rep < STAGES.length; rep += 1) {
-      const index = set * STAGES.length + rep;
-      const chip = document.createElement('span');
-
-      if (index < stepIndex) {
-        chip.className = 'min-w-0 flex-1 truncate rounded bg-green-600 px-1 py-0.5 text-xs font-semibold text-white';
-      } else if (index === stepIndex && !finished) {
-        chip.className = 'min-w-0 flex-1 truncate rounded bg-yellow-400 px-1 py-0.5 text-xs font-bold';
-      } else {
-        chip.className = 'min-w-0 flex-1 truncate rounded bg-gray-200 px-1 py-0.5 text-xs';
-      }
-
-      chip.textContent = `${rep + 1}. ${STAGES[rep].replace(' dumbbell', '')}`;
-      row.appendChild(chip);
-    }
-
-    setEl.appendChild(row);
-    setsEl.appendChild(setEl);
-  }
-
-  requiredEl.textContent = finished
-    ? ''
-    : `Required: ${STAGES[stepIndex % STAGES.length]} (${streak} / ${REQUIRED_MATCHES} continuous matches)`;
-  streakEl.textContent = `Matches: ${streak} / ${REQUIRED_MATCHES}`;
+  if (arms.left.done && arms.right.done) complete();
 }
 
-function updateStats() {
-  connectionEl.textContent = `llama.cpp 8080 status: ${connected ? 'connected' : 'disconnected'}`;
-  requestsEl.textContent = `Requests sent: ${requestCount}`;
-  avgEl.textContent = requestCount
-    ? `Avg request: ${(totalDurationMs / requestCount / 1000).toFixed(2)}s`
-    : 'Avg request: —';
-
-  recentEl.replaceChildren();
-  for (const entry of recent) {
-    const item = document.createElement('li');
-    item.className = 'truncate';
-    item.textContent = entry;
-    item.title = entry;
-    recentEl.appendChild(item);
-  }
-}
-
-async function refreshConnection() {
-  try {
-    connected = await window.electronAPI.getVisionStatus();
-  } catch {
-    connected = false;
-  }
-  updateStats();
-}
-
-function recordRecent(entry) {
-  recent.unshift(entry);
-  recent = recent.slice(0, 5);
-}
-
-function captureFrame() {
-  if (!videoEl.videoWidth || !videoEl.videoHeight) return null;
-
-  canvasEl.width = 320;
-  canvasEl.height = 240;
-  const context = canvasEl.getContext('2d');
-  context.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-  return canvasEl.toDataURL('image/jpeg', 0.7);
-}
-
-function scheduleNextFrame() {
-  if (!finished) {
-    timer = setTimeout(analyzeFrame, frameIntervalMs);
-  }
-}
-
-async function analyzeFrame() {
+let lastVideoTime = -1;
+function poseLoop() {
   if (finished) return;
 
-  const dataUrl = captureFrame();
-  if (!dataUrl) {
-    scheduleNextFrame();
-    return;
+  if (!testPaused && pose && videoEl.readyState >= 2 && videoEl.currentTime !== lastVideoTime) {
+    lastVideoTime = videoEl.currentTime;
+    const now = performance.now();
+    processPose(pose.detect(videoEl, now), now);
   }
 
-  requestCount += 1;
-  const startedAt = Date.now();
-
-  try {
-    const stage = STAGE_KEYS[stepIndex % STAGE_KEYS.length];
-    const result = await window.electronAPI.analyzeFrame(dataUrl, stage);
-    totalDurationMs += Date.now() - startedAt;
-
-    const seen = result.raw || '(no text)';
-    seenEl.textContent = `Last seen: ${seen}`;
-    recordRecent(seen);
-
-    if (result.label === STAGES[stepIndex % STAGES.length]) {
-      streak += 1;
-    } else {
-      streak = 0;
-    }
-  } catch (error) {
-    totalDurationMs += Date.now() - startedAt;
-    seenEl.textContent = `Last seen: error - ${error.message}`;
-    recordRecent(`error: ${error.message}`);
-    streak = 0;
-  }
-
-  updateStats();
-
-  if (streak >= REQUIRED_MATCHES) {
-    stepIndex += 1;
-    streak = 0;
-
-    if (stepIndex >= TOTAL_STEPS) {
-      complete();
-      return;
-    }
-  }
-
-  renderProgress();
-  scheduleNextFrame();
+  requestAnimationFrame(poseLoop);
 }
 
+// ---------- UI ----------
+function buildProgress() {
+  for (const side of SIDES) {
+    $(`${side}-bar`).replaceChildren(
+      ...Array.from({ length: TARGET_REPS }, () => {
+        const segment = document.createElement('span');
+        segment.className = SEG_OFF;
+        return segment;
+      }),
+    );
+  }
+}
+
+function renderReps() {
+  for (const side of SIDES) {
+    const arm = arms[side];
+    $(`${side}-reps`).textContent = `${arm.reps} / ${TARGET_REPS}`;
+
+    [...$(`${side}-bar`).children].forEach((segment, index) => {
+      segment.className = index < arm.reps ? SEG_ON : SEG_OFF;
+    });
+
+    let status;
+    if (arm.done) status = 'DONE ✔';
+    else if (!arm.visible) status = 'ARM HIDDEN';
+    else status = `${(arm.stage ?? '...').toUpperCase()} · ${Math.round(arm.angle)}°`;
+    $(`${side}-stage`).textContent = status;
+
+    $(`arm-${side}`).className = arm.done ? 'rounded bg-green-100 p-2' : 'rounded bg-gray-100 p-2';
+  }
+
+  overallEl.textContent = `Total ${arms.left.reps + arms.right.reps} / ${TARGET_REPS * 2}`;
+}
+
+// ---------- lifecycle ----------
 function complete() {
   finished = true;
-  clearTimeout(timer);
-  renderProgress();
+  renderReps();
   doneEl.classList.remove('hidden');
   setTimeout(() => window.electronAPI.exitInfo(), 300);
 }
 
 function stop() {
   finished = true;
-  clearTimeout(timer);
-  clearInterval(statusTimer);
-
-  if (stream) {
-    for (const track of stream.getTracks()) track.stop();
-    stream = null;
-  }
-
+  pose?.close();
+  pose = null;
+  stream?.getTracks().forEach((track) => track.stop());
+  stream = null;
   videoEl.srcObject = null;
 }
 
 async function start() {
-  const config = await window.electronAPI.getVisionConfig();
-  frameIntervalMs = config.frameIntervalMs;
-
-  await refreshConnection();
-  statusTimer = setInterval(refreshConnection, 2000);
+  buildProgress();
+  renderReps();
 
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     videoEl.srcObject = stream;
     await videoEl.play();
   } catch (error) {
-    seenEl.textContent = `Camera error: ${error.message}`;
+    statusEl.textContent = `Camera error: ${error.message}`;
+    return;
   }
 
-  renderProgress();
-  updateStats();
-  scheduleNextFrame();
+  try {
+    pose = await createPoseTracker();
+  } catch (error) {
+    statusEl.textContent = `Pose model error: ${error.message}`;
+    return;
+  }
+
+  statusEl.textContent = 'Pose tracker ready';
+
+  // Test hook: drives the same rep path with synthetic angles, so tests do not
+  // need a real person in front of the camera.
+  window.__dumbbellTest = {
+    feedPose(leftAngle, rightAngle, points = null, now = performance.now()) {
+      if (finished) return;
+      testPaused = true;
+      const arm = (angle) => (angle === null ? null : { angle, points });
+      processPose({ left: arm(leftAngle), right: arm(rightAngle) }, now);
+    },
+  };
+
+  requestAnimationFrame(poseLoop);
 }
 
 window.electronAPI.onHide(stop);

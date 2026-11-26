@@ -11,6 +11,19 @@ const taskFiles = {
   dumbbell: path.join(__dirname, '..', 'dumbbell', 'dumbbell.html'),
 };
 
+const appRoot = path.resolve(__dirname, '..', '..');
+
+function loadTask(window, taskType) {
+  const file = taskFiles[taskType] ?? taskFiles.english;
+
+  // MediaPipe needs fetch() for the .task model and .wasm files, which file:// blocks.
+  if (taskType === 'dumbbell') {
+    return window.loadURL(`app://local/${path.relative(appRoot, file).split(path.sep).join('/')}`);
+  }
+
+  return window.loadFile(file);
+}
+
 let mainWindow = null;
 
 function createWindow() {
@@ -25,7 +38,7 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadFile(taskFiles.english);
+  loadTask(mainWindow, 'english');
 
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
@@ -41,7 +54,7 @@ function showMainWindow() {
   if (!mainWindow) return;
 
   closeCountdownWindow();
-  mainWindow.loadFile(taskFiles[getNextTaskType()]);
+  loadTask(mainWindow, getNextTaskType());
   mainWindow.show();
   mainWindow.maximize();
   mainWindow.focus();

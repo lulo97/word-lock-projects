@@ -4,45 +4,48 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; media-src 'self' blob: data:"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; media-src 'self' blob: data:"
     />
     <title>Dumbbell Workout</title>
     <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="dumbbell.css" />
   </head>
   <body class="m-0 h-full w-full bg-white text-black">
     <main class="flex h-full w-full">
-      <section class="flex h-full w-[70%] items-center justify-center bg-black">
-        <video id="camera" autoplay playsinline muted class="h-full w-full object-cover"></video>
-        <canvas id="frame" class="hidden"></canvas>
+      <section class="relative flex h-full w-[70%] items-center justify-center overflow-hidden bg-black">
+        <video id="camera" autoplay playsinline muted class="mirror h-full w-full object-cover"></video>
+        <canvas id="overlay" class="mirror pointer-events-none absolute inset-0 h-full w-full"></canvas>
       </section>
+
       <aside class="flex h-full w-[30%] min-w-0 flex-col gap-2 overflow-hidden border-l border-gray-300 p-3">
         <h1 class="whitespace-nowrap text-2xl font-bold">Dumbbell Workout</h1>
-        <p id="overall" class="whitespace-nowrap text-xl font-bold">Step 1 / 15</p>
+        <p id="overall" class="whitespace-nowrap text-xl font-bold">Total 0 / 20</p>
+
+        <div id="arm-left" class="rounded bg-gray-100 p-2">
+          <div class="flex items-baseline justify-between">
+            <p class="font-bold">Left arm</p>
+            <p id="left-reps" class="text-2xl font-bold">0 / 10</p>
+          </div>
+          <div id="left-bar" class="mt-1 flex gap-0.5"></div>
+          <p id="left-stage" class="mt-1 truncate text-xs text-gray-600">ARM HIDDEN</p>
+        </div>
+
+        <div id="arm-right" class="rounded bg-gray-100 p-2">
+          <div class="flex items-baseline justify-between">
+            <p class="font-bold">Right arm</p>
+            <p id="right-reps" class="text-2xl font-bold">0 / 10</p>
+          </div>
+          <div id="right-bar" class="mt-1 flex gap-0.5"></div>
+          <p id="right-stage" class="mt-1 truncate text-xs text-gray-600">ARM HIDDEN</p>
+        </div>
 
         <div class="rounded bg-gray-100 p-2 text-sm leading-tight">
-          <p id="connection" class="truncate font-semibold">llama.cpp 8080 status: checking...</p>
-          <p id="requests" class="truncate">Requests sent: 0</p>
-          <p id="avg" class="truncate">Avg request: —</p>
+          <p id="status" class="truncate">Starting pose tracker...</p>
         </div>
 
-        <div id="sets" class="flex min-h-0 flex-1 flex-col justify-between gap-1"></div>
-
-        <div class="rounded bg-gray-100 p-2 text-sm leading-tight">
-          <p id="seen" class="truncate">Last seen: waiting for camera...</p>
-          <p id="required" class="truncate font-bold text-green-700">Required: hold dumbbell</p>
-          <p id="streak" class="truncate">Matches: 0 / 3</p>
-        </div>
-
-        <div class="rounded bg-gray-100 p-2 text-xs leading-tight">
-          <p class="font-bold">Nearest 5 requests</p>
-          <ol id="recent" class="flex flex-col gap-0.5"></ol>
-        </div>
-
-        <p id="done" class="hidden whitespace-nowrap text-2xl font-bold text-green-700">Trainning done</p>
+        <p id="done" class="hidden whitespace-nowrap text-2xl font-bold text-green-700">Training done</p>
       </aside>
     </main>
-    <script src="../../vendor/jquery.min.js"></script>
-    <script src="../../vendor/lodash.min.js"></script>
-    <script src="dumbbell.js"></script>
+    <script type="module" src="dumbbell.js"></script>
   </body>
 </html>

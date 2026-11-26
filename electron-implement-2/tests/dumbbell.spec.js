@@ -4,29 +4,18 @@ const { test, expect, _electron: electron } = require('@playwright/test');
 const projectDir = path.join(__dirname, '..');
 const settingsPath = path.join(projectDir, 'src', 'settings', 'settings.js');
 const windowPath = path.join(projectDir, 'src', 'main', 'createWindow.js');
-const mockPath = path.join(projectDir, 'src', 'dumbbell', 'vision.mock.js');
 
-function jsonOutput(status, message) {
-  return JSON.stringify({ status, message });
-}
+let fakeNow = 1000;
 
-async function launchDumbbellApp(frameMs = '10') {
+async function launchDumbbellApp() {
   return electron.launch({
     executablePath: require('electron'),
-    env: { ...process.env, DUMBBELL_VISION: 'mock', DUMBBELL_FRAME_MS: frameMs },
     args: [
       path.join(projectDir, 'src', 'main.js'),
       '--use-fake-device-for-media-stream',
       '--use-fake-ui-for-media-stream',
     ],
   });
-}
-
-async function setOutputs(app, outputs) {
-  await app.evaluate(
-    (_electron, { modulePath, values }) => process.mainModule.require(modulePath).setOutputs(values),
-    { modulePath: mockPath, values: outputs },
-  );
 }
 
 async function showDumbbell(app) {
@@ -62,149 +51,152 @@ async function quitApp(app) {
   await app.close();
 }
 
-test('renders a single dumbbell screen with 5 sets of 3 reps', async () => {
+async function waitForPoseTracker(page) {
+  await expect(page.locator('#status')).toHaveText('Pose tracker ready', { timeout: 25000 });
+  await page.waitForFunction(() => Boolean(window.__dumbbellTest), null, { timeout: 5000 });
+  fakeNow = 1000;
+}
+
+async function feedPose(page, leftAngle, rightAngle, advanceMs = 0) {
+  fakeNow += advanceMs;
+  await page.evaluate(
+    ([left, right, now]) => window.__dumbbellTest.feedPose(left, right, null, now),
+    [leftAngle, rightAngle, fakeNow],
+  );
+}
+
+// Enough frames for the 5-frame median to settle and the 3-frame debounce to confirm.
+async function holdAngle(page, angle, frames = 6) {
+  for (let frame = 0; frame < frames; frame += 1) {
+    await feedPose(page, angle, angle);
+  }
+}
+
+async function doRep(page) {
+  await holdAngle(page, 170); // down
+  await holdAngle(page, 40); // up
+  fakeNow += 400; // MIN_UP_MS
+  await holdAngle(page, 170); // down again = one rep
+  fakeNow += 900; // MIN_REP_MS before the next rep
+}
+
+test('renders two arm progress bars of 10 reps each', async () => {
   const app = await launchDumbbellApp();
 
   try {
     const page = await showDumbbell(app);
+    await waitForPoseTracker(page);
 
-    await expect(page.locator('#overall')).toHaveText('Step 1 / 15');
-    await expect(page.locator('#required')).toHaveText(/Required: hold dumbbell/);
-    await expect(page.locator('#seen')).toContainText('Last seen:');
-    await expect(page.locator('#connection')).toHaveText('llama.cpp 8080 status: connected');
-    await expect.poll(() => page.locator('#requests').textContent()).toMatch(/Requests sent: [1-9]/);
-    await expect(page.locator('#avg')).toContainText('Avg request:');
-    await expect.poll(() => page.locator('#recent li').count()).toBe(5);
-    await expect(page.getByText('Set 1 / 5')).toBeVisible();
-    await expect(page.getByText('Set 5 / 5')).toBeVisible();
-    await expect(page.locator('#sets span')).toHaveCount(15);
+    await expect(page.locator('#overall')).toHaveText('Total 0 / 20');
+    await expect(page.locator('#left-reps')).toHaveText('0 / 10');
+    await expect(page.locator('#right-reps')).toHaveText('0 / 10');
+    await expect(page.locator('#left-bar span')).toHaveCount(10);
+    await expect(page.locator('#right-bar span')).toHaveCount(10);
+    await expect(page.locator('#left-stage')).toHaveText('ARM HIDDEN');
+    await expect(page.locator('#right-stage')).toHaveText('ARM HIDDEN');
     await expect(page.locator('#done')).toBeHidden();
+    await expect(page.locator('#overlay')).toBeVisible();
+    await expect(page.locator('#camera')).toHaveClass(/mirror/);
+    await expect(page.locator('#connection, #seen, #recent, #hold')).toHaveCount(0);
 
     const asideOverflow = await page.locator('aside').evaluate((element) => ({
       scrollHeight: element.scrollHeight,
       clientHeight: element.clientHeight,
     }));
     expect(asideOverflow.scrollHeight).toBeLessThanOrEqual(asideOverflow.clientHeight + 1);
-
-    const repTops = await page
-      .locator('#sets > div')
-      .first()
-      .locator('span')
-      .evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().top)));
-    expect(new Set(repTops).size).toBe(1);
   } finally {
     await restoreSettings(app);
     await quitApp(app);
   }
 });
 
-test('advances one rep after three continuous matching frames', async () => {
+test('counts one rep per up and down cycle on each arm', async () => {
   const app = await launchDumbbellApp();
 
   try {
-    await setOutputs(app, [
-      'hold dumbbell',
-      'hold dumbbell',
-      'hold dumbbell',
-      'up dumbbell',
-      'up dumbbell',
-      'up dumbbell',
-      'down dumbbell',
-      'down dumbbell',
-      'down dumbbell',
-    ]);
-
     const page = await showDumbbell(app);
+    await waitForPoseTracker(page);
 
-    await expect(page.locator('#overall')).toHaveText('Step 4 / 15');
-    await expect(page.locator('#required')).toHaveText(/Required: hold dumbbell/);
-    await expect(page.locator('#seen')).toContainText('Last seen:');
+    await doRep(page);
+    await expect(page.locator('#left-reps')).toHaveText('1 / 10');
+    await expect(page.locator('#right-reps')).toHaveText('1 / 10');
+    await expect(page.locator('#left-bar span.bg-green-600')).toHaveCount(1);
+    await expect(page.locator('#right-bar span.bg-green-600')).toHaveCount(1);
+    await expect(page.locator('#left-stage')).toContainText('DOWN');
+    await expect(page.locator('#overall')).toHaveText('Total 2 / 20');
+
+    await doRep(page);
+    await expect(page.locator('#overall')).toHaveText('Total 4 / 20');
+
+    await feedPose(page, null, null);
+    await expect(page.locator('#left-stage')).toHaveText('ARM HIDDEN');
+    await expect(page.locator('#right-stage')).toHaveText('ARM HIDDEN');
+    await expect(page.locator('#overall')).toHaveText('Total 4 / 20');
   } finally {
     await restoreSettings(app);
     await quitApp(app);
   }
 });
 
-test('non-matching frames do not advance the rep', async () => {
+test('ignores angle spikes, too-fast reps and a lost arm', async () => {
   const app = await launchDumbbellApp();
 
   try {
-    await setOutputs(app, ['no hold dumbbell', 'hold dumbbell', 'no hold dumbbell']);
     const page = await showDumbbell(app);
+    await waitForPoseTracker(page);
 
-    await expect(page.locator('#overall')).toHaveText('Step 1 / 15');
-    await expect(page.locator('#required')).toContainText('hold dumbbell');
-    await expect(page.locator('#seen')).toContainText('no hold dumbbell');
-  } finally {
-    await restoreSettings(app);
-    await quitApp(app);
-  }
-});
+    await holdAngle(page, 170); // stage down
+    await holdAngle(page, 40); // stage up
 
-test('uses stage-specific JSON prompts and shows the model message', async () => {
-  const app = await launchDumbbellApp('1000');
+    // A 2-frame glitch is median-filtered and never confirmed.
+    await feedPose(page, 170, 170);
+    await feedPose(page, 170, 170);
+    await holdAngle(page, 40);
+    await expect(page.locator('#left-reps')).toHaveText('0 / 10');
 
-  try {
-    await setOutputs(app, [
-      jsonOutput('HOLD', 'Person is holding a dumbbell.'),
-      jsonOutput('HOLD', 'Person is holding a dumbbell.'),
-      jsonOutput('HOLD', 'Person is holding a dumbbell.'),
-      jsonOutput('UP', 'Person is holding a dumbbell in the high position.'),
-      jsonOutput('UP', 'Person is holding a dumbbell in the high position.'),
-      jsonOutput('UP', 'Person is holding a dumbbell in the high position.'),
-      jsonOutput('DOWN', 'Person is holding a dumbbell in the low position.'),
-      jsonOutput('DOWN', 'Person is holding a dumbbell in the low position.'),
-      jsonOutput('DOWN', 'Person is holding a dumbbell in the low position.'),
-    ]);
+    // A full down swing less than 300 ms after the top must not count.
+    await holdAngle(page, 170);
+    await expect(page.locator('#left-reps')).toHaveText('0 / 10');
 
-    const page = await showDumbbell(app);
+    // A proper rep: up, wait, then down.
+    await holdAngle(page, 40);
+    fakeNow += 400;
+    await holdAngle(page, 170);
+    await expect(page.locator('#left-reps')).toHaveText('1 / 10');
 
-    await expect(page.locator('#overall')).toHaveText('Step 4 / 15', { timeout: 15000 });
-    await expect(page.locator('#seen')).toHaveText('Last seen: Person is holding a dumbbell in the low position.');
-    await expect(page.locator('#recent li').first()).toHaveText(
-      'Person is holding a dumbbell in the low position.',
-    );
+    // Back-to-back rep within MIN_REP_MS must not count.
+    await holdAngle(page, 40);
+    await holdAngle(page, 170);
+    await expect(page.locator('#left-reps')).toHaveText('1 / 10');
 
-    const stages = await app.evaluate(
-      (_electron, modulePath) => process.mainModule.require(modulePath).getStages(),
-      mockPath,
-    );
-    expect(stages.slice(0, 9)).toEqual([
-      'hold',
-      'hold',
-      'hold',
-      'up',
-      'up',
-      'up',
-      'down',
-      'down',
-      'down',
-    ]);
-  } finally {
-    await restoreSettings(app);
-    await quitApp(app);
-  }
-});
-
-test('shows Trainning done after 15 reps and returns to the countdown', async () => {
-  const app = await launchDumbbellApp();
-
-  try {
-    const stages = [
-      { key: 'hold', status: 'HOLD', message: 'Person is holding a dumbbell.' },
-      { key: 'up', status: 'UP', message: 'Person is holding a dumbbell in the high position.' },
-      { key: 'down', status: 'DOWN', message: 'Person is holding a dumbbell in the low position.' },
-    ];
-    const outputs = [];
-    for (let step = 0; step < 15; step += 1) {
-      const stage = stages[step % stages.length];
-      outputs.push(jsonOutput(stage.status, stage.message), jsonOutput(stage.status, stage.message), jsonOutput(stage.status, stage.message));
+    // Losing the arm for 10 frames resets a half-finished rep.
+    await holdAngle(page, 40);
+    for (let frame = 0; frame < 10; frame += 1) {
+      await feedPose(page, null, null);
     }
-    await setOutputs(app, outputs);
+    await holdAngle(page, 170);
+    await expect(page.locator('#left-reps')).toHaveText('1 / 10');
+  } finally {
+    await restoreSettings(app);
+    await quitApp(app);
+  }
+});
 
+test('shows Training done after 10 reps per arm and returns to the countdown', async () => {
+  const app = await launchDumbbellApp();
+
+  try {
     const page = await showDumbbell(app);
+    await waitForPoseTracker(page);
 
-    await expect(page.getByText('Trainning done')).toBeVisible({ timeout: 15000 });
+    for (let rep = 0; rep < 10; rep += 1) {
+      await doRep(page);
+    }
+
+    await expect(page.locator('#overall')).toHaveText('Total 20 / 20');
+    await expect(page.locator('#arm-left')).toHaveClass(/bg-green-100/);
+    await expect(page.locator('#arm-right')).toHaveClass(/bg-green-100/);
+    await expect(page.getByText('Training done')).toBeVisible();
     await expect
       .poll(() => app.windows().some((window) => window.url().endsWith('countdown.html')))
       .toBe(true);

@@ -13,9 +13,6 @@ const { getSettings, setSettings } = require('./settings/settings');
 const { closeSettingsWindow } = require('./settings/createSettingsWindow');
 const { synthesize } = require('./tts/tts');
 
-const useMockVision = process.env.DUMBBELL_VISION === 'mock';
-const vision = require(useMockVision ? './dumbbell/vision.mock' : './dumbbell/vision');
-
 function registerIpcHandlers() {
   ipcMain.handle('word:getRandom', () => getRandomWord());
   ipcMain.handle('word:get', (_event, id) => getEnglishWord(id));
@@ -34,12 +31,6 @@ function registerIpcHandlers() {
   ipcMain.on('countdown:finished', () => showMainWindow());
   ipcMain.on('app:exitInfo', () => hideMainWindow());
   ipcMain.handle('tts:speak', (_event, text, lang) => synthesize(text, lang));
-  ipcMain.handle('vision:analyze', (_event, dataUrl, stage) => vision.analyzeFrame(dataUrl, stage));
-  ipcMain.handle('vision:status', () => vision.getStatus());
-  ipcMain.handle('vision:config', () => ({
-    frameIntervalMs: Number(process.env.DUMBBELL_FRAME_MS) || 1000,
-    mock: useMockVision,
-  }));
 }
 
 module.exports = { registerIpcHandlers };

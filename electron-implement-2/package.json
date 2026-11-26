@@ -2,7 +2,7 @@
   "name": "pomodorolock",
   "productName": "PomodoroLock",
   "version": "1.0.0",
-  "description": "",
+  "description": "PomodoroLock study timer and word lock app",
   "main": "src/main.js",
   "scripts": {
     "build:themes": "node scripts/build-themes.js",
@@ -13,15 +13,51 @@
     "build": "npm run build:ui && npm run build:vendor",
     "prestart": "npm run build",
     "start": "electron .",
+    "dist": "npm run build && electron-builder --win --x64",
     "test:e2e": "playwright test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "build": {
+    "appId": "com.pomodorolock.app",
+    "productName": "PomodoroLock",
+    "publish": null,
+    "asar": false,
+    "artifactName": "PomodoroLock-${version}-${arch}.${ext}",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "vendor/**/*",
+      "package.json",
+      "!tests/**/*",
+      "!dist/**/*",
+      "!scripts/**/*",
+      "!themes/**/*",
+      "!*.md",
+      "!playwright.config.js",
+      "!tailwind.input.css"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "portable": {
+      "artifactName": "PomodoroLock-Portable.exe"
+    }
+  },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
     "@tailwindcss/cli": "^4.3.5",
     "electron": "^45.5.0",
+    "electron-builder": "^26.18.0",
     "tailwindcss": "^4.3.5"
   },
   "dependencies": {

@@ -44,6 +44,18 @@ async function stubTts(app, delayMs) {
   );
 }
 
+async function stubTtsUnavailable(app) {
+  await app.evaluate((_electron) => {
+    const { ipcMain } = process.mainModule.require('electron');
+
+    ipcMain.removeHandler('tts:speak');
+    ipcMain.handle('tts:speak', async () => ({
+      ok: false,
+      error: 'TTS server is not available at 127.0.0.1:8080.',
+    }));
+  });
+}
+
 async function launchApp(stubDelayMs) {
   const app = await electron.launch({
     executablePath: require('electron'),
@@ -152,6 +164,31 @@ test('auto-speaks the Japanese kanji once when the info screen opens', async () 
     await expect(infoPage.locator('#speak-kanji')).toHaveText('Speak', { timeout: 15000 });
     await expect(infoPage.locator('#speak-kanji')).toBeEnabled();
     expect(await app.evaluate(() => global.__ttsCalls)).toEqual(['桜:ja']);
+  } finally {
+    await restoreSettings(app);
+    await quitApp(app);
+  }
+});
+
+test('shows a message when the TTS server is unavailable and keeps the app usable', async () => {
+  const app = await launchApp();
+
+  try {
+    await stubTtsUnavailable(app);
+
+    const infoPage = await showEnglishInfo(app);
+
+    await expect(infoPage.locator('#tts-status')).toHaveText(
+      'TTS server is not available at 127.0.0.1:8080.',
+    );
+    await expect(infoPage.locator('#speak-word')).toHaveText('Speak');
+    await expect(infoPage.locator('#speak-word')).toBeEnabled();
+
+    // The app is still responsive after the failed speech request.
+    await infoPage.keyboard.press('Enter');
+    await expect
+      .poll(() => app.windows().some((window) => window.url().endsWith('countdown.html')))
+      .toBe(true);
   } finally {
     await restoreSettings(app);
     await quitApp(app);

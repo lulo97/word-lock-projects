@@ -6,6 +6,15 @@ const TTS_HOST = '127.0.0.1';
 const TTS_PORT = 8080;
 const TTS_PATH = '/tts';
 
+const TTS_UNAVAILABLE_MESSAGE = `TTS server is not available at ${TTS_HOST}:${TTS_PORT}.`;
+
+class TtsUnavailableError extends Error {
+  constructor(message = TTS_UNAVAILABLE_MESSAGE) {
+    super(message);
+    this.name = 'TtsUnavailableError';
+  }
+}
+
 // Gain is applied to the 16-bit PCM samples, so values above 1 can amplify.
 // Samples are clipped to the Int16 range to avoid wrap-around distortion.
 function applyGain(base64, gain) {
@@ -80,7 +89,11 @@ function synthesize(text, lang = 'en') {
       (response) => {
         if (response.statusCode < 200 || response.statusCode >= 300) {
           response.resume();
-          reject(new Error(`TTS request failed with HTTP ${response.statusCode}`));
+          reject(
+            new TtsUnavailableError(
+              `${TTS_UNAVAILABLE_MESSAGE} (HTTP ${response.statusCode})`,
+            ),
+          );
           return;
         }
 
@@ -97,10 +110,18 @@ function synthesize(text, lang = 'en') {
       },
     );
 
-    request.on('error', reject);
-    request.setTimeout(300000, () => request.destroy(new Error('TTS request timed out')));
+    request.on('error', (error) => {
+      if (error instanceof TtsUnavailableError) {
+        reject(error);
+        return;
+      }
+      reject(new TtsUnavailableError(`${TTS_UNAVAILABLE_MESSAGE} (${error.message})`));
+    });
+    request.setTimeout(300000, () =>
+      request.destroy(new TtsUnavailableError(`${TTS_UNAVAILABLE_MESSAGE} (request timed out)`)),
+    );
     request.end(body);
   });
 }
 
-module.exports = { synthesize, applyGain };
+module.exports = { synthesize, applyGain, TTS_UNAVAILABLE_MESSAGE };

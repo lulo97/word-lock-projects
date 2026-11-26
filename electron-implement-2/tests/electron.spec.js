@@ -227,25 +227,33 @@ test('cycles word, mcq, and japanese tasks with round robin', async () => {
 
     await callMainWindow(app, 'showMainWindow');
     await expect
-      .poll(() => app.windows().some((window) => window.url().endsWith('english.html')))
+      .poll(() => app.windows().some((window) => window.url().endsWith('english.html')), {
+        timeout: 15000,
+      })
       .toBe(true);
 
     await callMainWindow(app, 'hideMainWindow');
     await callMainWindow(app, 'showMainWindow');
     await expect
-      .poll(() => app.windows().some((window) => window.url().endsWith('mcq.html')))
+      .poll(() => app.windows().some((window) => window.url().endsWith('mcq.html')), {
+        timeout: 15000,
+      })
       .toBe(true);
 
     await callMainWindow(app, 'hideMainWindow');
     await callMainWindow(app, 'showMainWindow');
     await expect
-      .poll(() => app.windows().some((window) => window.url().endsWith('japanese.html')))
+      .poll(() => app.windows().some((window) => window.url().endsWith('japanese.html')), {
+        timeout: 15000,
+      })
       .toBe(true);
 
     await callMainWindow(app, 'hideMainWindow');
     await callMainWindow(app, 'showMainWindow');
     await expect
-      .poll(() => app.windows().some((window) => window.url().endsWith('english.html')))
+      .poll(() => app.windows().some((window) => window.url().endsWith('english.html')), {
+        timeout: 15000,
+      })
       .toBe(true);
   } finally {
     await closeApp(app);

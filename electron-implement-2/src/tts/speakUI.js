@@ -6,8 +6,41 @@ const animationSteps = ['Speak.', 'Speak..', 'Speak...'];
 const buttonClass =
   'speak-button rounded border border-gray-400 px-2 py-0.5 text-sm text-gray-700 hover:bg-gray-100';
 
+const TTS_STATUS_ID = 'tts-status';
+const DEFAULT_ERROR = 'Speech could not be played.';
+
 let speechQueue = Promise.resolve();
 let disposed = false;
+
+function getStatusEl() {
+  let statusEl = document.getElementById(TTS_STATUS_ID);
+  if (statusEl) return statusEl;
+
+  statusEl = document.createElement('p');
+  statusEl.id = TTS_STATUS_ID;
+  statusEl.setAttribute('role', 'status');
+  statusEl.setAttribute('aria-live', 'polite');
+  statusEl.className = 'text-center text-sm font-semibold text-red-600';
+
+  const mainEl = document.querySelector('main');
+  const tableEl = mainEl?.querySelector('table');
+  if (tableEl) {
+    mainEl.insertBefore(statusEl, tableEl);
+  } else {
+    (mainEl || document.body).appendChild(statusEl);
+  }
+  return statusEl;
+}
+
+function showTtsMessage(message) {
+  if (disposed) return;
+  getStatusEl().textContent = message;
+}
+
+function clearTtsMessage() {
+  const statusEl = document.getElementById(TTS_STATUS_ID);
+  if (statusEl) statusEl.textContent = '';
+}
 
 function restoreButton(button) {
   activeButtons.delete(button);
@@ -34,15 +67,29 @@ function animate(button) {
 
 async function playSpeech(text, lang, button, stopAnimation) {
   try {
-    const base64 = await window.electronAPI.speak(text, lang);
+    const result = await window.electronAPI.speak(text, lang);
 
     if (disposed) return;
+
+    // The real IPC handler returns { ok, wav/error }. Older/simple stubs may
+    // still return the base64 WAV string directly.
+    const base64 = typeof result === 'string' ? result : result?.ok ? result.wav : null;
+
+    if (!base64) {
+      showTtsMessage(result?.error || DEFAULT_ERROR);
+      return;
+    }
+
+    clearTtsMessage();
 
     audio.pause();
     audio.src = `data:audio/wav;base64,${base64}`;
     await audio.play();
   } catch (error) {
-    if (!disposed) console.error('TTS failed:', error);
+    if (!disposed) {
+      console.error('TTS failed:', error);
+      showTtsMessage(DEFAULT_ERROR);
+    }
   } finally {
     stopAnimation();
 

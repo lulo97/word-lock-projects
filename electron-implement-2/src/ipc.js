@@ -16,7 +16,7 @@ const {
   createIgnoreWordsWindow,
   closeIgnoreWordsWindow,
 } = require('./settings/createIgnoreWordsWindow');
-const { synthesize } = require('./tts/tts');
+const { synthesize, TTS_UNAVAILABLE_MESSAGE } = require('./tts/tts');
 const { syncChromeFreeze } = require('./chromeFreeze/chromeFreezeManager');
 const { applyAutoStartPreference } = require('./autoStart/autoStartManager');
 
@@ -54,7 +54,16 @@ function registerIpcHandlers() {
   ipcMain.on('ignoreWords:close', () => closeIgnoreWordsWindow());
   ipcMain.on('countdown:finished', () => showMainWindow());
   ipcMain.on('app:exitInfo', () => hideMainWindow());
-  ipcMain.handle('tts:speak', (_event, text, lang) => synthesize(text, lang));
+  ipcMain.handle('tts:speak', async (_event, text, lang) => {
+    try {
+      return { ok: true, wav: await synthesize(text, lang) };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error?.message || TTS_UNAVAILABLE_MESSAGE,
+      };
+    }
+  });
 }
 
 module.exports = { registerIpcHandlers };

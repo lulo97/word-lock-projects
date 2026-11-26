@@ -387,6 +387,9 @@ test('saves master volume from the settings slider', async () => {
 
     await clickSettingsButton(settingsPage, 'confirm');
     await expect.poll(async () => (await getSettings(app)).masterVolume).toBe(target);
+    await expect
+      .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
+      .toBe(false);
 
     await callSettingsWindow(app);
     await expect

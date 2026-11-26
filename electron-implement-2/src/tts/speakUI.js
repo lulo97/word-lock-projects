@@ -60,7 +60,7 @@ function animate(button) {
   };
 }
 
-async function playSpeech(text, lang, button, stopAnimation) {
+async function playSpeech(text, lang, button, stopAnimation, userInitiated) {
   try {
     const result = await window.electronAPI.speak(text, lang);
 
@@ -71,7 +71,9 @@ async function playSpeech(text, lang, button, stopAnimation) {
     const base64 = typeof result === 'string' ? result : result?.ok ? result.wav : null;
 
     if (!base64) {
-      showTtsMessage(result?.error || DEFAULT_ERROR);
+      // Automatic speech on page load fails quietly; only show the error when
+      // the user explicitly pressed a Speak button.
+      if (userInitiated) showTtsMessage(result?.error || DEFAULT_ERROR);
       return;
     }
 
@@ -83,7 +85,7 @@ async function playSpeech(text, lang, button, stopAnimation) {
   } catch (error) {
     if (!disposed) {
       console.error('TTS failed:', error);
-      showTtsMessage(DEFAULT_ERROR);
+      if (userInitiated) showTtsMessage(DEFAULT_ERROR);
     }
   } finally {
     stopAnimation();
@@ -92,15 +94,16 @@ async function playSpeech(text, lang, button, stopAnimation) {
   }
 }
 
-function speak(text, lang, button) {
+function speak(text, lang, button, options = {}) {
   if (disposed || !button || activeButtons.has(button)) return;
 
+  const userInitiated = Boolean(options.userInitiated);
   activeButtons.add(button);
   button.disabled = true;
   const stopAnimation = animate(button);
 
   speechQueue = speechQueue
-    .then(() => playSpeech(text, lang, button, stopAnimation))
+    .then(() => playSpeech(text, lang, button, stopAnimation, userInitiated))
     .catch((error) => {
       if (!disposed) console.error('Speech queue error:', error);
     });
@@ -111,7 +114,7 @@ function createSpeakButton(text, lang) {
   button.type = 'button';
   button.className = buttonClass;
   button.textContent = 'Speak';
-  button.addEventListener('click', () => speak(text, lang, button));
+  button.addEventListener('click', () => speak(text, lang, button, { userInitiated: true }));
   return button;
 }
 
@@ -119,7 +122,7 @@ function bindSpeakButton(id, getText, lang) {
   const button = document.getElementById(id);
 
   if (button) {
-    button.addEventListener('click', () => speak(getText(), lang, button));
+    button.addEventListener('click', () => speak(getText(), lang, button, { userInitiated: true }));
   }
 }
 

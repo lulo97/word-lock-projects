@@ -170,7 +170,7 @@ test('auto-speaks the Japanese kanji once when the info screen opens', async () 
   }
 });
 
-test('shows a message when the TTS server is unavailable and keeps the app usable', async () => {
+test('shows the TTS error only after a Speak button is clicked', async () => {
   const app = await launchApp();
 
   try {
@@ -178,6 +178,13 @@ test('shows a message when the TTS server is unavailable and keeps the app usabl
 
     const infoPage = await showEnglishInfo(app);
 
+    // Automatic speech on page load fails quietly.
+    await expect(infoPage.locator('#speak-word')).toHaveText('Speak', { timeout: 15000 });
+    await expect(infoPage.locator('#speak-word')).toBeEnabled();
+    await expect(infoPage.locator('#tts-status')).toHaveCount(0);
+
+    // A user pressing Speak gets the visible explanation.
+    await infoPage.locator('#speak-word').click();
     await expect(infoPage.locator('#tts-status')).toHaveText(
       'TTS server is not available at 127.0.0.1:8080.',
     );

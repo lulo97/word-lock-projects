@@ -1,5 +1,7 @@
 const { BrowserWindow } = require('electron');
 const path = require('node:path');
+const { broadcastTheme } = require('../themes/broadcast');
+const { getSettings } = require('./settings');
 
 let settingsWindow = null;
 
@@ -10,8 +12,8 @@ function createSettingsWindow() {
   }
 
   settingsWindow = new BrowserWindow({
-    width: 420,
-    height: 620,
+    width: 460,
+    height: 720,
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),
@@ -23,6 +25,7 @@ function createSettingsWindow() {
 
   settingsWindow.on('closed', () => {
     settingsWindow = null;
+    broadcastTheme(getSettings().theme); // back to the saved skin (no-op after Confirm)
   });
 
   return settingsWindow;

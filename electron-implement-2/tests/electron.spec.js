@@ -120,7 +120,7 @@ test('checks the word, opens InfoScreen, and Enter restarts the countdown', asyn
 
     await wordPage.locator('#answer').fill('apple');
     await expect(wordPage.locator('#feedback')).toHaveText('Correct');
-    await expect(wordPage.locator('#feedback')).toHaveClass(/text-green-600/);
+    await expect(wordPage.locator('#feedback')).toHaveAttribute('data-state', 'ok');
 
     await expect
       .poll(() => app.windows().some((window) => window.url().includes('englishInfo.html')))
@@ -130,10 +130,11 @@ test('checks the word, opens InfoScreen, and Enter restarts the countdown', asyn
     await expect(infoPage.locator('#word')).toHaveText('apple');
     await expect(infoPage.locator('#meaning_vi')).toHaveText('quả táo');
     await expect(infoPage.locator('#examples')).toContainText('an apple a day keep the doctor away');
-    await expect(infoPage.locator('#examples_vi')).toContainText('anh ấy có một quả táo');
+    await expect(infoPage.locator('#examples')).toContainText('anh ấy có một quả táo');
     await expect(infoPage.locator('#speak-word')).toBeVisible();
-    await expect(infoPage.locator('#examples .speak-button')).toHaveCount(3);
-    await expect(infoPage.locator('#examples_vi .speak-button')).toHaveCount(0);
+    await expect(infoPage.locator('#examples .ui-example')).toHaveCount(3);
+    await expect(infoPage.locator('#examples button')).toHaveCount(3);
+    await expect(infoPage.locator('#examples_vi')).toHaveCount(0);
     await expect(infoPage.getByText('Enter to exit')).toBeVisible();
 
     await infoPage.keyboard.press('Enter');
@@ -200,7 +201,7 @@ test('opens the settings window with all task checkboxes', async () => {
       .toBe(true);
 
     const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
-    await expect(settingsPage.getByText('Randomly show these tasks')).toBeVisible();
+    await expect(settingsPage.getByRole('heading', { name: 'Tasks' })).toBeVisible();
     await expect(settingsPage.locator('#englishWord')).toBeVisible();
     await expect(settingsPage.locator('#multipleChoice')).toBeVisible();
     await expect(settingsPage.locator('#japaneseWord')).toBeVisible();
@@ -211,7 +212,7 @@ test('opens the settings window with all task checkboxes', async () => {
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('min', '0');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('max', '4');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('step', '0.5');
-    await expect(settingsPage.getByRole('button', { name: 'Open Ignore Words' })).toBeVisible();
+    await expect(settingsPage.getByRole('button', { name: 'Ignore words…' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Confirm' })).toBeVisible();
   } finally {
@@ -291,14 +292,15 @@ test('checks the japanese word, opens its info screen, and Enter restarts the co
     await expect(infoPage.locator('#romaji')).toHaveText('sakura');
     await expect(infoPage.locator('#meaning_en')).toHaveText('cherry blossom');
     await expect(infoPage.locator('#examples')).toContainText('桜が咲きました。');
-    await expect(infoPage.locator('#examples_en')).toContainText('The cherry blossoms bloomed.');
-    await expect(infoPage.locator('#examples_vi')).toContainText('Hoa anh đào đã nở.');
+    await expect(infoPage.locator('#examples')).toContainText('The cherry blossoms bloomed.');
+    await expect(infoPage.locator('#examples')).toContainText('Hoa anh đào đã nở.');
     await expect(infoPage.locator('#speak-kanji')).toBeVisible();
     await expect(infoPage.locator('#speak-hiragana')).toBeVisible();
     await expect(infoPage.locator('#speak-katakana')).toBeVisible();
-    await expect(infoPage.locator('#examples .speak-button')).toHaveCount(2);
-    await expect(infoPage.locator('#examples_en .speak-button')).toHaveCount(0);
-    await expect(infoPage.locator('#examples_vi .speak-button')).toHaveCount(0);
+    await expect(infoPage.locator('#examples .ui-example')).toHaveCount(2);
+    await expect(infoPage.locator('#examples button')).toHaveCount(2);
+    await expect(infoPage.locator('#examples_en')).toHaveCount(0);
+    await expect(infoPage.locator('#examples_vi')).toHaveCount(0);
     await expect(infoPage.getByText('Enter to exit')).toBeVisible();
 
     await infoPage.keyboard.press('Enter');

@@ -1,5 +1,10 @@
-const LINE_COLOR = '#22c55e';
+const LINE_COLOR_FALLBACK = '#22c55e';
 const DOT_COLOR = '#ffffff';
+
+function lineColor() {
+  const value = getComputedStyle(document.documentElement).getPropertyValue('--c-accent').trim();
+  return value || LINE_COLOR_FALLBACK;
+}
 
 export function drawArms(canvas, video, result) {
   const cw = video.clientWidth;
@@ -30,7 +35,7 @@ export function drawArms(canvas, video, result) {
     ctx.lineWidth = 6;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = LINE_COLOR;
+    ctx.strokeStyle = lineColor();
     ctx.beginPath();
     ctx.moveTo(shoulder.x, shoulder.y);
     ctx.lineTo(elbow.x, elbow.y);
@@ -43,7 +48,7 @@ export function drawArms(canvas, video, result) {
       ctx.fillStyle = DOT_COLOR;
       ctx.fill();
       ctx.lineWidth = 3;
-      ctx.strokeStyle = LINE_COLOR;
+      ctx.strokeStyle = lineColor();
       ctx.stroke();
     }
   }

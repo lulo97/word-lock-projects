@@ -3,8 +3,7 @@ const activeButtons = new Set();
 const animations = new Set();
 const animationSteps = ['Speak.', 'Speak..', 'Speak...'];
 
-const buttonClass =
-  'speak-button rounded border border-gray-400 px-2 py-0.5 text-sm text-gray-700 hover:bg-gray-100';
+const buttonClass = 'ui-btn ui-btn--sm';
 
 const TTS_STATUS_ID = 'tts-status';
 const DEFAULT_ERROR = 'Speech could not be played.';
@@ -20,15 +19,11 @@ function getStatusEl() {
   statusEl.id = TTS_STATUS_ID;
   statusEl.setAttribute('role', 'status');
   statusEl.setAttribute('aria-live', 'polite');
-  statusEl.className = 'text-center text-sm font-semibold text-red-600';
+  statusEl.className = 'ui-feedback text-center';
+  statusEl.dataset.state = 'bad';
 
   const mainEl = document.querySelector('main');
-  const tableEl = mainEl?.querySelector('table');
-  if (tableEl) {
-    mainEl.insertBefore(statusEl, tableEl);
-  } else {
-    (mainEl || document.body).appendChild(statusEl);
-  }
+  (mainEl || document.body).prepend(statusEl);
   return statusEl;
 }
 

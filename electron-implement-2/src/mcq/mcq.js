@@ -17,7 +17,7 @@ async function loadMcq() {
   currentMcq.answers.forEach((answer, index) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'rounded border border-black px-6 py-2 text-lg hover:bg-gray-100';
+    button.className = 'ui-btn ui-btn--choice';
     button.textContent = answer;
     button.addEventListener('click', () => choose(index));
     optionsEl.appendChild(button);

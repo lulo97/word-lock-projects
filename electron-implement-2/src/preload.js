@@ -1,6 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+const themeId = ipcRenderer.sendSync('theme:get');
+
 contextBridge.exposeInMainWorld('electronAPI', {
+  themeId,
+  listThemes: () => ipcRenderer.invoke('theme:list'),
+  previewTheme: (id) => ipcRenderer.send('theme:preview', id),
+  onThemeChanged: (callback) => ipcRenderer.on('theme:changed', (_event, id) => callback(id)),
   getRandomWord: () => ipcRenderer.invoke('word:getRandom'),
   getWord: (id) => ipcRenderer.invoke('word:get', id),
   getRandomMcq: () => ipcRenderer.invoke('mcq:getRandom'),

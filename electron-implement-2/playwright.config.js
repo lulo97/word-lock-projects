@@ -1,5 +1,9 @@
 const { defineConfig } = require('@playwright/test');
 
+// Every test run uses an in-memory database and in-memory settings. Nothing is
+// read from or written to the real USERPROFILE data folder.
+process.env.WORDLOCK_USE_TEST_DATA = '1';
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 30_000,
@@ -13,6 +17,7 @@ module.exports = defineConfig({
         ...process.env,
         WORDLOCK_CHROME_FREEZE_MOCK: '1',
         WORDLOCK_USE_MOCK_AUTO_START: '1',
+        WORDLOCK_USE_TEST_DATA: '1',
       },
     },
   },

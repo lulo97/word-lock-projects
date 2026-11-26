@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import './src/ui/base.css';
 
 @source "./src/english/*.html";
 @source "./src/countdown/countdown.html";
@@ -14,4 +15,5 @@
 @source "./src/tts/*.js";
 @source "./src/dumbbell/*.js";
 @source "./src/main.js";
+@source './src/ui/*.js';
 @source not "./vendor/**/*";

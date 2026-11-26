@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-full bg-white">
+<html class='h-full'>
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -8,101 +8,36 @@
     />
     <title>Japanese Word Info</title>
     <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="../../assets/themes.css" />
+    <script src="../ui/theme-boot.js"></script>
   </head>
-  <body class="m-0 flex h-full w-full flex-col items-center bg-white text-black">
-    <main class="flex w-full flex-1 flex-col items-center justify-center gap-4">
-      <h1 class="text-3xl font-bold">Japanese Word Info</h1>
-      <table class="w-full max-w-3xl table-auto text-left text-lg">
-        <thead>
-          <tr class="border-b border-gray-300">
-            <th class="px-3 py-2 font-semibold">column</th>
-            <th class="px-3 py-2 font-semibold">value</th>
-            <th class="px-3 py-2 font-semibold">speak</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">id</th>
-            <td id="id" class="px-3 py-2 align-top"></td>
-            <td class="px-3 py-2 align-top"></td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">kanji</th>
-            <td id="kanji" class="px-3 py-2 align-top"></td>
-            <td class="px-3 py-2 align-top">
-              <button
-                id="speak-kanji"
-                type="button"
-                class="speak-button rounded border border-gray-400 px-2 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Speak
-              </button>
-            </td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">hiragana</th>
-            <td id="hiragana" class="px-3 py-2 align-top"></td>
-            <td class="px-3 py-2 align-top">
-              <button
-                id="speak-hiragana"
-                type="button"
-                class="speak-button rounded border border-gray-400 px-2 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Speak
-              </button>
-            </td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">katakana</th>
-            <td id="katakana" class="px-3 py-2 align-top"></td>
-            <td class="px-3 py-2 align-top">
-              <button
-                id="speak-katakana"
-                type="button"
-                class="speak-button rounded border border-gray-400 px-2 py-0.5 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                Speak
-              </button>
-            </td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">romaji</th>
-            <td id="romaji" class="px-3 py-2 align-top"></td>
-            <td class="px-3 py-2 align-top"></td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">meaning_en</th>
-            <td id="meaning_en" class="px-3 py-2 align-top"></td>
-            <td class="px-3 py-2 align-top"></td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">examples</th>
-            <td class="px-3 py-2 align-top">
-              <ol id="examples" class="list-inside list-decimal space-y-1"></ol>
-            </td>
-            <td class="px-3 py-2 align-top"></td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">examples_en</th>
-            <td class="px-3 py-2 align-top">
-              <ol id="examples_en" class="list-inside list-decimal space-y-1"></ol>
-            </td>
-            <td class="px-3 py-2 align-top"></td>
-          </tr>
-          <tr class="border-b border-gray-100">
-            <th class="px-3 py-2 text-left font-semibold align-top">examples_vi</th>
-            <td class="px-3 py-2 align-top">
-              <ol id="examples_vi" class="list-inside list-decimal space-y-1"></ol>
-            </td>
-            <td class="px-3 py-2 align-top"></td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-    <p class="mb-6 text-sm text-gray-500">Enter to exit</p>
+  <body>
+    <div class='ui-scroll'>
+      <main class='ui-page'>
+        <section class='ui-panel ui-hero'>
+          <p class='ui-kicker'>Japanese word #<span id='id'></span></p>
+          <h1 id='kanji' class='ui-word'></h1>
+          <button id='speak-kanji' type='button' class='ui-btn ui-btn--sm'>Speak</button>
+          <p id='meaning_en' class='text-xl'></p>
+          <div class='flex flex-wrap items-center justify-center gap-2'>
+            <span class='ui-chip'>hiragana <b id='hiragana'></b>
+              <button id='speak-hiragana' type='button' class='ui-btn ui-btn--sm'>Speak</button></span>
+            <span class='ui-chip'>katakana <b id='katakana'></b>
+              <button id='speak-katakana' type='button' class='ui-btn ui-btn--sm'>Speak</button></span>
+            <span class='ui-chip'>romaji <b id='romaji'></b></span>
+          </div>
+        </section>
+
+        <h2 class='ui-section-title'>Examples</h2>
+        <div id='examples' class='ui-stack'></div>
+
+        <p class='ui-hint text-center'>Press <span class='ui-keycap'>Enter</span> to exit</p>
+      </main>
+    </div>
     <script src="../../vendor/jquery.min.js"></script>
     <script src="../../vendor/lodash.min.js"></script>
     <script src="../tts/speakUI.js"></script>
+    <script src="../ui/info-render.js"></script>
     <script src="japaneseInfo.js"></script>
   </body>
 </html>

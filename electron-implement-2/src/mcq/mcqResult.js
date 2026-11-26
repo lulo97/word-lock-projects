@@ -2,14 +2,11 @@ const resultEl = document.getElementById('result');
 const detailsEl = document.getElementById('details');
 
 function addField(label, value) {
-  const row = document.createElement('div');
-
-  const labelEl = document.createElement('span');
-  labelEl.className = 'font-semibold';
-  labelEl.textContent = `${label}: `;
-
-  row.append(labelEl, document.createTextNode(String(value)));
-  detailsEl.appendChild(row);
+  const dt = document.createElement('dt');
+  dt.textContent = label;
+  const dd = document.createElement('dd');
+  dd.textContent = String(value);
+  detailsEl.append(dt, dd);
 }
 
 async function loadResult() {
@@ -26,9 +23,7 @@ async function loadResult() {
   const correct = selected === mcq.correct_answer_idx;
 
   resultEl.textContent = correct ? 'Correct' : 'Wrong';
-  resultEl.className = correct
-    ? 'text-3xl font-bold text-green-600'
-    : 'text-3xl font-bold text-red-600';
+  resultEl.dataset.state = correct ? 'ok' : 'bad';
 
   addField('question', mcq.question);
   addField('your answer', mcq.answers[selected]);

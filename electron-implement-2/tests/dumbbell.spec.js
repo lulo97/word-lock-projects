@@ -120,8 +120,8 @@ test('counts one rep per up and down cycle on each arm', async () => {
     await doRep(page);
     await expect(page.locator('#left-reps')).toHaveText('1 / 10');
     await expect(page.locator('#right-reps')).toHaveText('1 / 10');
-    await expect(page.locator('#left-bar span.bg-green-600')).toHaveCount(1);
-    await expect(page.locator('#right-bar span.bg-green-600')).toHaveCount(1);
+    await expect(page.locator('#left-bar span.ui-seg.is-on')).toHaveCount(1);
+    await expect(page.locator('#right-bar span.ui-seg.is-on')).toHaveCount(1);
     await expect(page.locator('#left-stage')).toContainText('DOWN');
     await expect(page.locator('#overall')).toHaveText('Total 2 / 20');
 
@@ -194,8 +194,8 @@ test('shows Training done after 10 reps per arm and returns to the countdown', a
     }
 
     await expect(page.locator('#overall')).toHaveText('Total 20 / 20');
-    await expect(page.locator('#arm-left')).toHaveClass(/bg-green-100/);
-    await expect(page.locator('#arm-right')).toHaveClass(/bg-green-100/);
+    await expect(page.locator('#arm-left')).toHaveClass(/is-done/);
+    await expect(page.locator('#arm-right')).toHaveClass(/is-done/);
     await expect(page.getByText('Training done')).toBeVisible();
     await expect
       .poll(() => app.windows().some((window) => window.url().endsWith('countdown.html')))

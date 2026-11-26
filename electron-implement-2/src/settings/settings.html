@@ -1,82 +1,60 @@
 <!DOCTYPE html>
-<html class="h-full bg-white">
+<html class='h-full'>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <title>Settings</title>
     <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="../../assets/themes.css" />
+    <script src="../ui/theme-boot.js"></script>
   </head>
-  <body class="m-0 flex h-full w-full flex-col gap-4 bg-white p-6 text-black">
-    <label class="text-lg font-semibold">Randomly show these tasks</label>
-    <label class="flex items-center gap-2 text-base">
-      <input id="englishWord" type="checkbox" class="h-4 w-4" />
-      English word task
-    </label>
-    <label class="flex items-center gap-2 text-base">
-      <input id="multipleChoice" type="checkbox" class="h-4 w-4" />
-      Multiple choice task
-    </label>
-    <label class="flex items-center gap-2 text-base">
-      <input id="japaneseWord" type="checkbox" class="h-4 w-4" />
-      Japanese word task
-    </label>
-    <label class="flex items-center gap-2 text-base">
-      <input id="dumbbellWorkout" type="checkbox" class="h-4 w-4" />
-      Dumbbell workout task
-    </label>
-    <label class="flex items-center gap-2 text-base">
-      <input id="chromeFreeze" type="checkbox" class="h-4 w-4" />
-      Chrome freeze
-    </label>
-    <label class="flex items-center gap-2 text-base">
-      <input id="autoStart" type="checkbox" class="h-4 w-4" />
-      Start with Windows
-    </label>
-    <label class="flex flex-col gap-1 text-base" for="countdownSeconds">
-      <span class="font-semibold">Countdown (seconds)</span>
-      <input
-        id="countdownSeconds"
-        type="number"
-        min="1"
-        max="3600"
-        step="1"
-        class="w-full rounded border border-black px-2 py-1"
-      />
-      <span class="text-xs text-gray-600">1–3600 seconds</span>
-    </label>
-    <label class="flex flex-col gap-1 text-base">
-      <span class="flex items-baseline justify-between">
-        <span class="font-semibold">Master volume</span>
-        <span id="volumeValue">1×</span>
-      </span>
-      <input id="masterVolume" type="range" min="0" max="4" step="0.5" class="w-full" />
-      <span class="flex justify-between text-xs text-gray-600">
-        <span>0 (mute)</span>
-        <span>4 (max)</span>
-      </span>
-    </label>
-    <button
-      id="openIgnoreWords"
-      type="button"
-      class="w-full rounded border border-black px-6 py-2 text-base hover:bg-gray-100"
-    >
-      Open Ignore Words
-    </button>
-    <div class="mt-auto flex w-full justify-between">
-      <button
-        id="cancel"
-        type="button"
-        class="rounded border border-black px-6 py-2 text-base hover:bg-gray-100"
-      >
-        Cancel
-      </button>
-      <button
-        id="confirm"
-        type="button"
-        class="rounded bg-black px-6 py-2 text-base text-white hover:bg-gray-800"
-      >
-        Confirm
-      </button>
+  <body>
+    <div class='ui-form'>
+      <div class='ui-form__body'>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>Tasks</h2>
+          <p class='ui-hint'>Enabled tasks rotate one after another.</p>
+          <label class='ui-row'><span>English word</span><input id='englishWord' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Multiple choice</span><input id='multipleChoice' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Japanese word</span><input id='japaneseWord' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Dumbbell workout</span><input id='dumbbellWorkout' type='checkbox' class='ui-switch' /></label>
+          <button id='openIgnoreWords' type='button' class='ui-btn mt-3 w-full'>Ignore words…</button>
+        </section>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>Timing and sound</h2>
+          <div class='ui-row ui-row--col'>
+            <label for='countdownSeconds' class='font-semibold'>Countdown (seconds)</label>
+            <input id='countdownSeconds' type='number' min='1' max='3600' step='1' class='ui-input' />
+            <span class='ui-hint'>1–3600 seconds</span>
+          </div>
+          <div class='ui-row ui-row--col'>
+            <div class='flex items-baseline justify-between'>
+              <label for='masterVolume' class='font-semibold'>Master volume</label>
+              <span id='volumeValue' class='ui-chip'>1×</span>
+            </div>
+            <input id='masterVolume' type='range' min='0' max='4' step='0.5' class='ui-range' />
+            <div class='ui-hint flex justify-between'><span>0 (mute)</span><span>4 (max)</span></div>
+          </div>
+        </section>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>System</h2>
+          <label class='ui-row'><span>Freeze Chrome while locked</span><input id='chromeFreeze' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Start with Windows</span><input id='autoStart' type='checkbox' class='ui-switch' /></label>
+        </section>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>Appearance</h2>
+          <div id='themeGrid' class='ui-theme-grid'></div>
+        </section>
+
+      </div>
+      <div class='ui-form__footer'>
+        <button id='cancel' type='button' class='ui-btn'>Cancel</button>
+        <button id='confirm' type='button' class='ui-btn ui-btn--primary'>Confirm</button>
+      </div>
     </div>
     <script src="../../vendor/jquery.min.js"></script>
     <script src="../../vendor/lodash.min.js"></script>

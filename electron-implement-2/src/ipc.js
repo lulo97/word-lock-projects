@@ -1,5 +1,7 @@
 const { ipcMain } = require('electron');
 
+const { broadcastTheme } = require('./themes/broadcast');
+const { themes } = require('./themes/registry');
 const {
   getEnglishWord,
   getRandomWord,
@@ -9,7 +11,14 @@ const {
   getRandomJapaneseWord,
 } = require('./database/database');
 const { showMainWindow, hideMainWindow } = require('./main/createWindow');
-const { getSettings, setSettings, getIgnoreWords, setIgnoreWords, IGNORE_ERROR } = require('./settings/settings');
+const {
+  getSettings,
+  setSettings,
+  getIgnoreWords,
+  setIgnoreWords,
+  normalizeTheme,
+  IGNORE_ERROR,
+} = require('./settings/settings');
 const { closeSettingsWindow } = require('./settings/createSettingsWindow');
 const { closeCountdownWindow } = require('./countdown/createCountdownWindow');
 const {
@@ -20,6 +29,13 @@ const { synthesize, TTS_UNAVAILABLE_MESSAGE } = require('./tts/tts');
 const { syncChromeFreeze } = require('./chromeFreeze/chromeFreezeManager');
 const { applyAutoStartPreference } = require('./autoStart/autoStartManager');
 
+function applySettings(values) {
+  setSettings(values);
+  syncChromeFreeze();
+  if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
+  broadcastTheme(getSettings().theme);
+}
+
 function registerIpcHandlers() {
   ipcMain.handle('word:getRandom', () => getRandomWord());
   ipcMain.handle('word:get', (_event, id) => getEnglishWord(id));
@@ -29,19 +45,20 @@ function registerIpcHandlers() {
   ipcMain.handle('japanese:get', (_event, id) => getJapaneseWord(id));
   ipcMain.handle('settings:get', () => getSettings());
   ipcMain.handle('settings:set', (_event, values) => {
-    setSettings(values);
-    syncChromeFreeze();
-    if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
+    applySettings(values);
   });
   ipcMain.handle('settings:confirm', (_event, values) => {
-    setSettings(values);
-    syncChromeFreeze();
-    if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
+    applySettings(values);
     closeCountdownWindow();
     hideMainWindow();
     closeSettingsWindow();
   });
   ipcMain.on('settings:close', () => closeSettingsWindow());
+  ipcMain.on('theme:get', (event) => {
+    event.returnValue = getSettings().theme; // synchronous: used before first paint
+  });
+  ipcMain.handle('theme:list', () => themes);
+  ipcMain.on('theme:preview', (_event, id) => broadcastTheme(normalizeTheme(id)));
   ipcMain.handle('ignoreWords:open', () => createIgnoreWordsWindow());
   ipcMain.handle('ignoreWords:get', () => getIgnoreWords());
   ipcMain.handle('ignoreWords:save', (_event, values) => {

@@ -24,14 +24,14 @@ answerEl.addEventListener('input', () => {
     solved = true;
     answerEl.disabled = true;
     feedbackEl.textContent = 'Correct';
-    feedbackEl.className = 'text-xl font-semibold text-green-600';
+    feedbackEl.dataset.state = 'ok';
 
     setTimeout(() => {
       window.location.href = `englishInfo.html?id=${encodeURIComponent(currentWord.id)}`;
     }, 300);
   } else {
     feedbackEl.textContent = '';
-    feedbackEl.className = 'text-xl';
+    delete feedbackEl.dataset.state;
   }
 });
 

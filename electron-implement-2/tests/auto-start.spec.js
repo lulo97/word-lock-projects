@@ -118,23 +118,23 @@ test('the Start with Windows checkbox enables and disables auto-start', async ()
   }
 });
 
-test('launching again re-writes the login item with the current exe', async () => {
-  let app = await launchApp();
+test('launch-time sync re-writes the login item when auto-start is enabled', async () => {
+  const app = await launchApp();
   let original = null;
 
   try {
     original = await getSettings(app);
+    await mock(app, 'reset');
     await setSettings(app, { ...original, autoStart: true });
-  } finally {
-    await closeApp(app);
-  }
 
-  app = await launchApp();
-  try {
+    // Simulate the startup sync that a real relaunch would perform. Settings
+    // are in memory, so no cross-process persistence is involved.
+    await callManager(app, 'initializeAutoStart');
+
     expect(await mock(app, 'getCalls')).toEqual(['sync:true', 'set:true']);
     expect((await mock(app, 'getState')).openAtLogin).toBe(true);
   } finally {
-    await setSettings(app, { ...original, autoStart: false });
+    if (original) await setSettings(app, { ...original, autoStart: false });
     await closeApp(app);
   }
 });

@@ -210,15 +210,15 @@ test('animates speech, ignores spam clicks, and queues other speak buttons', asy
     await expect(infoPage.locator('#speak-word')).toBeDisabled();
 
     await infoPage.locator('#speak-word').click({ force: true });
-    await infoPage.locator('#examples .speak-button').first().click();
-    await expect(infoPage.locator('#examples .speak-button').first()).toHaveText(/^Speak\.{1,3}$/);
-    await expect(infoPage.locator('#examples .speak-button').first()).toBeDisabled();
+    await infoPage.locator('#examples button').first().click();
+    await expect(infoPage.locator('#examples button').first()).toHaveText(/^Speak\.{1,3}$/);
+    await expect(infoPage.locator('#examples button').first()).toBeDisabled();
     await expect.poll(() => app.evaluate(() => global.__ttsCalls.length)).toBe(2);
 
     await expect(infoPage.locator('#speak-word')).toHaveText('Speak', { timeout: 15000 });
     await expect(infoPage.locator('#speak-word')).toBeEnabled();
-    await expect(infoPage.locator('#examples .speak-button').first()).toHaveText('Speak', { timeout: 15000 });
-    await expect(infoPage.locator('#examples .speak-button').first()).toBeEnabled();
+    await expect(infoPage.locator('#examples button').first()).toHaveText('Speak', { timeout: 15000 });
+    await expect(infoPage.locator('#examples button').first()).toBeEnabled();
 
     expect(await app.evaluate(() => global.__ttsCalls)).toEqual([
       'apple:en',

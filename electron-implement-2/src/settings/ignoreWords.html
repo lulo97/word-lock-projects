@@ -1,54 +1,28 @@
 <!DOCTYPE html>
-<html class="h-full bg-white">
+<html class='h-full'>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <title>Ignore Words</title>
     <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="../../assets/themes.css" />
+    <script src="../ui/theme-boot.js"></script>
   </head>
-  <body class="m-0 flex h-full w-full flex-col gap-3 bg-white p-5 text-black">
-    <div class="flex gap-2">
-      <button
-        id="tabEnglish"
-        type="button"
-        class="rounded border border-black bg-black px-6 py-2 text-base text-white"
-      >
-        English
-      </button>
-      <button
-        id="tabJapanese"
-        type="button"
-        class="rounded border border-black px-6 py-2 text-base hover:bg-gray-100"
-      >
-        Japanese
-      </button>
-    </div>
-    <label id="hint" class="text-sm text-gray-600" for="words">
-      Comma-separated words only, e.g. abc, xyz, 123
-    </label>
-    <textarea
-      id="words"
-      class="h-64 w-full resize-none rounded border border-gray-400 p-2 text-base"
-      placeholder="word1, word2, word3"
-    ></textarea>
-    <p id="error" class="hidden text-sm font-semibold text-red-600" role="alert">
-      can't save ignore words
-    </p>
-    <div class="mt-auto flex justify-end gap-3">
-      <button
-        id="cancel"
-        type="button"
-        class="rounded border border-black px-6 py-2 text-base hover:bg-gray-100"
-      >
-        Cancel
-      </button>
-      <button
-        id="save"
-        type="button"
-        class="rounded bg-black px-6 py-2 text-base text-white hover:bg-gray-800"
-      >
-        Save
-      </button>
+  <body>
+    <div class='ui-form'>
+      <div class='ui-form__body'>
+        <div class='ui-tabs' role='tablist'>
+          <button id='tabEnglish' type='button' role='tab' class='ui-tab' aria-selected='true'>English</button>
+          <button id='tabJapanese' type='button' role='tab' class='ui-tab' aria-selected='false'>Japanese</button>
+        </div>
+        <label id='hint' class='ui-hint' for='words'>Comma-separated words only, e.g. abc, xyz, 123</label>
+        <textarea id='words' class='ui-textarea h-64' placeholder='word1, word2, word3'></textarea>
+        <p id='error' class='ui-feedback hidden' data-state='bad' role='alert'>can't save ignore words</p>
+      </div>
+      <div class='ui-form__footer'>
+        <button id='cancel' type='button' class='ui-btn'>Cancel</button>
+        <button id='save' type='button' class='ui-btn ui-btn--primary'>Save</button>
+      </div>
     </div>
     <script src="../../vendor/jquery.min.js"></script>
     <script src="../../vendor/lodash.min.js"></script>

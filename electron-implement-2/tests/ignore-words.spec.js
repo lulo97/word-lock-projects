@@ -54,7 +54,7 @@ async function openSettings(app) {
 }
 
 async function openIgnoreWords(app, settingsPage) {
-  await settingsPage.getByRole('button', { name: 'Open Ignore Words' }).click();
+  await settingsPage.getByRole('button', { name: 'Ignore words…' }).click();
   await expect
     .poll(() => app.windows().some((window) => window.url().endsWith('ignoreWords.html')))
     .toBe(true);
@@ -128,8 +128,8 @@ test('Open Ignore Words validates comma-separated input and saves both tabs', as
     const settingsPage = await openSettings(app);
     const ignorePage = await openIgnoreWords(app, settingsPage);
 
-    await expect(ignorePage.getByRole('button', { name: 'English' })).toBeVisible();
-    await expect(ignorePage.getByRole('button', { name: 'Japanese' })).toBeVisible();
+    await expect(ignorePage.getByRole('tab', { name: 'English' })).toBeVisible();
+    await expect(ignorePage.getByRole('tab', { name: 'Japanese' })).toBeVisible();
     await expect(ignorePage.locator('#words')).toBeVisible();
     await expect(ignorePage.getByRole('button', { name: 'Save' })).toBeVisible();
     await expect(ignorePage.getByRole('button', { name: 'Cancel' })).toBeVisible();
@@ -156,7 +156,7 @@ test('Open Ignore Words validates comma-separated input and saves both tabs', as
 
     // Japanese tab rejects romaji/English but accepts kanji, hiragana and katakana.
     const japanesePage = await openIgnoreWords(app, settingsPage);
-    await japanesePage.getByRole('button', { name: 'Japanese' }).click();
+    await japanesePage.getByRole('tab', { name: 'Japanese' }).click();
     await japanesePage.locator('#words').fill('sakura');
     await japanesePage.getByRole('button', { name: 'Save' }).click();
     await expect(japanesePage.getByText("can't save ignore words")).toBeVisible();

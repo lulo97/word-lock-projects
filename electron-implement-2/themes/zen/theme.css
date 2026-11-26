@@ -1,0 +1,9 @@
+:theme {
+  --c-bg: #eef2ea;  --c-surface: #fbfcf8;  --c-surface-2: #e1e8da;
+  --c-ink: #22301f; --c-muted: #6b7d63;    --c-line: #cfd9c6;
+  --c-accent: #3f7d4e; --c-accent-ink: #ffffff;
+  --c-ok: #2e7d32;  --c-bad: #b3392f;
+  --radius: 12px;   --radius-sm: 8px;
+  --shadow: 0 6px 20px rgb(63 125 78 / 0.12);
+  --font-display: Georgia, 'Times New Roman', serif;
+}

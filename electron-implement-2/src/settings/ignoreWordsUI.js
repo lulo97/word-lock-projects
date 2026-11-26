@@ -6,10 +6,6 @@ const errorEl = document.getElementById('error');
 const cancelEl = document.getElementById('cancel');
 const saveEl = document.getElementById('save');
 
-const activeTabClass = 'rounded border border-black bg-black px-6 py-2 text-base text-white';
-const inactiveTabClass =
-  'rounded border border-black px-6 py-2 text-base hover:bg-gray-100';
-
 const hints = {
   english: 'Comma-separated words only, e.g. abc, xyz, 123',
   japanese:
@@ -24,8 +20,8 @@ function hideError() {
 }
 
 function render() {
-  tabEnglishEl.className = activeLanguage === 'english' ? activeTabClass : inactiveTabClass;
-  tabJapaneseEl.className = activeLanguage === 'japanese' ? activeTabClass : inactiveTabClass;
+  tabEnglishEl.setAttribute('aria-selected', String(activeLanguage === 'english'));
+  tabJapaneseEl.setAttribute('aria-selected', String(activeLanguage === 'japanese'));
   hintEl.textContent = hints[activeLanguage];
   wordsEl.value = drafts[activeLanguage];
   hideError();

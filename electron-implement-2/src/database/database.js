@@ -13,10 +13,14 @@ const { getJapaneseWord: selectJapaneseWord } = require('./getJapaneseWord');
 const { getRandomJapaneseWord: selectRandomJapaneseWord } = require('./getRandomJapaneseWord');
 const { getIgnoreWords } = require('../settings/settings');
 
-const dataDir = path.join(app.getPath('home'), 'pomodoro_lock');
-const dbPath = path.join(dataDir, 'pomodoro_lock.db');
+// Playwright runs with WORDLOCK_USE_TEST_DATA=1. In that mode the database is
+// in memory and seeded with deterministic fake rows, so tests never touch the
+// user's real pomodoro_lock.db in their home folder.
+const USE_TEST_DATA = process.env.WORDLOCK_USE_TEST_DATA === '1';
+const dataDir = USE_TEST_DATA ? null : path.join(app.getPath('home'), 'pomodoro_lock');
+const dbPath = dataDir ? path.join(dataDir, 'pomodoro_lock.db') : ':memory:';
 
-fs.mkdirSync(dataDir, { recursive: true });
+if (dataDir) fs.mkdirSync(dataDir, { recursive: true });
 
 const db = new Database(dbPath);
 

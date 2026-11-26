@@ -1,28 +1,23 @@
 <!DOCTYPE html>
-<html class="h-full bg-white">
+<html class='h-full'>
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <title>Japanese Word</title>
     <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="../../assets/themes.css" />
+    <script src="../ui/theme-boot.js"></script>
   </head>
-  <body
-    class="m-0 flex h-full w-full flex-col items-center justify-center gap-6 bg-white text-black"
-  >
-    <div id="word" class="text-5xl font-semibold"></div>
-    <div class="flex flex-col items-center gap-1 text-lg text-gray-600">
-      <div>hiragana: <span id="hiragana"></span></div>
-      <div>katakana: <span id="katakana"></span></div>
-      <div>romaji: <span id="romaji"></span></div>
+  <body class='ui-screen'>
+    <p class='ui-kicker'>Type the romaji</p>
+    <div id='word' class='ui-word'></div>
+    <div class='flex flex-wrap justify-center gap-2'>
+      <span class='ui-chip'>hiragana <b id='hiragana'></b></span>
+      <span class='ui-chip'>katakana <b id='katakana'></b></span>
+      <span class='ui-chip'>romaji <b id='romaji'></b></span>
     </div>
-    <input
-      id="answer"
-      type="text"
-      autocomplete="off"
-      spellcheck="false"
-      class="w-64 border-b-2 border-black text-center text-2xl outline-none"
-    />
-    <p id="feedback" class="text-xl"></p>
+    <input id='answer' class='ui-input ui-input--big' type='text' autocomplete='off' spellcheck='false' />
+    <p id='feedback' class='ui-feedback' role='status'></p>
     <script src="../../vendor/jquery.min.js"></script>
     <script src="../../vendor/lodash.min.js"></script>
     <script src="japanese.js"></script>

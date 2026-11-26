@@ -3,8 +3,8 @@ import { drawArms } from './overlay.js';
 
 const TARGET_REPS = 10;
 const SIDES = ['left', 'right'];
-const SEG_ON = 'h-3 flex-1 rounded-sm bg-green-600';
-const SEG_OFF = 'h-3 flex-1 rounded-sm bg-gray-300';
+const SEG_ON = 'ui-seg is-on';
+const SEG_OFF = 'ui-seg';
 
 const $ = (id) => document.getElementById(id);
 const videoEl = $('camera');
@@ -71,7 +71,7 @@ function renderReps() {
     else status = `${(arm.stage ?? '...').toUpperCase()} · ${Math.round(arm.angle)}°`;
     $(`${side}-stage`).textContent = status;
 
-    $(`arm-${side}`).className = arm.done ? 'rounded bg-green-100 p-2' : 'rounded bg-gray-100 p-2';
+    $(`arm-${side}`).className = arm.done ? 'ui-panel is-done' : 'ui-panel';
   }
 
   overallEl.textContent = `Total ${arms.left.reps + arms.right.reps} / ${TARGET_REPS * 2}`;

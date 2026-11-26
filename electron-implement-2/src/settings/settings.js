@@ -1,9 +1,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { app } = require('electron');
+const { THEME_IDS, DEFAULT_THEME } = require('../themes/registry');
 
-const dataDir = path.join(app.getPath('home'), 'pomodoro_lock');
-const settingsPath = path.join(dataDir, 'settings.json');
+// Playwright runs with WORDLOCK_USE_TEST_DATA=1. In that mode settings live
+// only in memory, so tests never read or write the user's real settings.json.
+const USE_TEST_DATA = process.env.WORDLOCK_USE_TEST_DATA === '1';
+const dataDir = USE_TEST_DATA ? null : path.join(app.getPath('home'), 'pomodoro_lock');
+const settingsPath = dataDir ? path.join(dataDir, 'settings.json') : null;
 
 const IGNORE_ERROR = "can't save ignore words";
 
@@ -19,6 +23,7 @@ const defaults = {
   countdownSeconds: 60,
   chromeFreeze: false,
   autoStart: false,
+  theme: DEFAULT_THEME,
   ignoreWords: { english: [], japanese: [] },
 };
 
@@ -26,6 +31,10 @@ function normalizeVolume(value) {
   const volume = Number(value);
   if (!Number.isFinite(volume)) return defaults.masterVolume;
   return Math.min(4, Math.max(0, Math.round(volume * 2) / 2));
+}
+
+function normalizeTheme(value) {
+  return THEME_IDS.includes(value) ? value : DEFAULT_THEME;
 }
 
 function normalizeCountdownSeconds(value) {
@@ -84,6 +93,10 @@ function parseIgnoreWords(value, language = 'english') {
 }
 
 function load() {
+  if (USE_TEST_DATA) {
+    return { ...defaults, ignoreWords: normalizeStoredIgnoreWords(defaults.ignoreWords) };
+  }
+
   try {
     const saved = { ...defaults, ...JSON.parse(fs.readFileSync(settingsPath, 'utf8')) };
     return {
@@ -92,6 +105,7 @@ function load() {
       countdownSeconds: normalizeCountdownSeconds(saved.countdownSeconds),
       chromeFreeze: Boolean(saved.chromeFreeze),
       autoStart: Boolean(saved.autoStart),
+      theme: normalizeTheme(saved.theme),
       ignoreWords: normalizeStoredIgnoreWords(saved.ignoreWords),
     };
   } catch {
@@ -103,6 +117,7 @@ let settings = load();
 let nextTaskIndex = 0;
 
 function save() {
+  if (USE_TEST_DATA) return;
   fs.mkdirSync(dataDir, { recursive: true });
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
 }
@@ -147,6 +162,7 @@ function setSettings(next) {
     chromeFreeze:
       next.chromeFreeze === undefined ? settings.chromeFreeze : Boolean(next.chromeFreeze),
     autoStart: next.autoStart === undefined ? settings.autoStart : Boolean(next.autoStart),
+    theme: next.theme === undefined ? settings.theme : normalizeTheme(next.theme),
     ignoreWords: getIgnoreWords(),
   };
   nextTaskIndex = 0;
@@ -177,6 +193,7 @@ module.exports = {
   setIgnoreWords,
   parseIgnoreWords,
   normalizeVolume,
+  normalizeTheme,
   normalizeCountdownSeconds,
   COUNTDOWN_SECONDS_MIN,
   COUNTDOWN_SECONDS_MAX,

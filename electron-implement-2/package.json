@@ -4,9 +4,12 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "build": "npm run build:tailwind && npm run build:vendor",
+    "build:themes": "node scripts/build-themes.js",
+    "build:css": "npm run build:tailwind",
     "build:tailwind": "tailwindcss -i ./tailwind.input.css -o ./assets/tailwind.css --minify",
     "build:vendor": "node ./scripts/copy-vendor.js",
+    "build:ui": "npm run build:themes && npm run build:css",
+    "build": "npm run build:ui && npm run build:vendor",
     "prestart": "npm run build",
     "start": "electron .",
     "test:e2e": "playwright test"

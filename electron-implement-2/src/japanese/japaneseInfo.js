@@ -1,45 +1,22 @@
-function setText(id, value) {
-  document.getElementById(id).textContent = String(value);
-}
-
-function renderList(id, values, lang) {
-  const list = document.getElementById(id);
-  list.replaceChildren();
-
-  for (const value of values ?? []) {
-    const item = document.createElement('li');
-    item.className = 'flex items-center gap-2';
-
-    const text = document.createElement('span');
-    text.textContent = value;
-    item.appendChild(text);
-
-    if (lang) {
-      item.appendChild(window.speakUI.createSpeakButton(value, lang));
-    }
-
-    list.appendChild(item);
-  }
-}
-
 async function loadDetails() {
   const id = Number(new URLSearchParams(window.location.search).get('id'));
   const row = await window.electronAPI.getJapaneseWord(id);
 
   if (!row) {
-    setText('kanji', 'Word not found');
+    window.infoUI.setText('kanji', 'Word not found');
     return;
   }
 
-  setText('id', row.id);
-  setText('kanji', row.kanji);
-  setText('hiragana', row.hiragana);
-  setText('katakana', row.katakana);
-  setText('romaji', row.romaji);
-  setText('meaning_en', row.meaning_en);
-  renderList('examples', row.examples, 'ja');
-  renderList('examples_en', row.examples_en);
-  renderList('examples_vi', row.examples_vi);
+  for (const key of ['id', 'kanji', 'hiragana', 'katakana', 'romaji', 'meaning_en']) {
+    window.infoUI.setText(key, row[key]);
+  }
+
+  const rows = (row.examples ?? []).map((text, i) => ({
+    text,
+    subs: [row.examples_en?.[i], row.examples_vi?.[i]],
+  }));
+  window.infoUI.renderExamples('examples', rows, 'ja');
+
   window.speakUI.speak(row.kanji, 'ja', document.getElementById('speak-kanji'));
 }
 

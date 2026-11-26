@@ -9,6 +9,7 @@ const defaults = {
   englishWord: true,
   multipleChoice: true,
   japaneseWord: true,
+  dumbbellWorkout: true,
 };
 
 function load() {
@@ -36,6 +37,7 @@ function setSettings(next) {
     englishWord: Boolean(next.englishWord),
     multipleChoice: Boolean(next.multipleChoice),
     japaneseWord: Boolean(next.japaneseWord),
+    dumbbellWorkout: Boolean(next.dumbbellWorkout),
   };
   nextTaskIndex = 0;
   save();
@@ -47,6 +49,7 @@ function getNextTaskType() {
   if (settings.englishWord) enabled.push('english');
   if (settings.multipleChoice) enabled.push('mcq');
   if (settings.japaneseWord) enabled.push('japanese');
+  if (settings.dumbbellWorkout) enabled.push('dumbbell');
 
   if (enabled.length === 0) return 'english';
 

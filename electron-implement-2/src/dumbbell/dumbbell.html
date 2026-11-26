@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html class="h-full bg-white">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; media-src 'self' blob: data:"
+    />
+    <title>Dumbbell Workout</title>
+    <link rel="stylesheet" href="../../assets/tailwind.css" />
+  </head>
+  <body class="m-0 h-full w-full bg-white text-black">
+    <main class="flex h-full w-full">
+      <section class="flex h-full w-[70%] items-center justify-center bg-black">
+        <video id="camera" autoplay playsinline muted class="h-full w-full object-cover"></video>
+        <canvas id="frame" class="hidden"></canvas>
+      </section>
+      <aside class="flex h-full w-[30%] min-w-0 flex-col gap-2 overflow-hidden border-l border-gray-300 p-3">
+        <h1 class="whitespace-nowrap text-2xl font-bold">Dumbbell Workout</h1>
+        <p id="overall" class="whitespace-nowrap text-xl font-bold">Step 1 / 15</p>
+
+        <div class="rounded bg-gray-100 p-2 text-sm leading-tight">
+          <p id="connection" class="truncate font-semibold">llama.cpp 8080 status: checking...</p>
+          <p id="requests" class="truncate">Requests sent: 0</p>
+          <p id="avg" class="truncate">Avg request: —</p>
+        </div>
+
+        <div id="sets" class="flex min-h-0 flex-1 flex-col justify-between gap-1"></div>
+
+        <div class="rounded bg-gray-100 p-2 text-sm leading-tight">
+          <p id="seen" class="truncate">Last seen: waiting for camera...</p>
+          <p id="required" class="truncate font-bold text-green-700">Required: hold dumbbell</p>
+          <p id="streak" class="truncate">Matches: 0 / 3</p>
+        </div>
+
+        <div class="rounded bg-gray-100 p-2 text-xs leading-tight">
+          <p class="font-bold">Nearest 5 requests</p>
+          <ol id="recent" class="flex flex-col gap-0.5"></ol>
+        </div>
+
+        <p id="done" class="hidden whitespace-nowrap text-2xl font-bold text-green-700">Trainning done</p>
+      </aside>
+    </main>
+    <script src="../../vendor/jquery.min.js"></script>
+    <script src="../../vendor/lodash.min.js"></script>
+    <script src="dumbbell.js"></script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 const englishWordEl = document.getElementById('englishWord');
 const multipleChoiceEl = document.getElementById('multipleChoice');
 const japaneseWordEl = document.getElementById('japaneseWord');
+const dumbbellWorkoutEl = document.getElementById('dumbbellWorkout');
 const cancelEl = document.getElementById('cancel');
 const confirmEl = document.getElementById('confirm');
 
@@ -9,6 +10,7 @@ function readSettings() {
     englishWord: englishWordEl.checked,
     multipleChoice: multipleChoiceEl.checked,
     japaneseWord: japaneseWordEl.checked,
+    dumbbellWorkout: dumbbellWorkoutEl.checked,
   };
 }
 
@@ -18,6 +20,7 @@ async function loadSettings() {
   englishWordEl.checked = settings.englishWord;
   multipleChoiceEl.checked = settings.multipleChoice;
   japaneseWordEl.checked = settings.japaneseWord;
+  dumbbellWorkoutEl.checked = settings.dumbbellWorkout;
 }
 
 cancelEl.addEventListener('click', () => {

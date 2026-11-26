@@ -62,7 +62,7 @@ async function showEnglishInfo(app) {
     (_electron, modulePath) =>
       process.mainModule
         .require(modulePath)
-        .setSettings({ englishWord: true, multipleChoice: false, japaneseWord: false }),
+        .setSettings({ englishWord: true, multipleChoice: false, japaneseWord: false, dumbbellWorkout: false }),
     settingsPath,
   );
   await app.evaluate((_electron, modulePath) => process.mainModule.require(modulePath).showMainWindow(), windowPath);
@@ -85,7 +85,7 @@ async function showJapaneseInfo(app) {
     (_electron, modulePath) =>
       process.mainModule
         .require(modulePath)
-        .setSettings({ englishWord: false, multipleChoice: false, japaneseWord: true }),
+        .setSettings({ englishWord: false, multipleChoice: false, japaneseWord: true, dumbbellWorkout: false }),
     settingsPath,
   );
   await app.evaluate((_electron, modulePath) => process.mainModule.require(modulePath).showMainWindow(), windowPath);
@@ -108,7 +108,7 @@ async function restoreSettings(app) {
     (_electron, modulePath) =>
       process.mainModule
         .require(modulePath)
-        .setSettings({ englishWord: true, multipleChoice: true, japaneseWord: true }),
+        .setSettings({ englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true }),
     settingsPath,
   );
 }

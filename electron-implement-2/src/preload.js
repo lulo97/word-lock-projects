@@ -15,4 +15,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   exitInfo: () => ipcRenderer.send('app:exitInfo'),
   speak: (text, lang) => ipcRenderer.invoke('tts:speak', text, lang),
   onHide: (callback) => ipcRenderer.on('app:hide', callback),
+  analyzeFrame: (dataUrl) => ipcRenderer.invoke('vision:analyze', dataUrl),
+  getVisionStatus: () => ipcRenderer.invoke('vision:status'),
+  getVisionConfig: () => ipcRenderer.invoke('vision:config'),
 });

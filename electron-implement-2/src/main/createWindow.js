@@ -8,6 +8,7 @@ const taskFiles = {
   english: path.join(__dirname, '..', 'english', 'english.html'),
   mcq: path.join(__dirname, '..', 'mcq', 'mcq.html'),
   japanese: path.join(__dirname, '..', 'japanese', 'japanese.html'),
+  dumbbell: path.join(__dirname, '..', 'dumbbell', 'dumbbell.html'),
 };
 
 let mainWindow = null;

@@ -1,4 +1,4 @@
-const { app } = require('electron');
+const { app, session } = require('electron');
 
 const { createWindow, showMainWindow, hideMainWindow } = require('./main/createWindow');
 const { createCountdownWindow } = require('./countdown/createCountdownWindow');
@@ -6,6 +6,10 @@ const { createTray } = require('./tray/createTray');
 const { createSettingsWindow } = require('./settings/createSettingsWindow');
 
 app.whenReady().then(() => {
+  session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) => {
+    callback(permission === 'media');
+  });
+
   require('./database/database');
   require('./ipc').registerIpcHandlers();
 

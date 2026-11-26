@@ -74,7 +74,7 @@ test('closes the countdown window for the maximized main window and restores it 
       .poll(() => app.windows().some((window) => window.url().endsWith('countdown.html')))
       .toBe(true);
 
-    await setTasks(app, { englishWord: true, multipleChoice: false, japaneseWord: false });
+    await setTasks(app, { englishWord: true, multipleChoice: false, japaneseWord: false, dumbbellWorkout: false });
     await callMainWindow(app, 'showMainWindow');
 
     await expect
@@ -111,7 +111,7 @@ test('checks the word, opens InfoScreen, and Enter restarts the countdown', asyn
   const app = await launchApp();
 
   try {
-    await setTasks(app, { englishWord: true, multipleChoice: false, japaneseWord: false });
+    await setTasks(app, { englishWord: true, multipleChoice: false, japaneseWord: false, dumbbellWorkout: false });
     await callMainWindow(app, 'showMainWindow');
 
     const wordPage = app.windows().find((window) => window.url().endsWith('english.html'));
@@ -152,7 +152,7 @@ test('shows a multiple choice task, its result screen, and Enter restarts the co
   const app = await launchApp();
 
   try {
-    await setTasks(app, { englishWord: false, multipleChoice: true, japaneseWord: false });
+    await setTasks(app, { englishWord: false, multipleChoice: true, japaneseWord: false, dumbbellWorkout: false });
     await callMainWindow(app, 'showMainWindow');
 
     await expect
@@ -182,7 +182,7 @@ test('shows a multiple choice task, its result screen, and Enter restarts the co
     const countdownWindow = app.windows().find((window) => window.url().endsWith('countdown.html'));
     await expect(countdownWindow.locator('#countdown')).toHaveText(/^(60|59)$/);
 
-    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true });
+    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true });
   } finally {
     await closeApp(app);
   }
@@ -203,6 +203,7 @@ test('opens the settings window with all task checkboxes', async () => {
     await expect(settingsPage.locator('#englishWord')).toBeVisible();
     await expect(settingsPage.locator('#multipleChoice')).toBeVisible();
     await expect(settingsPage.locator('#japaneseWord')).toBeVisible();
+    await expect(settingsPage.locator('#dumbbellWorkout')).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Confirm' })).toBeVisible();
   } finally {
@@ -214,7 +215,7 @@ test('cycles word, mcq, and japanese tasks with round robin', async () => {
   const app = await launchApp();
 
   try {
-    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true });
+    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: false });
 
     await callMainWindow(app, 'showMainWindow');
     await expect
@@ -247,7 +248,7 @@ test('checks the japanese word, opens its info screen, and Enter restarts the co
   const app = await launchApp();
 
   try {
-    await setTasks(app, { englishWord: false, multipleChoice: false, japaneseWord: true });
+    await setTasks(app, { englishWord: false, multipleChoice: false, japaneseWord: true, dumbbellWorkout: false });
     await callMainWindow(app, 'showMainWindow');
 
     await expect
@@ -293,7 +294,7 @@ test('checks the japanese word, opens its info screen, and Enter restarts the co
     const countdownWindow = app.windows().find((window) => window.url().endsWith('countdown.html'));
     await expect(countdownWindow.locator('#countdown')).toHaveText(/^(60|59)$/);
 
-    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true });
+    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true });
   } finally {
     await closeApp(app);
   }
@@ -303,7 +304,7 @@ test('confirm applies settings and restarts the countdown', async () => {
   const app = await launchApp();
 
   try {
-    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true });
+    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true });
     await callSettingsWindow(app);
 
     await expect
@@ -325,7 +326,7 @@ test('confirm applies settings and restarts the countdown', async () => {
       .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
       .toBe(false);
   } finally {
-    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true });
+    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true });
     await closeApp(app);
   }
 });
@@ -334,7 +335,7 @@ test('cancel discards settings changes', async () => {
   const app = await launchApp();
 
   try {
-    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true });
+    await setTasks(app, { englishWord: true, multipleChoice: true, japaneseWord: true, dumbbellWorkout: true });
     await callSettingsWindow(app);
 
     await expect

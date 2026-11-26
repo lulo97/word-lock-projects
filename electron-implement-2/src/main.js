@@ -10,6 +10,7 @@ const {
   initializeChromeFreeze,
   unfreezeChromeOnExit,
 } = require('./chromeFreeze/chromeFreezeManager');
+const { initializeAutoStart } = require('./autoStart/autoStartManager');
 
 // MediaPipe fetches its .wasm and .task files. file:// blocks fetch(), so the
 // dumbbell page is served from app:// instead. Register before app is ready.
@@ -46,6 +47,7 @@ app.whenReady().then(() => {
   require('./ipc').registerIpcHandlers();
 
   initializeChromeFreeze();
+  initializeAutoStart();
 
   const mainWindow = createWindow();
   mainWindow.hide();

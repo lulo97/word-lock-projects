@@ -11,7 +11,7 @@ function createSettingsWindow() {
 
   settingsWindow = new BrowserWindow({
     width: 420,
-    height: 510,
+    height: 550,
     resizable: false,
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload.js'),

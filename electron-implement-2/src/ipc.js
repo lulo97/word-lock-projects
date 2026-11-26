@@ -17,6 +17,7 @@ const {
 } = require('./settings/createIgnoreWordsWindow');
 const { synthesize } = require('./tts/tts');
 const { syncChromeFreeze } = require('./chromeFreeze/chromeFreezeManager');
+const { applyAutoStartPreference } = require('./autoStart/autoStartManager');
 
 function registerIpcHandlers() {
   ipcMain.handle('word:getRandom', () => getRandomWord());
@@ -29,10 +30,12 @@ function registerIpcHandlers() {
   ipcMain.handle('settings:set', (_event, values) => {
     setSettings(values);
     syncChromeFreeze();
+    if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
   });
   ipcMain.handle('settings:confirm', (_event, values) => {
     setSettings(values);
     syncChromeFreeze();
+    if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
     hideMainWindow();
     closeSettingsWindow();
   });

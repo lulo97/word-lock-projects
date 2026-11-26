@@ -206,6 +206,7 @@ test('opens the settings window with all task checkboxes', async () => {
     await expect(settingsPage.locator('#japaneseWord')).toBeVisible();
     await expect(settingsPage.locator('#dumbbellWorkout')).toBeVisible();
     await expect(settingsPage.locator('#chromeFreeze')).toBeVisible();
+    await expect(settingsPage.locator('#autoStart')).toBeVisible();
     await expect(settingsPage.locator('#masterVolume')).toBeVisible();
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('min', '0');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('max', '4');

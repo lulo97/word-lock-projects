@@ -9,7 +9,11 @@ module.exports = defineConfig({
   use: {
     // Tests always use the mock; npm start uses the real ntdll implementation.
     launchOptions: {
-      env: { ...process.env, WORDLOCK_CHROME_FREEZE_MOCK: '1' },
+      env: {
+        ...process.env,
+        WORDLOCK_CHROME_FREEZE_MOCK: '1',
+        WORDLOCK_USE_MOCK_AUTO_START: '1',
+      },
     },
   },
 });

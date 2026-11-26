@@ -14,6 +14,7 @@ const defaults = {
   dumbbellWorkout: true,
   masterVolume: 1,
   chromeFreeze: false,
+  autoStart: false,
   ignoreWords: { english: [], japanese: [] },
 };
 
@@ -76,6 +77,7 @@ function load() {
       ...saved,
       masterVolume: normalizeVolume(saved.masterVolume),
       chromeFreeze: Boolean(saved.chromeFreeze),
+      autoStart: Boolean(saved.autoStart),
       ignoreWords: normalizeStoredIgnoreWords(saved.ignoreWords),
     };
   } catch {
@@ -126,6 +128,7 @@ function setSettings(next) {
       next.masterVolume === undefined ? settings.masterVolume : normalizeVolume(next.masterVolume),
     chromeFreeze:
       next.chromeFreeze === undefined ? settings.chromeFreeze : Boolean(next.chromeFreeze),
+    autoStart: next.autoStart === undefined ? settings.autoStart : Boolean(next.autoStart),
     ignoreWords: getIgnoreWords(),
   };
   nextTaskIndex = 0;

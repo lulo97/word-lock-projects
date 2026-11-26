@@ -3,6 +3,7 @@ const multipleChoiceEl = document.getElementById('multipleChoice');
 const japaneseWordEl = document.getElementById('japaneseWord');
 const dumbbellWorkoutEl = document.getElementById('dumbbellWorkout');
 const chromeFreezeEl = document.getElementById('chromeFreeze');
+const autoStartEl = document.getElementById('autoStart');
 const masterVolumeEl = document.getElementById('masterVolume');
 const volumeValueEl = document.getElementById('volumeValue');
 const openIgnoreWordsEl = document.getElementById('openIgnoreWords');
@@ -16,6 +17,7 @@ function readSettings() {
     japaneseWord: japaneseWordEl.checked,
     dumbbellWorkout: dumbbellWorkoutEl.checked,
     chromeFreeze: chromeFreezeEl.checked,
+    autoStart: autoStartEl.checked,
     masterVolume: Number(masterVolumeEl.value),
   };
 }
@@ -34,6 +36,7 @@ async function loadSettings() {
   japaneseWordEl.checked = settings.japaneseWord;
   dumbbellWorkoutEl.checked = settings.dumbbellWorkout;
   chromeFreezeEl.checked = settings.chromeFreeze;
+  autoStartEl.checked = settings.autoStart;
   masterVolumeEl.value = settings.masterVolume;
   renderVolume();
 }

@@ -6,6 +6,7 @@ const chromeFreezeEl = document.getElementById('chromeFreeze');
 const autoStartEl = document.getElementById('autoStart');
 const masterVolumeEl = document.getElementById('masterVolume');
 const volumeValueEl = document.getElementById('volumeValue');
+const countdownSecondsEl = document.getElementById('countdownSeconds');
 const openIgnoreWordsEl = document.getElementById('openIgnoreWords');
 const cancelEl = document.getElementById('cancel');
 const confirmEl = document.getElementById('confirm');
@@ -19,6 +20,7 @@ function readSettings() {
     chromeFreeze: chromeFreezeEl.checked,
     autoStart: autoStartEl.checked,
     masterVolume: Number(masterVolumeEl.value),
+    countdownSeconds: Number(countdownSecondsEl.value),
   };
 }
 
@@ -38,6 +40,7 @@ async function loadSettings() {
   chromeFreezeEl.checked = settings.chromeFreeze;
   autoStartEl.checked = settings.autoStart;
   masterVolumeEl.value = settings.masterVolume;
+  countdownSecondsEl.value = settings.countdownSeconds;
   renderVolume();
 }
 

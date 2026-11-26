@@ -7,12 +7,16 @@ const settingsPath = path.join(dataDir, 'settings.json');
 
 const IGNORE_ERROR = "can't save ignore words";
 
+const COUNTDOWN_SECONDS_MIN = 1;
+const COUNTDOWN_SECONDS_MAX = 3600;
+
 const defaults = {
   englishWord: true,
   multipleChoice: true,
   japaneseWord: true,
   dumbbellWorkout: true,
   masterVolume: 1,
+  countdownSeconds: 60,
   chromeFreeze: false,
   autoStart: false,
   ignoreWords: { english: [], japanese: [] },
@@ -22,6 +26,15 @@ function normalizeVolume(value) {
   const volume = Number(value);
   if (!Number.isFinite(volume)) return defaults.masterVolume;
   return Math.min(4, Math.max(0, Math.round(volume * 2) / 2));
+}
+
+function normalizeCountdownSeconds(value) {
+  const seconds = Number(value);
+  if (!Number.isFinite(seconds)) return defaults.countdownSeconds;
+  return Math.min(
+    COUNTDOWN_SECONDS_MAX,
+    Math.max(COUNTDOWN_SECONDS_MIN, Math.round(seconds)),
+  );
 }
 
 function normalizeStoredList(value) {
@@ -76,6 +89,7 @@ function load() {
     return {
       ...saved,
       masterVolume: normalizeVolume(saved.masterVolume),
+      countdownSeconds: normalizeCountdownSeconds(saved.countdownSeconds),
       chromeFreeze: Boolean(saved.chromeFreeze),
       autoStart: Boolean(saved.autoStart),
       ignoreWords: normalizeStoredIgnoreWords(saved.ignoreWords),
@@ -126,6 +140,10 @@ function setSettings(next) {
     dumbbellWorkout: Boolean(next.dumbbellWorkout),
     masterVolume:
       next.masterVolume === undefined ? settings.masterVolume : normalizeVolume(next.masterVolume),
+    countdownSeconds:
+      next.countdownSeconds === undefined
+        ? settings.countdownSeconds
+        : normalizeCountdownSeconds(next.countdownSeconds),
     chromeFreeze:
       next.chromeFreeze === undefined ? settings.chromeFreeze : Boolean(next.chromeFreeze),
     autoStart: next.autoStart === undefined ? settings.autoStart : Boolean(next.autoStart),
@@ -159,6 +177,9 @@ module.exports = {
   setIgnoreWords,
   parseIgnoreWords,
   normalizeVolume,
+  normalizeCountdownSeconds,
+  COUNTDOWN_SECONDS_MIN,
+  COUNTDOWN_SECONDS_MAX,
   IGNORE_ERROR,
   settingsPath,
 };

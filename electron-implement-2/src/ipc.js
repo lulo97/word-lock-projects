@@ -11,6 +11,7 @@ const {
 const { showMainWindow, hideMainWindow } = require('./main/createWindow');
 const { getSettings, setSettings, getIgnoreWords, setIgnoreWords, IGNORE_ERROR } = require('./settings/settings');
 const { closeSettingsWindow } = require('./settings/createSettingsWindow');
+const { closeCountdownWindow } = require('./countdown/createCountdownWindow');
 const {
   createIgnoreWordsWindow,
   closeIgnoreWordsWindow,
@@ -36,6 +37,7 @@ function registerIpcHandlers() {
     setSettings(values);
     syncChromeFreeze();
     if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
+    closeCountdownWindow();
     hideMainWindow();
     closeSettingsWindow();
   });

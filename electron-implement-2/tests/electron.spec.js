@@ -383,6 +383,41 @@ test('saves master volume from the settings slider', async () => {
   }
 });
 
+test('saves a custom countdown and applies it when settings are confirmed', async () => {
+  const app = await launchApp();
+  let initialCountdown = 60;
+
+  try {
+    await callSettingsWindow(app);
+
+    await expect
+      .poll(() => app.windows().some((window) => window.url().endsWith('settings.html')))
+      .toBe(true);
+
+    const settingsPage = app.windows().find((window) => window.url().endsWith('settings.html'));
+    initialCountdown = Number(await settingsPage.locator('#countdownSeconds').inputValue());
+    await settingsPage.locator('#countdownSeconds').fill('120');
+    await settingsPage.getByRole('button', { name: 'Confirm' }).click();
+
+    await expect.poll(async () => (await getSettings(app)).countdownSeconds).toBe(120);
+    await expect
+      .poll(() => app.windows().some((window) => window.url().endsWith('countdown.html')))
+      .toBe(true);
+
+    const countdownWindow = app.windows().find((window) => window.url().endsWith('countdown.html'));
+    await expect(countdownWindow.locator('#countdown')).toHaveText(/^(120|119)$/);
+  } finally {
+    await app.evaluate(
+      (_electron, { modulePath, seconds }) => {
+        const settings = process.mainModule.require(modulePath);
+        settings.setSettings({ ...settings.getSettings(), countdownSeconds: seconds });
+      },
+      { modulePath: settingsPath, seconds: initialCountdown },
+    );
+    await closeApp(app);
+  }
+});
+
 test('cancel discards settings changes', async () => {
   const app = await launchApp();
 

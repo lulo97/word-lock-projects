@@ -4,8 +4,10 @@ const { pathToFileURL } = require('node:url');
 
 const { iconPath } = require('./appIcon');
 
+app.setName('PomodoroLock');
+
 // Group all windows under the same taskbar icon instead of the generic Electron one.
-app.setAppUserModelId('com.wordlock.app');
+app.setAppUserModelId('com.pomodorolock.app');
 
 const { createWindow, showMainWindow, hideMainWindow } = require('./main/createWindow');
 const { createCountdownWindow } = require('./countdown/createCountdownWindow');

@@ -5,7 +5,7 @@ let tray = null;
 
 function createTray(mainWindow, openApp, closeApp, openSettings) {
   tray = new Tray(icon);
-  tray.setToolTip('My Electron App');
+  tray.setToolTip('PomodoroLock');
 
   const contextMenu = Menu.buildFromTemplate([
     {

@@ -1,5 +1,6 @@
 {
-  "name": "electron-implement-2",
+  "name": "pomodorolock",
+  "productName": "PomodoroLock",
   "version": "1.0.0",
   "description": "",
   "main": "src/main.js",

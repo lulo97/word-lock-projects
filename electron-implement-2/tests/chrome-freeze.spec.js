@@ -9,7 +9,7 @@ const settingsWindowPath = path.join(projectDir, 'src', 'settings', 'createSetti
 const mockPath = path.join(projectDir, 'src', 'chromeFreeze', 'chromeFreeze.mock.js');
 
 function makeLogPath() {
-  return path.join(os.tmpdir(), `wordlock-chrome-freeze-${process.pid}-${Date.now()}.log`);
+  return path.join(os.tmpdir(), `pomodorolock-chrome-freeze-${process.pid}-${Date.now()}.log`);
 }
 
 function readLog(logPath) {

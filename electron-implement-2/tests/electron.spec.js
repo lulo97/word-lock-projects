@@ -81,3 +81,39 @@ test('closes the countdown window for the maximized main window and restores it 
     await closeApp(app);
   }
 });
+
+test('checks the word, opens InfoScreen, and Enter restarts the countdown', async () => {
+  const app = await launchApp();
+
+  try {
+    await callMainWindow(app, 'showMainWindow');
+
+    const wordPage = app.windows().find((window) => window.url().endsWith('index.html'));
+    await expect(wordPage.locator('#word')).toHaveText('apple');
+
+    await wordPage.locator('#answer').fill('apple');
+    await expect(wordPage.locator('#feedback')).toHaveText('Correct');
+    await expect(wordPage.locator('#feedback')).toHaveClass(/text-green-600/);
+
+    await expect
+      .poll(() => app.windows().some((window) => window.url().includes('info.html')))
+      .toBe(true);
+
+    const infoPage = app.windows().find((window) => window.url().includes('info.html'));
+    await expect(infoPage.locator('#details')).toContainText('apple');
+    await expect(infoPage.locator('#details')).toContainText('quả táo');
+    await expect(infoPage.locator('#details')).toContainText('an apple a day keep the doctor away');
+    await expect(infoPage.getByText('Enter to exit')).toBeVisible();
+
+    await infoPage.keyboard.press('Enter');
+
+    await expect
+      .poll(() => app.windows().some((window) => window.url().endsWith('countdown.html')))
+      .toBe(true);
+
+    const countdownWindow = app.windows().find((window) => window.url().endsWith('countdown.html'));
+    await expect(countdownWindow.locator('#countdown')).toHaveText(/^(60|59)$/);
+  } finally {
+    await closeApp(app);
+  }
+});

@@ -45,6 +45,7 @@ function hideMainWindow() {
 
   if (!app.isQuitting) {
     createCountdownWindow();
+    mainWindow.loadFile('index.html');
   }
 }
 

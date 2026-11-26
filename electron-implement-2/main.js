@@ -5,6 +5,9 @@ const { createCountdownWindow } = require('./src/createCountdownWindow');
 const { createTray } = require('./src/createTray');
 
 app.whenReady().then(() => {
+  require('./src/database');
+  require('./src/ipc').registerIpcHandlers();
+
   const mainWindow = createWindow();
   mainWindow.hide();
 

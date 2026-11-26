@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 @source "./index.html";
+@source "./info.html";
 @source "./countdown.html";
+@source "./index.js";
+@source "./info.js";
 @source "./main.js";
 @source "./src/**/*.js";
 @source not "./vendor/**/*";

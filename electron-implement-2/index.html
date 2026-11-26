@@ -1,14 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full bg-white">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
-    <title>Hello Electron</title>
+    <title>Pomodoro Lock</title>
     <link rel="stylesheet" href="assets/tailwind.css" />
   </head>
-  <body>
-    <h1>Hello from Electron!</h1>
+  <body
+    class="m-0 flex h-full w-full flex-col items-center justify-center gap-6 bg-white text-black"
+  >
+    <div id="word" class="text-5xl font-semibold"></div>
+    <input
+      id="answer"
+      type="text"
+      autocomplete="off"
+      spellcheck="false"
+      class="w-64 border-b-2 border-black text-center text-2xl outline-none"
+    />
+    <p id="feedback" class="text-xl"></p>
     <script src="vendor/jquery.min.js"></script>
     <script src="vendor/lodash.min.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>

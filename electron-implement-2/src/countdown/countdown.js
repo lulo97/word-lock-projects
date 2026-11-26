@@ -8,5 +8,6 @@ const intervalId = setInterval(() => {
 
   if (seconds === 0) {
     clearInterval(intervalId);
+    window.electronAPI.countdownFinished();
   }
 }, 1000);

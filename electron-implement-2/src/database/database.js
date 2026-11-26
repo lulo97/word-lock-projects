@@ -3,6 +3,13 @@ const path = require('node:path');
 const { app } = require('electron');
 const Database = require('better-sqlite3');
 
+const { createSchema } = require('./schema');
+const { seed } = require('./seed');
+const { getEnglishWord: selectEnglishWord } = require('./getEnglishWord');
+const { getRandomWord: selectRandomWord } = require('./getRandomWord');
+const { getMcq: selectMcq } = require('./getMcq');
+const { getRandomMcq: selectRandomMcq } = require('./getRandomMcq');
+
 const dataDir = path.join(app.getPath('home'), 'pomodoro_lock');
 const dbPath = path.join(dataDir, 'pomodoro_lock.db');
 
@@ -10,41 +17,23 @@ fs.mkdirSync(dataDir, { recursive: true });
 
 const db = new Database(dbPath);
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS english_word (
-    id INTEGER PRIMARY KEY,
-    word TEXT NOT NULL,
-    meaning_vi TEXT NOT NULL,
-    examples TEXT NOT NULL
-  )
-`);
-
-db.prepare(`
-  INSERT OR IGNORE INTO english_word (id, word, meaning_vi, examples)
-  VALUES (@id, @word, @meaning_vi, @examples)
-`).run({
-  id: 0,
-  word: 'apple',
-  meaning_vi: 'quả táo',
-  examples: JSON.stringify([
-    'he has an apple',
-    'apple is a popular company',
-    'an apple a day keep the doctor away',
-  ]),
-});
+createSchema(db);
+seed(db);
 
 function getEnglishWord(id) {
-  const row = db.prepare('SELECT * FROM english_word WHERE id = ?').get(id);
-  if (!row) return null;
-
-  return { ...row, examples: JSON.parse(row.examples) };
+  return selectEnglishWord(db, id);
 }
 
 function getRandomWord() {
-  const row = db.prepare('SELECT * FROM english_word ORDER BY RANDOM() LIMIT 1').get();
-  if (!row) return null;
-
-  return { ...row, examples: JSON.parse(row.examples) };
+  return selectRandomWord(db);
 }
 
-module.exports = { db, dbPath, getEnglishWord, getRandomWord };
+function getMcq(id) {
+  return selectMcq(db, id);
+}
+
+function getRandomMcq() {
+  return selectRandomMcq(db);
+}
+
+module.exports = { db, dbPath, getEnglishWord, getRandomWord, getMcq, getRandomMcq };

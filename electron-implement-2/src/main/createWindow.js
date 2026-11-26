@@ -2,6 +2,12 @@ const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 
 const { createCountdownWindow, closeCountdownWindow } = require('../countdown/createCountdownWindow');
+const { getNextTaskType } = require('../settings/settings');
+
+const taskFiles = {
+  word: path.join(__dirname, '..', 'index.html'),
+  mcq: path.join(__dirname, '..', 'mcq', 'mcq.html'),
+};
 
 let mainWindow = null;
 
@@ -33,6 +39,7 @@ function showMainWindow() {
   if (!mainWindow) return;
 
   closeCountdownWindow();
+  mainWindow.loadFile(taskFiles[getNextTaskType()]);
   mainWindow.show();
   mainWindow.maximize();
   mainWindow.focus();
@@ -45,7 +52,6 @@ function hideMainWindow() {
 
   if (!app.isQuitting) {
     createCountdownWindow();
-    mainWindow.loadFile(path.join(__dirname, '..', 'index.html'));
   }
 }
 

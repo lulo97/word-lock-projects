@@ -1,0 +1,8 @@
+function getEnglishWord(db, id) {
+  const row = db.prepare('SELECT * FROM english_word WHERE id = ?').get(id);
+  if (!row) return null;
+
+  return { ...row, examples: JSON.parse(row.examples) };
+}
+
+module.exports = { getEnglishWord };

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html class="h-full bg-white">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>Multiple Choice Result</title>
+    <link rel="stylesheet" href="../../assets/tailwind.css" />
+  </head>
+  <body class="m-0 flex h-full w-full flex-col items-center bg-white text-black">
+    <main class="flex w-full flex-1 flex-col items-center justify-center gap-4">
+      <h1 id="result" class="text-3xl font-bold"></h1>
+      <dl id="details" class="w-full max-w-2xl space-y-2 text-lg"></dl>
+    </main>
+    <p class="mb-6 text-sm text-gray-500">Enter to exit</p>
+    <script src="../../vendor/jquery.min.js"></script>
+    <script src="../../vendor/lodash.min.js"></script>
+    <script src="mcqResult.js"></script>
+  </body>
+</html>

@@ -9,8 +9,12 @@ const {
   getRandomJapaneseWord,
 } = require('./database/database');
 const { showMainWindow, hideMainWindow } = require('./main/createWindow');
-const { getSettings, setSettings } = require('./settings/settings');
+const { getSettings, setSettings, getIgnoreWords, setIgnoreWords, IGNORE_ERROR } = require('./settings/settings');
 const { closeSettingsWindow } = require('./settings/createSettingsWindow');
+const {
+  createIgnoreWordsWindow,
+  closeIgnoreWordsWindow,
+} = require('./settings/createIgnoreWordsWindow');
 const { synthesize } = require('./tts/tts');
 
 function registerIpcHandlers() {
@@ -28,6 +32,16 @@ function registerIpcHandlers() {
     closeSettingsWindow();
   });
   ipcMain.on('settings:close', () => closeSettingsWindow());
+  ipcMain.handle('ignoreWords:open', () => createIgnoreWordsWindow());
+  ipcMain.handle('ignoreWords:get', () => getIgnoreWords());
+  ipcMain.handle('ignoreWords:save', (_event, values) => {
+    try {
+      return { ok: true, words: setIgnoreWords(values) };
+    } catch {
+      return { ok: false, error: IGNORE_ERROR };
+    }
+  });
+  ipcMain.on('ignoreWords:close', () => closeIgnoreWordsWindow());
   ipcMain.on('countdown:finished', () => showMainWindow());
   ipcMain.on('app:exitInfo', () => hideMainWindow());
   ipcMain.handle('tts:speak', (_event, text, lang) => synthesize(text, lang));

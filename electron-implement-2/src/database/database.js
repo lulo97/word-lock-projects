@@ -11,6 +11,7 @@ const { getMcq: selectMcq } = require('./getMcq');
 const { getRandomMcq: selectRandomMcq } = require('./getRandomMcq');
 const { getJapaneseWord: selectJapaneseWord } = require('./getJapaneseWord');
 const { getRandomJapaneseWord: selectRandomJapaneseWord } = require('./getRandomJapaneseWord');
+const { getIgnoreWords } = require('../settings/settings');
 
 const dataDir = path.join(app.getPath('home'), 'pomodoro_lock');
 const dbPath = path.join(dataDir, 'pomodoro_lock.db');
@@ -27,7 +28,7 @@ function getEnglishWord(id) {
 }
 
 function getRandomWord() {
-  return selectRandomWord(db);
+  return selectRandomWord(db, getIgnoreWords().english);
 }
 
 function getMcq(id) {
@@ -43,7 +44,7 @@ function getJapaneseWord(id) {
 }
 
 function getRandomJapaneseWord() {
-  return selectRandomJapaneseWord(db);
+  return selectRandomJapaneseWord(db, getIgnoreWords().japanese);
 }
 
 module.exports = {

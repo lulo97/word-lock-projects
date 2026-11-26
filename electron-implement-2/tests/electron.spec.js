@@ -209,6 +209,7 @@ test('opens the settings window with all task checkboxes', async () => {
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('min', '0');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('max', '4');
     await expect(settingsPage.locator('#masterVolume')).toHaveAttribute('step', '0.5');
+    await expect(settingsPage.getByRole('button', { name: 'Open Ignore Words' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
     await expect(settingsPage.getByRole('button', { name: 'Confirm' })).toBeVisible();
   } finally {

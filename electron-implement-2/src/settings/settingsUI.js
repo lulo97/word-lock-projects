@@ -4,6 +4,7 @@ const japaneseWordEl = document.getElementById('japaneseWord');
 const dumbbellWorkoutEl = document.getElementById('dumbbellWorkout');
 const masterVolumeEl = document.getElementById('masterVolume');
 const volumeValueEl = document.getElementById('volumeValue');
+const openIgnoreWordsEl = document.getElementById('openIgnoreWords');
 const cancelEl = document.getElementById('cancel');
 const confirmEl = document.getElementById('confirm');
 
@@ -33,6 +34,10 @@ async function loadSettings() {
   masterVolumeEl.value = settings.masterVolume;
   renderVolume();
 }
+
+openIgnoreWordsEl.addEventListener('click', () => {
+  window.electronAPI.openIgnoreWords();
+});
 
 cancelEl.addEventListener('click', () => {
   window.electronAPI.closeSettings();

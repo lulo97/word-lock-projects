@@ -3,14 +3,25 @@
 namespace wordlock {
 
 void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
-    if (!IsTestDomDumpEnabled() || wcscmp(htmlFile, L"settings.html") != 0) {
+    if (!IsTestDomDumpEnabled()) {
+        return;
+    }
+    const bool settingsDump = wcscmp(htmlFile, L"settings.html") == 0;
+    const bool dumbbellDump = wcscmp(htmlFile, L"dumbbell.html") == 0;
+    if (!settingsDump && !dumbbellDump) {
         return;
     }
 
+    const std::wstring dumpScript = dumbbellDump
+        ? L"JSON.stringify({status:(document.getElementById('status')||{}).innerText,"
+          L"overall:(document.getElementById('overall')||{}).innerText,"
+          L"mock:window.__dumbbellMock||null})"
+        : L"document.body ? document.body.innerText : ''";
+
     webView->add_NavigationCompleted(
         Callback<ICoreWebView2NavigationCompletedEventHandler>(
-            [](ICoreWebView2* sender,
-               ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
+            [dumpScript](ICoreWebView2* sender,
+                         ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
                 BOOL success = FALSE;
                 if (args == nullptr || FAILED(args->get_IsSuccess(&success))) {
                     WriteTestDomDump(L"{\"navigationResultFailed\":true}");
@@ -23,7 +34,7 @@ void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
 
                 ComPtr<ICoreWebView2> view = sender;
                 const HRESULT hr = view->ExecuteScript(
-                    L"document.body ? document.body.innerText : ''",
+                    dumpScript.c_str(),
                     Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
                         [view](HRESULT result, LPCWSTR resultJson) -> HRESULT {
                             if (FAILED(result) || resultJson == nullptr) {
@@ -56,7 +67,8 @@ void InitializeWebView(HWND hwnd,
 
 void InitializeMainWebView(HWND hwnd) {
     CreateWebView(hwnd, &g_mainViewController,
-                  [](ComPtr<ICoreWebView2>&) {
+                  [](ComPtr<ICoreWebView2>& webView) {
+                      InstallTestDomDump(webView.Get(), TaskAsset(g_currentTask));
                       NavigateMainToTask(g_currentTask);
                   });
 }

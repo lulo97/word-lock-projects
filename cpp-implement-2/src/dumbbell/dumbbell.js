@@ -25,6 +25,24 @@
   var pose = null;
   var finished = false;
   var testPaused = false;
+  var mockMode = window.__WORDLOCK_DUMBBELL_MOCK__ === true ||
+      window.location.search.indexOf('mock=1') !== -1;
+
+  function installMockVideo() {
+    Object.defineProperty(videoEl, 'videoWidth', {
+      configurable: true, get: function () { return 640; }
+    });
+    Object.defineProperty(videoEl, 'videoHeight', {
+      configurable: true, get: function () { return 640; }
+    });
+    Object.defineProperty(videoEl, 'readyState', {
+      configurable: true, get: function () { return 4; }
+    });
+    Object.defineProperty(videoEl, 'currentTime', {
+      configurable: true, get: function () { return performance.now() / 1000; }
+    });
+    videoEl.muted = true;
+  }
 
   // Tests can drive the rep path even when camera/model assets are unavailable.
   window.__dumbbellTest = {
@@ -113,23 +131,27 @@
     buildProgress();
     renderReps();
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      statusEl.textContent = 'Camera error: mediaDevices unavailable';
-      return;
-    }
-
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-      if (finished) {
-        stream.getTracks().forEach(function (track) { track.stop(); });
-        stream = null;
+    if (mockMode) {
+      installMockVideo();
+    } else {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        statusEl.textContent = 'Camera error: mediaDevices unavailable';
         return;
       }
-      videoEl.srcObject = stream;
-      await videoEl.play();
-    } catch (error) {
-      statusEl.textContent = 'Camera error: ' + error.message;
-      return;
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        if (finished) {
+          stream.getTracks().forEach(function (track) { track.stop(); });
+          stream = null;
+          return;
+        }
+        videoEl.srcObject = stream;
+        await videoEl.play();
+      } catch (error) {
+        statusEl.textContent = 'Camera error: ' + error.message;
+        return;
+      }
     }
 
     if (finished) return;

@@ -52,6 +52,7 @@ std::wstring BuildBootScript() {
   };
 
   window.app = api;
+  window.__WORDLOCK_DUMBBELL_MOCK__ = __DUMBBELL_MOCK__;
   try {
     if (document.documentElement) document.documentElement.dataset.theme = api.theme;
   } catch (error) { /* document may still be booting */ }
@@ -84,6 +85,12 @@ std::wstring BuildBootScript() {
     const size_t placeholder = script.find(L"__THEME__");
     if (placeholder != std::wstring::npos) {
         script.replace(placeholder, 9, JsonEscape(g_settings.theme));
+    }
+    const std::wstring mockPlaceholder = L"__DUMBBELL_MOCK__";
+    const size_t mockPosition = script.find(mockPlaceholder);
+    if (mockPosition != std::wstring::npos) {
+        script.replace(mockPosition, mockPlaceholder.size(),
+                       BoolLiteral(EnvFlagEnabled(kDumbbellMockEnv)));
     }
     return script;
 }

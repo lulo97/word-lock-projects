@@ -9,7 +9,7 @@ std::wstring ContentTypeForFile(const std::filesystem::path& path) {
     });
 
     if (extension == L".html" || extension == L".htm") return L"text/html; charset=utf-8";
-    if (extension == L".js") return L"application/javascript; charset=utf-8";
+    if (extension == L".js" || extension == L".mjs") return L"application/javascript; charset=utf-8";
     if (extension == L".css") return L"text/css; charset=utf-8";
     if (extension == L".json") return L"application/json; charset=utf-8";
     if (extension == L".wasm") return L"application/wasm";

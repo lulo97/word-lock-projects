@@ -56,6 +56,19 @@ foreach(asset dumbbell.html rep-counter.js overlay.js pose-tracker.js dumbbell.j
     copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/dumbbell/${asset}" "${asset}")
 endforeach()
 
+copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/pose_landmarker_heavy.task"
+                   "pose_landmarker_heavy.task")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/mediapipe/wasm"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mediapipe/vision_bundle.mjs"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/mediapipe/vision_bundle.mjs"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mediapipe/wasm"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/mediapipe/wasm"
+)
+
 # WebView2Loader.dll must sit next to the executable.
 set(WEBVIEW2_LOADER_RELEASE "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/WebView2Loader.dll")
 set(WEBVIEW2_LOADER_DEBUG "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/bin/WebView2Loader.dll")

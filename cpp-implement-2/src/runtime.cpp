@@ -19,7 +19,14 @@ int Run(HINSTANCE hInstance, int nCmdShow) {
     }
     g_hInstance = hInstance;
     const bool testOpenSettings = WantsTestSettingsOpen();
+    const bool testOpenDumbbell = WantsTestDumbbellOpen();
     LoadSettings();
+    if (testOpenDumbbell) {
+        g_settings.tasks.englishWord = false;
+        g_settings.tasks.multipleChoice = false;
+        g_settings.tasks.japaneseWord = false;
+        g_settings.tasks.dumbbellWorkout = true;
+    }
     InitializeDatabase();
     SyncAutoStartOnStartup();
 
@@ -56,6 +63,9 @@ int Run(HINSTANCE hInstance, int nCmdShow) {
     }
     if (testOpenSettings) {
         OpenSettingWindow();
+    }
+    if (testOpenDumbbell) {
+        ShowMainWindow();
     }
 
     const int result = RunMessageLoop();

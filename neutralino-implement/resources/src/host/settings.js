@@ -1,5 +1,4 @@
 import { DEFAULT_THEME, getThemeIds, nextThemeId } from './themes.js';
-import { native } from './native.js';
 
 // Same folder/file as the Electron build, so existing users keep their data.
 // With WORDLOCK_USE_TEST_DATA=1 everything stays in memory.
@@ -21,10 +20,14 @@ const defaults = {
   ignoreWords: { english: [], japanese: [] },
 };
 
+const TASK_KEYS = ['englishWord', 'multipleChoice', 'japaneseWord', 'dumbbellWorkout'];
+
 let useTestData = true;
 let dataDir = null;
 let settingsPath = null;
-let settings = null;
+// getSettings() can be reached before initSettings() finishes (an early IPC
+// request or the countdown iframe). Start from a usable normalized snapshot.
+let settings = fromSaved({ ...defaults, ignoreWords: normalizeStoredIgnoreWords(defaults.ignoreWords) });
 let nextTaskIndex = 0;
 let writeQueue = Promise.resolve();
 
@@ -98,20 +101,19 @@ async function env(key) {
   }
 }
 
-async function readText(path) {
+// Neutralino's filesystem API is the only writer now. The Rust fs.* fallbacks
+// are gone, so a failed native call can no longer hide a filesystem error.
+async function ensureDataDir() {
+  if (!dataDir) return;
   try {
-    return await Neutralino.filesystem.readFile(path);
+    await Neutralino.filesystem.createDirectory(dataDir);
   } catch {
-    return (await native.call('fs.readText', { path })).text ?? null;
+    // Directory already exists (or is inaccessible; the writes below fail).
   }
 }
 
-async function writeText(path, data) {
-  try {
-    await Neutralino.filesystem.writeFile(path, data);
-  } catch {
-    await native.call('fs.writeText', { path, data });
-  }
+async function readText(path) {
+  return Neutralino.filesystem.readFile(path);
 }
 
 function fromSaved(saved) {
@@ -134,6 +136,7 @@ export async function initSettings() {
   if (!useTestData && home) {
     dataDir = `${home.replace(/\\/g, '/')}/pomodoro_lock`;
     settingsPath = `${dataDir}/settings.json`;
+    await ensureDataDir();
   }
 
   if (useTestData || !settingsPath) {
@@ -156,15 +159,21 @@ function save() {
   // Serialize writes; a temp file + move keeps the last good settings intact.
   writeQueue = writeQueue
     .then(async () => {
+      await ensureDataDir();
       const tmp = `${settingsPath}.tmp`;
-      await writeText(tmp, snapshot);
+      await Neutralino.filesystem.writeFile(tmp, snapshot);
       try {
         await Neutralino.filesystem.move(tmp, settingsPath);
       } catch {
-        await native.call('fs.move', { from: tmp, to: settingsPath });
+        // Some Neutralino versions reject move() when the target exists.
+        // copy() explicitly supports overwrite; keep the temp file cleanup best effort.
+        await Neutralino.filesystem.copy(tmp, settingsPath, { overwrite: true });
+        await Neutralino.filesystem.remove(tmp).catch(() => {});
       }
     })
-    .catch(() => {});
+    .catch((error) => {
+      console.warn('Unable to save settings:', error);
+    });
 }
 
 export function getSettings() {
@@ -193,11 +202,19 @@ export function setIgnoreWords(values = {}) {
 }
 
 export function setSettings(next) {
+  // Missing task keys keep their current value instead of silently disabling
+  // every task. This also avoids resetting the rotation on unrelated changes.
+  const taskChanges = {};
+  let tasksChanged = false;
+  for (const key of TASK_KEYS) {
+    if (next[key] === undefined) continue;
+    taskChanges[key] = Boolean(next[key]);
+    if (taskChanges[key] !== Boolean(settings[key])) tasksChanged = true;
+  }
+
   settings = {
-    englishWord: Boolean(next.englishWord),
-    multipleChoice: Boolean(next.multipleChoice),
-    japaneseWord: Boolean(next.japaneseWord),
-    dumbbellWorkout: Boolean(next.dumbbellWorkout),
+    ...settings,
+    ...taskChanges,
     masterVolume:
       next.masterVolume === undefined ? settings.masterVolume : normalizeVolume(next.masterVolume),
     countdownSeconds:
@@ -211,7 +228,7 @@ export function setSettings(next) {
     theme: next.theme === undefined ? settings.theme : normalizeTheme(next.theme),
     ignoreWords: getIgnoreWords(),
   };
-  nextTaskIndex = 0;
+  if (tasksChanged) nextTaskIndex = 0;
   save();
 }
 

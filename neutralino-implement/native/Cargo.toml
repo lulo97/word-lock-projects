@@ -10,9 +10,8 @@ path = "src/main.rs"
 
 [dependencies]
 serde_json = "1"
-uuid = { version = "1", features = ["v4"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
-tungstenite = { version = "0.24", default-features = false, features = ["handshake"] }
+tungstenite = { version = "=0.24.0", default-features = false, features = ["handshake"] }
 winreg = "0.52"
 ureq = { version = "2", default-features = false }
 

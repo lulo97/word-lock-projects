@@ -12,7 +12,6 @@ module.exports = defineConfig({
   expect: { timeout: 10_000 },
   fullyParallel: false,
   workers: 1,
-  maxFailures: 1,
   reporter: 'list',
   use: {
     trace: 'retain-on-failure',

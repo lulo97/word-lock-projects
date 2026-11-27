@@ -2,14 +2,31 @@
 const calls = [];
 let frozen = false;
 let logPath = null;
+let logQueue = Promise.resolve();
+
+function enqueue(action) {
+  logQueue = logQueue.then(action).catch(() => {});
+  return logQueue;
+}
 
 function record(name) {
   calls.push(name);
   if (!logPath) return;
-  // Fire and forget: logging is only used by tests.
-  Neutralino.filesystem.readFile(logPath)
-    .then((old) => Neutralino.filesystem.writeFile(logPath, `${old}${name}\n`))
-    .catch(() => Neutralino.filesystem.writeFile(logPath, `${name}\n`).catch(() => {}));
+  // Logging is only used by tests, but never drop a line and never let two
+  // read-modify-write pairs race each other.
+  enqueue(async () => {
+    let old = '';
+    try {
+      old = await Neutralino.filesystem.readFile(logPath);
+    } catch {
+      old = '';
+    }
+    await Neutralino.filesystem.writeFile(logPath, `${old}${name}\n`).catch(() => {});
+  });
+}
+
+export function flush() {
+  return logQueue;
 }
 
 export function freeze() {
@@ -35,7 +52,7 @@ export function isFrozen() {
 export function reset() {
   calls.length = 0;
   frozen = false;
-  if (logPath) Neutralino.filesystem.writeFile(logPath, '').catch(() => {});
+  if (logPath) enqueue(() => Neutralino.filesystem.writeFile(logPath, '').catch(() => {}));
 }
 
 export function setLogPath(path) {
@@ -52,4 +69,4 @@ export function call(method) {
   }
 }
 
-export const mock = { freeze, unfreeze, getCalls, isFrozen, reset, setLogPath, call };
+export const mock = { freeze, unfreeze, getCalls, isFrozen, reset, setLogPath, flush, call };

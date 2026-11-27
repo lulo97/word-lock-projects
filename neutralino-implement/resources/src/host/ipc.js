@@ -14,12 +14,15 @@ import { applyAutoStartPreference } from './autoStart.js';
 import { synthesize, TTS_UNAVAILABLE_MESSAGE } from './tts.js';
 
 function applySettings(values) {
+  const before = getSettings();
   setSettings(values);
+  const after = getSettings();
+
   // Fire-and-forget, just like the old stdin-based helper: renderer calls
-  // must not wait on a DB/RPC round trip.
-  void syncChromeFreeze();
-  if (values.autoStart !== undefined) void applyAutoStartPreference(values.autoStart);
-  broadcastTheme(getSettings().theme);
+  // must not wait on a DB/RPC round trip. Only touch native state that changed.
+  if (before.chromeFreeze !== after.chromeFreeze) void syncChromeFreeze();
+  if (before.autoStart !== after.autoStart) void applyAutoStartPreference(after.autoStart);
+  broadcastTheme(after.theme);
 }
 
 const handlers = {
@@ -34,10 +37,11 @@ const handlers = {
 
   'settings:get': () => getSettings(),
   'settings:set': (values) => { applySettings(values); },
-  'settings:confirm': (values) => {
+  'settings:confirm': async (values) => {
     applySettings(values);
-    hideMainWindow();
-    closeSettingsWindow();
+    // hideMainWindow always restarts the countdown, even when no task is open.
+    await hideMainWindow();
+    await closeSettingsWindow();
   },
   'settings:close': () => closeSettingsWindow(),
 

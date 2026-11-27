@@ -14,61 +14,92 @@ const TASKS = {
 const COUNTDOWN_W = 100;
 const COUNTDOWN_H = 50;
 
-const alive = new Set();
+// Neutralino child windows are separate processes. Keep each one alive and
+// navigate it between pages instead of spawning a new process every cycle.
+const spawned = new Set();
+const active = new Set();
 let quitting = false;
-let hidingTask = false;
 
 export function isAlive(id) {
-  return alive.has(id);
+  return active.has(id);
+}
+
+// Stop the countdown iframe while a task is visible. Otherwise its interval
+// keeps ticking and can fire countdown:finished in the middle of the task.
+function stopCountdown() {
+  const frame = document.getElementById('cd');
+  if (!frame) return;
+  try { frame.contentWindow?.stop(); } catch { /* already detached */ }
+  delete frame.dataset.loaded;
+  frame.src = 'about:blank';
+}
+
+function buildProcessArgs(id, options, theme) {
+  const parts = [`--win=${id}`, `--theme=${theme}`];
+  if (options.maximize) parts.push('--maximize');
+  if (options.width) parts.push(`--width=${options.width}`);
+  if (options.height) parts.push(`--height=${options.height}`);
+  return parts.join(' ');
 }
 
 async function spawn(id, url, options = {}) {
-  if (alive.has(id)) {
+  const theme = getSettings().theme;
+
+  if (spawned.has(id)) {
+    active.add(id);
+    // A retired child parks on a bridge-enabled blank page, so it can still
+    // receive this navigation broadcast without another process being created.
+    emit('app:navigate', { to: id, url, theme });
     emit('app:focus', { to: id });
     return;
   }
-  alive.add(id);
+
+  spawned.add(id);
+  active.add(id);
   try {
     await Neutralino.window.create(url, {
-      title: 'PomodoroLock',
+      title: 'PomodoroLock Task',
       icon: '/resources/assets/icon.png',
       injectGlobals: true,
       injectClientLibrary: true,
       enableInspector: false,
-      exitProcessOnClose: false,
-      processArgs: `--win=${id} --theme=${getSettings().theme}`,
+      processArgs: buildProcessArgs(id, options, theme),
       ...options,
+      // Closing a child must never take down the host or its Chrome unfreeze path.
+      exitProcessOnClose: false,
     });
   } catch (error) {
-    alive.delete(id);
+    spawned.delete(id);
+    active.delete(id);
     throw error;
   }
+}
+
+// Hide the child and park it on a same-origin page that still loads the bridge.
+// The process is reused by the next spawn() for the same id.
+async function retire(id) {
+  if (!active.has(id)) return;
+  active.delete(id);
+  emit('app:hide', { to: id });
+  await sleep(180);
 }
 
 export async function showMainWindow() {
   if (quitting) return;
 
+  stopCountdown();
   try { await Neutralino.window.hide(); } catch { /* already hidden */ }
 
-  if (alive.has('task')) {
-    emit('app:close', { to: 'task' });
-    alive.delete('task');
-    await sleep(150);
-  }
+  await retire('task');
 
   const task = getNextTaskType();
   await spawn('task', TASKS[task] || TASKS.english, { maximize: true });
 }
 
 export async function hideMainWindow() {
-  if (quitting || !alive.has('task')) return;
+  if (quitting) return;
 
-  hidingTask = true;
-  alive.delete('task');
-  // Children stop the camera/TTS themselves, then exit only their own process.
-  emit('app:hide', { to: 'task' });
-  await sleep(80);
-  hidingTask = false;
+  await retire('task');
   await showCountdown();
 }
 
@@ -95,25 +126,27 @@ export async function showCountdown() {
   );
   await Neutralino.window.show();
   await Neutralino.window.setAlwaysOnTop(true);
-  native.call('window.setOpacity', { title: 'PomodoroLock', alpha: 0.5 });
+  native.call('window.setOpacity', { title: 'PomodoroLock Countdown', alpha: 0.5 });
 }
 
 export function createSettingsWindow() {
   return spawn('settings', '/src/settings/settings.html', {
-    title: 'Settings',
+    title: 'PomodoroLock Settings',
     width: 460,
     height: 720,
     resizable: false,
   });
 }
 
-export function closeSettingsWindow() {
-  emit('app:close', { to: 'settings' });
+export async function closeSettingsWindow() {
+  await retire('settings');
+  // Closing settings cancels any live theme preview.
+  broadcastTheme(getSettings().theme);
 }
 
 export function createIgnoreWordsWindow() {
   return spawn('ignore', '/src/settings/ignoreWords.html', {
-    title: 'Ignore Words',
+    title: 'PomodoroLock Ignore Words',
     width: 560,
     height: 460,
     resizable: false,
@@ -121,25 +154,26 @@ export function createIgnoreWordsWindow() {
 }
 
 export function closeIgnoreWordsWindow() {
-  emit('app:close', { to: 'ignore' });
+  return retire('ignore');
 }
 
 export function onChildClosed(id) {
-  if (!alive.has(id)) return;
-  alive.delete(id);
+  if (!spawned.has(id)) return;
+  active.delete(id);
 
-  // Closing settings cancels any live theme preview.
   if (id === 'settings') broadcastTheme(getSettings().theme);
   // Closing the task window returns to the countdown, as in Electron.
-  if (id === 'task' && !hidingTask) hideMainWindow();
+  if (id === 'task') hideMainWindow();
 }
 
-export function quitAll() {
+export async function quitAll() {
   if (quitting) return;
   quitting = true;
-  unfreezeChromeOnExit();
+  // Wait for Chrome to be released before the process disappears.
+  await unfreezeChromeOnExit();
   emit('app:quit');
-  setTimeout(() => Neutralino.app.exit(), 120);
+  await sleep(180);
+  await Neutralino.app.exit();
 }
 
 export function isQuitting() {

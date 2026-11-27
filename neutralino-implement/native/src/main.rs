@@ -5,14 +5,14 @@ mod system;
 mod tts;
 
 use serde_json::{json, Map, Value};
+use std::env;
 use std::io::{self, BufRead};
 use std::net::TcpStream;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 use tungstenite::{client::client, Message, WebSocket};
-use uuid::Uuid;
 
 struct AppState {
     db: Option<db::Database>,
@@ -20,13 +20,24 @@ struct AppState {
     refreeze_on: bool,
 }
 
+static NEXT_ID: AtomicU64 = AtomicU64::new(1);
+
+// Outbound WebSocket ids only need to be unique for this one connection.
 fn make_id() -> String {
-    Uuid::new_v4().to_string()
+    NEXT_ID.fetch_add(1, Ordering::Relaxed).to_string()
+}
+
+fn test_mode() -> bool {
+    env::var("WORDLOCK_USE_TEST_DATA")
+        .map(|value| value == "1")
+        .unwrap_or(false)
 }
 
 fn dispatch(method: &str, params: &Value, state: &mut AppState) -> Value {
     match method {
-        "lock.acquire" => json!({ "ok": system::acquire_lock() }),
+        "native.ping" => json!({ "ok": true, "pong": true }),
+
+        "lock.acquire" => system::acquire_lock(),
 
         "db.open" => {
             let test = params.get("test").and_then(Value::as_bool).unwrap_or(false);
@@ -38,6 +49,9 @@ fn dispatch(method: &str, params: &Value, state: &mut AppState) -> Value {
                 Err(error) => json!({ "ok": false, "error": error }),
             }
         }
+        // Arbitrary SQL is only needed by the Playwright fixtures. Keep it
+        // behind the test env so a compromised renderer cannot dispatch it.
+        "db.exec" if !test_mode() => json!({ "ok": false, "error": "db.exec is disabled" }),
         "db.exec" => match state.db.as_ref() {
             Some(database) => database
                 .call(method, params)
@@ -60,30 +74,28 @@ fn dispatch(method: &str, params: &Value, state: &mut AppState) -> Value {
         }
 
         "autostart.get" => autostart::get_state(),
-        "autostart.set" => autostart::set(params.get("enabled").and_then(Value::as_bool).unwrap_or(false)),
-        "autostart.sync" => autostart::sync(params.get("wants").and_then(Value::as_bool).unwrap_or(false)),
+        "autostart.set" => autostart::set(
+            params
+                .get("enabled")
+                .and_then(Value::as_bool)
+                .unwrap_or(false),
+        ),
+        "autostart.sync" => autostart::sync(
+            params
+                .get("wants")
+                .and_then(Value::as_bool)
+                .unwrap_or(false),
+        ),
 
         "screen.workArea" => system::work_area(),
         "window.setOpacity" => {
-            let title = params.get("title").and_then(Value::as_str).unwrap_or("PomodoroLock");
+            let title = params
+                .get("title")
+                .and_then(Value::as_str)
+                .unwrap_or("PomodoroLock Countdown");
             let alpha = params.get("alpha").and_then(Value::as_f64).unwrap_or(0.5);
             system::set_opacity(title, alpha)
         }
-
-        "tts.synthesize" => tts::synthesize(
-            params.get("text").and_then(Value::as_str).unwrap_or(""),
-            params.get("lang").and_then(Value::as_str).unwrap_or("en"),
-        ),
-
-        "fs.readText" => system::read_text(params.get("path").and_then(Value::as_str).unwrap_or("")),
-        "fs.writeText" => system::write_text(
-            params.get("path").and_then(Value::as_str).unwrap_or(""),
-            params.get("data").and_then(Value::as_str).unwrap_or(""),
-        ),
-        "fs.move" => system::move_file(
-            params.get("from").and_then(Value::as_str).unwrap_or(""),
-            params.get("to").and_then(Value::as_str).unwrap_or(""),
-        ),
 
         _ => json!({ "ok": false, "error": format!("unknown method: {}", method) }),
     }
@@ -108,7 +120,14 @@ fn handle_text(
     let method = data.get("method").and_then(Value::as_str).unwrap_or("");
     let params = data.get("params").cloned().unwrap_or_else(|| json!({}));
 
-    let mut result = {
+    // TTS can take minutes. Never hold the AppState mutex while it runs:
+    // Chrome's re-freeze loop and the parent watchdog must stay responsive.
+    let mut result = if method == "tts.synthesize" {
+        let text = params.get("text").and_then(Value::as_str).unwrap_or("");
+        let lang = params.get("lang").and_then(Value::as_str).unwrap_or("en");
+        let gain = params.get("gain").and_then(Value::as_f64).unwrap_or(1.0);
+        tts::synthesize(text, lang, gain)
+    } else {
         let mut locked = match state.lock() {
             Ok(guard) => guard,
             Err(poisoned) => poisoned.into_inner(),
@@ -166,9 +185,21 @@ fn main() {
                 .or_else(|| value.as_str().and_then(|text| text.parse::<u64>().ok()))
         })
         .unwrap_or(0) as u16;
-    let token = info.get("nlToken").and_then(Value::as_str).unwrap_or("").to_string();
-    let connect_token = info.get("nlConnectToken").and_then(Value::as_str).unwrap_or("").to_string();
-    let extension_id = info.get("nlExtensionId").and_then(Value::as_str).unwrap_or("").to_string();
+    let token = info
+        .get("nlToken")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let connect_token = info
+        .get("nlConnectToken")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
+    let extension_id = info
+        .get("nlExtensionId")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .to_string();
 
     if port == 0 || token.is_empty() || connect_token.is_empty() {
         eprintln!("wordlock-native: incomplete handshake");
@@ -196,12 +227,19 @@ fn main() {
 
     // Apply the poll timeout only after the handshake succeeded. Setting it
     // earlier can turn a slow-but-valid upgrade into an Interrupted error.
-    if let Err(error) = socket.get_mut().set_read_timeout(Some(Duration::from_millis(200))) {
+    if let Err(error) = socket
+        .get_mut()
+        .set_read_timeout(Some(Duration::from_millis(200)))
+    {
         eprintln!("wordlock-native: set_read_timeout failed: {}", error);
         return;
     }
 
-    let parent = system::parent_pid();
+    // Each thread gets its own waitable handle to the same parent process.
+    let parent_pid = system::parent_pid();
+    let watchdog_parent = Arc::new(system::ParentProcess::open(parent_pid));
+    let loop_parent = Arc::new(system::ParentProcess::open(parent_pid));
+
     let eof = Arc::new(AtomicBool::new(false));
     let state = Arc::new(Mutex::new(AppState {
         db: None,
@@ -228,11 +266,9 @@ fn main() {
 
     let watchdog_state = state.clone();
     let watchdog_eof = eof.clone();
-    let watchdog_parent = parent;
     thread::spawn(move || loop {
         thread::sleep(Duration::from_secs(1));
-        if watchdog_eof.load(Ordering::Relaxed)
-            || (watchdog_parent != 0 && !system::process_alive(watchdog_parent))
+        if watchdog_eof.load(Ordering::Relaxed) || (parent_pid != 0 && !watchdog_parent.is_alive())
         {
             let mut locked = watchdog_state.lock().unwrap_or_else(|e| e.into_inner());
             let _ = locked.chrome.unfreeze_all();
@@ -254,7 +290,7 @@ fn main() {
     });
 
     loop {
-        if eof.load(Ordering::Relaxed) || (parent != 0 && !system::process_alive(parent)) {
+        if eof.load(Ordering::Relaxed) || (parent_pid != 0 && !loop_parent.is_alive()) {
             break;
         }
 

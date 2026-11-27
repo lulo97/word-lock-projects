@@ -14,6 +14,11 @@
     return;
   }
 
+  // WebView2 has no setPermissionRequestHandler. The port is fixed, so the
+  // user only answers once; if they blocked it, fail with a usable message
+  // instead of leaving the dumbbell page stuck on "Starting pose tracker...".
+  installCameraPermissionFallback();
+
   const args = Array.isArray(window.NL_ARGS) ? window.NL_ARGS : [];
   const arg = (key) => {
     const prefix = `--${key}=`;
@@ -32,8 +37,29 @@
   Neutralino.init();
   Neutralino.events.on('ready', () => markReady());
 
+  // Reused children keep their original process args. Re-apply the window
+  // state after each navigation so a parked child comes back the right size.
+  ready.then(async () => {
+    if (isHost || location.pathname.endsWith('childPark.html')) return;
+    try {
+      if (args.includes('--maximize')) {
+        await Neutralino.window.maximize();
+      } else {
+        const width = Number(arg('width'));
+        const height = Number(arg('height'));
+        if (width > 0 && height > 0) {
+          await Neutralino.window.setSize({ width, height });
+        }
+      }
+      await Neutralino.window.show();
+    } catch { /* window state is cosmetic */ }
+  });
+
   const waiting = new Map();
   let seq = 0;
+  // A child process keeps the same id across page navigations, so a reply to
+  // an old page's `task:1` must not resolve a new page's `task:1`.
+  const pageNonce = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
   Neutralino.events.on('ipc:res', ({ detail }) => {
     // Broadcasts reach every WebView. Only accept replies addressed to this id.
@@ -55,7 +81,7 @@
     }
 
     return ready.then(() => new Promise((resolve) => {
-      const id = `${myId}:${++seq}`;
+      const id = `${myId}:${pageNonce}:${++seq}`;
       const timer = setTimeout(() => {
         if (waiting.delete(id)) resolve(undefined);
       }, 8000);
@@ -92,40 +118,106 @@
     }
   });
 
-  // Neutralino has no API to close a single child window, and app.exit() would
-  // terminate the whole application. Hide the WebView and navigate it away:
-  // the host stays alive in the tray, and tests no longer see the old URL.
+  Neutralino.events.on('app:navigate', ({ detail }) => {
+    if (isHost || !detail || detail.to !== myId || !detail.url) return;
+    if (detail.theme) {
+      themeId = detail.theme;
+      if (window.electronAPI) window.electronAPI.themeId = themeId;
+    }
+    window.location.replace(detail.url);
+  });
+
+  // Parking keeps the child process alive so the host can navigate it to the
+  // next task instead of spawning another WebView. The bridge must also run on
+  // this page so it can receive the later app:navigate broadcast.
+  const PARK_URL = '/src/host/childPark.html';
   const retireChild = () => {
+    if (isHost || location.pathname.endsWith('childPark.html')) return;
     Neutralino.window.hide().catch(() => {});
-    setTimeout(() => window.location.replace('about:blank'), 60);
+    setTimeout(() => window.location.replace(PARK_URL), 60);
   };
 
   const hideListeners = [];
-  Neutralino.events.on('app:hide', ({ detail }) => {
-    if (detail.to !== myId) return;
-    for (const cb of hideListeners) {
+  function runHideCallbacks() {
+    // Both app:hide and app:close may arrive for the same retirement. Run each
+    // cleanup once so the camera stream and TTS stop before navigation.
+    const callbacks = hideListeners.splice(0);
+    for (const cb of callbacks) {
       try { cb(); } catch { /* cleanup is best effort */ }
     }
+  }
+
+  Neutralino.events.on('app:hide', ({ detail }) => {
+    if (!detail || detail.to !== myId) return;
+    runHideCallbacks();
     // Give camera/TTS cleanup a chance to finish before navigation.
     setTimeout(retireChild, 60);
   });
   Neutralino.events.on('app:close', ({ detail }) => {
-    if (detail.to === myId) retireChild();
+    if (!detail || detail.to !== myId) return;
+    runHideCallbacks();
+    retireChild();
   });
   Neutralino.events.on('app:focus', ({ detail }) => {
     if (detail.to === myId) Neutralino.window.focus();
   });
   Neutralino.events.on('app:quit', () => {
-    // The host exits the whole Neutralino process; children need no action.
+    // Each Neutralino window is its own process; a child only exits itself.
+    if (!isHost) Neutralino.app.exit();
   });
   if (!isHost) {
     Neutralino.events.on('windowClose', () => {
+      // Neutralino does not act on windowClose by itself: hide immediately so
+      // the X button behaves, then let the host retire/reuse this child.
+      Neutralino.window.hide().catch(() => {});
       send('win:closed', myId);
+      retireChild();
     });
   }
 
+  function installCameraPermissionFallback() {
+    const media = navigator.mediaDevices;
+    if (!media || typeof media.getUserMedia !== 'function') return;
+
+    const original = media.getUserMedia.bind(media);
+    const blocked = `Camera access is blocked. Allow the camera for ${window.location.origin}, then reopen this task.`;
+
+    try {
+      Object.defineProperty(media, 'getUserMedia', {
+        configurable: true,
+        writable: true,
+        value: async (constraints) => {
+          try {
+            if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+              const status = await navigator.permissions.query({ name: 'camera' });
+              if (status.state === 'denied') throw new Error(blocked);
+            }
+          } catch (error) {
+            // Permissions API is optional; an unsupported query is not a denial.
+            if (error && error.message === blocked) throw error;
+          }
+
+          try {
+            return await original(constraints);
+          } catch (error) {
+            if (error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError')) {
+              throw new Error(blocked);
+            }
+            throw error;
+          }
+        },
+      });
+    } catch {
+      // If a runtime locks the property down, the original getUserMedia still
+      // works; the user just sees the browser's own permission prompt.
+    }
+  }
+
   const api = {
-    themeId,
+    // Keep the host's `window.electronAPI.themeId = ...` assignment and the
+    // theme:changed listener on the same underlying value.
+    get themeId() { return themeId; },
+    set themeId(value) { themeId = value; },
     listThemes: () => invoke('theme:list'),
     previewTheme: (id) => send('theme:preview', id),
     onThemeChanged: (cb) => themeListeners.push(cb),

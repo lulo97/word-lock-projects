@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-src 'self'; connect-src 'self' ws://127.0.0.1:*" />
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-src 'self'; connect-src 'self' ws://127.0.0.1:47831" />
+  <script src="../bridge/electronAPI.js"></script>
   <title>PomodoroLock</title>
   <link rel="stylesheet" href="../../assets/tailwind.css" />
   <link rel="stylesheet" href="../../assets/themes.css" />
-  <script src="../bridge/electronAPI.js"></script>
+  <link rel="stylesheet" href="host.css" />
 </head>
-<body class="ui-countdown">
+<body class="ui-countdown ui-host">
   <!-- Unchanged countdown page. Reloading it restarts the timer. -->
-  <iframe id="cd" style="border:0;width:100%;height:100%" title="Countdown"></iframe>
-  <div id="drag" style="position:fixed;inset:0"></div>
+  <iframe id="cd" class="ui-host-frame" title="Countdown"></iframe>
+  <!-- Neutralino's setDraggableRegion listens for pointerdown on this overlay. -->
+  <div id="drag" class="ui-host-drag"></div>
   <script type="module" src="host.js"></script>
 </body>
 </html>

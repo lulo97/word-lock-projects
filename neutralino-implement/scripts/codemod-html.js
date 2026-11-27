@@ -6,14 +6,19 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const srcDir = path.join(root, 'resources', 'src');
 const BRIDGE = '<script src="../bridge/electronAPI.js"></script>';
-const WS = "ws://127.0.0.1:*";
+const BRIDGE_LINE = `  ${BRIDGE}`;
+const BRIDGE_RE = /^[ \t]*<script src="\.\.\/bridge\/electronAPI\.js"><\/script>[ \t]*\r?\n?/im;
+const CSP_RE = /<meta\s+http-equiv="Content-Security-Policy"[\s\S]*?>/i;
+const CSP_CONTENT_RE = /(<meta\s+http-equiv="Content-Security-Policy"\s+content=")([^"]*)(")/i;
+const WS = 'ws://127.0.0.1:47831';
+const WS_ANY_RE = /ws:\/\/127\.0\.0\.1:\*/g;
 
 function walk(dir) {
   const out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === 'bridge' || entry.name === 'host') continue;
+      if (entry.name === 'bridge') continue;
       out.push(...walk(full));
     } else if (entry.name.endsWith('.html')) {
       out.push(full);
@@ -22,32 +27,38 @@ function walk(dir) {
   return out;
 }
 
-function patch(html) {
-  let next = html;
+function placeBridge(html) {
+  let next = html.replace(BRIDGE_RE, '');
 
-  // 1. The bridge must run before theme-boot.js so the first paint is themed.
-  if (!next.includes('bridge/electronAPI.js')) {
-    next = next.replace(/<head(?:\s[^>]*)?>/i, (head) => `${head}\n    ${BRIDGE}`);
+  // The CSP meta must govern the bridge script, so insert immediately after
+  // the policy instead of as the first child of <head>.
+  if (CSP_RE.test(next)) {
+    next = next.replace(CSP_RE, (meta) => `${meta}\n${BRIDGE_LINE}`);
+  } else {
+    next = next.replace(/<head(?:\s[^>]*)?>/i, (head) => `${head}\n${BRIDGE_LINE}`);
   }
 
-  // 2. Neutralino's IPC is a WebSocket on the same host. Some WebView2 builds
-  //    do not treat ws:// as 'self', so spell it out in every CSP.
-  next = next.replace(
-    /(<meta\s+http-equiv="Content-Security-Policy"\s+content=")([^"]*)(")/i,
-    (_match, open, policy, close) => {
-      let updated = policy;
-      if (!/connect-src/.test(updated)) {
-        updated = updated.replace(/;$/, '') + `; connect-src 'self' ${WS}`;
-      } else if (!updated.includes(WS)) {
-        updated = updated.replace(/connect-src\s+([^;]*)/, (m, sources) =>
-          `connect-src ${sources.trim()} ${WS}`,
-        );
-      }
-      return `${open}${updated}${close}`;
-    },
-  );
-
   return next;
+}
+
+function patchCsp(html) {
+  return html.replace(CSP_CONTENT_RE, (_match, open, policy, close) => {
+    let updated = policy.replace(WS_ANY_RE, WS);
+
+    if (!/connect-src/.test(updated)) {
+      updated = updated.replace(/;\s*$/, '') + `; connect-src 'self' ${WS}`;
+    } else if (!updated.includes(WS)) {
+      updated = updated.replace(/connect-src\s+([^;]*)/, (_m, sources) =>
+        `connect-src ${sources.trim()} ${WS}`,
+      );
+    }
+
+    return `${open}${updated}${close}`;
+  });
+}
+
+function patch(html) {
+  return patchCsp(placeBridge(html));
 }
 
 let changed = 0;

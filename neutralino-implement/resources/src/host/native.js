@@ -26,9 +26,13 @@ export function getMocks() {
 }
 
 export const native = {
-  call(method, params = {}, timeout = 5000) {
+  async call(method, params = {}, timeout = 5000) {
     if (method.startsWith('chrome.') && mocks.chrome) {
-      return Promise.resolve(mocks.chrome.call(method, params));
+      const result = await mocks.chrome.call(method, params);
+      // Mock log writes are queued; a quitting host must not exit before the
+      // final unfreeze line has been flushed to disk.
+      if (typeof mocks.chrome.flush === 'function') await mocks.chrome.flush();
+      return result;
     }
     if (method.startsWith('autostart.') && mocks.autostart) {
       return Promise.resolve(mocks.autostart.call(method, params));
@@ -44,3 +48,32 @@ export const native = {
     });
   },
 };
+
+let readyProbe = null;
+
+// The extension is spawned by Neutralino, so it may not have connected by the
+// time host.js runs. Probe with a short timeout instead of losing the first
+// real RPC to the 5-second default timeout.
+export function waitReady(timeout = 15000) {
+  if (readyProbe) return readyProbe;
+
+  readyProbe = (async () => {
+    const deadline = Date.now() + timeout;
+    let lastError = 'extension did not answer native.ping';
+
+    while (Date.now() < deadline) {
+      try {
+        const result = await native.call('native.ping', {}, 800);
+        if (result && result.ok && result.pong) return result;
+        lastError = result?.error || lastError;
+      } catch (error) {
+        lastError = error?.message || String(error);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+
+    throw new Error(`wordlock-native extension did not become ready: ${lastError}`);
+  })();
+
+  return readyProbe;
+}

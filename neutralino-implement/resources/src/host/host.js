@@ -1,4 +1,4 @@
-import { native, configureMocks, getMocks } from './native.js';
+import { native, waitReady, configureMocks, getMocks } from './native.js';
 import { initSettings, getSettings as readSettings } from './settings.js';
 import { initThemes } from './themes.js';
 import { createRouter } from './ipc.js';
@@ -27,12 +27,19 @@ async function boot() {
     configureMocks({ autostart: mock.mock });
   }
 
+  // The extension is a separate process; wait for its ping before any RPC.
+  await waitReady();
+
   // Single instance: a second process must never fight over frozen Chrome.
-  const lock = await native.call('lock.acquire');
-  if (!lock.ok) {
-    Neutralino.app.broadcast('second-instance', {});
-    Neutralino.app.exit();
-    return;
+  // Test runs use in-memory state and deliberately skip the named mutex.
+  if (!testData) {
+    const lock = await native.call('lock.acquire');
+    if (lock && lock.ok === false && lock.error === 'already-running') {
+      Neutralino.app.broadcast('second-instance', {});
+      Neutralino.app.exit();
+      return;
+    }
+    // A timeout or RPC error is not proof of a second instance: keep starting.
   }
 
   await initThemes();
@@ -51,7 +58,8 @@ async function boot() {
   void initializeAutoStart();
 
   await showCountdown();
-  await createTray();
+  // Headless tests must not get a native modal if tray setup is unavailable.
+  await createTray({ visibleFallback: !testData });
 
   if (testData) {
     const settings = await import('./settings.js');
@@ -90,7 +98,7 @@ async function boot() {
   }
 }
 
-boot().catch((error) => {
+boot().catch(async (error) => {
   console.error('PomodoroLock host failed to start:', error);
-  unfreezeChromeOnExit();
+  await unfreezeChromeOnExit();
 });

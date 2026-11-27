@@ -1,17 +1,20 @@
 use serde_json::{json, Value};
+use std::env;
 use std::ffi::c_void;
-use std::fs;
-use std::path::Path;
 use windows_sys::Win32::Foundation::{
-    CloseHandle, GetLastError, SetLastError, ERROR_ALREADY_EXISTS, INVALID_HANDLE_VALUE, RECT,
+    CloseHandle, GetLastError, SetLastError, ERROR_ALREADY_EXISTS, HANDLE, INVALID_HANDLE_VALUE,
+    RECT, WAIT_TIMEOUT,
 };
 use windows_sys::Win32::System::Diagnostics::ToolHelp::{
     CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
 };
-use windows_sys::Win32::System::Threading::{CreateMutexW, GetCurrentProcessId};
+use windows_sys::Win32::System::Threading::{
+    CreateMutexW, GetCurrentProcessId, OpenProcess, WaitForSingleObject,
+    PROCESS_QUERY_LIMITED_INFORMATION, PROCESS_SYNCHRONIZE,
+};
 use windows_sys::Win32::UI::WindowsAndMessaging::{
-    FindWindowW, GetWindowLongPtrW, LWA_ALPHA, SetLayeredWindowAttributes, SetWindowLongPtrW,
-    SystemParametersInfoW, GWL_EXSTYLE, SPI_GETWORKAREA, WS_EX_LAYERED,
+    FindWindowW, GetWindowLongPtrW, SetLayeredWindowAttributes, SetWindowLongPtrW,
+    SystemParametersInfoW, GWL_EXSTYLE, LWA_ALPHA, SPI_GETWORKAREA, WS_EX_LAYERED,
 };
 
 fn wide(text: &str) -> Vec<u16> {
@@ -45,6 +48,18 @@ pub fn current_pid() -> u32 {
 }
 
 pub fn parent_pid() -> u32 {
+    // Neutralino passes its own pid to extensions in these env vars on recent
+    // releases. Prefer them over a process snapshot.
+    for key in ["NL_PID", "NEUTRALINO_PID"] {
+        if let Ok(value) = env::var(key) {
+            if let Ok(pid) = value.trim().parse::<u32>() {
+                if pid != 0 {
+                    return pid;
+                }
+            }
+        }
+    }
+
     let me = current_pid();
     for (pid, parent) in processes() {
         if pid == me {
@@ -54,32 +69,70 @@ pub fn parent_pid() -> u32 {
     0
 }
 
-pub fn process_alive(pid: u32) -> bool {
-    pid != 0 && processes().iter().any(|(id, _)| *id == pid)
+/// A waitable handle to the Neutralino parent process. A process handle stays
+/// signaled only when that exact process exits, so recycled pids are harmless.
+pub struct ParentProcess {
+    handle: HANDLE,
 }
 
-pub fn acquire_lock() -> bool {
+unsafe impl Send for ParentProcess {}
+unsafe impl Sync for ParentProcess {}
+
+impl ParentProcess {
+    pub fn open(pid: u32) -> Self {
+        let handle = if pid == 0 {
+            std::ptr::null_mut()
+        } else {
+            unsafe {
+                OpenProcess(
+                    PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_SYNCHRONIZE,
+                    0,
+                    pid,
+                )
+            }
+        };
+        Self { handle }
+    }
+
+    pub fn is_alive(&self) -> bool {
+        if self.handle.is_null() {
+            // If OpenProcess was denied, do not invent a parent death: the
+            // stdin-EOF watcher is still authoritative.
+            return true;
+        }
+        unsafe { WaitForSingleObject(self.handle, 0) == WAIT_TIMEOUT }
+    }
+}
+
+impl Drop for ParentProcess {
+    fn drop(&mut self) {
+        if !self.handle.is_null() {
+            unsafe { CloseHandle(self.handle) };
+        }
+    }
+}
+
+pub fn acquire_lock() -> Value {
     unsafe {
         let name = wide("Local\\PomodoroLock");
         SetLastError(0);
         let handle = CreateMutexW(std::ptr::null(), 1, name.as_ptr());
-        if handle.is_null() || GetLastError() == ERROR_ALREADY_EXISTS {
-            return false;
+        if handle.is_null() {
+            return json!({ "ok": false, "error": format!("CreateMutexW failed: {}", GetLastError()) });
+        }
+        if GetLastError() == ERROR_ALREADY_EXISTS {
+            return json!({ "ok": false, "error": "already-running" });
         }
         // The mutex stays open for the process lifetime; Windows closes it at exit.
-        true
+        json!({ "ok": true })
     }
 }
 
 pub fn work_area() -> Value {
     unsafe {
         let mut rect: RECT = std::mem::zeroed();
-        let ok = SystemParametersInfoW(
-            SPI_GETWORKAREA,
-            0,
-            &mut rect as *mut RECT as *mut c_void,
-            0,
-        );
+        let ok =
+            SystemParametersInfoW(SPI_GETWORKAREA, 0, &mut rect as *mut RECT as *mut c_void, 0);
         if ok == 0 {
             return json!({ "ok": false, "error": "SPI_GETWORKAREA failed" });
         }
@@ -109,29 +162,5 @@ pub fn set_opacity(title: &str, alpha: f64) -> Value {
         let value = (alpha.clamp(0.0, 1.0) * 255.0).round() as u8;
         let ok = SetLayeredWindowAttributes(handle, 0, value, LWA_ALPHA as u32);
         json!({ "ok": ok != 0 })
-    }
-}
-
-pub fn read_text(path: &str) -> Value {
-    match fs::read_to_string(path) {
-        Ok(text) => json!({ "ok": true, "text": text }),
-        Err(error) => json!({ "ok": false, "error": error.to_string() }),
-    }
-}
-
-pub fn write_text(path: &str, data: &str) -> Value {
-    if let Some(parent) = Path::new(path).parent() {
-        let _ = fs::create_dir_all(parent);
-    }
-    match fs::write(path, data) {
-        Ok(()) => json!({ "ok": true }),
-        Err(error) => json!({ "ok": false, "error": error.to_string() }),
-    }
-}
-
-pub fn move_file(from: &str, to: &str) -> Value {
-    match fs::rename(from, to) {
-        Ok(()) => json!({ "ok": true }),
-        Err(error) => json!({ "ok": false, "error": error.to_string() }),
     }
 }

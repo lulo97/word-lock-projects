@@ -1,0 +1,21 @@
+/* Host-only styles. The countdown renderer itself stays untouched. */
+
+.ui-host {
+  /* Neutralino uses setDraggableRegion('drag') instead of Electron's CSS drag
+     region. Keep pointerdown events flowing to the #drag overlay. */
+  -webkit-app-region: no-drag;
+}
+
+.ui-host-frame {
+  display: block;
+  border: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ui-host-drag {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  -webkit-app-region: no-drag;
+}

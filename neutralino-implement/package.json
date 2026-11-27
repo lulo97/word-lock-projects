@@ -12,7 +12,8 @@
     "native": "cargo build --release --manifest-path native/Cargo.toml && node scripts/copy-native.js",
     "dev": "npm run build:themes && npm run codemod && npm run build:css && npm run vendor && neu run",
     "build": "npm run build:themes && npm run codemod && npm run build:css && npm run vendor && npm run native && neu build --release",
-    "test": "playwright test --max-failures=1 --workers=1"
+    "clean": "node scripts/clean.js",
+    "test": "playwright test --workers=1"
   },
   "keywords": [],
   "author": "",

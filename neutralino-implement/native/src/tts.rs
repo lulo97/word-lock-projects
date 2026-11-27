@@ -1,35 +1,96 @@
-use serde_json::json;
-use serde_json::Value;
+use serde_json::{json, Value};
+use std::env;
+use std::fs;
 use std::io::Read;
-use std::time::Duration;
+use std::path::PathBuf;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-const TABLE: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-fn base64(data: &[u8]) -> String {
-    let mut out = String::with_capacity((data.len() + 2) / 3 * 4);
-    for chunk in data.chunks(3) {
-        let b0 = chunk[0] as usize;
-        let b1 = chunk.get(1).copied().unwrap_or(0) as usize;
-        let b2 = chunk.get(2).copied().unwrap_or(0) as usize;
-        out.push(TABLE[b0 >> 2] as char);
-        out.push(TABLE[((b0 & 0x03) << 4) | (b1 >> 4)] as char);
-        if chunk.len() > 1 {
-            out.push(TABLE[((b1 & 0x0f) << 2) | (b2 >> 6)] as char);
-        } else {
-            out.push('=');
-        }
-        if chunk.len() > 2 {
-            out.push(TABLE[b2 & 0x3f] as char);
-        } else {
-            out.push('=');
-        }
-    }
-    out
+fn read_u16(bytes: &[u8], offset: usize) -> Option<u16> {
+    let slice = bytes.get(offset..offset + 2)?;
+    Some(u16::from_le_bytes([slice[0], slice[1]]))
 }
 
-pub fn synthesize(text: &str, lang: &str) -> Value {
+fn read_u32(bytes: &[u8], offset: usize) -> Option<u32> {
+    let slice = bytes.get(offset..offset + 4)?;
+    Some(u32::from_le_bytes([slice[0], slice[1], slice[2], slice[3]]))
+}
+
+// Same rule as the old Node applyGain(): scale 16-bit PCM in place and clip to
+// Int16. Unknown/non-PCM WAVs pass through untouched.
+fn apply_gain(mut bytes: Vec<u8>, gain: f64) -> Vec<u8> {
+    if !gain.is_finite() || gain == 1.0 {
+        return bytes;
+    }
+    if bytes.len() < 12 || &bytes[0..4] != b"RIFF" || &bytes[8..12] != b"WAVE" {
+        return bytes;
+    }
+
+    let mut format = None;
+    let mut bits_per_sample = None;
+    let mut data_offset = None;
+    let mut data_size = 0usize;
+
+    let mut offset = 12usize;
+    while offset + 8 <= bytes.len() {
+        let size = match read_u32(&bytes, offset + 4) {
+            Some(size) => size as usize,
+            None => break,
+        };
+        let start = offset + 8;
+
+        if &bytes[offset..offset + 4] == b"fmt " && size >= 16 && start + 16 <= bytes.len() {
+            format = read_u16(&bytes, start);
+            bits_per_sample = read_u16(&bytes, start + 14);
+        }
+        if &bytes[offset..offset + 4] == b"data" {
+            data_offset = Some(start);
+            data_size = size;
+            break;
+        }
+
+        let next = start + size + (size % 2);
+        if next <= offset {
+            break;
+        }
+        offset = next;
+    }
+
+    if format != Some(1) || bits_per_sample != Some(16) {
+        return bytes;
+    }
+    let start = match data_offset {
+        Some(start) => start,
+        None => return bytes,
+    };
+    let end = start.saturating_add(data_size).min(bytes.len());
+
+    for index in (start..end).step_by(2) {
+        if index + 1 >= end {
+            break;
+        }
+        let sample = i16::from_le_bytes([bytes[index], bytes[index + 1]]);
+        let scaled = (sample as f64 * gain).round().clamp(-32768.0, 32767.0) as i16;
+        let [low, high] = scaled.to_le_bytes();
+        bytes[index] = low;
+        bytes[index + 1] = high;
+    }
+
+    bytes
+}
+
+fn temp_path() -> PathBuf {
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    env::temp_dir().join(format!("wordlock-tts-{}-{}.wav", std::process::id(), nanos))
+}
+
+pub fn synthesize(text: &str, lang: &str, gain: f64) -> Value {
     let body = json!({ "input": text, "lang": lang, "voice": "female" }).to_string();
-    let agent = ureq::AgentBuilder::new().timeout(Duration::from_secs(300)).build();
+    let agent = ureq::AgentBuilder::new()
+        .timeout(Duration::from_secs(300))
+        .build();
 
     let response = agent
         .post("http://127.0.0.1:8080/tts")
@@ -42,7 +103,13 @@ pub fn synthesize(text: &str, lang: &str) -> Value {
             if let Err(error) = response.into_reader().read_to_end(&mut bytes) {
                 return json!({ "ok": false, "error": error.to_string() });
             }
-            json!({ "ok": true, "wav": base64(&bytes) })
+
+            let bytes = apply_gain(bytes, gain);
+            let path = temp_path();
+            match fs::write(&path, &bytes) {
+                Ok(()) => json!({ "ok": true, "path": path.to_string_lossy().into_owned() }),
+                Err(error) => json!({ "ok": false, "error": error.to_string() }),
+            }
         }
         Err(ureq::Error::Status(code, response)) => {
             let mut body = String::new();

@@ -1,5 +1,5 @@
 const path = require('node:path');
-const { spawn } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
 const { chromium } = require('@playwright/test');
 
 const root = path.join(__dirname, '..');
@@ -9,6 +9,19 @@ const cdpBase = `http://127.0.0.1:${cdpPort}`;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Neutralino child windows are separate processes. Killing only the host can
+// leave WebView2 children behind holding the shared CDP port.
+function killProcessTree(child) {
+  if (!child?.pid) return;
+  const result = spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], {
+    stdio: 'ignore',
+    windowsHide: true,
+  });
+  if (result.status !== 0) {
+    try { child.kill(); } catch { /* already gone */ }
+  }
 }
 
 async function waitForCdp(timeoutMs = 30000) {
@@ -121,7 +134,7 @@ async function launchApp({ env = {}, extraArgs = [] } = {}) {
           await page.evaluate(() => window.__host?.quit()).catch(() => {});
         }
         await sleep(300);
-        if (child.exitCode === null && child.signalCode === null) child.kill();
+        if (child.exitCode === null && child.signalCode === null) killProcessTree(child);
         await browser.close().catch(() => {});
         await sleep(150);
       },
@@ -130,7 +143,7 @@ async function launchApp({ env = {}, extraArgs = [] } = {}) {
     await app.waitHost();
     return app;
   } catch (error) {
-    child.kill();
+    killProcessTree(child);
     throw error;
   }
 }

@@ -26,11 +26,16 @@ export async function syncChromeFreeze() {
   else await safely('chrome.unfreeze');
 }
 
-let didUnfreezeOnExit = false;
+let exitUnfreeze = null;
 
+// Idempotent, and awaitable so quitAll() cannot exit before the final log
+// write (or native unfreeze) has completed.
 export function unfreezeChromeOnExit() {
-  if (didUnfreezeOnExit) return;
-  didUnfreezeOnExit = true;
-  void safely('chrome.refreeze', { on: false });
-  void safely('chrome.unfreeze');
+  if (!exitUnfreeze) {
+    exitUnfreeze = (async () => {
+      await safely('chrome.refreeze', { on: false });
+      await safely('chrome.unfreeze');
+    })();
+  }
+  return exitUnfreeze;
 }

@@ -12,7 +12,10 @@ function toBytes(base64) {
 
 function toBase64(bytes) {
   let binary = '';
-  for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i]);
+  const CHUNK = 0x8000;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  }
   return btoa(binary);
 }
 
@@ -20,6 +23,20 @@ function ascii(bytes, start, end) {
   let out = '';
   for (let i = start; i < end; i += 1) out += String.fromCharCode(bytes[i]);
   return out;
+}
+
+// Rust writes the WAV to a temp file instead of broadcasting a large base64
+// payload to every WebView. Read it back in chunks so btoa() stays safe.
+async function readWavPath(path) {
+  if (!path) return null;
+  const buffer = await Neutralino.filesystem.readBinaryFile(path);
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const CHUNK = 0x8000;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  }
+  return btoa(binary);
 }
 
 // Port of the old Node Buffer implementation: scale 16-bit PCM in place,
@@ -75,8 +92,23 @@ export function applyGain(base64, gain) {
 
 export async function synthesize(text, lang = 'en') {
   const gain = getSettings().masterVolume;
-  const result = await native.call('tts.synthesize', { text, lang }, 300000);
-  const base64 = typeof result === 'string' ? result : result?.ok ? result.wav : null;
+  const result = await native.call('tts.synthesize', { text, lang, gain }, 300000);
+
+  let base64 = null;
+  let needsJsGain = false;
+  if (typeof result === 'string') {
+    base64 = result;
+  } else if (result && result.ok) {
+    if (result.path) {
+      base64 = await readWavPath(result.path);
+      void Neutralino.filesystem.remove(result.path).catch(() => {});
+    } else if (result.wav) {
+      // Backward compatibility with an older extension or a test stub.
+      base64 = result.wav;
+      needsJsGain = true;
+    }
+  }
+
   if (!base64) {
     const detail = result?.error || '';
     if (/refused|10061|ECONNREFUSED/i.test(detail)) {
@@ -84,7 +116,8 @@ export async function synthesize(text, lang = 'en') {
     }
     throw new Error(detail || TTS_UNAVAILABLE_MESSAGE);
   }
-  return applyGain(base64, gain);
+
+  return needsJsGain ? applyGain(base64, gain) : base64;
 }
 
 export { TTS_UNAVAILABLE_MESSAGE };

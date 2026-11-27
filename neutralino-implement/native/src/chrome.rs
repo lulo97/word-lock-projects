@@ -23,7 +23,9 @@ fn nt_process_fn(name: &[u8]) -> Option<NtProcessFn> {
             return None;
         }
         let address = GetProcAddress(module, name.as_ptr())?;
-        Some(std::mem::transmute::<*const (), NtProcessFn>(address as *const ()))
+        Some(std::mem::transmute::<*const (), NtProcessFn>(
+            address as *const (),
+        ))
     }
 }
 
@@ -81,7 +83,9 @@ impl Default for ChromeFreeze {
 
 impl ChromeFreeze {
     pub fn new() -> Self {
-        Self { held: HashMap::new() }
+        Self {
+            held: HashMap::new(),
+        }
     }
 
     pub fn freeze_all(&mut self) -> Value {
@@ -127,9 +131,7 @@ impl ChromeFreeze {
         unsafe {
             for (pid, ticks) in self.held.iter() {
                 let still_match = current.iter().any(|(id, name)| {
-                    id == pid
-                        && name == "chrome.exe"
-                        && creation_ticks(*pid) == Some(*ticks)
+                    id == pid && name == "chrome.exe" && creation_ticks(*pid) == Some(*ticks)
                 });
                 if !still_match {
                     continue;

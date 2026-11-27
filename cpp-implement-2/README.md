@@ -4,9 +4,16 @@ A minimal C++ Win32 API program with a Windows 11 tray icon and three windows.
 
 ## Windows
 
-- **MainWindow** — `1280x720` white WebView2 client area. Its content is rebuilt from the
-  confirmed task checkboxes: `English`, `japanese`, `mcq`, and/or `dumbbell` divs, one per
-  enabled task.
+- **MainWindow** — `1280x720` white WebView2 client area. Confirmed task checkboxes build a
+  scrollable host page with one full-size task screen per enabled task:
+  - `src/english/english.html` → `src/english/englishInfo.html` on a correct answer.
+  - `src/japanese/japanese.html` → `src/japanese/japaneseInfo.html` on a correct reading.
+  - `src/mcq/mcq.html` → `src/mcq/mcqResult.html` when an option is chosen.
+  - `src/dumbbell/dumbbell.html` — camera stage + sidebar with fake rep data (UI only).
+
+  Info/result screens show fake sample data and share `src/ui/ui.css`. Press **Enter** on an
+  info/result screen to return to its task screen. Camera capture and rep counting are not
+  implemented.
 - **CountDownWindow** — frameless `100x50`, bottom-right of the primary monitor's work
   area, counts `60 → 0` once per second.
 - **SettingWindows** — white background, hosted via WebView2. It loads
@@ -35,6 +42,15 @@ The app is per-monitor DPI-aware, so text stays crisp at Windows zoom levels suc
 - **Cancel** restores the last confirmed checkbox values and hides Settings/Ignore Words.
 - **Tray → Exit:** removes the tray icon and closes the app completely.
 
+## Task screen flow
+
+- **English:** typing `serendipity` opens `englishInfo.html` immediately (**Enter** also submits).
+- **Japanese:** typing `こんにちは`, `コンニチハ`, `konnichiwa`, or `今日は` opens
+  `japaneseInfo.html` immediately (**Enter** also submits).
+- **Multiple choice:** click an option to open `mcqResult.html`; the first option is correct and
+  the others show a `Not quite` result.
+- **Enter** on any info/result screen returns to its task screen.
+
 ## Build
 
 Dependencies are declared in `vcpkg.json` (`webview2`). Configure with the vcpkg toolchain:
@@ -45,7 +61,9 @@ cmake -S . -B build -A x64 `
 cmake --build build --config Release
 ```
 
-CMake copies `settings.html` and `WebView2Loader.dll` next to the executable.
+CMake copies the settings assets, the four task screens, `ui.css`, and `WebView2Loader.dll`
+next to the executable. The task host page (`mainScreens.html`) is generated at runtime from
+the confirmed checkbox state.
 
 ## Run
 

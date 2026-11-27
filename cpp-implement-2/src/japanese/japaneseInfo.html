@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Japanese Word Info</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <div class="ui-scroll">
+    <main class="ui-page">
+      <section class="ui-panel ui-hero">
+        <p class="ui-kicker">Japanese word #<span id="id">17</span></p>
+        <h1 id="kanji" class="ui-word">今日は</h1>
+        <button id="speak-kanji" type="button" class="ui-btn ui-btn--sm">Speak</button>
+        <p id="meaning_en" class="text-xl">Hello / good afternoon — a casual daytime greeting.</p>
+
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <span class="ui-chip">hiragana <b id="hiragana">こんにちは</b></span>
+          <button id="speak-hiragana" type="button" class="ui-btn ui-btn--sm">Speak</button>
+          <span class="ui-chip">katakana <b id="katakana">コンニチハ</b></span>
+          <button id="speak-katakana" type="button" class="ui-btn ui-btn--sm">Speak</button>
+          <span class="ui-chip">romaji <b id="romaji">konnichiwa</b></span>
+        </div>
+      </section>
+
+      <h2 class="ui-section-title">Examples</h2>
+      <div id="examples" class="ui-stack">
+        <div class="ui-example">
+          <div>
+            <div class="ui-example__text">今日は、元気ですか？</div>
+            <div class="ui-example__sub">Konnichiwa, genki desu ka? — Hello, how are you?</div>
+          </div>
+          <button type="button" class="ui-btn ui-btn--sm">Speak</button>
+        </div>
+        <div class="ui-example">
+          <div>
+            <div class="ui-example__text">今日はいい天気ですね。</div>
+            <div class="ui-example__sub">Konnichiwa ii tenki desu ne. — Nice weather today, isn't it?</div>
+          </div>
+          <button type="button" class="ui-btn ui-btn--sm">Speak</button>
+        </div>
+      </div>
+
+      <p class="ui-hint text-center">Press <span class="ui-keycap">Enter</span> to exit</p>
+    </main>
+  </div>
+
+  <script src="japaneseInfo.js"></script>
+</body>
+</html>

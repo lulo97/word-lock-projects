@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dumbbell Workout</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <main class="flex h-full w-full">
+    <section class="ui-stage relative flex h-full w-[70%] items-center justify-center overflow-hidden">
+      <video id="camera" autoplay playsinline muted class="mirror h-full w-full object-cover"></video>
+      <canvas id="overlay" class="mirror pointer-events-none absolute inset-0 h-full w-full"></canvas>
+    </section>
+
+    <aside class="ui-aside flex h-full w-[30%] min-w-0 flex-col gap-3 overflow-y-auto p-4">
+      <h1 class="ui-title">Dumbbell workout</h1>
+      <p id="overall" class="ui-chip self-start">Overall 14 / 20</p>
+
+      <section id="arm-left" class="ui-panel is-done">
+        <div class="flex items-baseline justify-between">
+          <b>Left arm</b>
+          <span id="left-reps" class="text-2xl font-bold">10</span>
+        </div>
+        <div id="left-bar" class="mt-2 flex gap-0.5">
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+        </div>
+        <p id="left-stage" class="ui-hint mt-2 truncate">Stage: curl complete — 10 / 10 reps</p>
+      </section>
+
+      <section id="arm-right" class="ui-panel">
+        <div class="flex items-baseline justify-between">
+          <b>Right arm</b>
+          <span id="right-reps" class="text-2xl font-bold">4</span>
+        </div>
+        <div id="right-bar" class="mt-2 flex gap-0.5">
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg is-on"></span>
+          <span class="ui-seg"></span>
+          <span class="ui-seg"></span>
+          <span class="ui-seg"></span>
+          <span class="ui-seg"></span>
+          <span class="ui-seg"></span>
+          <span class="ui-seg"></span>
+        </div>
+        <p id="right-stage" class="ui-hint mt-2 truncate">Stage: curl — 4 / 10 reps</p>
+      </section>
+
+      <p id="status" class="ui-hint truncate">Tracking both arms · form looks good</p>
+      <p id="done" class="ui-done hidden">Workout complete!</p>
+    </aside>
+  </main>
+</body>
+</html>

@@ -6,6 +6,8 @@
 #include <WebView2.h>
 
 #include <cwchar>
+#include <filesystem>
+#include <fstream>
 #include <functional>
 #include <string>
 
@@ -188,6 +190,18 @@ void UpdateWebViewBounds(HWND hwnd, ComPtr<ICoreWebView2Controller>& controller)
 
 using WebViewReady = std::function<void(ComPtr<ICoreWebView2>&)>;
 
+std::wstring GetExecutableDirectory() {
+    wchar_t exePath[MAX_PATH]{};
+    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+
+    std::wstring path(exePath);
+    const size_t slash = path.find_last_of(L"\\/");
+    if (slash != std::wstring::npos) {
+        path.resize(slash + 1);
+    }
+    return path;
+}
+
 const wchar_t* BoolLiteral(bool value) {
     return value ? L"true" : L"false";
 }
@@ -217,53 +231,59 @@ void SendSettingsToSettingsWebView() {
     }
 }
 
-std::wstring BuildMainHtml() {
-    std::wstring body;
-    if (g_settings.tasks.englishWord) {
-        body += L"<div>English</div>";
-    }
-    if (g_settings.tasks.japaneseWord) {
-        body += L"<div>japanese</div>";
-    }
-    if (g_settings.tasks.multipleChoice) {
-        body += L"<div>mcq</div>";
-    }
-    if (g_settings.tasks.dumbbellWorkout) {
-        body += L"<div>dumbbell</div>";
-    }
-
-    return LR"(<!doctype html>
+std::string BuildMainHtml() {
+    std::string html = R"(<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <style>
-  html, body { height: 100%; }
-  body {
-    margin: 0;
-    background: #fff;
-    color: #000;
-    font-family: "Segoe UI", system-ui, sans-serif;
-    font-size: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-  }
+  html, body { height: 100%; margin: 0; background: #fff; }
+  .screen-frame { display: block; width: 100%; height: 100vh; border: 0; }
 </style>
 </head>
-<body>)" + body + LR"(</body>
-</html>)";
+<body>
+)";
+
+    if (g_settings.tasks.englishWord) {
+        html += R"(<iframe class="screen-frame" title="English word" src="english.html"></iframe>
+)";
+    }
+    if (g_settings.tasks.japaneseWord) {
+        html += R"(<iframe class="screen-frame" title="Japanese word" src="japanese.html"></iframe>
+)";
+    }
+    if (g_settings.tasks.multipleChoice) {
+        html += R"(<iframe class="screen-frame" title="Multiple choice" src="mcq.html"></iframe>
+)";
+    }
+    if (g_settings.tasks.dumbbellWorkout) {
+        html += R"(<iframe class="screen-frame" title="Dumbbell workout" src="dumbbell.html"></iframe>
+)";
+    }
+
+    html += "</body>\n</html>";
+    return html;
 }
 
 void UpdateMainContent() {
     if (!g_mainViewController) {
         return;
     }
+
+    const std::filesystem::path shellPath =
+        std::filesystem::path(GetExecutableDirectory()) / L"mainScreens.html";
+    std::ofstream shell(shellPath, std::ios::binary | std::ios::trunc);
+    if (!shell) {
+        MessageBoxW(g_mainWindow, L"Failed to write mainScreens.html.",
+                    L"Error", MB_ICONERROR | MB_OK);
+        return;
+    }
+    shell << BuildMainHtml();
+    shell.close();
+
     ComPtr<ICoreWebView2> webView;
     if (SUCCEEDED(g_mainViewController->get_CoreWebView2(&webView)) && webView) {
-        const std::wstring html = BuildMainHtml();
-        webView->NavigateToString(html.c_str());
+        webView->Navigate(shellPath.wstring().c_str());
     }
 }
 
@@ -353,15 +373,7 @@ void InitializeWebView(HWND hwnd,
                        const wchar_t* htmlFile,
                        ComPtr<ICoreWebView2Controller>* controllerOut,
                        bool registerSettingsMessages) {
-    wchar_t exePath[MAX_PATH]{};
-    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-
-    std::wstring htmlPath = exePath;
-    const size_t slash = htmlPath.find_last_of(L"\\/");
-    if (slash != std::wstring::npos) {
-        htmlPath.resize(slash + 1);
-    }
-    htmlPath += htmlFile;
+    const std::wstring htmlPath = GetExecutableDirectory() + htmlFile;
 
     CreateWebView(hwnd, controllerOut,
                   [htmlPath, registerSettingsMessages](ComPtr<ICoreWebView2>& webView) {

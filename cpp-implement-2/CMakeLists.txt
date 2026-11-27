@@ -16,14 +16,34 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     unofficial::webview2::webview2
 )
 
-# The settings screens are plain HTML/CSS hosted by WebView2.
-foreach(asset settings.html settings.js ignoreWords.html ignoreWordsUI.js)
+# WebView2 screens are plain HTML/CSS copied next to the executable.
+function(copy_webview_asset source_file asset_name)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/settings/${asset}"
-                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${asset}"
+                "${source_file}"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${asset_name}"
     )
+endfunction()
+
+foreach(asset settings.html settings.js ignoreWords.html ignoreWordsUI.js)
+    copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/settings/${asset}" "${asset}")
 endforeach()
+
+copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/ui/ui.css" "ui.css")
+
+foreach(asset english.html englishInfo.html english.js englishInfo.js)
+    copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/english/${asset}" "${asset}")
+endforeach()
+
+foreach(asset japanese.html japaneseInfo.html japanese.js japaneseInfo.js)
+    copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/japanese/${asset}" "${asset}")
+endforeach()
+
+foreach(asset mcq.html mcqResult.html mcq.js mcqResult.js)
+    copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/mcq/${asset}" "${asset}")
+endforeach()
+
+copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/dumbbell/dumbbell.html" "dumbbell.html")
 
 # WebView2Loader.dll must sit next to the executable.
 set(WEBVIEW2_LOADER_RELEASE "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/WebView2Loader.dll")

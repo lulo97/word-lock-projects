@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Japanese Word</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <main class="ui-screen" aria-labelledby="japanese-kicker">
+    <p id="japanese-kicker" class="ui-kicker">Japanese word</p>
+    <div class="ui-word">今日は</div>
+    <div class="flex flex-wrap justify-center gap-2">
+      <span class="ui-chip">hiragana <b id="hiragana">こんにちは</b></span>
+      <span class="ui-chip">katakana <b id="katakana">コンニチハ</b></span>
+      <span class="ui-chip">romaji <b id="romaji">konnichiwa</b></span>
+    </div>
+    <input id="answer" class="ui-input ui-input--big" type="text" placeholder="こんにちは" aria-label="Answer" autocomplete="off" spellcheck="false">
+    <p id="feedback" class="ui-feedback" role="status">Type the reading and press Enter.</p>
+  </main>
+
+  <script src="japanese.js"></script>
+</body>
+</html>

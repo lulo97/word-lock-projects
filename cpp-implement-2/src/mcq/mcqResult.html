@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Multiple Choice Result</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <main class="ui-screen">
+    <h1 id="result" class="ui-result" data-state="ok">Correct!</h1>
+
+    <dl id="details" class="ui-panel ui-qa w-full max-w-2xl">
+      <dt>Question</dt>
+      <dd>What does “serendipity” mean?</dd>
+
+      <dt>Your answer</dt>
+      <dd id="your-answer">A. A lucky discovery</dd>
+
+      <dt>Correct answer</dt>
+      <dd id="correct-answer">A. A lucky discovery</dd>
+
+      <dt>Explanation</dt>
+      <dd id="explanation">Exactly — serendipity means finding something good by chance.</dd>
+    </dl>
+
+    <p class="ui-hint">Press <span class="ui-keycap">Enter</span> to exit</p>
+  </main>
+
+  <script src="mcqResult.js"></script>
+</body>
+</html>

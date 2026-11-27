@@ -8,7 +8,9 @@ void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
     }
     const bool settingsDump = wcscmp(htmlFile, L"settings.html") == 0;
     const bool dumbbellDump = wcscmp(htmlFile, L"dumbbell.html") == 0;
-    if (!settingsDump && !dumbbellDump) {
+    const bool wordDump = wcscmp(htmlFile, L"english.html") == 0 ||
+                          wcscmp(htmlFile, L"japanese.html") == 0;
+    if (!settingsDump && !dumbbellDump && !wordDump) {
         return;
     }
 
@@ -16,7 +18,12 @@ void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
         ? L"JSON.stringify({status:(document.getElementById('status')||{}).innerText,"
           L"overall:(document.getElementById('overall')||{}).innerText,"
           L"mock:window.__dumbbellMock||null})"
-        : L"document.body ? document.body.innerText : ''";
+        : wordDump
+              ? L"JSON.stringify({word:(document.getElementById('word')||{}).textContent,"
+                L"id:(document.getElementById('word')||{}).dataset.id,"
+                L"answer:(document.getElementById('answer')||{}).value,"
+                L"feedback:(document.getElementById('feedback')||{}).textContent})"
+              : L"document.body ? document.body.innerText : ''";
 
     webView->add_NavigationCompleted(
         Callback<ICoreWebView2NavigationCompletedEventHandler>(

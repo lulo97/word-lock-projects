@@ -22,15 +22,21 @@
     }
 
     wordEl.textContent = currentWord.word;
+    wordEl.dataset.id = String(currentWord.id);
     answerEl.focus();
   }
 
-  answerEl.addEventListener('input', function () {
+  answerEl.addEventListener('input', async function () {
     if (!currentWord || solved) return;
 
     if (answerEl.value.trim().toLowerCase() === String(currentWord.word).toLowerCase()) {
       solved = true;
       answerEl.disabled = true;
+      try {
+        await window.app.call('word:correct', { value: String(currentWord.id) });
+      } catch (error) {
+        // Keep the UI responsive if the host reply is lost.
+      }
       feedbackEl.textContent = 'Correct';
       feedbackEl.dataset.state = 'ok';
       setTimeout(function () {

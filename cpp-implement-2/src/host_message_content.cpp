@@ -8,6 +8,16 @@ bool HandleContentMessage(const std::wstring& type, const std::wstring& message,
         reply(GetRandomEnglishWordJson());
     } else if (type == L"word:get") {
         reply(GetEnglishWordJson(number));
+    } else if (type == L"word:correct") {
+        RecordWordShow("english", number);
+        reply(L"{\"ok\":true}");
+    } else if (type == L"japanese:correct") {
+        RecordWordShow("japanese", number);
+        reply(L"{\"ok\":true}");
+    } else if (type == L"progress:get") {
+        reply(GetWordProgressJson());
+    } else if (type == L"db:info") {
+        reply(GetDatabaseInfoJson());
     } else if (type == L"mcq:getRandom") {
         reply(GetRandomMcqJson());
     } else if (type == L"mcq:get") {

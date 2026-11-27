@@ -20,7 +20,7 @@ if "%~1"=="" goto run_all
 
 set "TEST_NAME=%~n1"
 echo Running test: %TEST_NAME%
-"%CTEST_EXE%" --test-dir build -C Release -R "^%TEST_NAME%$" --output-on-failure > "%CTEST_OUT%" 2>&1
+"%CTEST_EXE%" --test-dir build -C Release -R "^%TEST_NAME%$" --output-on-failure --parallel > "%CTEST_OUT%" 2>&1
 set "CTEST_RC=%ERRORLEVEL%"
 type "%CTEST_OUT%"
 findstr /C:"***Timeout" "%CTEST_OUT%" >nul
@@ -30,7 +30,7 @@ exit /b %CTEST_RC%
 
 :run_all
 echo Running all tests...
-"%CTEST_EXE%" --test-dir build -C Release --output-on-failure > "%CTEST_OUT%" 2>&1
+"%CTEST_EXE%" --test-dir build -C Release --output-on-failure --parallel > "%CTEST_OUT%" 2>&1
 set "CTEST_RC=%ERRORLEVEL%"
 type "%CTEST_OUT%"
 findstr /C:"***Timeout" "%CTEST_OUT%" >nul

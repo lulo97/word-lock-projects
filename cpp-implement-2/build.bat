@@ -29,7 +29,7 @@ if not exist "build\CMakeCache.txt" (
 )
 
 echo Building PomodoroLockCpp (Release)...
-"%CMAKE_EXE%" --build build --config Release
+"%CMAKE_EXE%" --build build --config Release --parallel
 if errorlevel 1 exit /b 1
 
 echo.

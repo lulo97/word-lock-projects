@@ -25,18 +25,24 @@
     }
 
     wordEl.textContent = currentWord.kanji;
+    wordEl.dataset.id = String(currentWord.id);
     hiraganaEl.textContent = currentWord.hiragana;
     katakanaEl.textContent = currentWord.katakana;
     romajiEl.textContent = currentWord.romaji;
     answerEl.focus();
   }
 
-  answerEl.addEventListener('input', function () {
+  answerEl.addEventListener('input', async function () {
     if (!currentWord || solved) return;
 
     if (answerEl.value.trim().toLowerCase() === String(currentWord.romaji).toLowerCase()) {
       solved = true;
       answerEl.disabled = true;
+      try {
+        await window.app.call('japanese:correct', { value: String(currentWord.id) });
+      } catch (error) {
+        // Keep the UI responsive if the host reply is lost.
+      }
       feedbackEl.textContent = 'Correct';
       feedbackEl.dataset.state = 'ok';
       setTimeout(function () {

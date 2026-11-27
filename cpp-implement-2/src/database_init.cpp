@@ -22,6 +22,10 @@ void InitializeDatabase() {
                "katakana TEXT NOT NULL, romaji TEXT NOT NULL DEFAULT '', meaning_en TEXT NOT NULL, "
                "examples TEXT NOT NULL, examples_en TEXT NOT NULL DEFAULT '[]', "
                "examples_vi TEXT NOT NULL DEFAULT '[]')");
+    ExecuteSql("CREATE TABLE IF NOT EXISTS word_show_progress ("
+               "language TEXT NOT NULL, word_id INTEGER NOT NULL, "
+               "show_count INTEGER NOT NULL DEFAULT 0, "
+               "PRIMARY KEY(language, word_id))");
 
     EnsureColumn("english_word", "examples_vi", "TEXT NOT NULL DEFAULT '[]'");
     EnsureColumn("japanese_word", "romaji", "TEXT NOT NULL DEFAULT ''");
@@ -64,6 +68,8 @@ void InitializeDatabase() {
         "examples_vi=excluded.examples_vi");
     runSeed(sql);
     sqlite3_free(sql);
+
+    SeedTestData();
 }
 
 }  // namespace wordlock

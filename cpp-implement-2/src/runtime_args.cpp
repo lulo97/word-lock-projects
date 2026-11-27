@@ -2,7 +2,9 @@
 
 namespace wordlock {
 
-bool WantsTestSettingsOpen() {
+namespace {
+
+bool HasTestArg(const wchar_t* wanted) {
     if (!IsTestModeEnabled()) {
         return false;
     }
@@ -11,33 +13,32 @@ bool WantsTestSettingsOpen() {
     if (argv == nullptr) {
         return false;
     }
-    bool open = false;
+    bool found = false;
     for (int i = 1; i < argc; ++i) {
-        if (wcscmp(argv[i], kTestOpenSettingsArg) == 0) {
-            open = true;
+        if (wcscmp(argv[i], wanted) == 0) {
+            found = true;
         }
     }
     LocalFree(argv);
-    return open;
+    return found;
+}
+
+}  // namespace
+
+bool WantsTestSettingsOpen() {
+    return HasTestArg(kTestOpenSettingsArg);
 }
 
 bool WantsTestDumbbellOpen() {
-    if (!IsTestModeEnabled()) {
-        return false;
-    }
-    int argc = 0;
-    LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    if (argv == nullptr) {
-        return false;
-    }
-    bool open = false;
-    for (int i = 1; i < argc; ++i) {
-        if (wcscmp(argv[i], kTestOpenDumbbellArg) == 0) {
-            open = true;
-        }
-    }
-    LocalFree(argv);
-    return open;
+    return HasTestArg(kTestOpenDumbbellArg);
+}
+
+bool WantsTestEnglishOpen() {
+    return HasTestArg(kTestOpenEnglishArg);
+}
+
+bool WantsTestJapaneseOpen() {
+    return HasTestArg(kTestOpenJapaneseArg);
 }
 
 }  // namespace wordlock

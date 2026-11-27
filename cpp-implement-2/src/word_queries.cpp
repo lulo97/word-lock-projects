@@ -4,16 +4,18 @@ namespace wordlock {
 
 std::wstring GetRandomEnglishWordJson() {
     const std::vector<std::string> ignored = LowerUtf8List(g_settings.ignoreWords.english);
-    std::string sql = "SELECT * FROM english_word";
+    std::string sql =
+        "SELECT e.* FROM english_word e "
+        "LEFT JOIN word_show_progress p ON p.language='english' AND p.word_id=e.id";
     if (!ignored.empty()) {
-        sql += " WHERE LOWER(word) NOT IN (";
+        sql += " WHERE LOWER(e.word) NOT IN (";
         for (size_t i = 0; i < ignored.size(); ++i) {
             if (i != 0) sql += ",";
             sql += "?";
         }
         sql += ")";
     }
-    sql += " ORDER BY RANDOM() LIMIT 1";
+    sql += " ORDER BY COALESCE(p.show_count,0) ASC, RANDOM() LIMIT 1";
     return QueryRowJson(sql, ignored, {"examples", "examples_vi"});
 }
 
@@ -32,31 +34,33 @@ std::wstring GetMcqJson(int id) {
 
 std::wstring GetRandomJapaneseWordJson() {
     const std::vector<std::string> ignored = LowerUtf8List(g_settings.ignoreWords.japanese);
-    std::string sql = "SELECT * FROM japanese_word";
+    std::string sql =
+        "SELECT j.* FROM japanese_word j "
+        "LEFT JOIN word_show_progress p ON p.language='japanese' AND p.word_id=j.id";
     if (!ignored.empty()) {
-        sql += " WHERE LOWER(kanji) NOT IN (";
+        sql += " WHERE LOWER(j.kanji) NOT IN (";
         for (size_t i = 0; i < ignored.size(); ++i) {
             if (i != 0) sql += ",";
             sql += "?";
         }
-        sql += ") AND LOWER(hiragana) NOT IN (";
+        sql += ") AND LOWER(j.hiragana) NOT IN (";
         for (size_t i = 0; i < ignored.size(); ++i) {
             if (i != 0) sql += ",";
             sql += "?";
         }
-        sql += ") AND LOWER(katakana) NOT IN (";
+        sql += ") AND LOWER(j.katakana) NOT IN (";
         for (size_t i = 0; i < ignored.size(); ++i) {
             if (i != 0) sql += ",";
             sql += "?";
         }
-        sql += ") AND LOWER(romaji) NOT IN (";
+        sql += ") AND LOWER(j.romaji) NOT IN (";
         for (size_t i = 0; i < ignored.size(); ++i) {
             if (i != 0) sql += ",";
             sql += "?";
         }
         sql += ")";
     }
-    sql += " ORDER BY RANDOM() LIMIT 1";
+    sql += " ORDER BY COALESCE(p.show_count,0) ASC, RANDOM() LIMIT 1";
 
     std::vector<std::string> parameters;
     for (int repeat = 0; repeat < 4; ++repeat) {

@@ -1,7 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { app } = require('electron');
-const Database = require('better-sqlite3');
+const { DatabaseSync } = require('node:sqlite');
 
 const { createSchema } = require('./schema');
 const { seed } = require('./seed');
@@ -22,7 +22,7 @@ const dbPath = dataDir ? path.join(dataDir, 'pomodoro_lock.db') : ':memory:';
 
 if (dataDir) fs.mkdirSync(dataDir, { recursive: true });
 
-const db = new Database(dbPath);
+const db = new DatabaseSync(dbPath);
 
 createSchema(db);
 seed(db);

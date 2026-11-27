@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class='h-full'>
+  <head>
+    <script src="../bridge/electronAPI.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self' ws://127.0.0.1:*" />
+    <title>Multiple Choice</title>
+    <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="../../assets/themes.css" />
+    <script src="../ui/theme-boot.js"></script>
+  </head>
+  <body class='ui-screen'>
+    <p class='ui-kicker'>Choose one</p>
+    <div id='question' class='ui-title text-center'></div>
+    <div id='options' class='ui-stack items-center'></div>
+    <script src="mcq.js"></script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "applicationId": "com.pomodorolock.app",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "port": 47831,
+  "documentRoot": "/resources/",
+  "url": "/src/host/host.html",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "enableExtensions": true,
+  "tokenSecurity": "one-time",
+  "logging": {
+    "enabled": false
+  },
+  "nativeAllowList": [
+    "app.*",
+    "window.*",
+    "os.*",
+    "filesystem.*",
+    "events.*",
+    "extensions.*",
+    "computer.*"
+  ],
+  "modes": {
+    "window": {
+      "title": "PomodoroLock",
+      "icon": "/resources/assets/icon.png",
+      "width": 100,
+      "height": 50,
+      "borderless": true,
+      "alwaysOnTop": true,
+      "resizable": false,
+      "maximizable": false,
+      "exitProcessOnClose": false,
+      "enableInspector": false,
+      "injectGlobals": true,
+      "injectClientLibrary": true
+    }
+  },
+  "cli": {
+    "binaryName": "pomodorolock",
+    "resourcesPath": "/resources/",
+    "extensionsPath": "/extensions/",
+    "clientLibrary": "/resources/js/neutralino.js",
+    "binaryVersion": "6.10.0",
+    "clientVersion": "6.10.0"
+  },
+  "extensions": [
+    {
+      "id": "js.wordlock.native",
+      "commandWindows": "${NL_PATH}/extensions/wordlock-native.exe"
+    }
+  ]
+}

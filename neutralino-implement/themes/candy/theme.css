@@ -1,0 +1,13 @@
+:theme {
+  --c-bg: #e8f7ff;  --c-surface: #ffffff;  --c-surface-2: #d6f0ff;
+  --c-ink: #1f2a44; --c-muted: #6b7a99;    --c-line: #b9dcf5;
+  --c-accent: #ff6b35; --c-accent-ink: #ffffff;
+  --c-ok: #0e9f77;  --c-bad: #e03131;
+  --radius: 28px;   --radius-sm: 18px;
+  --border-w: 2px;
+  --shadow: 0 6px 0 rgb(31 42 68 / 0.14);
+  --font-display: 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+:theme .ui-btn { border-radius: 999px; box-shadow: 0 3px 0 rgb(31 42 68 / 0.18); }
+:theme .ui-btn:active { box-shadow: none; transform: translateY(3px); }
+:theme .ui-chip { border-radius: 999px; }

@@ -1,0 +1,28 @@
+{
+  "name": "pomodorolock-neutralino",
+  "productName": "PomodoroLock",
+  "version": "1.0.0",
+  "description": "PomodoroLock study timer and word lock app (Neutralinojs port)",
+  "private": true,
+  "scripts": {
+    "build:themes": "node scripts/build-themes.js",
+    "build:css": "tailwindcss -i tailwind.input.css -o resources/assets/tailwind.css --minify",
+    "vendor": "node scripts/copy-vendor.js",
+    "codemod": "node scripts/codemod-html.js",
+    "native": "cargo build --release --manifest-path native/Cargo.toml && node scripts/copy-native.js",
+    "dev": "npm run build:themes && npm run codemod && npm run build:css && npm run vendor && neu run",
+    "build": "npm run build:themes && npm run codemod && npm run build:css && npm run vendor && npm run native && neu build --release",
+    "test": "playwright test --max-failures=1 --workers=1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@tailwindcss/cli": "^4.3.5",
+    "tailwindcss": "^4.3.5"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^1.2.3"
+  }
+}

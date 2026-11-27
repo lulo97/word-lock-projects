@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class="h-full overflow-hidden">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-src 'self'; connect-src 'self' ws://127.0.0.1:*" />
+  <title>PomodoroLock</title>
+  <link rel="stylesheet" href="../../assets/tailwind.css" />
+  <link rel="stylesheet" href="../../assets/themes.css" />
+  <script src="../bridge/electronAPI.js"></script>
+</head>
+<body class="ui-countdown">
+  <!-- Unchanged countdown page. Reloading it restarts the timer. -->
+  <iframe id="cd" style="border:0;width:100%;height:100%" title="Countdown"></iframe>
+  <div id="drag" style="position:fixed;inset:0"></div>
+  <script type="module" src="host.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html class='h-full'>
+  <head>
+    <script src="../bridge/electronAPI.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self' ws://127.0.0.1:*" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="../../assets/tailwind.css" />
+    <link rel="stylesheet" href="../../assets/themes.css" />
+    <script src="../ui/theme-boot.js"></script>
+  </head>
+  <body>
+    <div class='ui-form'>
+      <div class='ui-form__body'>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>Tasks</h2>
+          <p class='ui-hint'>Enabled tasks rotate one after another.</p>
+          <label class='ui-row'><span>English word</span><input id='englishWord' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Multiple choice</span><input id='multipleChoice' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Japanese word</span><input id='japaneseWord' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Dumbbell workout</span><input id='dumbbellWorkout' type='checkbox' class='ui-switch' /></label>
+          <button id='openIgnoreWords' type='button' class='ui-btn mt-3 w-full'>Ignore words…</button>
+        </section>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>Timing and sound</h2>
+          <div class='ui-row ui-row--col'>
+            <label for='countdownSeconds' class='font-semibold'>Countdown (seconds)</label>
+            <input id='countdownSeconds' type='number' min='1' max='3600' step='1' class='ui-input' />
+            <span class='ui-hint'>1–3600 seconds</span>
+          </div>
+          <div class='ui-row ui-row--col'>
+            <div class='flex items-baseline justify-between'>
+              <label for='masterVolume' class='font-semibold'>Master volume</label>
+              <span id='volumeValue' class='ui-chip'>1×</span>
+            </div>
+            <input id='masterVolume' type='range' min='0' max='4' step='0.5' class='ui-range' />
+            <div class='ui-hint flex justify-between'><span>0 (mute)</span><span>4 (max)</span></div>
+          </div>
+        </section>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>System</h2>
+          <label class='ui-row'><span>Freeze Chrome while locked</span><input id='chromeFreeze' type='checkbox' class='ui-switch' /></label>
+          <label class='ui-row'><span>Start with Windows</span><input id='autoStart' type='checkbox' class='ui-switch' /></label>
+        </section>
+
+        <section class='ui-panel'>
+          <h2 class='ui-group-title'>Appearance</h2>
+          <label class='ui-row'><span>Auto-change theme after a task</span><input id='autoTheme' type='checkbox' class='ui-switch' /></label>
+          <div id='themeGrid' class='ui-theme-grid'></div>
+        </section>
+
+      </div>
+      <div class='ui-form__footer'>
+        <button id='cancel' type='button' class='ui-btn'>Cancel</button>
+        <button id='confirm' type='button' class='ui-btn ui-btn--primary'>Confirm</button>
+      </div>
+    </div>
+    <script src="settingsUI.js"></script>
+  </body>
+</html>

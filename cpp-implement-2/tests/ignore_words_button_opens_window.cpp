@@ -134,8 +134,8 @@ TEST_CASE("Clicking Ignore words button opens IgnoreWordsWindows", "[settings][i
     const std::wstring ignoreClass =
         L"IgnoreWordsWindowsTest" + std::to_wstring(guard.process.dwProcessId);
 
-    REQUIRE(WaitForNonEmptyFile(dumpFile, 30000));
-    HWND ignoreWindow = WaitForVisibleWindow(ignoreClass, 15000);
+    REQUIRE(WaitForNonEmptyFile(dumpFile, 5000));
+    HWND ignoreWindow = WaitForVisibleWindow(ignoreClass, 3000);
     INFO("Host messages: " << ReadFile(messageLog));
     REQUIRE(ignoreWindow != nullptr);
     REQUIRE(IsWindowVisible(ignoreWindow));
@@ -143,6 +143,6 @@ TEST_CASE("Clicking Ignore words button opens IgnoreWordsWindows", "[settings][i
     HWND mainWindow = FindWindowW(mainClass.c_str(), nullptr);
     REQUIRE(mainWindow != nullptr);
     REQUIRE(PostMessageW(mainWindow, kTestQuitMessage, 0, 0));
-    REQUIRE(WaitForSingleObject(guard.process.hProcess, 5000) == WAIT_OBJECT_0);
+    REQUIRE(WaitForSingleObject(guard.process.hProcess, 1000) == WAIT_OBJECT_0);
     guard.Dismiss();
 }

@@ -127,11 +127,11 @@ TEST_CASE("Settings window renders Settings text at runtime",
     const std::wstring mainClass =
         L"MainWindowTest" + std::to_wstring(guard.process.dwProcessId);
 
-    HWND settingsWindow = WaitForVisibleWindow(settingClass, 30000);
+    HWND settingsWindow = WaitForVisibleWindow(settingClass, 3000);
     REQUIRE(settingsWindow != nullptr);
     REQUIRE(IsWindowVisible(settingsWindow));
 
-    REQUIRE(WaitForNonEmptyFile(dumpFile, 30000));
+    REQUIRE(WaitForNonEmptyFile(dumpFile, 5000));
     const std::string domDump = ReadFile(dumpFile);
     INFO("Settings WebView DOM dump: " << domDump);
     REQUIRE(domDump.find("Settings") != std::string::npos);
@@ -139,6 +139,6 @@ TEST_CASE("Settings window renders Settings text at runtime",
     HWND mainWindow = FindWindowW(mainClass.c_str(), nullptr);
     REQUIRE(mainWindow != nullptr);
     REQUIRE(PostMessageW(mainWindow, kTestQuitMessage, 0, 0));
-    REQUIRE(WaitForSingleObject(guard.process.hProcess, 5000) == WAIT_OBJECT_0);
+    REQUIRE(WaitForSingleObject(guard.process.hProcess, 1000) == WAIT_OBJECT_0);
     guard.Dismiss();
 }

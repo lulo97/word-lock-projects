@@ -134,9 +134,9 @@ TEST_CASE("Confirming settings keeps countdown visible", "[settings][countdown][
     const std::wstring countdownClass =
         L"CountDownWindowTest" + std::to_wstring(guard.process.dwProcessId);
 
-    REQUIRE(WaitForNonEmptyFile(dumpFile, 30000));
-    REQUIRE(WaitForFileContains(messageLog, "settings:confirm", 15000));
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    REQUIRE(WaitForNonEmptyFile(dumpFile, 5000));
+    REQUIRE(WaitForFileContains(messageLog, "settings:confirm", 3000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     INFO("Host messages: " << ReadFile(messageLog));
     HWND countdownWindow = FindWindowW(countdownClass.c_str(), nullptr);
@@ -146,6 +146,6 @@ TEST_CASE("Confirming settings keeps countdown visible", "[settings][countdown][
     HWND mainWindow = FindWindowW(mainClass.c_str(), nullptr);
     REQUIRE(mainWindow != nullptr);
     REQUIRE(PostMessageW(mainWindow, kTestQuitMessage, 0, 0));
-    REQUIRE(WaitForSingleObject(guard.process.hProcess, 5000) == WAIT_OBJECT_0);
+    REQUIRE(WaitForSingleObject(guard.process.hProcess, 1000) == WAIT_OBJECT_0);
     guard.Dismiss();
 }

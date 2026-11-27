@@ -14,8 +14,9 @@ foreach(test_source IN LISTS TEST_SOURCES)
     )
 
     add_test(NAME ${test_name} COMMAND ${test_name})
+    # Hard limit: CTest kills the test and logs "***Timeout" if it exceeds 10s.
     set_tests_properties(${test_name} PROPERTIES
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-        TIMEOUT 60
+        TIMEOUT 10
     )
 endforeach()

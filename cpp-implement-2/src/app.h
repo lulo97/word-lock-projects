@@ -126,6 +126,8 @@ extern bool g_countDownPositionValid;
 struct WebViewBinding {
     ComPtr<ICoreWebView2Controller> controller;
     EventRegistrationToken messageToken{};
+    std::wstring bootScriptId;
+    bool bootScriptReady = false;
 };
 
 extern std::vector<WebViewBinding> g_webViewBindings;
@@ -194,7 +196,7 @@ void SyncAutoStartOnStartup();
 std::wstring Base64Encode(const std::vector<unsigned char>& bytes);
 uint32_t ReadLe32(const std::vector<unsigned char>& bytes, size_t offset);
 uint16_t ReadLe16(const std::vector<unsigned char>& bytes, size_t offset);
-std::wstring BuildBootScript();
+std::wstring BuildBootScript(const std::wstring& theme);
 void ResumeAllChromeProcesses();
 void FreezeChromeProcesses();
 NtProcessFn GetNtProcessFunction(const char* name);
@@ -308,6 +310,11 @@ void RegisterWebViewBinding(ICoreWebView2Controller* controller,
                             EventRegistrationToken token);
 void UnregisterWebViewBinding(ICoreWebView2Controller* controller);
 void BroadcastTheme(const std::wstring& theme);
+void RememberBootScript(ICoreWebView2Controller* controller, LPCWSTR id);
+void AddBootScript(ICoreWebView2* webView, ICoreWebView2Controller* controller,
+                   const std::wstring& theme, WebViewReady onReady);
+void RefreshBootScript(ICoreWebView2* webView, ICoreWebView2Controller* controller,
+                       const std::wstring& theme);
 void SendHostReply(ICoreWebView2* sender,
                    const std::wstring& requestId,
                    const std::wstring& resultJson,

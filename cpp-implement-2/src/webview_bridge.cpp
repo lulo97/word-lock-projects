@@ -47,37 +47,4 @@ void ConfigureWebViewResources(ICoreWebView2* webView,
         nullptr);
 }
 
-void InstallWebViewBridge(ICoreWebView2* webView, ICoreWebView2Controller* controller,
-                          WebViewReady onReady) {
-    const std::wstring bootScript = BuildBootScript();
-    webView->AddScriptToExecuteOnDocumentCreated(
-        bootScript.c_str(),
-        Callback<ICoreWebView2AddScriptToExecuteOnDocumentCreatedCompletedHandler>(
-            [onReady, webView](HRESULT scriptResult, LPCWSTR error) mutable -> HRESULT {
-                if (FAILED(scriptResult) && IsTestModeEnabled()) {
-                    AppendTestMessageLog(L"boot-script-add-failed:" +
-                                         (error != nullptr ? std::wstring(error)
-                                                           : std::wstring(L"unknown")));
-                }
-                ComPtr<ICoreWebView2> readyView = webView;
-                onReady(readyView);
-                return S_OK;
-            }).Get());
-
-    EventRegistrationToken messageToken{};
-    webView->add_WebMessageReceived(
-        Callback<ICoreWebView2WebMessageReceivedEventHandler>(
-            [webView](ICoreWebView2*, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
-                LPWSTR json = nullptr;
-                if (SUCCEEDED(args->get_WebMessageAsJson(&json)) && json != nullptr) {
-                    const std::wstring message(json);
-                    CoTaskMemFree(json);
-                    HandleHostMessage(webView, message);
-                }
-                return S_OK;
-            }).Get(),
-        &messageToken);
-    RegisterWebViewBinding(controller, webView, messageToken);
-}
-
 }  // namespace wordlock

@@ -27,12 +27,14 @@ void UnregisterWebViewBinding(ICoreWebView2Controller* controller) {
 }
 
 void BroadcastTheme(const std::wstring& theme) {
+    const std::wstring normalized = NormalizeTheme(theme);
     const std::wstring message =
-        L"{\"type\":\"theme:changed\",\"theme\":" + JsLiteral(NormalizeTheme(theme)) + L"}";
+        L"{\"type\":\"theme:changed\",\"theme\":" + JsLiteral(normalized) + L"}";
     for (const WebViewBinding& binding : g_webViewBindings) {
         ComPtr<ICoreWebView2> webView;
         if (SUCCEEDED(binding.controller->get_CoreWebView2(&webView)) && webView) {
             webView->PostWebMessageAsJson(message.c_str());
+            RefreshBootScript(webView.Get(), binding.controller.Get(), normalized);
         }
     }
 }
@@ -52,6 +54,25 @@ void SendHostReply(ICoreWebView2* sender,
     }
     json += L"}";
     sender->PostWebMessageAsJson(json.c_str());
+}
+
+void InstallWebViewBridge(ICoreWebView2* webView, ICoreWebView2Controller* controller,
+                          WebViewReady onReady) {
+    EventRegistrationToken messageToken{};
+    webView->add_WebMessageReceived(
+        Callback<ICoreWebView2WebMessageReceivedEventHandler>(
+            [webView](ICoreWebView2*, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
+                LPWSTR json = nullptr;
+                if (SUCCEEDED(args->get_WebMessageAsJson(&json)) && json != nullptr) {
+                    const std::wstring message(json);
+                    CoTaskMemFree(json);
+                    HandleHostMessage(webView, message);
+                }
+                return S_OK;
+            }).Get(),
+        &messageToken);
+    RegisterWebViewBinding(controller, webView, messageToken);
+    AddBootScript(webView, controller, g_settings.theme, onReady);
 }
 
 }  // namespace wordlock

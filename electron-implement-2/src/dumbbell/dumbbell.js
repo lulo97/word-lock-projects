@@ -1,4 +1,4 @@
-import { createPoseTracker, RepCounter } from './pose-tracker.js';
+import { RepCounter } from './rep-counter.js';
 import { drawArms } from './overlay.js';
 
 const TARGET_REPS = 10;
@@ -100,6 +100,11 @@ async function start() {
 
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    if (finished) {
+      stream.getTracks().forEach((track) => track.stop());
+      stream = null;
+      return;
+    }
     videoEl.srcObject = stream;
     await videoEl.play();
   } catch (error) {
@@ -107,8 +112,19 @@ async function start() {
     return;
   }
 
+  if (finished) return;
+
   try {
+    statusEl.textContent = 'Loading pose model...';
+    const { createPoseTracker } = await import('./pose-tracker.js');
+    if (finished) return;
+
     pose = await createPoseTracker();
+    if (finished) {
+      pose.close();
+      pose = null;
+      return;
+    }
   } catch (error) {
     statusEl.textContent = `Pose model error: ${error.message}`;
     return;

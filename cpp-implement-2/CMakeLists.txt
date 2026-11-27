@@ -9,7 +9,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(unofficial-webview2 CONFIG REQUIRED)
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
 
-add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
+file(GLOB APP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+add_executable(${PROJECT_NAME} WIN32 ${APP_SOURCES})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
 target_link_libraries(${PROJECT_NAME} PRIVATE

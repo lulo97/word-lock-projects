@@ -25,3 +25,4 @@ endforeach()
 # alongside other runtime tests.
 set_tests_properties(countdown_draggable PROPERTIES RUN_SERIAL TRUE)
 set_tests_properties(input_autofocus PROPERTIES RUN_SERIAL TRUE)
+set_tests_properties(countdown_foreground PROPERTIES RUN_SERIAL TRUE)

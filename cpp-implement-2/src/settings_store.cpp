@@ -6,6 +6,14 @@ void LoadSettings() {
     g_settings = AppSettings{};
     if (IsTestDataMode()) {
         g_settings.chromeFreeze = EnvFlagEnabled(kTestChromeFreezeEnv);
+        const std::wstring seconds = GetEnvironmentValue(kTestCountdownSecondsEnv);
+        if (!seconds.empty()) {
+            try {
+                g_settings.countdownSeconds = NormalizeCountdownSeconds(std::stod(seconds));
+            } catch (...) {
+                // Keep the default when a test supplies an invalid value.
+            }
+        }
         return;
     }
 

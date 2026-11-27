@@ -52,6 +52,7 @@ constexpr wchar_t kSingleInstanceMutexName[] = L"Local\\PomodoroLockCppSingleIns
 constexpr wchar_t kChromeProcessName[] = L"chrome.exe";
 constexpr wchar_t kChromeFreezeMockEnv[] = L"WORDLOCK_CHROME_FREEZE_MOCK";
 constexpr wchar_t kTestChromeFreezeEnv[] = L"WORDLOCK_TEST_CHROME_FREEZE";
+constexpr wchar_t kTestCountdownSecondsEnv[] = L"WORDLOCK_TEST_COUNTDOWN_SECONDS";
 constexpr wchar_t kUseTestDataEnv[] = L"WORDLOCK_USE_TEST_DATA";
 constexpr wchar_t kTestModeEnv[] = L"WORDLOCK_TEST_MODE";
 constexpr wchar_t kTestHomeEnv[] = L"WORDLOCK_TEST_HOME";
@@ -179,6 +180,7 @@ std::wstring AppRelativePathFromUri(const std::wstring& uri);
 std::filesystem::path ResolveAppResourcePath(const std::wstring& relative);
 bool IsAppResourceUriAllowed(const std::wstring& uri);
 void ShowMainWindow();
+void BringWindowToForeground(HWND hwnd);
 void NotifyActiveViewHide();
 void ToggleMainWindow();
 void QuitApp();

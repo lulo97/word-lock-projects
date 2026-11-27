@@ -29,9 +29,18 @@ LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
         SetTimer(hwnd, kCountDownTimerId, 1000, nullptr);
         return 0;
 
+    case kThemeChangedMessage:
+        if (IsTestModeEnabled()) {
+            AppendTestMessageLog(L"countdown:theme:" + g_countDownTheme);
+        }
+        InvalidateRect(hwnd, nullptr, TRUE);
+        UpdateWindow(hwnd);
+        return 0;
+
     case WM_PAINT: {
         std::wstring text = std::to_wstring(g_countdownSeconds);
-        PaintCenteredText(hwnd, text.c_str(), kCountDownFontHeight);
+        PaintCenteredText(hwnd, text.c_str(), kCountDownFontHeight,
+                          GetThemePalette(g_countDownTheme));
         return 0;
     }
 

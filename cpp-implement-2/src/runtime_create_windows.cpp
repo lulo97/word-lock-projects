@@ -22,6 +22,7 @@ HWND CreateMainWindow(HINSTANCE hInstance, const wchar_t* className, UINT dpi) {
 }
 
 void CreateCountDownWindow(HINSTANCE hInstance, const wchar_t* className, UINT dpi) {
+    g_countDownTheme = g_settings.theme;
     const int width = ScaleForDpi(kCountDownWidth, dpi);
     const int height = ScaleForDpi(kCountDownHeight, dpi);
     MONITORINFO info{};

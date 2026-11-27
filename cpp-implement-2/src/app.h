@@ -77,6 +77,7 @@ constexpr int kCountDownFontHeight = 28;
 constexpr int kCountDownStartSeconds = 60;
 constexpr UINT_PTR kCountDownTimerId = 1;
 constexpr UINT_PTR kChromeFreezeTimerId = 2;
+constexpr UINT kThemeChangedMessage = WM_APP + 3;
 constexpr int kSettingWindowWidth = 780;
 constexpr int kSettingWindowHeight = 780;
 constexpr int kIgnoreWindowWidth = 560;
@@ -122,6 +123,15 @@ extern TaskType g_currentTask;
 extern int g_countdownSeconds;
 extern POINT g_countDownPosition;
 extern bool g_countDownPositionValid;
+
+struct ThemePalette {
+    COLORREF background;
+    COLORREF text;
+    const wchar_t* font;
+    bool bold;
+};
+
+extern std::wstring g_countDownTheme;
 
 struct WebViewBinding {
     ComPtr<ICoreWebView2Controller> controller;
@@ -259,7 +269,9 @@ double NormalizeVolume(double value);
 std::wstring NormalizeTheme(const std::wstring& value);
 std::wstring NextThemeId(const std::wstring& current);
 std::wstring Trim(const std::wstring& value);
-void PaintCenteredText(HWND hwnd, const wchar_t* text, int fontHeight);
+void PaintCenteredText(HWND hwnd, const wchar_t* text, int fontHeight,
+                       const ThemePalette& palette);
+ThemePalette GetThemePalette(const std::wstring& theme);
 std::wstring QueryRowJson(const std::string& sql,
                           const std::vector<std::string>& parameters,
                           const std::vector<std::string>& rawJsonColumns);

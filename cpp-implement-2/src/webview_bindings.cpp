@@ -28,6 +28,10 @@ void UnregisterWebViewBinding(ICoreWebView2Controller* controller) {
 
 void BroadcastTheme(const std::wstring& theme) {
     const std::wstring normalized = NormalizeTheme(theme);
+    g_countDownTheme = normalized;
+    if (g_countDownWindow && IsWindow(g_countDownWindow)) {
+        PostMessageW(g_countDownWindow, kThemeChangedMessage, 0, 0);
+    }
     const std::wstring message =
         L"{\"type\":\"theme:changed\",\"theme\":" + JsLiteral(normalized) + L"}";
     for (const WebViewBinding& binding : g_webViewBindings) {

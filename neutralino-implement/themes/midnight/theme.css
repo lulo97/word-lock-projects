@@ -1,9 +1,0 @@
-:theme {
-  --c-bg: #0f1420;  --c-surface: #171e2e;  --c-surface-2: #1f283b;
-  --c-ink: #e8ecf5; --c-muted: #8d9ab5;    --c-line: #2b3650;
-  --c-accent: #6ea8ff; --c-accent-ink: #0b1220;
-  --c-ok: #4ade80;  --c-bad: #f87171;
-  --radius: 14px;   --radius-sm: 10px;
-  --shadow: 0 10px 30px rgb(0 0 0 / 0.45);
-  --font-display: 'Segoe UI Semibold', 'Segoe UI', system-ui, sans-serif;
-}

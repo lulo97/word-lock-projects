@@ -33,8 +33,8 @@ namespace wordlock {
 using Microsoft::WRL::Callback;
 using Microsoft::WRL::ComPtr;
 
-using Microsoft::WRL::Callback;
-using Microsoft::WRL::ComPtr;
+constexpr int IDI_APP_ICON = 1;
+HICON LoadAppIcon(int width = 0, int height = 0);
 
 constexpr int kClientWidth = 1280;
 constexpr int kClientHeight = 720;

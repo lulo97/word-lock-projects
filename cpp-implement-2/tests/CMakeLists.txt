@@ -10,6 +10,7 @@ foreach(test_source IN LISTS TEST_SOURCES)
     target_link_libraries(${test_name} PRIVATE
         Catch2::Catch2WithMain
         user32.lib
+        shell32.lib
     )
 
     add_test(NAME ${test_name} COMMAND ${test_name})

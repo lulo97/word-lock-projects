@@ -12,7 +12,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         g_trayIcon.uID = kTrayIconId;
         g_trayIcon.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
         g_trayIcon.uCallbackMessage = kTrayMessage;
-        g_trayIcon.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+        g_trayIcon.hIcon = LoadAppIcon(16, 16);
         wcscpy_s(g_trayIcon.szTip, kTrayTip);
 
         if (!Shell_NotifyIconW(NIM_ADD, &g_trayIcon)) {

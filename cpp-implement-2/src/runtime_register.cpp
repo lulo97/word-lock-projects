@@ -8,7 +8,7 @@ bool RegisterWindowClass(HINSTANCE hInstance, const wchar_t* className,
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
     windowClass.lpfnWndProc = procedure;
     windowClass.hInstance = hInstance;
-    windowClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+    windowClass.hIcon = LoadAppIcon();
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
     windowClass.lpszClassName = className;

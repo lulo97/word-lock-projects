@@ -1,0 +1,6 @@
+#include <windows.h>
+
+// ID 1 is the conventional executable icon resource that Windows Explorer uses.
+// favicon.ico contains 16x16, 32x32 and 48x48 32-bit images.
+#define IDI_APP_ICON 1
+IDI_APP_ICON ICON "../favicon.ico"

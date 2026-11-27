@@ -10,7 +10,7 @@ find_package(unofficial-webview2 CONFIG REQUIRED)
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
 
 file(GLOB APP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-add_executable(${PROJECT_NAME} WIN32 ${APP_SOURCES})
+add_executable(${PROJECT_NAME} WIN32 ${APP_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc")
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -38,6 +38,7 @@ foreach(asset ui.css themes.css info-render.js)
 endforeach()
 
 copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/tts/speakUI.js" "speakUI.js")
+copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/favicon.ico" "favicon.ico")
 
 foreach(asset english.html englishInfo.html english.js englishInfo.js)
     copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/english/${asset}" "${asset}")

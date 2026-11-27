@@ -154,21 +154,14 @@ TEST_CASE("Chrome freeze follows main window visibility",
 
     TruncateFile(messageLog);
     REQUIRE(PostMessageW(mainWindow, WM_CLOSE, 0, 0));
-    REQUIRE(WaitForWindow(mainClass, true, 2000) != nullptr);
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    INFO("Mock log after X skip: " << ReadFile(messageLog));
-    REQUIRE(ReadFile(messageLog).find("chrome:unfreeze") == std::string::npos);
-
-    TruncateFile(messageLog);
-    REQUIRE(PostMessageW(mainWindow, kTrayMessage, 0, WM_LBUTTONUP));
     REQUIRE(WaitForCount(messageLog, "chrome:unfreeze", 1, 2000));
     REQUIRE(!IsWindowVisible(mainWindow));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(2300));
-    const std::string afterHide = ReadFile(messageLog);
-    INFO("Mock log after main hides: " << afterHide);
-    REQUIRE(afterHide.find("chrome:freeze") == std::string::npos);
-    REQUIRE(CountOccurrences(afterHide, "chrome:unfreeze") == 1);
+    const std::string afterClose = ReadFile(messageLog);
+    INFO("Mock log after main closes: " << afterClose);
+    REQUIRE(afterClose.find("chrome:freeze") == std::string::npos);
+    REQUIRE(CountOccurrences(afterClose, "chrome:unfreeze") == 1);
 
     REQUIRE(PostMessageW(mainWindow, kTestQuitMessage, 0, 0));
     REQUIRE(WaitForSingleObject(guard.process.hProcess, 1000) == WAIT_OBJECT_0);

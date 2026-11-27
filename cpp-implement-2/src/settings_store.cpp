@@ -6,6 +6,7 @@ void LoadSettings() {
     g_settings = AppSettings{};
     if (IsTestDataMode()) {
         g_settings.chromeFreeze = EnvFlagEnabled(kTestChromeFreezeEnv);
+        g_settings.autoTheme = EnvFlagEnabled(kTestAutoThemeEnv);
         const std::wstring seconds = GetEnvironmentValue(kTestCountdownSecondsEnv);
         if (!seconds.empty()) {
             try {

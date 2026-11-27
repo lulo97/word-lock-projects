@@ -63,7 +63,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         if (g_isQuitting) {
             QuitApp();
         } else {
-            SkipCurrentTask();
+            FinishCurrentTask();
         }
         return 0;
 

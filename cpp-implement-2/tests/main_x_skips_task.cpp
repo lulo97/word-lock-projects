@@ -12,6 +12,8 @@
 
 namespace {
 
+constexpr UINT kTestQuitMessage = WM_APP + 2;
+
 std::filesystem::path CurrentExecutablePath() {
     wchar_t buffer[MAX_PATH]{};
     const DWORD length = GetModuleFileNameW(nullptr, buffer, MAX_PATH);
@@ -61,6 +63,17 @@ HWND WaitForVisibleWindow(const std::wstring& className, DWORD timeoutMs) {
     return nullptr;
 }
 
+bool WaitForHiddenWindow(HWND window, DWORD timeoutMs) {
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMs);
+    while (std::chrono::steady_clock::now() < deadline) {
+        if (window != nullptr && !IsWindowVisible(window)) {
+            return true;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+    return false;
+}
+
 struct ProcessGuard {
     PROCESS_INFORMATION process{};
 
@@ -84,26 +97,26 @@ struct ProcessGuard {
     void Dismiss() { process = {}; }
 };
 
-}  // namespace
-
-TEST_CASE("Main window X skips the task and advances the theme",
-          "[main][skip][theme][runtime]") {
+void CheckXClose(bool autoThemeEnabled) {
     const std::filesystem::path app = AppExecutablePath();
     REQUIRE(std::filesystem::exists(app));
 
     const auto stamp = std::chrono::duration_cast<std::chrono::milliseconds>(
                            std::chrono::steady_clock::now().time_since_epoch())
                            .count();
+    const std::wstring scenario = autoThemeEnabled ? L"on" : L"off";
     const std::filesystem::path testDir =
-        TempRoot() / (L"PomodoroLockMainXSkip_" + std::to_wstring(GetCurrentProcessId()) + L"_" +
-                      std::to_wstring(stamp));
+        TempRoot() / (L"PomodoroLockMainX_" + std::to_wstring(GetCurrentProcessId()) + L"_" +
+                      std::to_wstring(stamp) + L"_" + scenario);
     const std::filesystem::path messageLog = testDir / L"messages.log";
     std::filesystem::create_directories(testDir);
 
     REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_MODE", L"1"));
     REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_USE_TEST_DATA", L"1"));
     REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_CHROME_FREEZE_MOCK", L"1"));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_COUNTDOWN_SECONDS", L"3"));
+    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_COUNTDOWN_SECONDS", L"1"));
+    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_AUTO_THEME",
+                                    autoThemeEnabled ? L"1" : L"0"));
     REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_HOME", testDir.c_str()));
     REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_DOM_DUMP_FILE", L""));
     REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_COMMAND_FILE", L""));
@@ -126,28 +139,34 @@ TEST_CASE("Main window X skips the task and advances the theme",
     REQUIRE(mainWindow != nullptr);
     REQUIRE(WaitForFileContains(messageLog, "word:getRandom", 3000));
 
-    HWND countdownWindow = FindWindowW(countdownClass.c_str(), nullptr);
-    REQUIRE(countdownWindow != nullptr);
-
     REQUIRE(PostMessageW(mainWindow, WM_CLOSE, 0, 0));
 
-    // The normal countdown is 3 seconds, so this state proves X skipped it.
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
-    const bool mainStayedVisible = IsWindowVisible(mainWindow) != FALSE;
-    const bool countdownStayedHidden = IsWindowVisible(countdownWindow) == FALSE;
-    const bool themed = WaitForFileContains(messageLog, "countdown:theme:brutal", 1200);
-    const bool nextTask = WaitForFileContains(messageLog, "mcq:getRandom", 1200);
+    const bool mainHidden = WaitForHiddenWindow(mainWindow, 1500);
+    const bool countdownVisible = WaitForVisibleWindow(countdownClass, 1500) != nullptr;
+    const bool themeSwitched = WaitForFileContains(messageLog, "countdown:theme:brutal", 1500);
+    const bool mainReturned = WaitForVisibleWindow(mainClass, 3000) != nullptr;
+    const bool nextTask = WaitForFileContains(messageLog, "mcq:getRandom", 3000);
+
+    INFO("Auto theme enabled: " << autoThemeEnabled);
     INFO("Host messages: " << ReadFile(messageLog));
-    INFO("Main stayed visible after X: " << mainStayedVisible);
-    INFO("Countdown stayed hidden after X: " << countdownStayedHidden);
+    INFO("Main hidden after X: " << mainHidden);
+    INFO("Countdown visible after X: " << countdownVisible);
 
-    REQUIRE(mainStayedVisible);
-    REQUIRE(countdownStayedHidden);
-    REQUIRE(themed);
+    REQUIRE(mainHidden);
+    REQUIRE(countdownVisible);
+    REQUIRE(mainReturned);
     REQUIRE(nextTask);
+    REQUIRE(themeSwitched == autoThemeEnabled);
 
-    constexpr UINT kTestQuitMessage = WM_APP + 2;
     REQUIRE(PostMessageW(mainWindow, kTestQuitMessage, 0, 0));
     REQUIRE(WaitForSingleObject(guard.process.hProcess, 1000) == WAIT_OBJECT_0);
     guard.Dismiss();
+}
+
+}  // namespace
+
+TEST_CASE("Main window X closes, counts down, and advances the next task",
+          "[main][skip][theme][runtime]") {
+    CheckXClose(true);
+    CheckXClose(false);
 }

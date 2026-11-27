@@ -8,9 +8,11 @@ void AdvanceTheme() {
     BroadcastTheme(g_settings.theme);
 }
 
-void SkipCurrentTask() {
-    AdvanceTheme();
-    ShowMainWindow();
+void FinishCurrentTask() {
+    if (g_settings.autoTheme) {
+        AdvanceTheme();
+    }
+    StartCountdown();
 }
 
 }  // namespace wordlock

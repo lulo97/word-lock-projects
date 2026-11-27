@@ -7,10 +7,7 @@ void HandleAppMessage(const std::wstring& type, const std::wstring& message,
     if (type == L"countdown:finished") {
         ShowMainWindow();
     } else if (type == L"app:exitInfo") {
-        if (g_settings.autoTheme) {
-            AdvanceTheme();
-        }
-        StartCountdown();
+        FinishCurrentTask();
     } else if (type == L"tts:speak") {
         std::wstring text;
         std::wstring lang;

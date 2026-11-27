@@ -34,11 +34,7 @@ void ApplySettingsFromJson(const std::wstring& values, bool confirm) {
     BroadcastTheme(g_settings.theme);
 
     if (confirm) {
-        StopCountdown();
-        HideSettingsWindows();
-        if (g_mainWindow && IsWindow(g_mainWindow)) {
-            ShowWindow(g_mainWindow, SW_HIDE);
-        }
+        StartCountdown();
     }
 }
 

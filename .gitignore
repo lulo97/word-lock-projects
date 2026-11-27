@@ -118,6 +118,7 @@ neutralino-implement/.tmp/
 cpp-implement-2/ROADMAP.md
 cpp-implement-2/electron_codebase.txt
 cpp-implement-2/docs
+cpp-implement-2/release/
 cpp-implement-2/pose_landmarker_lite.task
 # The real MediaPipe model is intentionally tracked for the C++ app build.
 !cpp-implement-2/pose_landmarker_heavy.task

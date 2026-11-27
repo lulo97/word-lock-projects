@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ignore Words</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1f2430;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --error-bg: #fef2f2;
+      --error-text: #b91c1c;
+      --error-border: #fecaca;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 20px 24px 0;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      padding: 9px 16px;
+      border: 1px solid transparent;
+      border-bottom: 0;
+      border-radius: 6px 6px 0 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      background: #fff;
+      border-color: var(--border);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    #words {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font: inherit;
+      line-height: 1.5;
+      color: inherit;
+    }
+
+    #words:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    #hint {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    #hint code {
+      font-family: Consolas, monospace;
+      background: #f3f4f6;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    #error {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--error-border);
+      border-radius: 6px;
+      background: var(--error-bg);
+      color: var(--error-text);
+      font-weight: 500;
+    }
+
+    #error[hidden] { display: none; }
+
+    footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: #f9fafb; }
+    .btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn--primary:hover { background: var(--accent-hover); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Ignore Words</h1>
+      <div class="tabs" role="tablist" aria-label="Language">
+        <button type="button" class="tab" id="tabEnglish" role="tab" aria-selected="true">English</button>
+        <button type="button" class="tab" id="tabJapanese" role="tab" aria-selected="false">Japanese</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <label for="words">Words to ignore</label>
+      <textarea id="words" spellcheck="false" placeholder="abc, xyz, 123"></textarea>
+
+      <div id="hint">
+        Single line, comma-separated. No trailing commas and no spaces inside entries.<br>
+        English: <code>abc, xyz, 123</code> · Japanese: <code>こんにちは, コンニチハ, 今日は</code>
+      </div>
+
+      <div id="error" role="alert" hidden>can't save ignore words</div>
+    </div>
+
+    <footer>
+      <button type="button" id="cancel" class="btn">Cancel</button>
+      <button type="button" id="save" class="btn btn--primary">Save</button>
+    </footer>
+  </div>
+
+  <script src="ignoreWordsUI.js"></script>
+</body>
+</html>

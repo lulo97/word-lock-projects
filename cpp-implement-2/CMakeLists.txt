@@ -16,12 +16,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     unofficial::webview2::webview2
 )
 
-# The settings screen is plain HTML/CSS hosted by WebView2.
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/settings/settings.html"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/settings.html"
-)
+# The settings screens are plain HTML/CSS hosted by WebView2.
+foreach(asset settings.html settings.js ignoreWords.html ignoreWordsUI.js)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/settings/${asset}"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${asset}"
+    )
+endforeach()
 
 # WebView2Loader.dll must sit next to the executable.
 set(WEBVIEW2_LOADER_RELEASE "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/WebView2Loader.dll")

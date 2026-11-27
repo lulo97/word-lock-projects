@@ -6,6 +6,7 @@
 #include <WebView2.h>
 
 #include <cwchar>
+#include <functional>
 #include <string>
 
 namespace {
@@ -18,9 +19,11 @@ constexpr int kClientHeight = 720;
 constexpr wchar_t kWindowClass[] = L"MainWindow";
 constexpr wchar_t kCountDownClass[] = L"CountDownWindow";
 constexpr wchar_t kSettingClass[] = L"SettingWindows";
+constexpr wchar_t kIgnoreClass[] = L"IgnoreWordsWindows";
 constexpr wchar_t kWindowTitle[] = L"MainWindow";
 constexpr wchar_t kCountDownTitle[] = L"CountDownWindow";
 constexpr wchar_t kSettingTitle[] = L"SettingWindows";
+constexpr wchar_t kIgnoreTitle[] = L"IgnoreWordsWindows";
 constexpr wchar_t kTrayTip[] = L"MainWindow";
 
 constexpr int kCountDownWidth = 100;
@@ -30,6 +33,8 @@ constexpr int kCountDownStartSeconds = 60;
 constexpr UINT_PTR kCountDownTimerId = 1;
 constexpr int kSettingWindowWidth = 780;
 constexpr int kSettingWindowHeight = 780;
+constexpr int kIgnoreWindowWidth = 560;
+constexpr int kIgnoreWindowHeight = 620;
 
 constexpr UINT kTrayMessage = WM_APP + 1;
 constexpr UINT kTrayIconId = 1;
@@ -38,9 +43,15 @@ constexpr UINT ID_TRAY_OPEN = 1;
 constexpr UINT ID_TRAY_SETTING = 2;
 constexpr UINT ID_TRAY_EXIT = 3;
 
+struct TaskSettings {
+    bool englishWord = true;
+    bool multipleChoice = true;
+    bool japaneseWord = true;
+    bool dumbbellWorkout = false;
+};
+
 struct AppSettings {
-    std::wstring greeting = L"Hello World";
-    int fontHeight = 48;
+    TaskSettings tasks;
 };
 
 AppSettings g_settings;
@@ -49,11 +60,21 @@ HINSTANCE g_hInstance = nullptr;
 HWND g_mainWindow = nullptr;
 HWND g_countDownWindow = nullptr;
 HWND g_settingWindow = nullptr;
+HWND g_ignoreWordsWindow = nullptr;
+bool g_mainWebViewInitialized = false;
 NOTIFYICONDATAW g_trayIcon{};
+ComPtr<ICoreWebView2Controller> g_mainViewController;
 ComPtr<ICoreWebView2Controller> g_webViewController;
+ComPtr<ICoreWebView2Controller> g_ignoreWordsController;
+EventRegistrationToken g_settingsMessageToken{};
 
 LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SettingWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK IgnoreWordsWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+void OpenIgnoreWordsWindow();
+void HideSettingsWindows();
+void InitializeMainWebView(HWND hwnd);
+void UpdateMainContent();
 
 int ScaleForDpi(int value, UINT dpi) {
     return MulDiv(value, static_cast<int>(dpi), USER_DEFAULT_SCREEN_DPI);
@@ -119,9 +140,7 @@ void StopCountdown() {
 void StartCountdown() {
     g_countdownSeconds = kCountDownStartSeconds;
 
-    if (g_settingWindow && IsWindow(g_settingWindow)) {
-        ShowWindow(g_settingWindow, SW_HIDE);
-    }
+    HideSettingsWindows();
     if (g_mainWindow && IsWindow(g_mainWindow)) {
         ShowWindow(g_mainWindow, SW_HIDE);
     }
@@ -138,33 +157,124 @@ void ShowMainWindow() {
     if (g_mainWindow && IsWindow(g_mainWindow)) {
         ShowWindow(g_mainWindow, SW_RESTORE);
         SetForegroundWindow(g_mainWindow);
+
+        // WebView2 renders reliably only after its parent window has been shown.
+        if (!g_mainWebViewInitialized) {
+            g_mainWebViewInitialized = true;
+            InitializeMainWebView(g_mainWindow);
+        } else {
+            UpdateMainContent();
+        }
     }
 }
 
-void UpdateWebViewBounds(HWND hwnd) {
-    if (!g_webViewController) {
+void HideSettingsWindows() {
+    if (g_settingWindow && IsWindow(g_settingWindow)) {
+        ShowWindow(g_settingWindow, SW_HIDE);
+    }
+    if (g_ignoreWordsWindow && IsWindow(g_ignoreWordsWindow)) {
+        ShowWindow(g_ignoreWordsWindow, SW_HIDE);
+    }
+}
+
+void UpdateWebViewBounds(HWND hwnd, ComPtr<ICoreWebView2Controller>& controller) {
+    if (!controller) {
         return;
     }
     RECT bounds{};
     GetClientRect(hwnd, &bounds);
-    g_webViewController->put_Bounds(bounds);
+    controller->put_Bounds(bounds);
 }
 
-void InitializeWebView(HWND hwnd) {
-    wchar_t exePath[MAX_PATH]{};
-    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+using WebViewReady = std::function<void(ComPtr<ICoreWebView2>&)>;
 
-    std::wstring htmlPath = exePath;
-    const size_t slash = htmlPath.find_last_of(L"\\/");
-    if (slash != std::wstring::npos) {
-        htmlPath.resize(slash + 1);
+const wchar_t* BoolLiteral(bool value) {
+    return value ? L"true" : L"false";
+}
+
+std::wstring BuildSettingsJson() {
+    std::wstring json = L"{\"type\":\"applySettings\",\"tasks\":{";
+    json += L"\"englishWord\":";
+    json += BoolLiteral(g_settings.tasks.englishWord);
+    json += L",\"multipleChoice\":";
+    json += BoolLiteral(g_settings.tasks.multipleChoice);
+    json += L",\"japaneseWord\":";
+    json += BoolLiteral(g_settings.tasks.japaneseWord);
+    json += L",\"dumbbellWorkout\":";
+    json += BoolLiteral(g_settings.tasks.dumbbellWorkout);
+    json += L"}}";
+    return json;
+}
+
+void SendSettingsToSettingsWebView() {
+    if (!g_webViewController) {
+        return;
     }
-    htmlPath += L"settings.html";
+    ComPtr<ICoreWebView2> webView;
+    if (SUCCEEDED(g_webViewController->get_CoreWebView2(&webView)) && webView) {
+        const std::wstring json = BuildSettingsJson();
+        webView->PostWebMessageAsJson(json.c_str());
+    }
+}
 
+std::wstring BuildMainHtml() {
+    std::wstring body;
+    if (g_settings.tasks.englishWord) {
+        body += L"<div>English</div>";
+    }
+    if (g_settings.tasks.japaneseWord) {
+        body += L"<div>japanese</div>";
+    }
+    if (g_settings.tasks.multipleChoice) {
+        body += L"<div>mcq</div>";
+    }
+    if (g_settings.tasks.dumbbellWorkout) {
+        body += L"<div>dumbbell</div>";
+    }
+
+    return LR"(<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: #fff;
+    color: #000;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    font-size: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+</style>
+</head>
+<body>)" + body + LR"(</body>
+</html>)";
+}
+
+void UpdateMainContent() {
+    if (!g_mainViewController) {
+        return;
+    }
+    ComPtr<ICoreWebView2> webView;
+    if (SUCCEEDED(g_mainViewController->get_CoreWebView2(&webView)) && webView) {
+        const std::wstring html = BuildMainHtml();
+        webView->NavigateToString(html.c_str());
+    }
+}
+
+void CreateWebView(HWND hwnd,
+                   ComPtr<ICoreWebView2Controller>* controllerOut,
+                   WebViewReady onReady) {
     HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(
         nullptr, nullptr, nullptr,
         Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
-            [hwnd, htmlPath](HRESULT result, ICoreWebView2Environment* environment) -> HRESULT {
+            [hwnd, controllerOut, onReady](HRESULT result,
+                                           ICoreWebView2Environment* environment) -> HRESULT {
                 if (FAILED(result) || environment == nullptr) {
                     MessageBoxW(hwnd, L"WebView2 environment initialization failed.",
                                 L"Error", MB_ICONERROR | MB_OK);
@@ -174,18 +284,19 @@ void InitializeWebView(HWND hwnd) {
                 return environment->CreateCoreWebView2Controller(
                     hwnd,
                     Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-                        [hwnd, htmlPath](HRESULT controllerResult,
-                                         ICoreWebView2Controller* controller) -> HRESULT {
-                            if (FAILED(controllerResult) || controller == nullptr) {
+                        [hwnd, controllerOut, onReady](
+                            HRESULT controllerResult,
+                            ICoreWebView2Controller* controllerRaw) -> HRESULT {
+                            if (FAILED(controllerResult) || controllerRaw == nullptr) {
                                 MessageBoxW(hwnd, L"WebView2 controller initialization failed.",
                                             L"Error", MB_ICONERROR | MB_OK);
                                 return controllerResult;
                             }
 
-                            g_webViewController = controller;
+                            *controllerOut = controllerRaw;
 
                             ComPtr<ICoreWebView2Controller2> controller2;
-                            if (SUCCEEDED(controller->QueryInterface(IID_PPV_ARGS(&controller2))) &&
+                            if (SUCCEEDED(controllerRaw->QueryInterface(IID_PPV_ARGS(&controller2))) &&
                                 controller2) {
                                 COREWEBVIEW2_COLOR white{};
                                 white.A = 255;
@@ -195,13 +306,11 @@ void InitializeWebView(HWND hwnd) {
                                 controller2->put_DefaultBackgroundColor(white);
                             }
 
-                            RECT bounds{};
-                            GetClientRect(hwnd, &bounds);
-                            g_webViewController->put_Bounds(bounds);
+                            UpdateWebViewBounds(hwnd, *controllerOut);
 
                             ComPtr<ICoreWebView2> webView;
-                            if (SUCCEEDED(g_webViewController->get_CoreWebView2(&webView)) && webView) {
-                                webView->Navigate(htmlPath.c_str());
+                            if (SUCCEEDED((*controllerOut)->get_CoreWebView2(&webView)) && webView) {
+                                onReady(webView);
                             }
                             return S_OK;
                         }).Get());
@@ -214,8 +323,79 @@ void InitializeWebView(HWND hwnd) {
     }
 }
 
+void HandleSettingsWebMessage(const std::wstring& message) {
+    if (message.find(L"openIgnoreWords") != std::wstring::npos) {
+        OpenIgnoreWordsWindow();
+        return;
+    }
+
+    if (message.find(L"confirmSettings") != std::wstring::npos) {
+        g_settings.tasks.englishWord =
+            message.find(L"\"englishWord\":true") != std::wstring::npos;
+        g_settings.tasks.multipleChoice =
+            message.find(L"\"multipleChoice\":true") != std::wstring::npos;
+        g_settings.tasks.japaneseWord =
+            message.find(L"\"japaneseWord\":true") != std::wstring::npos;
+        g_settings.tasks.dumbbellWorkout =
+            message.find(L"\"dumbbellWorkout\":true") != std::wstring::npos;
+
+        HideSettingsWindows();
+        ShowMainWindow();
+        return;
+    }
+
+    if (message.find(L"closeSettings") != std::wstring::npos) {
+        HideSettingsWindows();
+    }
+}
+
+void InitializeWebView(HWND hwnd,
+                       const wchar_t* htmlFile,
+                       ComPtr<ICoreWebView2Controller>* controllerOut,
+                       bool registerSettingsMessages) {
+    wchar_t exePath[MAX_PATH]{};
+    GetModuleFileNameW(nullptr, exePath, MAX_PATH);
+
+    std::wstring htmlPath = exePath;
+    const size_t slash = htmlPath.find_last_of(L"\\/");
+    if (slash != std::wstring::npos) {
+        htmlPath.resize(slash + 1);
+    }
+    htmlPath += htmlFile;
+
+    CreateWebView(hwnd, controllerOut,
+                  [htmlPath, registerSettingsMessages](ComPtr<ICoreWebView2>& webView) {
+                      if (registerSettingsMessages) {
+                          webView->add_WebMessageReceived(
+                              Callback<ICoreWebView2WebMessageReceivedEventHandler>(
+                                  [](ICoreWebView2*,
+                                     ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
+                                      LPWSTR json = nullptr;
+                                      if (SUCCEEDED(args->get_WebMessageAsJson(&json)) && json) {
+                                          std::wstring message(json);
+                                          CoTaskMemFree(json);
+                                          HandleSettingsWebMessage(message);
+                                      }
+                                      return S_OK;
+                                  }).Get(),
+                              &g_settingsMessageToken);
+
+                          SendSettingsToSettingsWebView();
+                      }
+                      webView->Navigate(htmlPath.c_str());
+                  });
+}
+
+void InitializeMainWebView(HWND hwnd) {
+    CreateWebView(hwnd, &g_mainViewController,
+                  [](ComPtr<ICoreWebView2>&) {
+                      UpdateMainContent();
+                  });
+}
+
 void OpenSettingWindow() {
     if (g_settingWindow && IsWindow(g_settingWindow)) {
+        SendSettingsToSettingsWebView();
         ShowWindow(g_settingWindow, SW_SHOW);
         SetForegroundWindow(g_settingWindow);
         return;
@@ -230,7 +410,7 @@ void OpenSettingWindow() {
         0,
         kSettingClass,
         kSettingTitle,
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT, CW_USEDEFAULT,
         ScaleForDpi(kSettingWindowWidth, dpi),
         ScaleForDpi(kSettingWindowHeight, dpi),
@@ -242,6 +422,37 @@ void OpenSettingWindow() {
     if (g_settingWindow) {
         ShowWindow(g_settingWindow, SW_SHOW);
         UpdateWindow(g_settingWindow);
+    }
+}
+
+void OpenIgnoreWordsWindow() {
+    if (g_ignoreWordsWindow && IsWindow(g_ignoreWordsWindow)) {
+        ShowWindow(g_ignoreWordsWindow, SW_SHOW);
+        SetForegroundWindow(g_ignoreWordsWindow);
+        return;
+    }
+
+    UINT dpi = GetDpiForSystem();
+    if (dpi == 0) {
+        dpi = USER_DEFAULT_SCREEN_DPI;
+    }
+
+    g_ignoreWordsWindow = CreateWindowExW(
+        0,
+        kIgnoreClass,
+        kIgnoreTitle,
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        ScaleForDpi(kIgnoreWindowWidth, dpi),
+        ScaleForDpi(kIgnoreWindowHeight, dpi),
+        g_settingWindow,
+        nullptr,
+        g_hInstance,
+        nullptr);
+
+    if (g_ignoreWordsWindow) {
+        ShowWindow(g_ignoreWordsWindow, SW_SHOW);
+        UpdateWindow(g_ignoreWordsWindow);
     }
 }
 
@@ -324,14 +535,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             ShowWindow(hwnd, SW_HIDE);
             return 0;
         }
+        UpdateWebViewBounds(hwnd, g_mainViewController);
         break;
 
     case WM_DPICHANGED:
         HandleDpiChanged(hwnd, lParam);
-        return 0;
-
-    case WM_PAINT:
-        PaintCenteredText(hwnd, g_settings.greeting.c_str(), g_settings.fontHeight);
         return 0;
 
     case WM_CLOSE:
@@ -340,6 +548,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         return 0;
 
     case WM_DESTROY:
+        if (g_ignoreWordsWindow && IsWindow(g_ignoreWordsWindow)) {
+            DestroyWindow(g_ignoreWordsWindow);
+        }
         if (g_settingWindow && IsWindow(g_settingWindow)) {
             DestroyWindow(g_settingWindow);
         }
@@ -347,8 +558,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
             DestroyWindow(g_countDownWindow);
         }
         Shell_NotifyIconW(NIM_DELETE, &g_trayIcon);
+        g_mainViewController.Reset();
         g_mainWindow = nullptr;
         g_countDownWindow = nullptr;
+        g_ignoreWordsWindow = nullptr;
         PostQuitMessage(0);
         return 0;
 
@@ -410,7 +623,7 @@ LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 LRESULT CALLBACK SettingWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_CREATE:
-        InitializeWebView(hwnd);
+        InitializeWebView(hwnd, L"settings.html", &g_webViewController, true);
         return 0;
 
     case WM_DPICHANGED:
@@ -418,17 +631,53 @@ LRESULT CALLBACK SettingWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
         return 0;
 
     case WM_SIZE:
-        UpdateWebViewBounds(hwnd);
+        UpdateWebViewBounds(hwnd, g_webViewController);
         break;
 
     case WM_CLOSE:
         // Only the tray menu can show it again.
+        HideSettingsWindows();
+        return 0;
+
+    case WM_DESTROY:
+        if (g_webViewController) {
+            ComPtr<ICoreWebView2> webView;
+            if (SUCCEEDED(g_webViewController->get_CoreWebView2(&webView)) && webView) {
+                webView->remove_WebMessageReceived(g_settingsMessageToken);
+            }
+        }
+        g_webViewController.Reset();
+        g_settingWindow = nullptr;
+        return 0;
+
+    default:
+        return DefWindowProcW(hwnd, message, wParam, lParam);
+    }
+
+    return DefWindowProcW(hwnd, message, wParam, lParam);
+}
+
+LRESULT CALLBACK IgnoreWordsWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+    case WM_CREATE:
+        InitializeWebView(hwnd, L"ignoreWords.html", &g_ignoreWordsController, false);
+        return 0;
+
+    case WM_DPICHANGED:
+        HandleDpiChanged(hwnd, lParam);
+        return 0;
+
+    case WM_SIZE:
+        UpdateWebViewBounds(hwnd, g_ignoreWordsController);
+        break;
+
+    case WM_CLOSE:
         ShowWindow(hwnd, SW_HIDE);
         return 0;
 
     case WM_DESTROY:
-        g_webViewController.Reset();
-        g_settingWindow = nullptr;
+        g_ignoreWordsController.Reset();
+        g_ignoreWordsWindow = nullptr;
         return 0;
 
     default:
@@ -493,6 +742,20 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         return 1;
     }
 
+    WNDCLASSW ignoreClass{};
+    ignoreClass.style = CS_HREDRAW | CS_VREDRAW;
+    ignoreClass.lpfnWndProc = IgnoreWordsWndProc;
+    ignoreClass.hInstance = hInstance;
+    ignoreClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+    ignoreClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    ignoreClass.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+    ignoreClass.lpszClassName = kIgnoreClass;
+
+    if (!RegisterClassW(&ignoreClass)) {
+        MessageBoxW(nullptr, L"RegisterClassW for IgnoreWordsWindows failed.", L"Error", MB_ICONERROR | MB_OK);
+        return 1;
+    }
+
     // Keep the logical 1280x720 size at any DPI, with crisp physical-pixel rendering.
     UINT systemDpi = GetDpiForSystem();
     if (systemDpi == 0) {
@@ -509,7 +772,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         0,
         kWindowClass,
         kWindowTitle,
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT, CW_USEDEFAULT,
         windowWidth, windowHeight,
         nullptr, nullptr,

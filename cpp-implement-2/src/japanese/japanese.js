@@ -1,41 +1,52 @@
-// Japanese word screen: accept any listed reading and open the info screen.
+// Random non-ignored Japanese word; romaji input comparison with the same
+// solved/navigation behaviour as the English screen.
 (function () {
-  const input = document.getElementById('answer');
-  const feedback = document.getElementById('feedback');
+  'use strict';
 
-  function normalize(value) {
-    return value.trim().normalize('NFKC').toLocaleLowerCase();
-  }
+  var wordEl = document.getElementById('word');
+  var hiraganaEl = document.getElementById('hiragana');
+  var katakanaEl = document.getElementById('katakana');
+  var romajiEl = document.getElementById('romaji');
+  var answerEl = document.getElementById('answer');
+  var feedbackEl = document.getElementById('feedback');
+  var currentWord = null;
+  var solved = false;
 
-  const accepted = ['こんにちは', 'コンニチハ', 'konnichiwa', '今日は'].map(normalize);
+  async function loadWord() {
+    try {
+      currentWord = await window.app.call('japanese:getRandom');
+    } catch (error) {
+      currentWord = null;
+    }
 
-  function checkAnswer() {
-    if (accepted.includes(normalize(input.value))) {
-      feedback.dataset.state = 'ok';
-      feedback.textContent = 'Correct! Opening word details…';
-      window.location.href = 'japaneseInfo.html';
+    if (!currentWord) {
+      wordEl.textContent = 'No words available';
       return;
     }
 
-    feedback.dataset.state = 'bad';
-    feedback.textContent = 'Not quite — try the hiragana, katakana, or romaji reading.';
-    input.focus();
-    input.select();
+    wordEl.textContent = currentWord.kanji;
+    hiraganaEl.textContent = currentWord.hiragana;
+    katakanaEl.textContent = currentWord.katakana;
+    romajiEl.textContent = currentWord.romaji;
+    answerEl.focus();
   }
 
-  input.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      checkAnswer();
+  answerEl.addEventListener('input', function () {
+    if (!currentWord || solved) return;
+
+    if (answerEl.value.trim().toLowerCase() === String(currentWord.romaji).toLowerCase()) {
+      solved = true;
+      answerEl.disabled = true;
+      feedbackEl.textContent = 'Correct';
+      feedbackEl.dataset.state = 'ok';
+      setTimeout(function () {
+        window.location.href = 'japaneseInfo.html?id=' + encodeURIComponent(currentWord.id);
+      }, 300);
+    } else {
+      feedbackEl.textContent = '';
+      delete feedbackEl.dataset.state;
     }
   });
 
-  // Move on as soon as one of the accepted readings has been typed.
-  input.addEventListener('input', function () {
-    if (accepted.includes(normalize(input.value))) {
-      checkAnswer();
-    }
-  });
-
-  input.focus();
+  loadWord();
 })();

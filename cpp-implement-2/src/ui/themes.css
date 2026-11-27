@@ -1,0 +1,211 @@
+/* Theme registry. The injected boot script sets data-theme on <html> before
+   first paint, and host broadcasts update it live in every WebView. */
+
+:root[data-theme="paper"],
+[data-theme="paper"] {
+  --font-display: Georgia, "Times New Roman", serif;
+  --c-bg: #fbfaf7;
+  --c-surface: #ffffff;
+  --c-surface-2: #f1efe9;
+  --c-ink: #1f2937;
+  --c-muted: #6b7280;
+  --c-line: #d9d5cc;
+  --c-accent: #2563eb;
+  --c-ok: #16a34a;
+  --c-bad: #dc2626;
+  --radius: 14px;
+  --border-w: 1px;
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --blur: 8px;
+  --letter: 0.02em;
+  --title-case: capitalize;
+}
+
+:root[data-theme="brutal"],
+[data-theme="brutal"] {
+  --font-display: "Arial Black", Impact, sans-serif;
+  --c-bg: #fffde7;
+  --c-surface: #ffffff;
+  --c-surface-2: #fff59d;
+  --c-ink: #000000;
+  --c-muted: #374151;
+  --c-line: #000000;
+  --c-accent: #e11d48;
+  --radius: 2px;
+  --border-w: 3px;
+  --shadow: 6px 6px 0 #000000;
+  --blur: 0px;
+  --letter: 0.06em;
+  --title-case: uppercase;
+}
+
+:root[data-theme="candy"],
+[data-theme="candy"] {
+  --font-display: "Comic Sans MS", "Segoe UI", sans-serif;
+  --c-bg: #fff1f6;
+  --c-surface: #ffffff;
+  --c-surface-2: #ffe4ef;
+  --c-ink: #831843;
+  --c-muted: #be185d;
+  --c-line: #f9a8d4;
+  --c-accent: #db2777;
+  --radius: 20px;
+  --border-w: 2px;
+  --shadow: 0 12px 30px rgba(219, 39, 119, 0.18);
+  --blur: 12px;
+  --letter: 0.03em;
+  --title-case: none;
+}
+
+:root[data-theme="glass"],
+[data-theme="glass"] {
+  --font-display: "Segoe UI", system-ui, sans-serif;
+  --c-bg: #dbeafe;
+  --c-surface: rgba(255, 255, 255, 0.68);
+  --c-surface-2: rgba(255, 255, 255, 0.42);
+  --c-ink: #1e3a8a;
+  --c-muted: #475569;
+  --c-line: rgba(255, 255, 255, 0.75);
+  --c-accent: #0ea5e9;
+  --radius: 22px;
+  --border-w: 1px;
+  --shadow: 0 16px 40px rgba(30, 58, 138, 0.18);
+  --blur: 18px;
+  --letter: 0.02em;
+  --title-case: none;
+}
+
+:root[data-theme="midnight"],
+[data-theme="midnight"] {
+  --font-display: Georgia, serif;
+  --c-bg: #0f172a;
+  --c-surface: #1e293b;
+  --c-surface-2: #334155;
+  --c-ink: #e2e8f0;
+  --c-muted: #94a3b8;
+  --c-line: #475569;
+  --c-accent: #38bdf8;
+  --c-ok: #4ade80;
+  --c-bad: #f87171;
+  --radius: 12px;
+  --border-w: 1px;
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --blur: 10px;
+  --letter: 0.04em;
+  --title-case: none;
+}
+
+:root[data-theme="notebook"],
+[data-theme="notebook"] {
+  --font-display: "Bradley Hand", "Segoe Print", cursive;
+  --c-bg: repeating-linear-gradient(#fff 0 31px, #dbeafe 32px 33px);
+  --c-surface: #fffef8;
+  --c-surface-2: #f5f3e7;
+  --c-ink: #1e293b;
+  --c-muted: #64748b;
+  --c-line: #cbd5e1;
+  --c-accent: #2563eb;
+  --radius: 4px;
+  --border-w: 1px;
+  --shadow: 2px 4px 12px rgba(15, 23, 42, 0.12);
+  --blur: 4px;
+  --letter: 0.01em;
+  --title-case: none;
+}
+
+:root[data-theme="sakura"],
+[data-theme="sakura"] {
+  --font-display: Georgia, serif;
+  --c-bg: #fff5f7;
+  --c-surface: #ffffff;
+  --c-surface-2: #ffe3ea;
+  --c-ink: #7f1d3a;
+  --c-muted: #a16272;
+  --c-line: #fecdd3;
+  --c-accent: #f43f5e;
+  --radius: 18px;
+  --border-w: 1px;
+  --shadow: 0 10px 26px rgba(244, 63, 94, 0.16);
+  --blur: 8px;
+  --letter: 0.05em;
+  --title-case: none;
+}
+
+:root[data-theme="synthwave"],
+[data-theme="synthwave"] {
+  --font-display: "Courier New", monospace;
+  --c-bg: #1b1035;
+  --c-surface: #2d1b4e;
+  --c-surface-2: #42275f;
+  --c-ink: #f5d0fe;
+  --c-muted: #c084fc;
+  --c-line: #7c3aed;
+  --c-accent: #22d3ee;
+  --c-ok: #a3e635;
+  --c-bad: #fb7185;
+  --radius: 8px;
+  --border-w: 2px;
+  --shadow: 0 0 28px rgba(34, 211, 238, 0.35);
+  --blur: 10px;
+  --letter: 0.08em;
+  --title-case: uppercase;
+}
+
+:root[data-theme="terminal"],
+[data-theme="terminal"] {
+  --font-display: "Consolas", "Courier New", monospace;
+  --c-bg: #000000;
+  --c-surface: #04140a;
+  --c-surface-2: #0b2413;
+  --c-ink: #4ade80;
+  --c-muted: #22c55e;
+  --c-line: #166534;
+  --c-accent: #86efac;
+  --c-ok: #4ade80;
+  --c-bad: #f87171;
+  --radius: 0px;
+  --border-w: 1px;
+  --shadow: none;
+  --blur: 0px;
+  --letter: 0.02em;
+  --title-case: none;
+}
+
+:root[data-theme="zen"],
+[data-theme="zen"] {
+  --font-display: Georgia, serif;
+  --c-bg: #f5f5f4;
+  --c-surface: #fafaf9;
+  --c-surface-2: #e7e5e4;
+  --c-ink: #44403c;
+  --c-muted: #78716c;
+  --c-line: #d6d3d1;
+  --c-accent: #78716c;
+  --radius: 28px;
+  --border-w: 1px;
+  --shadow: 0 6px 20px rgba(68, 64, 60, 0.08);
+  --blur: 6px;
+  --letter: 0.08em;
+  --title-case: none;
+}
+
+/* Theme card swatches. Applied to the card element itself as well as :root. */
+[data-theme="paper"] { --swatch: #fbfaf7; }
+[data-theme="brutal"] { --swatch: #ffd400; }
+[data-theme="candy"] { --swatch: #ffb3c6; }
+[data-theme="glass"] { --swatch: #bae6fd; }
+[data-theme="midnight"] { --swatch: #0f172a; }
+[data-theme="notebook"] { --swatch: #eff6ff; }
+[data-theme="sakura"] { --swatch: #ffe4ef; }
+[data-theme="synthwave"] { --swatch: #22d3ee; }
+[data-theme="terminal"] { --swatch: #4ade80; }
+[data-theme="zen"] { --swatch: #e7e5e4; }
+
+.ui-theme-card,
+.theme-card,
+.ui-panel[data-theme],
+button[data-theme] {
+  background: var(--c-surface);
+  color: var(--c-ink);
+  border-color: var(--c-line);
+}

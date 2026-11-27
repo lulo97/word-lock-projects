@@ -7,12 +7,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(unofficial-webview2 CONFIG REQUIRED)
+find_package(unofficial-sqlite3 CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME} WIN32 src/main.cpp)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     shell32.lib
+    winhttp.lib
+    unofficial::sqlite3::sqlite3
     unofficial::webview2::webview2
 )
 
@@ -29,7 +32,11 @@ foreach(asset settings.html settings.js ignoreWords.html ignoreWordsUI.js)
     copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/settings/${asset}" "${asset}")
 endforeach()
 
-copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/ui/ui.css" "ui.css")
+foreach(asset ui.css themes.css info-render.js)
+    copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/ui/${asset}" "${asset}")
+endforeach()
+
+copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/tts/speakUI.js" "speakUI.js")
 
 foreach(asset english.html englishInfo.html english.js englishInfo.js)
     copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/english/${asset}" "${asset}")
@@ -43,7 +50,9 @@ foreach(asset mcq.html mcqResult.html mcq.js mcqResult.js)
     copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/mcq/${asset}" "${asset}")
 endforeach()
 
-copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/dumbbell/dumbbell.html" "dumbbell.html")
+foreach(asset dumbbell.html rep-counter.js overlay.js pose-tracker.js dumbbell.js)
+    copy_webview_asset("${CMAKE_CURRENT_SOURCE_DIR}/src/dumbbell/${asset}" "${asset}")
+endforeach()
 
 # WebView2Loader.dll must sit next to the executable.
 set(WEBVIEW2_LOADER_RELEASE "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/WebView2Loader.dll")

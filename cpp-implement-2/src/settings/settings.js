@@ -1,80 +1,92 @@
-// Settings screen logic.
-// - Tracks a draft of the four task checkboxes.
-// - Confirm sends the draft to the native host and applies it to MainWindow.
-// - Cancel restores the last saved values and closes the window.
+// Settings screen: load persisted values from the host, preview themes live,
+// and confirm or cancel through host messages.
 (function () {
-  const checkboxIds = [
-    'englishWord',
-    'multipleChoice',
-    'japaneseWord',
-    'dumbbellWorkout'
+  'use strict';
+
+  var checkboxIds = [
+    'englishWord', 'multipleChoice', 'japaneseWord', 'dumbbellWorkout',
+    'chromeFreeze', 'autoStart', 'autoTheme'
   ];
+  var checkboxes = {};
+  checkboxIds.forEach(function (id) { checkboxes[id] = document.getElementById(id); });
 
-  const checkboxes = {
-    englishWord: document.getElementById('englishWord'),
-    multipleChoice: document.getElementById('multipleChoice'),
-    japaneseWord: document.getElementById('japaneseWord'),
-    dumbbellWorkout: document.getElementById('dumbbellWorkout')
-  };
+  var masterVolumeEl = document.getElementById('masterVolume');
+  var volumeValueEl = document.getElementById('volumeValue');
+  var countdownSecondsEl = document.getElementById('countdownSeconds');
+  var themeGridEl = document.getElementById('themeGrid');
+  var selectedTheme = 'paper';
 
-  let saved = {
-    englishWord: true,
-    multipleChoice: true,
-    japaneseWord: true,
-    dumbbellWorkout: false
-  };
-
-  function post(type, tasks) {
-    if (!window.chrome || !window.chrome.webview) {
-      return;
-    }
-    const message = { type: type };
-    if (tasks) {
-      message.tasks = tasks;
-    }
-    window.chrome.webview.postMessage(message);
-  }
-
-  function readDraft() {
-    const draft = {};
-    for (const id of checkboxIds) {
-      draft[id] = !!checkboxes[id].checked;
-    }
-    return draft;
-  }
-
-  function applyToCheckboxes(state) {
-    for (const id of checkboxIds) {
-      checkboxes[id].checked = !!state[id];
-    }
-  }
-
-  if (window.chrome && window.chrome.webview) {
-    window.chrome.webview.addEventListener('message', function (event) {
-      const data = event.data;
-      if (data && data.type === 'applySettings' && data.tasks) {
-        saved = {
-          englishWord: !!data.tasks.englishWord,
-          multipleChoice: !!data.tasks.multipleChoice,
-          japaneseWord: !!data.tasks.japaneseWord,
-          dumbbellWorkout: !!data.tasks.dumbbellWorkout
-        };
-        applyToCheckboxes(saved);
-      }
+  function renderThemeCards(themes) {
+    themeGridEl.replaceChildren();
+    (themes || []).forEach(function (theme) {
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'theme-card';
+      card.dataset.theme = theme.id;
+      card.dataset.id = theme.id;
+      card.title = theme.description || '';
+      card.setAttribute('aria-pressed', String(theme.id === selectedTheme));
+      card.textContent = theme.name;
+      card.addEventListener('click', function () { selectTheme(theme.id); });
+      themeGridEl.appendChild(card);
     });
   }
 
-  document.getElementById('openIgnoreWords').addEventListener('click', function () {
-    post('openIgnoreWords');
-  });
+  function selectTheme(id) {
+    selectedTheme = id;
+    Array.prototype.forEach.call(themeGridEl.children, function (card) {
+      card.setAttribute('aria-pressed', String(card.dataset.id === id));
+    });
+    window.app.send('theme:preview', { value: id });
+  }
 
-  document.getElementById('confirm').addEventListener('click', function () {
-    saved = readDraft();
-    post('confirmSettings', saved);
+  function renderVolume() {
+    volumeValueEl.textContent = Number(masterVolumeEl.value) + '×';
+  }
+
+  function readSettings() {
+    var values = {};
+    checkboxIds.forEach(function (id) { values[id] = !!checkboxes[id].checked; });
+    values.masterVolume = Number(masterVolumeEl.value);
+    values.countdownSeconds = Number(countdownSecondsEl.value);
+    values.theme = selectedTheme;
+    return values;
+  }
+
+  async function loadSettings() {
+    var settings = null;
+    var themes = [];
+    try {
+      settings = await window.app.call('settings:get');
+      themes = await window.app.call('theme:list');
+    } catch (error) {
+      settings = null;
+    }
+
+    if (!settings) return;
+
+    checkboxIds.forEach(function (id) { checkboxes[id].checked = !!settings[id]; });
+    masterVolumeEl.value = settings.masterVolume;
+    countdownSecondsEl.value = settings.countdownSeconds;
+    selectedTheme = settings.theme || 'paper';
+    renderVolume();
+    renderThemeCards(themes);
+    document.body.dataset.settingsLoaded = 'true';
+  }
+
+  masterVolumeEl.addEventListener('input', renderVolume);
+
+  document.getElementById('openIgnoreWords').addEventListener('click', function () {
+    window.app.call('ignoreWords:open');
   });
 
   document.getElementById('cancel').addEventListener('click', function () {
-    applyToCheckboxes(saved);
-    post('closeSettings');
+    window.app.send('settings:close');
   });
+
+  document.getElementById('confirm').addEventListener('click', function () {
+    window.app.call('settings:confirm', readSettings());
+  });
+
+  loadSettings();
 })();

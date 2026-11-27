@@ -1,30 +1,50 @@
-// Multiple choice result screen: reflect the chosen option and exit on Enter.
+// Evaluate the selected answer against the stored question and exit on Enter.
 (function () {
-  const params = new URLSearchParams(window.location.search);
-  const isCorrect = params.get('result') === 'ok';
-  const choice = params.get('choice') || '';
+  'use strict';
 
-  const labels = {
-    A: 'A. A lucky discovery',
-    B: 'B. A planned routine',
-    C: 'C. A sudden mistake',
-    D: 'D. A quiet conversation'
-  };
+  var resultEl = document.getElementById('result');
+  var detailsEl = document.getElementById('details');
 
-  const result = document.getElementById('result');
-  result.textContent = isCorrect ? 'Correct!' : 'Not quite';
-  result.dataset.state = isCorrect ? 'ok' : 'bad';
+  function addField(label, value) {
+    var dt = document.createElement('dt');
+    dt.textContent = label;
+    var dd = document.createElement('dd');
+    dd.textContent = String(value == null ? '' : value);
+    detailsEl.append(dt, dd);
+  }
 
-  document.getElementById('your-answer').textContent = labels[choice] || '—';
-  document.getElementById('correct-answer').textContent = labels.A;
-  document.getElementById('explanation').textContent = isCorrect
-    ? 'Exactly — serendipity means finding something good by chance.'
-    : 'Serendipity means finding something good by chance, usually without planning it.';
+  async function loadResult() {
+    var params = new URLSearchParams(window.location.search);
+    var id = Number(params.get('id'));
+    var selected = Number(params.get('selected'));
+    var mcq = null;
+    try {
+      mcq = await window.app.call('mcq:get', { value: String(id) });
+    } catch (error) {
+      mcq = null;
+    }
 
-  document.addEventListener('keydown', function (event) {
+    if (!mcq) {
+      resultEl.textContent = 'Question not found';
+      return;
+    }
+
+    var correct = selected === mcq.correct_answer_idx;
+    resultEl.textContent = correct ? 'Correct' : 'Wrong';
+    resultEl.dataset.state = correct ? 'ok' : 'bad';
+
+    addField('question', mcq.question);
+    addField('your answer', mcq.answers[selected]);
+    addField('correct answer', mcq.answers[mcq.correct_answer_idx]);
+    addField('explanation', mcq.explanation);
+  }
+
+  window.addEventListener('keydown', function (event) {
     if (event.key === 'Enter') {
       event.preventDefault();
-      window.location.href = 'mcq.html';
+      window.app.send('app:exitInfo');
     }
   });
+
+  loadResult();
 })();

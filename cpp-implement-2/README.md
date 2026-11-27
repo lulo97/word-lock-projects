@@ -1,59 +1,78 @@
 # Win32 Hello World
 
-A minimal C++ Win32 API program with a Windows 11 tray icon and three windows.
+A C++/Win32 tray application that locks the active task screen between countdowns.
+Task screens are hosted in WebView2 and call native services (SQLite, settings, TTS,
+Chrome freeze) through an injected `window.app` bridge.
 
 ## Windows
 
-- **MainWindow** — `1280x720` white WebView2 client area. Confirmed task checkboxes build a
-  scrollable host page with one full-size task screen per enabled task:
-  - `src/english/english.html` → `src/english/englishInfo.html` on a correct answer.
-  - `src/japanese/japanese.html` → `src/japanese/japaneseInfo.html` on a correct reading.
-  - `src/mcq/mcq.html` → `src/mcq/mcqResult.html` when an option is chosen.
-  - `src/dumbbell/dumbbell.html` — camera stage + sidebar with fake rep data (UI only).
+- **MainWindow** — WebView2 client area that navigates directly to the next enabled task:
+  - `english.html` → `englishInfo.html` after the typed word matches.
+  - `japanese.html` → `japaneseInfo.html` after the typed romaji matches.
+  - `mcq.html` → `mcqResult.html` after an option is chosen.
+  - `dumbbell.html` — live camera stage, pose overlay, and two 10-rep counters.
+  - Info/result screens render database rows via `info-render.js` and share `ui.css` +
+    `themes.css`. **Enter** exits the task back to the countdown.
+- **CountDownWindow** — frameless `100x50`, 50% alpha, bottom-right of the primary monitor's
+  work area. Counts down from the configured 1–3600 second interval.
+- **SettingWindows** — full Settings UI with task toggles, countdown/volume controls,
+  Chrome freeze, auto-start, auto-theme, theme picker, and an Ignore Words editor.
+  Hidden at startup; opened from **Tray → Settings**.
+- **IgnoreWordsWindows** — English/Japanese tabs with per-tab drafts, host-side validation,
+  duplicate retention, and persistence to `settings.json`.
 
-  Info/result screens show fake sample data and share `src/ui/ui.css`. Press **Enter** on an
-  info/result screen to return to its task screen. Camera capture and rep counting are not
-  implemented.
-- **CountDownWindow** — frameless `100x50`, bottom-right of the primary monitor's work
-  area, counts `60 → 0` once per second.
-- **SettingWindows** — white background, hosted via WebView2. It loads
-  `src/settings/settings.html`, which contains the full Settings UI structure (HTML/CSS
-  only, no logic yet). It is hidden at startup and can only be opened from
-  **Tray → Setting**.
-- **IgnoreWordsWindows** — hosted via WebView2, loads
-  `src/settings/ignoreWords.html`. It opens when the **Ignore words…** button in
-  SettingWindows is clicked. Its UI is markup/CSS only; `ignoreWordsUI.js` is a stub.
-
-The app is per-monitor DPI-aware, so text stays crisp at Windows zoom levels such as
-125% and 150%. Window sizes are kept in logical pixels and scaled automatically.
+The app is per-monitor DPI-aware; window sizes are kept in logical pixels and scaled
+automatically.
 
 ## Window flow
 
-- **First launch:** only **CountDownWindow** is visible; MainWindow and SettingWindows are hidden.
-- When the countdown reaches **0**, MainWindow opens and the countdown hides.
-- **Tray → Open App** (or double-click the tray icon): opens MainWindow and hides the countdown.
-- **Closing MainWindow:** hides MainWindow and restarts CountDownWindow from `60`.
-- **Tray → Setting:** shows SettingWindows. Closing it only hides it — the tray menu is the
-  only way to show it again.
-- **Ignore words…** in SettingWindows opens IgnoreWordsWindows. Its tabs, textarea, error
-  banner, and footer are UI-only for now; no validation/save logic is wired yet.
-- **Confirm** in SettingWindows saves the four task checkbox drafts, rebuilds MainWindow's
-  HTML content, hides Settings/Ignore Words, and shows MainWindow.
-- **Cancel** restores the last confirmed checkbox values and hides Settings/Ignore Words.
-- **Tray → Exit:** removes the tray icon and closes the app completely.
+- **First launch:** only **CountDownWindow** is visible.
+- When the countdown reaches 0, MainWindow opens with the next enabled task.
+- **Tray → Show App** opens MainWindow. Clicking the tray icon toggles between MainWindow
+  and the countdown.
+- **Closing MainWindow** hides it and restarts the countdown.
+- **Tray → Settings** shows SettingWindows. Closing it only hides it and reverts any
+  unconfirmed theme preview.
+- **Confirm** saves settings, resets task rotation, syncs Chrome freeze and auto-start,
+  rebroadcasts the theme, hides secondary windows, and hides MainWindow.
+- **Cancel** rebroadcasts the saved theme and hides Settings/Ignore Words.
+- **Tray → Quit** unfreezes Chrome, removes the tray icon, and exits completely.
 
 ## Task screen flow
 
-- **English:** typing `serendipity` opens `englishInfo.html` immediately (**Enter** also submits).
-- **Japanese:** typing `こんにちは`, `コンニチハ`, `konnichiwa`, or `今日は` opens
-  `japaneseInfo.html` immediately (**Enter** also submits).
-- **Multiple choice:** click an option to open `mcqResult.html`; the first option is correct and
-  the others show a `Not quite` result.
-- **Enter** on any info/result screen returns to its task screen.
+- Database rows are seeded with English `apple`, MCQ `1+1=?` (answer `2`), and Japanese
+  `桜` (`sakura`).
+- **English:** type the displayed word (case-insensitive) to open its info screen after 300 ms.
+- **Japanese:** type the displayed romaji to open its info screen after 300 ms.
+- **Multiple choice:** choose an option once; the result screen compares the selected index
+  with `correct_answer_idx`.
+- **Dumbbell:** each arm needs 10 confirmed reps (20 total); completion shows `Training done`
+  and exits after 300 ms. MediaPipe assets are used when installed; otherwise the tracker
+  still exposes `window.__dumbbellTest.feedPose(left, right, null, now)` for synthetic poses.
+- **Enter** on any info/result screen exits to the countdown, advancing the theme first when
+  `autoTheme` is enabled.
+
+## Native services
+
+- Settings persist to `%USERPROFILE%\pomodoro_lock\settings.json`; SQLite data lives in
+  `%USERPROFILE%\pomodoro_lock\pomodoro_lock.db`.
+- Ignore words are filtered case-insensitively from random English and Japanese queries.
+- Speech posts `{"input","lang","voice":"female"}` to `http://127.0.0.1:8080/tts`; when the
+  server is unavailable, automatic speech stays quiet while button clicks show an error.
+- Chrome freeze records each PID's start time before `NtSuspendProcess`, refreezes every
+  2 seconds, resumes on disable/exit, and resumes leftovers on the next startup.
+- Auto-start writes `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\PomodoroLock`,
+  preferring `PORTABLE_EXECUTABLE_FILE`, and respects `StartupApproved\Run`.
+
+## Environment flags
+
+- `WORDLOCK_USE_TEST_DATA=1` — in-memory SQLite and in-memory settings defaults.
+- `WORDLOCK_CHROME_FREEZE_MOCK=1` — disables the single-instance mutex and Chrome freeze.
 
 ## Build
 
-Dependencies are declared in `vcpkg.json` (`webview2`). Configure with the vcpkg toolchain:
+Dependencies are declared in `vcpkg.json` (`webview2`, `sqlite3`). Configure with the vcpkg
+toolchain:
 
 ```powershell
 cmake -S . -B build -A x64 `
@@ -61,9 +80,8 @@ cmake -S . -B build -A x64 `
 cmake --build build --config Release
 ```
 
-CMake copies the settings assets, the four task screens, `ui.css`, and `WebView2Loader.dll`
-next to the executable. The task host page (`mainScreens.html`) is generated at runtime from
-the confirmed checkbox state.
+CMake copies all HTML/CSS/JS assets, `sqlite3.dll`, `WebView2Loader.dll`, and the executable
+into `build\Release`.
 
 ## Run
 

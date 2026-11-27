@@ -1,40 +1,46 @@
-// English word screen: accept "serendipity" and open the info screen.
+// Random non-ignored English word, case-insensitive input matching, and a
+// 300 ms navigation to the info screen after a correct answer.
 (function () {
-  const input = document.getElementById('answer');
-  const feedback = document.getElementById('feedback');
-  const expected = 'serendipity';
+  'use strict';
 
-  function normalize(value) {
-    return value.trim().normalize('NFKC').toLocaleLowerCase();
-  }
+  var wordEl = document.getElementById('word');
+  var answerEl = document.getElementById('answer');
+  var feedbackEl = document.getElementById('feedback');
+  var currentWord = null;
+  var solved = false;
 
-  function checkAnswer() {
-    if (normalize(input.value) === expected) {
-      feedback.dataset.state = 'ok';
-      feedback.textContent = 'Correct! Opening word details…';
-      window.location.href = 'englishInfo.html';
+  async function loadWord() {
+    try {
+      currentWord = await window.app.call('word:getRandom');
+    } catch (error) {
+      currentWord = null;
+    }
+
+    if (!currentWord) {
+      wordEl.textContent = 'No words available';
       return;
     }
 
-    feedback.dataset.state = 'bad';
-    feedback.textContent = 'Not quite — try again.';
-    input.focus();
-    input.select();
+    wordEl.textContent = currentWord.word;
+    answerEl.focus();
   }
 
-  input.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      checkAnswer();
+  answerEl.addEventListener('input', function () {
+    if (!currentWord || solved) return;
+
+    if (answerEl.value.trim().toLowerCase() === String(currentWord.word).toLowerCase()) {
+      solved = true;
+      answerEl.disabled = true;
+      feedbackEl.textContent = 'Correct';
+      feedbackEl.dataset.state = 'ok';
+      setTimeout(function () {
+        window.location.href = 'englishInfo.html?id=' + encodeURIComponent(currentWord.id);
+      }, 300);
+    } else {
+      feedbackEl.textContent = '';
+      delete feedbackEl.dataset.state;
     }
   });
 
-  // Move on as soon as the correct word has been typed.
-  input.addEventListener('input', function () {
-    if (normalize(input.value) === expected) {
-      checkAnswer();
-    }
-  });
-
-  input.focus();
+  loadWord();
 })();

@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Settings</title>
+  <link rel="stylesheet" href="themes.css">
   <style>
     :root {
-      --bg: #ffffff;
-      --panel: #ffffff;
-      --text: #1f2430;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --track: #d1d5db;
-      --shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+      --bg: var(--c-bg, #ffffff);
+      --panel: var(--c-surface, #ffffff);
+      --text: var(--c-ink, #1f2430);
+      --muted: var(--c-muted, #6b7280);
+      --border: var(--c-line, #e5e7eb);
+      --accent: var(--c-accent, #2563eb);
+      --accent-hover: var(--c-accent, #1d4ed8);
+      --track: var(--c-line, #d1d5db);
+      --panel-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
     }
 
     * { box-sizing: border-box; }
@@ -44,7 +45,7 @@
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 10px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--panel-shadow);
       padding: 18px 20px;
       margin-bottom: 16px;
     }
@@ -224,7 +225,7 @@
       justify-content: flex-end;
       gap: 10px;
       padding: 14px 24px;
-      background: rgba(255, 255, 255, 0.96);
+      background: var(--bg);
       border-top: 1px solid var(--border);
       backdrop-filter: blur(8px);
     }

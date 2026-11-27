@@ -321,6 +321,7 @@ void InstallWebViewBridge(ICoreWebView2* webView, ICoreWebView2Controller* contr
 void CreateWebView(HWND hwnd, ComPtr<ICoreWebView2Controller>* controllerOut,
                    WebViewReady onReady);
 void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile);
+void InstallTaskInputFocus(ICoreWebView2* webView, ICoreWebView2Controller* controller);
 void InitializeWebView(HWND hwnd,
                        const wchar_t* htmlFile,
                        ComPtr<ICoreWebView2Controller>* controllerOut);

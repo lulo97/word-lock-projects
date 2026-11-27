@@ -75,6 +75,7 @@ void InitializeWebView(HWND hwnd,
 void InitializeMainWebView(HWND hwnd) {
     CreateWebView(hwnd, &g_mainViewController,
                   [](ComPtr<ICoreWebView2>& webView) {
+                      InstallTaskInputFocus(webView.Get(), g_mainViewController.Get());
                       InstallTestDomDump(webView.Get(), TaskAsset(g_currentTask));
                       NavigateMainToTask(g_currentTask);
                   });

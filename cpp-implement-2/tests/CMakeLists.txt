@@ -21,6 +21,7 @@ foreach(test_source IN LISTS TEST_SOURCES)
     )
 endforeach()
 
-# This test injects real mouse input, so it must not share the cursor with
-# other parallel runtime tests.
+# These tests rely on global mouse/keyboard focus state, so they must not run
+# alongside other runtime tests.
 set_tests_properties(countdown_draggable PROPERTIES RUN_SERIAL TRUE)
+set_tests_properties(input_autofocus PROPERTIES RUN_SERIAL TRUE)

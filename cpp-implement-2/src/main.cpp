@@ -41,9 +41,9 @@ constexpr wchar_t kWindowTitle[] = L"MainWindow";
 constexpr wchar_t kCountDownTitle[] = L"CountDownWindow";
 constexpr wchar_t kSettingTitle[] = L"SettingWindows";
 constexpr wchar_t kIgnoreTitle[] = L"IgnoreWordsWindows";
-constexpr wchar_t kTrayTip[] = L"PomodoroLock";
+constexpr wchar_t kTrayTip[] = L"PomodoroLockCpp";
 
-constexpr wchar_t kSingleInstanceMutexName[] = L"Local\\PomodoroLockSingleInstance";
+constexpr wchar_t kSingleInstanceMutexName[] = L"Local\\PomodoroLockCppSingleInstance";
 constexpr wchar_t kChromeProcessName[] = L"chrome.exe";
 constexpr wchar_t kChromeFreezeMockEnv[] = L"WORDLOCK_CHROME_FREEZE_MOCK";
 constexpr wchar_t kUseTestDataEnv[] = L"WORDLOCK_USE_TEST_DATA";
@@ -464,7 +464,7 @@ std::wstring GetDataDirectory() {
     if (!directory.empty() && directory.back() != L'\\') {
         directory.push_back(L'\\');
     }
-    directory += L"pomodoro_lock\\";
+    directory += L"pomodoro_lock_cpp\\";
     std::filesystem::create_directories(directory);
     return directory;
 }
@@ -629,7 +629,7 @@ bool SynthesizeTts(const std::wstring& text,
     error = kTtsUnavailableMessage;
     wavBase64.clear();
 
-    HINTERNET session = WinHttpOpen(L"PomodoroLock TTS/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+    HINTERNET session = WinHttpOpen(L"PomodoroLockCpp TTS/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
                                     WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
     if (session == nullptr) {
         return false;
@@ -1036,7 +1036,7 @@ bool EnsureColumn(const char* table, const char* column, const char* definition)
 void InitializeDatabase() {
     const std::string path = IsTestDataMode()
                                  ? ":memory:"
-                                 : WideToUtf8(GetDataDirectory() + L"pomodoro_lock.db");
+                                 : WideToUtf8(GetDataDirectory() + L"pomodoro_lock_cpp.db");
     if (sqlite3_open(path.c_str(), &g_db) != SQLITE_OK) {
         g_db = nullptr;
         return;
@@ -1426,15 +1426,46 @@ bool IsAutoStartDisabledByWindows(const std::wstring& valueName) {
     return result == ERROR_SUCCESS && type == REG_BINARY && size > 0 && data[0] == 0x03;
 }
 
-void ApplyAutoStartPreference(bool enabled) {
-    constexpr wchar_t kRunKey[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-    constexpr wchar_t kRunValue[] = L"PomodoroLock";
-    if (IsAutoStartDisabledByWindows(kRunValue)) {
+// Older C++ builds registered themselves as "PomodoroLock", the same value the
+// Electron app uses. Remove that legacy entry only when it points at this
+// executable so an Electron auto-start entry is never disturbed.
+void RemoveLegacyAutoStartEntry(HKEY key, const std::wstring& launchPath) {
+    constexpr wchar_t kLegacyRunValue[] = L"PomodoroLock";
+
+    wchar_t raw[2048]{};
+    DWORD size = sizeof(raw);
+    DWORD type = 0;
+    if (RegQueryValueExW(key, kLegacyRunValue, nullptr, &type,
+                         reinterpret_cast<BYTE*>(raw), &size) != ERROR_SUCCESS ||
+        type != REG_SZ) {
         return;
     }
 
+    std::wstring command(raw);
+    if (!command.empty() && command.front() == L'"') {
+        const size_t quote = command.find(L'"', 1);
+        if (quote != std::wstring::npos) {
+            command = command.substr(1, quote - 1);
+        }
+    }
+    if (_wcsicmp(command.c_str(), launchPath.c_str()) == 0) {
+        RegDeleteValueW(key, kLegacyRunValue);
+    }
+}
+
+void ApplyAutoStartPreference(bool enabled) {
+    constexpr wchar_t kRunKey[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    constexpr wchar_t kRunValue[] = L"PomodoroLockCpp";
+
     HKEY key = nullptr;
     if (RegOpenKeyExW(HKEY_CURRENT_USER, kRunKey, 0, KEY_SET_VALUE, &key) != ERROR_SUCCESS) {
+        return;
+    }
+
+    RemoveLegacyAutoStartEntry(key, GetLaunchExecutablePath());
+
+    if (IsAutoStartDisabledByWindows(kRunValue)) {
+        RegCloseKey(key);
         return;
     }
 

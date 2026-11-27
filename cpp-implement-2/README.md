@@ -54,15 +54,17 @@ automatically.
 
 ## Native services
 
-- Settings persist to `%USERPROFILE%\pomodoro_lock\settings.json`; SQLite data lives in
-  `%USERPROFILE%\pomodoro_lock\pomodoro_lock.db`.
+- Settings persist to `%USERPROFILE%\pomodoro_lock_cpp\settings.json`; SQLite data lives in
+  `%USERPROFILE%\pomodoro_lock_cpp\pomodoro_lock_cpp.db`. The separate folder and database
+  name keep this app isolated from the Electron `PomodoroLock` app.
 - Ignore words are filtered case-insensitively from random English and Japanese queries.
 - Speech posts `{"input","lang","voice":"female"}` to `http://127.0.0.1:8080/tts`; when the
   server is unavailable, automatic speech stays quiet while button clicks show an error.
 - Chrome freeze records each PID's start time before `NtSuspendProcess`, refreezes every
   2 seconds, resumes on disable/exit, and resumes leftovers on the next startup.
-- Auto-start writes `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\PomodoroLock`,
-  preferring `PORTABLE_EXECUTABLE_FILE`, and respects `StartupApproved\Run`.
+- Auto-start writes `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\PomodoroLockCpp`,
+  preferring `PORTABLE_EXECUTABLE_FILE`, and respects `StartupApproved\Run`. A legacy C++
+  `PomodoroLock` entry is removed only when it points at this executable.
 
 ## Environment flags
 
@@ -86,7 +88,7 @@ into `build\Release`.
 ## Run
 
 ```powershell
-.\build\Release\Win32HelloWorld.exe
+.\build\Release\PomodoroLockCpp.exe
 ```
 
 The WebView2 Runtime is normally preinstalled on Windows 11. If it is missing, install the

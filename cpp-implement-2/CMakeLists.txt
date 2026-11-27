@@ -62,3 +62,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             "$<$<CONFIG:Debug>:${WEBVIEW2_LOADER_DEBUG}>$<$<NOT:$<CONFIG:Debug>>:${WEBVIEW2_LOADER_RELEASE}>"
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>/WebView2Loader.dll"
 )
+
+include(CTest)
+if(BUILD_TESTING)
+    find_package(Catch2 CONFIG REQUIRED)
+    add_subdirectory(tests)
+endif()

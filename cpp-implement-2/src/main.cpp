@@ -47,6 +47,10 @@ constexpr wchar_t kSingleInstanceMutexName[] = L"Local\\PomodoroLockCppSingleIns
 constexpr wchar_t kChromeProcessName[] = L"chrome.exe";
 constexpr wchar_t kChromeFreezeMockEnv[] = L"WORDLOCK_CHROME_FREEZE_MOCK";
 constexpr wchar_t kUseTestDataEnv[] = L"WORDLOCK_USE_TEST_DATA";
+constexpr wchar_t kTestModeEnv[] = L"WORDLOCK_TEST_MODE";
+constexpr wchar_t kTestHomeEnv[] = L"WORDLOCK_TEST_HOME";
+constexpr wchar_t kTestDomDumpFileEnv[] = L"WORDLOCK_TEST_DOM_DUMP_FILE";
+constexpr wchar_t kTestOpenSettingsArg[] = L"--test-open-settings";
 constexpr wchar_t kIgnoreError[] = L"can't save ignore words";
 constexpr wchar_t kPortableExecutableEnv[] = L"PORTABLE_EXECUTABLE_FILE";
 constexpr wchar_t kTtsHost[] = L"127.0.0.1";
@@ -68,6 +72,7 @@ constexpr int kIgnoreWindowWidth = 560;
 constexpr int kIgnoreWindowHeight = 620;
 
 constexpr UINT kTrayMessage = WM_APP + 1;
+constexpr UINT kTestQuitMessage = WM_APP + 2;
 constexpr UINT kTrayIconId = 1;
 
 constexpr UINT ID_TRAY_OPEN = 1;
@@ -162,17 +167,41 @@ void HandleDpiChanged(HWND hwnd, LPARAM lParam) {
     InvalidateRect(hwnd, nullptr, TRUE);
 }
 
-bool IsChromeFreezeMockEnabled() {
+bool EnvFlagEnabled(const wchar_t* name) {
     wchar_t value[8]{};
-    const DWORD length =
-        GetEnvironmentVariableW(kChromeFreezeMockEnv, value, static_cast<DWORD>(std::size(value)));
+    const DWORD length = GetEnvironmentVariableW(name, value, static_cast<DWORD>(std::size(value)));
     return length > 0 && length < std::size(value) && wcscmp(value, L"1") == 0;
+}
+
+bool IsTestModeEnabled() {
+    return EnvFlagEnabled(kTestModeEnv);
+}
+
+std::wstring GetEnvironmentValue(const wchar_t* name) {
+    const DWORD length = GetEnvironmentVariableW(name, nullptr, 0);
+    if (length == 0) {
+        return std::wstring();
+    }
+    std::vector<wchar_t> buffer(length, L'\0');
+    GetEnvironmentVariableW(name, buffer.data(), length);
+    return std::wstring(buffer.data());
+}
+
+std::wstring WindowClassForCurrentProcess(const wchar_t* base) {
+    if (!IsTestModeEnabled()) {
+        return std::wstring(base);
+    }
+    return std::wstring(base) + L"Test" + std::to_wstring(GetCurrentProcessId());
+}
+
+bool IsChromeFreezeMockEnabled() {
+    return EnvFlagEnabled(kChromeFreezeMockEnv);
 }
 
 // Mirrors Electron's requestSingleInstanceLock(): tests bypass the lock so
 // separate test launches do not interfere with each other.
 bool AcquireSingleInstanceLock() {
-    if (IsChromeFreezeMockEnabled()) {
+    if (IsTestModeEnabled() || IsChromeFreezeMockEnabled()) {
         return true;
     }
 
@@ -414,39 +443,52 @@ std::wstring UrlDecode(const std::wstring& value) {
     return out;
 }
 
-bool IsAppResourceUriAllowed(const std::wstring& uri) {
-    constexpr wchar_t kPrefix[] = L"http://app/";
-    if (uri.rfind(kPrefix, 0) != 0) {
-        return true;  // Not an app:// request; WebView2 may serve it normally.
+constexpr wchar_t kAppUriPrefix[] = L"http://app/";
+
+bool IsAppResourceUri(const std::wstring& uri) {
+    return uri.rfind(kAppUriPrefix, 0) == 0;
+}
+
+std::wstring AppRelativePathFromUri(const std::wstring& uri) {
+    if (!IsAppResourceUri(uri)) {
+        return std::wstring();
     }
 
-    std::wstring relative = UrlDecode(uri.substr(std::size(kPrefix) - 1));
+    std::wstring relative = UrlDecode(uri.substr(std::size(kAppUriPrefix) - 1));
     const size_t query = relative.find_first_of(L"?#");
     if (query != std::wstring::npos) {
         relative.resize(query);
     }
     std::replace(relative.begin(), relative.end(), L'/', L'\\');
+    return relative;
+}
+
+std::filesystem::path ResolveAppResourcePath(const std::wstring& relative) {
+    return std::filesystem::path(GetExecutableDirectory()) / relative;
+}
+
+bool IsAppResourceUriAllowed(const std::wstring& uri) {
+    if (!IsAppResourceUri(uri)) {
+        return true;  // Not an app resource request; WebView2 may serve it normally.
+    }
 
     std::error_code error;
     const std::filesystem::path root = std::filesystem::weakly_canonical(GetExecutableDirectory(), error);
     const std::filesystem::path target =
-        std::filesystem::weakly_canonical(std::filesystem::path(GetExecutableDirectory()) / relative, error);
+        std::filesystem::weakly_canonical(ResolveAppResourcePath(AppRelativePathFromUri(uri)), error);
     if (error) {
         return false;
     }
 
-    const std::wstring rootText = root.wstring();
+    std::wstring rootText = root.wstring();
+    while (!rootText.empty() && (rootText.back() == L'\\' || rootText.back() == L'/')) {
+        rootText.pop_back();
+    }
     const std::wstring targetText = target.wstring();
     if (targetText.rfind(rootText, 0) != 0) {
         return false;
     }
     return targetText.size() == rootText.size() || targetText[rootText.size()] == L'\\';
-}
-
-bool EnvFlagEnabled(const wchar_t* name) {
-    wchar_t value[8]{};
-    const DWORD length = GetEnvironmentVariableW(name, value, static_cast<DWORD>(std::size(value)));
-    return length > 0 && length < std::size(value) && wcscmp(value, L"1") == 0;
 }
 
 bool IsTestDataMode() {
@@ -456,6 +498,18 @@ bool IsTestDataMode() {
 std::wstring GetDataDirectory() {
     if (IsTestDataMode()) {
         return std::wstring();
+    }
+
+    if (IsTestModeEnabled()) {
+        std::wstring directory = GetEnvironmentValue(kTestHomeEnv);
+        if (directory.empty()) {
+            return std::wstring();
+        }
+        if (directory.back() != L'\\') {
+            directory.push_back(L'\\');
+        }
+        std::filesystem::create_directories(directory);
+        return directory;
     }
 
     wchar_t home[MAX_PATH]{};
@@ -493,6 +547,90 @@ std::string WideToUtf8(const std::wstring& text) {
     std::vector<char> buffer(static_cast<size_t>(length));
     WideCharToMultiByte(CP_UTF8, 0, text.c_str(), -1, buffer.data(), length, nullptr, nullptr);
     return std::string(buffer.data(), static_cast<size_t>(length - 1));
+}
+
+bool IsTestDomDumpEnabled() {
+    return IsTestModeEnabled() && !GetEnvironmentValue(kTestDomDumpFileEnv).empty();
+}
+
+void WriteTestDomDump(const std::wstring& contents) {
+    if (!IsTestDomDumpEnabled()) {
+        return;
+    }
+
+    static bool written = false;
+    if (written) {
+        return;
+    }
+    written = true;
+
+    const std::filesystem::path path(GetEnvironmentValue(kTestDomDumpFileEnv));
+    if (path.has_parent_path()) {
+        std::filesystem::create_directories(path.parent_path());
+    }
+    std::ofstream output(path, std::ios::binary | std::ios::trunc);
+    if (output) {
+        output << WideToUtf8(contents);
+    }
+}
+
+std::wstring ContentTypeForFile(const std::filesystem::path& path) {
+    std::wstring extension = path.extension().wstring();
+    std::transform(extension.begin(), extension.end(), extension.begin(), [](wchar_t ch) {
+        return static_cast<wchar_t>(std::tolower(static_cast<unsigned char>(ch)));
+    });
+
+    if (extension == L".html" || extension == L".htm") return L"text/html; charset=utf-8";
+    if (extension == L".js") return L"application/javascript; charset=utf-8";
+    if (extension == L".css") return L"text/css; charset=utf-8";
+    if (extension == L".json") return L"application/json; charset=utf-8";
+    if (extension == L".wasm") return L"application/wasm";
+    if (extension == L".svg") return L"image/svg+xml";
+    if (extension == L".png") return L"image/png";
+    if (extension == L".jpg" || extension == L".jpeg") return L"image/jpeg";
+    if (extension == L".gif") return L"image/gif";
+    if (extension == L".mp4") return L"video/mp4";
+    if (extension == L".wav") return L"audio/wav";
+    return L"application/octet-stream";
+}
+
+ComPtr<ICoreWebView2WebResourceResponse> CreateFileWebResourceResponse(
+    ICoreWebView2Environment2* environment,
+    const std::filesystem::path& file) {
+    if (environment == nullptr) {
+        return nullptr;
+    }
+
+    std::ifstream input(file, std::ios::binary);
+    if (!input) {
+        return nullptr;
+    }
+    const std::vector<char> bytes((std::istreambuf_iterator<char>(input)),
+                                  std::istreambuf_iterator<char>());
+
+    IStream* rawStream = nullptr;
+    if (FAILED(CreateStreamOnHGlobal(nullptr, TRUE, &rawStream)) || rawStream == nullptr) {
+        return nullptr;
+    }
+    ComPtr<IStream> stream;
+    stream.Attach(rawStream);
+
+    if (!bytes.empty()) {
+        ULONG written = 0;
+        if (FAILED(stream->Write(bytes.data(), static_cast<ULONG>(bytes.size()), &written))) {
+            return nullptr;
+        }
+    }
+    LARGE_INTEGER start{};
+    stream->Seek(start, STREAM_SEEK_SET, nullptr);
+
+    const std::wstring headers = L"Content-Type: " + ContentTypeForFile(file) + L"\r\n";
+    ComPtr<ICoreWebView2WebResourceResponse> response;
+    if (FAILED(environment->CreateWebResourceResponse(
+            stream.Get(), 200, L"OK", headers.c_str(), &response))) {
+        return nullptr;
+    }
+    return response;
 }
 
 std::wstring JsonEscape(const std::wstring& value) {
@@ -1296,7 +1434,7 @@ bool ChangeChromeProcessState(DWORD processId, bool suspend) {
 }
 
 void ResumeAllChromeProcesses() {
-    if (IsChromeFreezeMockEnabled()) {
+    if (IsTestModeEnabled() || IsChromeFreezeMockEnabled()) {
         g_heldChromeProcesses.clear();
         return;
     }
@@ -1321,7 +1459,7 @@ void ResumeAllChromeProcesses() {
 }
 
 void FreezeChromeProcesses() {
-    if (IsChromeFreezeMockEnabled()) {
+    if (IsTestModeEnabled() || IsChromeFreezeMockEnabled()) {
         return;
     }
 
@@ -1384,7 +1522,7 @@ void UnfreezeChromeOnExit() {
 }
 
 void SyncChromeFreeze() {
-    if (!g_mainWindow || !IsWindow(g_mainWindow)) {
+    if (IsTestModeEnabled() || !g_mainWindow || !IsWindow(g_mainWindow)) {
         return;
     }
     if (g_settings.chromeFreeze) {
@@ -1454,6 +1592,10 @@ void RemoveLegacyAutoStartEntry(HKEY key, const std::wstring& launchPath) {
 }
 
 void ApplyAutoStartPreference(bool enabled) {
+    if (IsTestModeEnabled()) {
+        return;
+    }
+
     constexpr wchar_t kRunKey[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
     constexpr wchar_t kRunValue[] = L"PomodoroLockCpp";
 
@@ -1898,31 +2040,46 @@ void CreateWebView(HWND hwnd,
             [hwnd, controllerOut, onReady](HRESULT result,
                                            ICoreWebView2Environment* environment) -> HRESULT {
                 if (FAILED(result) || environment == nullptr) {
+                    if (IsTestModeEnabled()) {
+                        WriteTestDomDump(L"{\"webviewEnvironmentFailed\":true}");
+                        return result;
+                    }
                     MessageBoxW(hwnd, L"WebView2 environment initialization failed.",
                                 L"Error", MB_ICONERROR | MB_OK);
                     return result;
                 }
 
-                // Serve task assets from http://app/ so fetch() works for WASM/model files.
+                // Prefer WebView2's virtual-host folder mapping. Older runtimes do not
+                // expose ICoreWebView2_3, so the WebResourceRequested handler below serves
+                // the same files itself in that case.
+                std::wstring assetFolder = GetExecutableDirectory();
+                if (!assetFolder.empty() && assetFolder.back() == L'\\') {
+                    assetFolder.pop_back();
+                }
+                bool hasVirtualHostMapping = false;
                 ComPtr<ICoreWebView2_3> environment3;
                 if (SUCCEEDED(environment->QueryInterface(IID_PPV_ARGS(&environment3))) &&
                     environment3) {
-                    std::wstring folder = GetExecutableDirectory();
-                    if (!folder.empty() && folder.back() == L'\\') {
-                        folder.pop_back();
-                    }
-                    environment3->SetVirtualHostNameToFolderMapping(
-                        L"app", folder.c_str(), COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
+                    hasVirtualHostMapping = SUCCEEDED(environment3->SetVirtualHostNameToFolderMapping(
+                        L"app", assetFolder.c_str(),
+                        COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW));
                 }
 
+                ComPtr<ICoreWebView2Environment2> environment2;
+                environment->QueryInterface(IID_PPV_ARGS(&environment2));
                 ComPtr<ICoreWebView2Environment> environmentRef = environment;
                 return environment->CreateCoreWebView2Controller(
                     hwnd,
                     Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-                        [hwnd, controllerOut, onReady, environmentRef](
+                        [hwnd, controllerOut, onReady, environmentRef, environment2,
+                         assetFolder, hasVirtualHostMapping](
                             HRESULT controllerResult,
                             ICoreWebView2Controller* controllerRaw) -> HRESULT {
                             if (FAILED(controllerResult) || controllerRaw == nullptr) {
+                                if (IsTestModeEnabled()) {
+                                    WriteTestDomDump(L"{\"webviewControllerFailed\":true}");
+                                    return controllerResult;
+                                }
                                 MessageBoxW(hwnd, L"WebView2 controller initialization failed.",
                                             L"Error", MB_ICONERROR | MB_OK);
                                 return controllerResult;
@@ -1970,7 +2127,8 @@ void CreateWebView(HWND hwnd,
                                     L"http://app/*", COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
                                 webView->add_WebResourceRequested(
                                     Callback<ICoreWebView2WebResourceRequestedEventHandler>(
-                                        [environmentRef](
+                                        [environmentRef, environment2, assetFolder,
+                                         hasVirtualHostMapping](
                                             ICoreWebView2*,
                                             ICoreWebView2WebResourceRequestedEventArgs* args)
                                             -> HRESULT {
@@ -1981,17 +2139,31 @@ void CreateWebView(HWND hwnd,
                                             LPWSTR uri = nullptr;
                                             request->get_Uri(&uri);
                                             if (uri != nullptr) {
-                                                if (!IsAppResourceUriAllowed(uri)) {
-                                                    ComPtr<ICoreWebView2Environment2> environment2;
-                                                    if (SUCCEEDED(environmentRef->QueryInterface(
-                                                            IID_PPV_ARGS(&environment2))) &&
-                                                        environment2) {
-                                                        ComPtr<ICoreWebView2WebResourceResponse> response;
-                                                        environment2->CreateWebResourceResponse(
+                                                const std::wstring uriText(uri);
+                                                ComPtr<ICoreWebView2Environment2> responseEnvironment =
+                                                    environment2;
+                                                if (!responseEnvironment && environmentRef) {
+                                                    environmentRef->QueryInterface(
+                                                        IID_PPV_ARGS(&responseEnvironment));
+                                                }
+
+                                                ComPtr<ICoreWebView2WebResourceResponse> response;
+                                                if (!IsAppResourceUriAllowed(uriText)) {
+                                                    if (responseEnvironment) {
+                                                        responseEnvironment->CreateWebResourceResponse(
                                                             nullptr, 403, L"Forbidden", nullptr,
                                                             &response);
-                                                        args->put_Response(response.Get());
                                                     }
+                                                } else if (IsAppResourceUri(uriText) &&
+                                                           !hasVirtualHostMapping) {
+                                                    const std::filesystem::path file =
+                                                        std::filesystem::path(assetFolder) /
+                                                        AppRelativePathFromUri(uriText);
+                                                    response = CreateFileWebResourceResponse(
+                                                        responseEnvironment.Get(), file);
+                                                }
+                                                if (response) {
+                                                    args->put_Response(response.Get());
                                                 }
                                                 CoTaskMemFree(uri);
                                             }
@@ -2032,18 +2204,63 @@ void CreateWebView(HWND hwnd,
             }).Get());
 
     if (FAILED(hr)) {
-        MessageBoxW(hwnd,
-                    L"Failed to start WebView2. Is the WebView2 runtime installed?",
-                    L"Error", MB_ICONERROR | MB_OK);
+        if (IsTestModeEnabled()) {
+            WriteTestDomDump(L"{\"webviewStartFailed\":true}");
+        } else {
+            MessageBoxW(hwnd,
+                        L"Failed to start WebView2. Is the WebView2 runtime installed?",
+                        L"Error", MB_ICONERROR | MB_OK);
+        }
     }
+}
+
+void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
+    if (!IsTestDomDumpEnabled() || wcscmp(htmlFile, L"settings.html") != 0) {
+        return;
+    }
+
+    webView->add_NavigationCompleted(
+        Callback<ICoreWebView2NavigationCompletedEventHandler>(
+            [](ICoreWebView2* sender,
+               ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
+                BOOL success = FALSE;
+                if (args == nullptr || FAILED(args->get_IsSuccess(&success))) {
+                    WriteTestDomDump(L"{\"navigationResultFailed\":true}");
+                    return S_OK;
+                }
+                if (!success) {
+                    WriteTestDomDump(L"{\"navigationFailed\":true}");
+                    return S_OK;
+                }
+
+                ComPtr<ICoreWebView2> view = sender;
+                const HRESULT hr = view->ExecuteScript(
+                    L"document.body ? document.body.innerText : ''",
+                    Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
+                        [](HRESULT result, LPCWSTR resultJson) -> HRESULT {
+                            if (FAILED(result) || resultJson == nullptr) {
+                                WriteTestDomDump(L"{\"domScriptFailed\":true}");
+                            } else {
+                                WriteTestDomDump(resultJson);
+                            }
+                            return S_OK;
+                        }).Get());
+                if (FAILED(hr)) {
+                    WriteTestDomDump(L"{\"domScriptStartFailed\":true}");
+                }
+                return S_OK;
+            }).Get(),
+        nullptr);
 }
 
 void InitializeWebView(HWND hwnd,
                        const wchar_t* htmlFile,
                        ComPtr<ICoreWebView2Controller>* controllerOut) {
     const std::wstring htmlPath = AppAssetUrl(htmlFile);
+    const std::wstring htmlFileValue(htmlFile);
     CreateWebView(hwnd, controllerOut,
-                  [htmlPath](ComPtr<ICoreWebView2>& webView) {
+                  [htmlPath, htmlFileValue](ComPtr<ICoreWebView2>& webView) {
+                      InstallTestDomDump(webView.Get(), htmlFileValue.c_str());
                       webView->Navigate(htmlPath.c_str());
                   });
 }
@@ -2068,9 +2285,10 @@ void OpenSettingWindow() {
         dpi = USER_DEFAULT_SCREEN_DPI;
     }
 
+    const std::wstring settingClass = WindowClassForCurrentProcess(kSettingClass);
     g_settingWindow = CreateWindowExW(
         0,
-        kSettingClass,
+        settingClass.c_str(),
         kSettingTitle,
         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT, CW_USEDEFAULT,
@@ -2099,9 +2317,10 @@ void OpenIgnoreWordsWindow() {
         dpi = USER_DEFAULT_SCREEN_DPI;
     }
 
+    const std::wstring ignoreClass = WindowClassForCurrentProcess(kIgnoreClass);
     g_ignoreWordsWindow = CreateWindowExW(
         0,
-        kIgnoreClass,
+        ignoreClass.c_str(),
         kIgnoreTitle,
         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT, CW_USEDEFAULT,
@@ -2193,6 +2412,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         default:
             return 0;
         }
+
+    case kTestQuitMessage:
+        if (IsTestModeEnabled()) {
+            QuitApp();
+            return 0;
+        }
+        break;
 
     case WM_SIZE:
         // Minimize goes to the tray; use the tray icon or menu to bring it back.
@@ -2374,6 +2600,25 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
 
     g_hInstance = hInstance;
 
+    bool testOpenSettings = false;
+    if (IsTestModeEnabled()) {
+        int argc = 0;
+        LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+        if (argv != nullptr) {
+            for (int i = 1; i < argc; ++i) {
+                if (wcscmp(argv[i], kTestOpenSettingsArg) == 0) {
+                    testOpenSettings = true;
+                }
+            }
+            LocalFree(argv);
+        }
+    }
+
+    const std::wstring mainWindowClass = WindowClassForCurrentProcess(kWindowClass);
+    const std::wstring countDownWindowClass = WindowClassForCurrentProcess(kCountDownClass);
+    const std::wstring settingWindowClass = WindowClassForCurrentProcess(kSettingClass);
+    const std::wstring ignoreWindowClass = WindowClassForCurrentProcess(kIgnoreClass);
+
     // Settings and the database are ready before any window or WebView exists.
     LoadSettings();
     InitializeDatabase();
@@ -2389,7 +2634,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
 
     // Crash recovery: processes suspended by an earlier instance must be alive
     // again before this instance starts its own freeze cycle.
-    ResumeAllChromeProcesses();
+    if (!IsTestModeEnabled()) {
+        ResumeAllChromeProcesses();
+    }
 
     WNDCLASSW windowClass{};
     windowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -2398,7 +2645,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     windowClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    windowClass.lpszClassName = kWindowClass;
+    windowClass.lpszClassName = mainWindowClass.c_str();
 
     if (!RegisterClassW(&windowClass)) {
         MessageBoxW(nullptr, L"RegisterClassW failed.", L"Error", MB_ICONERROR | MB_OK);
@@ -2412,7 +2659,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     countDownClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
     countDownClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     countDownClass.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    countDownClass.lpszClassName = kCountDownClass;
+    countDownClass.lpszClassName = countDownWindowClass.c_str();
 
     if (!RegisterClassW(&countDownClass)) {
         MessageBoxW(nullptr, L"RegisterClassW for CountDownWindow failed.", L"Error", MB_ICONERROR | MB_OK);
@@ -2426,7 +2673,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     settingClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
     settingClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     settingClass.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    settingClass.lpszClassName = kSettingClass;
+    settingClass.lpszClassName = settingWindowClass.c_str();
 
     if (!RegisterClassW(&settingClass)) {
         MessageBoxW(nullptr, L"RegisterClassW for SettingWindows failed.", L"Error", MB_ICONERROR | MB_OK);
@@ -2440,7 +2687,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     ignoreClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
     ignoreClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     ignoreClass.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    ignoreClass.lpszClassName = kIgnoreClass;
+    ignoreClass.lpszClassName = ignoreWindowClass.c_str();
 
     if (!RegisterClassW(&ignoreClass)) {
         MessageBoxW(nullptr, L"RegisterClassW for IgnoreWordsWindows failed.", L"Error", MB_ICONERROR | MB_OK);
@@ -2461,7 +2708,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
 
     HWND hwnd = CreateWindowExW(
         0,
-        kWindowClass,
+        mainWindowClass.c_str(),
         kWindowTitle,
         WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT, CW_USEDEFAULT,
@@ -2488,7 +2735,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     const int countDownMargin = ScaleForDpi(kCountDownMargin, systemDpi);
     g_countDownWindow = CreateWindowExW(
         WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED,
-        kCountDownClass,
+        countDownWindowClass.c_str(),
         kCountDownTitle,
         WS_POPUP,
         monitorInfo.rcWork.right - countDownWidth - countDownMargin,
@@ -2512,6 +2759,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     if (g_countDownWindow) {
         ShowWindow(g_countDownWindow, SW_SHOW);
         UpdateWindow(g_countDownWindow);
+    }
+
+    if (testOpenSettings) {
+        OpenSettingWindow();
     }
 
     MSG message{};

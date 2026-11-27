@@ -101,3 +101,21 @@ into `build\Release`.
 
 The WebView2 Runtime is normally preinstalled on Windows 11. If it is missing, install the
 Microsoft WebView2 Runtime before launching.
+
+## Tests
+
+Tests use Catch2 and CTest. Each `.cpp` file directly in `tests/` is registered as its own test
+case. Build the app and run every test with:
+
+```bat
+test.bat
+```
+
+Run one test file with:
+
+```bat
+test.bat tests\settings_window_shows_settings_text.cpp
+```
+
+The runtime WebView2 test launches `PomodoroLockCpp.exe` in isolated test mode, opens the real
+Settings window, and asserts that the live WebView DOM contains `Settings`.

@@ -43,31 +43,50 @@ function registerAppProtocol() {
   });
 }
 
-app.whenReady().then(() => {
-  registerAppProtocol();
+function startApp() {
+  app.whenReady().then(() => {
+    registerAppProtocol();
 
-  session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) => {
-    callback(permission === 'media');
+    session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) => {
+      callback(permission === 'media');
+    });
+
+    require('./database/database');
+    require('./ipc').registerIpcHandlers();
+
+    void initializeChromeFreeze().catch(() => {});
+    initializeAutoStart();
+
+    const mainWindow = createWindow();
+    mainWindow.hide();
+
+    createCountdownWindow();
+    createTray(mainWindow, showMainWindow, hideMainWindow, createSettingsWindow);
   });
 
-  require('./database/database');
-  require('./ipc').registerIpcHandlers();
+  // Bring the running instance forward instead of starting a second copy that
+  // would fight over the same frozen Chrome processes.
+  app.on('second-instance', () => showMainWindow());
 
-  initializeChromeFreeze();
-  initializeAutoStart();
+  // Exit and tray Quit must always release Chrome. The guard in the manager
+  // makes these repeated calls harmless.
+  app.on('before-quit', unfreezeChromeOnExit);
+  app.on('will-quit', unfreezeChromeOnExit);
+  app.on('quit', unfreezeChromeOnExit);
+  process.on('exit', unfreezeChromeOnExit);
 
-  const mainWindow = createWindow();
-  mainWindow.hide();
+  // Prevent app exit when all windows are closed while running in tray
+  app.on('window-all-closed', (event) => {
+    event.preventDefault();
+  });
+}
 
-  createCountdownWindow();
-  createTray(mainWindow, showMainWindow, hideMainWindow, createSettingsWindow);
-});
-
-// Exit and tray Quit must always release Chrome.
-app.on('before-quit', unfreezeChromeOnExit);
-app.on('quit', unfreezeChromeOnExit);
-
-// Prevent app exit when all windows are closed while running in tray
-app.on('window-all-closed', (event) => {
-  event.preventDefault();
-});
+// Tests opt into the in-memory mock, where a single-instance lock would only
+// make separate test launches interfere with each other.
+const useTestMock = process.env.WORDLOCK_CHROME_FREEZE_MOCK === '1';
+if (useTestMock || app.requestSingleInstanceLock()) {
+  startApp();
+} else {
+  unfreezeChromeOnExit();
+  app.quit();
+}

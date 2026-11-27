@@ -32,7 +32,9 @@ const { applyAutoStartPreference } = require('./autoStart/autoStartManager');
 
 function applySettings(values) {
   setSettings(values);
-  syncChromeFreeze();
+  // The freeze helper is fire-and-forget: the stdin write happens immediately,
+  // and settings/window changes must stay synchronous for the renderer.
+  void syncChromeFreeze().catch(() => {});
   if (values.autoStart !== undefined) applyAutoStartPreference(values.autoStart);
   broadcastTheme(getSettings().theme);
 }

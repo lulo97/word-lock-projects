@@ -35,7 +35,7 @@ void ConfigureWebViewResources(ICoreWebView2* webView,
                                ComPtr<ICoreWebView2Environment> environmentRef,
                                ComPtr<ICoreWebView2Environment2> environment2,
                                std::wstring assetFolder, bool hasVirtualHostMapping) {
-    webView->AddWebResourceRequestedFilter(L"http://app/*",
+    webView->AddWebResourceRequestedFilter(L"https://app/*",
                                            COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
     webView->add_WebResourceRequested(
         Callback<ICoreWebView2WebResourceRequestedEventHandler>(

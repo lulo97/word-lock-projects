@@ -15,7 +15,7 @@ std::wstring GetExecutableDirectory() {
 }
 
 std::wstring AppAssetUrl(const wchar_t* file) {
-    return std::wstring(L"http://app/") + file;
+    return std::wstring(kAppUriPrefix) + file;
 }
 
 bool IsTestDataMode() {

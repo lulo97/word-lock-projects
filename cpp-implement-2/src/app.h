@@ -144,7 +144,7 @@ LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
 constexpr wchar_t kTestCommandFileEnv[] = L"WORDLOCK_TEST_COMMAND_FILE";
 constexpr wchar_t kTestMessageLogFileEnv[] = L"WORDLOCK_TEST_MESSAGE_LOG_FILE";
-constexpr wchar_t kAppUriPrefix[] = L"http://app/";
+constexpr wchar_t kAppUriPrefix[] = L"https://app/";
 
 using WebViewReady = std::function<void(ComPtr<ICoreWebView2>&)>;
 using NtProcessFn = LONG(NTAPI*)(HANDLE);

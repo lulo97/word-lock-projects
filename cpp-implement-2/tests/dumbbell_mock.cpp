@@ -140,6 +140,13 @@ TEST_CASE("Dumbbell mock uses heavy model and advances reps",
   function signal(type) {
     if (!seen[type]) { seen[type] = true; window.app.send(type); }
   }
+  if (window.isSecureContext && window.location.protocol === 'https:') {
+    signal('dumbbell:secure-origin');
+  }
+  if (navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === 'function') {
+    signal('dumbbell:media-devices');
+  }
   fetch('mediapipe/vision_bundle.mjs', { method: 'HEAD' }).then(function (response) {
     var contentType = response.headers.get('content-type') || '';
     if (response.ok && contentType.indexOf('javascript') >= 0) {
@@ -156,7 +163,8 @@ TEST_CASE("Dumbbell mock uses heavy model and advances reps",
     var right = document.getElementById('right-reps');
     if (left && left.textContent !== '0 / 10') signal('dumbbell:reps-advancing');
     if (right && right.textContent !== '0 / 10') signal('dumbbell:both-arms');
-    if (seen['dumbbell:mjs-mime-ok'] && seen['dumbbell:model-heavy'] &&
+    if (seen['dumbbell:secure-origin'] && seen['dumbbell:media-devices'] &&
+        seen['dumbbell:mjs-mime-ok'] && seen['dumbbell:model-heavy'] &&
         seen['dumbbell:mock-detecting'] && seen['dumbbell:reps-advancing'] &&
         seen['dumbbell:both-arms']) {
       clearInterval(timer);
@@ -190,7 +198,8 @@ TEST_CASE("Dumbbell mock uses heavy model and advances reps",
     REQUIRE(WaitForNonEmptyFile(dumpFile, 2000));
 
     const std::vector<std::string> requiredMessages{
-        "dumbbell:mjs-mime-ok", "dumbbell:model-heavy", "dumbbell:mock-detecting",
+        "dumbbell:secure-origin", "dumbbell:media-devices", "dumbbell:mjs-mime-ok",
+        "dumbbell:model-heavy", "dumbbell:mock-detecting",
         "dumbbell:reps-advancing", "dumbbell:both-arms"};
     REQUIRE(WaitForAllMessages(messageLog, requiredMessages, 2500));
 

@@ -1,4 +1,4 @@
-# Win32 Hello World
+# PomodoroLockCpp
 
 A C++/Win32 tray application that locks the active task screen between countdowns.
 Task screens are hosted in WebView2 and call native services (SQLite, settings, TTS,
@@ -73,12 +73,20 @@ automatically.
 
 ## Build
 
-Dependencies are declared in `vcpkg.json` (`webview2`, `sqlite3`). Configure with the vcpkg
-toolchain:
+Dependencies are declared in `vcpkg.json` (`webview2`, `sqlite3`). Build with one command from
+this folder:
+
+```bat
+build.bat
+```
+
+`build.bat` configures `build` with the vcpkg toolchain when needed, then builds Release. The
+equivalent manual commands are:
 
 ```powershell
 cmake -S . -B build -A x64 `
-  "-DCMAKE_TOOLCHAIN_FILE=C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake"
+  "-DCMAKE_TOOLCHAIN_FILE=C:/Program Files/Microsoft Visual Studio/18/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake" `
+  -DVCPKG_TARGET_TRIPLET=x64-windows
 cmake --build build --config Release
 ```
 

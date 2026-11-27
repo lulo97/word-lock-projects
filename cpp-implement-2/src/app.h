@@ -51,6 +51,7 @@ constexpr wchar_t kTrayTip[] = L"PomodoroLockCpp";
 constexpr wchar_t kSingleInstanceMutexName[] = L"Local\\PomodoroLockCppSingleInstance";
 constexpr wchar_t kChromeProcessName[] = L"chrome.exe";
 constexpr wchar_t kChromeFreezeMockEnv[] = L"WORDLOCK_CHROME_FREEZE_MOCK";
+constexpr wchar_t kTestChromeFreezeEnv[] = L"WORDLOCK_TEST_CHROME_FREEZE";
 constexpr wchar_t kUseTestDataEnv[] = L"WORDLOCK_USE_TEST_DATA";
 constexpr wchar_t kTestModeEnv[] = L"WORDLOCK_TEST_MODE";
 constexpr wchar_t kTestHomeEnv[] = L"WORDLOCK_TEST_HOME";

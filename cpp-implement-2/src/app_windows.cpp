@@ -7,6 +7,7 @@ void ShowMainWindow() {
     if (g_mainWindow && IsWindow(g_mainWindow)) {
         ShowWindow(g_mainWindow, SW_MAXIMIZE);
         SetForegroundWindow(g_mainWindow);
+        SyncChromeFreeze();
 
         const TaskType task = GetNextTaskType();
 

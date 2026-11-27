@@ -18,6 +18,7 @@ void StartCountdown() {
     HideSettingsWindows();
     if (g_mainWindow && IsWindow(g_mainWindow)) {
         ShowWindow(g_mainWindow, SW_HIDE);
+        SyncChromeFreeze();
     }
     if (g_countDownWindow && IsWindow(g_countDownWindow)) {
         KillTimer(g_countDownWindow, kCountDownTimerId);

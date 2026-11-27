@@ -43,6 +43,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         // Minimize goes to the tray; use the tray icon or menu to bring it back.
         if (wParam == SIZE_MINIMIZED) {
             ShowWindow(hwnd, SW_HIDE);
+            SyncChromeFreeze();
             return 0;
         }
         UpdateWebViewBounds(hwnd, g_mainViewController);
@@ -53,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         return 0;
 
     case WM_TIMER:
-        if (wParam == kChromeFreezeTimerId) {
+        if (wParam == kChromeFreezeTimerId && g_settings.chromeFreeze && IsWindowVisible(hwnd)) {
             FreezeChromeProcesses();
         }
         return 0;

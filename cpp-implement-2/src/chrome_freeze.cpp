@@ -28,7 +28,11 @@ void ResumeAllChromeProcesses() {
 }
 
 void FreezeChromeProcesses() {
-    if (IsTestModeEnabled() || IsChromeFreezeMockEnabled()) {
+    if (IsChromeFreezeMockEnabled()) {
+        AppendTestMessageLog(L"chrome:freeze");
+        return;
+    }
+    if (IsTestModeEnabled()) {
         return;
     }
 

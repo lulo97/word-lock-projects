@@ -4,6 +4,7 @@ namespace wordlock {
 
 void UnfreezeHeldChromeProcesses() {
     if (IsChromeFreezeMockEnabled()) {
+        AppendTestMessageLog(L"chrome:unfreeze");
         g_heldChromeProcesses.clear();
         return;
     }
@@ -32,10 +33,14 @@ void UnfreezeChromeOnExit() {
 }
 
 void SyncChromeFreeze() {
-    if (IsTestModeEnabled() || !g_mainWindow || !IsWindow(g_mainWindow)) {
+    if (!g_mainWindow || !IsWindow(g_mainWindow)) {
         return;
     }
-    if (g_settings.chromeFreeze) {
+    if (IsTestModeEnabled() && !IsChromeFreezeMockEnabled()) {
+        return;
+    }
+    const bool shouldFreeze = g_settings.chromeFreeze && IsWindowVisible(g_mainWindow);
+    if (shouldFreeze) {
         FreezeChromeProcesses();
         SetTimer(g_mainWindow, kChromeFreezeTimerId, 2000, nullptr);
     } else {

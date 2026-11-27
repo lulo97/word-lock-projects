@@ -5,6 +5,7 @@ namespace wordlock {
 void LoadSettings() {
     g_settings = AppSettings{};
     if (IsTestDataMode()) {
+        g_settings.chromeFreeze = EnvFlagEnabled(kTestChromeFreezeEnv);
         return;
     }
 

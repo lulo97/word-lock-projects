@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --text: #1f2430;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --track: #d1d5db;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .settings {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .settings__header h1 {
+      margin: 0 0 20px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .row:first-of-type { border-top: 0; }
+
+    .row__text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .row__text label,
+    .row__text .row__title {
+      font-weight: 500;
+    }
+
+    .row__text small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Switch toggle */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 24px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .switch__track {
+      display: block;
+      width: 42px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--track);
+      transition: background 0.15s ease;
+    }
+
+    .switch__thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s ease;
+    }
+
+    .switch input:checked + .switch__track { background: var(--accent); }
+    .switch input:checked + .switch__track .switch__thumb { transform: translateX(18px); }
+    .switch input:focus-visible + .switch__track { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Inputs */
+    input[type="number"] {
+      width: 110px;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font: inherit;
+      color: inherit;
+    }
+
+    .volume {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    #volumeValue {
+      min-width: 42px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--accent);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: #f9fafb; }
+    .btn--soft { background: #f3f4f6; }
+    .btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn--primary:hover { background: var(--accent-hover); }
+
+    /* Theme grid */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .theme-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .theme-card::before {
+      content: "";
+      width: 100%;
+      height: 34px;
+      border-radius: 5px;
+      background: var(--swatch);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .theme-card:hover,
+    .theme-card:focus-visible { border-color: var(--accent); }
+
+    .theme-card[aria-pressed="true"] {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+    }
+
+    /* Footer */
+    .footer {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 24px;
+      background: rgba(255, 255, 255, 0.96);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body>
+  <main class="settings">
+    <header class="settings__header">
+      <h1>Settings</h1>
+    </header>
+
+    <section class="section" aria-labelledby="tasks-heading">
+      <h2 id="tasks-heading">Tasks</h2>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="englishWord">English word</label>
+          <small>Include English typing tasks</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="englishWord" checked>
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="multipleChoice">Multiple choice</label>
+          <small>Include multiple-choice tasks</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="multipleChoice" checked>
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="japaneseWord">Japanese word</label>
+          <small>Include Japanese romaji typing tasks</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="japaneseWord" checked>
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="dumbbellWorkout">Dumbbell workout</label>
+          <small>Include dumbbell curl workout tasks</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="dumbbellWorkout">
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="row__text">
+          <span class="row__title">Ignore words…</span>
+          <small>Open the separate Ignore Words window</small>
+        </div>
+        <button type="button" id="openIgnoreWords" class="btn btn--soft">Ignore words…</button>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="timing-heading">
+      <h2 id="timing-heading">Timing and sound</h2>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="countdownSeconds">Countdown (seconds)</label>
+          <small>Allowed range: 1–3600</small>
+        </div>
+        <input type="number" id="countdownSeconds" min="1" max="3600" step="1" value="60">
+      </div>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="masterVolume">Master volume</label>
+          <small>0 = mute, 4 = max</small>
+        </div>
+        <div class="volume">
+          <input type="range" id="masterVolume" min="0" max="4" step="0.5" value="1">
+          <output id="volumeValue" for="masterVolume">1×</output>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="system-heading">
+      <h2 id="system-heading">System</h2>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="chromeFreeze">Freeze Chrome while locked</label>
+          <small>Suspend Chrome processes while the desktop is locked</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="chromeFreeze">
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="autoStart">Start with Windows</label>
+          <small>Launch the app at login</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="autoStart">
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="appearance-heading">
+      <h2 id="appearance-heading">Appearance</h2>
+
+      <div class="row">
+        <div class="row__text">
+          <label for="autoTheme">Auto-change theme after a task</label>
+          <small>Cycle to the next theme after completing a task</small>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="autoTheme">
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="theme-grid" id="themeGrid" role="group" aria-label="Theme">
+        <button type="button" class="theme-card" data-theme="paper" aria-pressed="true" style="--swatch: #f5f0e6;">paper</button>
+        <button type="button" class="theme-card" data-theme="brutal" aria-pressed="false" style="--swatch: #ffd400;">brutal</button>
+        <button type="button" class="theme-card" data-theme="candy" aria-pressed="false" style="--swatch: #ffb3c6;">candy</button>
+        <button type="button" class="theme-card" data-theme="glass" aria-pressed="false" style="--swatch: linear-gradient(135deg, #dbeafe, #f3e8ff);">glass</button>
+        <button type="button" class="theme-card" data-theme="midnight" aria-pressed="false" style="--swatch: #111827;">midnight</button>
+        <button type="button" class="theme-card" data-theme="notebook" aria-pressed="false" style="--swatch: repeating-linear-gradient(#fff, #fff 5px, #e5e7eb 6px);">notebook</button>
+        <button type="button" class="theme-card" data-theme="sakura" aria-pressed="false" style="--swatch: #ffe4e6;">sakura</button>
+        <button type="button" class="theme-card" data-theme="synthwave" aria-pressed="false" style="--swatch: linear-gradient(135deg, #f0f, #0ff);">synthwave</button>
+        <button type="button" class="theme-card" data-theme="terminal" aria-pressed="false" style="--swatch: #000000;">terminal</button>
+        <button type="button" class="theme-card" data-theme="zen" aria-pressed="false" style="--swatch: #e7e5e4;">zen</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <button type="button" id="cancel" class="btn">Cancel</button>
+    <button type="button" id="confirm" class="btn btn--primary">Confirm</button>
+  </footer>
+</body>
+</html>

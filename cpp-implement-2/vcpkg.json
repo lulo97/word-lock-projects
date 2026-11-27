@@ -1,0 +1,8 @@
+{
+  "name": "win32-word-lock",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "webview2"
+  ],
+  "builtin-baseline": "99541cc939bf01ae3c42f928266d648f5acb88fd"
+}

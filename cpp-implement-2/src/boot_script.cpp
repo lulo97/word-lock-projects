@@ -70,6 +70,9 @@ std::wstring BuildBootScript(const std::wstring& theme) {
       emit(data.type, data);
     });
   }
+  api.call('theme:get').then(function (value) {
+    if (value) applyTheme(value);
+  }).catch(function () {});
 })();)JS";
 
     const size_t themePosition = script.find(L"__THEME__");

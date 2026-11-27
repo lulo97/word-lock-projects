@@ -8,9 +8,7 @@ void HandleAppMessage(const std::wstring& type, const std::wstring& message,
         ShowMainWindow();
     } else if (type == L"app:exitInfo") {
         if (g_settings.autoTheme) {
-            g_settings.theme = NextThemeId(g_settings.theme);
-            SaveSettings();
-            BroadcastTheme(g_settings.theme);
+            AdvanceTheme();
         }
         StartCountdown();
     } else if (type == L"tts:speak") {

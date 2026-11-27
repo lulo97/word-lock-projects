@@ -219,6 +219,8 @@ void UnfreezeChromeOnExit();
 void SyncChromeFreeze();
 void StopCountdown();
 void StartCountdown();
+void AdvanceTheme();
+void SkipCurrentTask();
 void RememberCountDownPosition(HWND hwnd);
 void ApplyCountDownPosition(HWND hwnd);
 TaskType GetNextTaskType();

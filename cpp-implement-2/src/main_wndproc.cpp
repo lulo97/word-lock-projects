@@ -63,9 +63,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         if (g_isQuitting) {
             QuitApp();
         } else {
-            // Closing MainWindow returns to a fresh 60s countdown instead of
-            // ending the process; the tray icon keeps the app alive.
-            StartCountdown();
+            SkipCurrentTask();
         }
         return 0;
 

@@ -7,6 +7,8 @@ sqlite3* g_db = nullptr;
 int g_nextTaskIndex = 0;
 TaskType g_currentTask = TaskType::English;
 int g_countdownSeconds = kCountDownStartSeconds;
+POINT g_countDownPosition{};
+bool g_countDownPositionValid = false;
 
 std::vector<WebViewBinding> g_webViewBindings;
 std::unordered_map<DWORD, FILETIME> g_heldChromeProcesses;

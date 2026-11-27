@@ -3,10 +3,26 @@
 namespace wordlock {
 
 LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    static bool cursorLogged = false;
     switch (message) {
     case WM_DPICHANGED:
         HandleDpiChanged(hwnd, lParam);
         return 0;
+
+    case WM_SETCURSOR:
+        SetCursor(LoadCursor(nullptr, IDC_SIZEALL));
+        if (!cursorLogged && IsTestModeEnabled()) {
+            AppendTestMessageLog(L"countdown:cursor-sizeall");
+            cursorLogged = true;
+        }
+        return TRUE;
+
+    case WM_NCHITTEST:
+        return HTCAPTION;
+
+    case WM_MOVE:
+        RememberCountDownPosition(hwnd);
+        break;
 
     case WM_CREATE:
         g_countdownSeconds = std::clamp(g_settings.countdownSeconds, 1, 3600);

@@ -37,6 +37,7 @@ void CreateCountDownWindow(HINSTANCE hInstance, const wchar_t* className, UINT d
         width, height, nullptr, nullptr, hInstance, nullptr);
     if (g_countDownWindow) {
         SetLayeredWindowAttributes(g_countDownWindow, 0, kCountDownOpacity, LWA_ALPHA);
+        RememberCountDownPosition(g_countDownWindow);
     } else {
         MessageBoxW(nullptr, L"CreateWindowExW for CountDownWindow failed.",
                     L"Error", MB_ICONERROR | MB_OK);

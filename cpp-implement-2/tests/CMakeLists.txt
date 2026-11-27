@@ -20,3 +20,7 @@ foreach(test_source IN LISTS TEST_SOURCES)
         TIMEOUT 10
     )
 endforeach()
+
+# This test injects real mouse input, so it must not share the cursor with
+# other parallel runtime tests.
+set_tests_properties(countdown_draggable PROPERTIES RUN_SERIAL TRUE)

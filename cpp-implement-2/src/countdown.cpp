@@ -22,6 +22,7 @@ void StartCountdown() {
     if (g_countDownWindow && IsWindow(g_countDownWindow)) {
         KillTimer(g_countDownWindow, kCountDownTimerId);
         SetTimer(g_countDownWindow, kCountDownTimerId, 1000, nullptr);
+        ApplyCountDownPosition(g_countDownWindow);
         ShowWindow(g_countDownWindow, SW_SHOW);
         UpdateWindow(g_countDownWindow);
     }

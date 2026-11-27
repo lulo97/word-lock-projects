@@ -118,6 +118,8 @@ extern sqlite3* g_db;
 extern int g_nextTaskIndex;
 extern TaskType g_currentTask;
 extern int g_countdownSeconds;
+extern POINT g_countDownPosition;
+extern bool g_countDownPositionValid;
 
 struct WebViewBinding {
     ComPtr<ICoreWebView2Controller> controller;
@@ -202,6 +204,8 @@ void UnfreezeChromeOnExit();
 void SyncChromeFreeze();
 void StopCountdown();
 void StartCountdown();
+void RememberCountDownPosition(HWND hwnd);
+void ApplyCountDownPosition(HWND hwnd);
 TaskType GetNextTaskType();
 const wchar_t* TaskAsset(TaskType task);
 void NavigateMainToTask(TaskType task);

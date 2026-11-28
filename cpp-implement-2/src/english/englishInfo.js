@@ -19,6 +19,7 @@
     window.infoUI.setText('id', row.id);
     window.infoUI.setText('word', row.word);
     window.infoUI.setText('meaning_vi', row.meaning_vi);
+    window.infoUI.setText('part_of_speech', row.part_of_speech || 'unknown');
 
     var examples = row.examples || [];
     var translations = row.examples_vi || [];

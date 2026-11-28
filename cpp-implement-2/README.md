@@ -51,6 +51,9 @@ automatically.
   still exposes `window.__dumbbellTest.feedPose(left, right, null, now)` for synthetic poses.
 - **Enter** on any info/result screen exits to the countdown, advancing the theme first when
   `autoTheme` is enabled.
+- English and Japanese info screens show the word's most common part of speech
+  (`noun`, `verb`, `adjective`, ...) from the `part_of_speech` column. Older databases get the
+  column added automatically on startup, defaulting existing rows to `noun`.
 
 ## Native services
 

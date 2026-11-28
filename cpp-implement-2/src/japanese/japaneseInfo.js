@@ -20,6 +20,7 @@
     ['id', 'kanji', 'hiragana', 'katakana', 'romaji', 'meaning_en'].forEach(function (key) {
       window.infoUI.setText(key, row[key]);
     });
+    window.infoUI.setText('part_of_speech', row.part_of_speech || 'unknown');
 
     var examples = row.examples || [];
     var english = row.examples_en || [];

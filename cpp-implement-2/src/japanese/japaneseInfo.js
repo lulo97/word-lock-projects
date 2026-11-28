@@ -21,6 +21,7 @@
       window.infoUI.setText(key, row[key]);
     });
     window.infoUI.setText('part_of_speech', row.part_of_speech || 'unknown');
+    window.infoUI.setSvgIcon(row.svg_icon, 'svg_icon_frame', 'svg_icon');
 
     var examples = row.examples || [];
     var english = row.examples_en || [];

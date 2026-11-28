@@ -7,6 +7,22 @@
     if (element) element.textContent = String(value);
   }
 
+  function setSvgIcon(svg, frameId, imageId) {
+    var frame = document.getElementById(frameId);
+    var image = document.getElementById(imageId);
+    if (!frame || !image) return;
+
+    var value = typeof svg === 'string' ? svg.trim() : '';
+    if (!value || value.indexOf('<svg') !== 0 || value.indexOf('<script') >= 0) {
+      frame.hidden = true;
+      image.removeAttribute('src');
+      return;
+    }
+
+    image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(value);
+    frame.hidden = false;
+  }
+
   function renderExamples(containerId, rows, lang) {
     var container = document.getElementById(containerId);
     if (!container) return;
@@ -36,5 +52,9 @@
     });
   }
 
-  window.infoUI = { setText: setText, renderExamples: renderExamples };
+  window.infoUI = {
+    setText: setText,
+    renderExamples: renderExamples,
+    setSvgIcon: setSvgIcon
+  };
 })();

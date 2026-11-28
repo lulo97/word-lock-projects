@@ -20,6 +20,7 @@
     window.infoUI.setText('word', row.word);
     window.infoUI.setText('meaning_vi', row.meaning_vi);
     window.infoUI.setText('part_of_speech', row.part_of_speech || 'unknown');
+    window.infoUI.setSvgIcon(row.svg_icon, 'svg_icon_frame', 'svg_icon');
 
     var examples = row.examples || [];
     var translations = row.examples_vi || [];

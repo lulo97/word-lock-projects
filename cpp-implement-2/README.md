@@ -54,6 +54,9 @@ automatically.
 - English and Japanese info screens show the word's most common part of speech
   (`noun`, `verb`, `adjective`, ...) from the `part_of_speech` column. Older databases get the
   column added automatically on startup, defaulting existing rows to `noun`.
+- The `svg_icon` column stores a wordless SVG illustration rendered as a small decorative image
+  on the info screens. Rows without an icon simply show no image. The column is added
+  automatically on startup.
 
 ## Native services
 

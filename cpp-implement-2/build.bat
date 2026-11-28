@@ -29,8 +29,27 @@ if not exist "build\CMakeCache.txt" (
 )
 
 echo Building PomodoroLockCpp (Release)...
-"%CMAKE_EXE%" --build build --config Release --parallel
-if errorlevel 1 exit /b 1
+set "BUILD_LOG=%TEMP%\pomodorolock_build_%RANDOM%.txt"
+"%CMAKE_EXE%" --build build --config Release --parallel > "%BUILD_LOG%" 2>&1
+set "BUILD_RC=%ERRORLEVEL%"
+type "%BUILD_LOG%"
+if not "%BUILD_RC%"=="0" (
+    del "%BUILD_LOG%" >nul 2>&1
+    exit /b %BUILD_RC%
+)
+
+rem A new tests/*.cpp file makes CMake regenerate the projects mid-build; the
+rem newly added test target only appears in the next build invocation.
+findstr /C:"GLOB mismatch" /C:"CMake is re-running" "%BUILD_LOG%" >nul
+if not errorlevel 1 (
+    echo Test sources changed; rebuilding with regenerated projects...
+    "%CMAKE_EXE%" --build build --config Release --parallel
+    if errorlevel 1 (
+        del "%BUILD_LOG%" >nul 2>&1
+        exit /b 1
+    )
+)
+del "%BUILD_LOG%" >nul 2>&1
 
 echo.
 echo Build complete: build\Release\PomodoroLockCpp.exe

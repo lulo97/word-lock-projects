@@ -28,13 +28,30 @@ bool TryGetStringArrayField(const std::wstring& json,
         }
         ++index;
         std::wstring value;
-        while (index < json.size() && json[index] != L'"') {
-            value.push_back(json[index++]);
+        bool closed = false;
+        while (index < json.size()) {
+            wchar_t ch = json[index++];
+            if (ch == L'"') {
+                closed = true;
+                break;
+            }
+            if (ch == L'\\' && index < json.size()) {
+                ch = json[index++];
+                switch (ch) {
+                case L'n': ch = L'\n'; break;
+                case L'r': ch = L'\r'; break;
+                case L't': ch = L'\t'; break;
+                case L'"': break;
+                case L'\\': break;
+                case L'/': break;
+                default: break;
+                }
+            }
+            value.push_back(ch);
         }
-        if (index >= json.size()) {
+        if (!closed) {
             return false;
         }
-        ++index;
         out.push_back(value);
     }
     return false;

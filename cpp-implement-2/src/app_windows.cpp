@@ -56,6 +56,9 @@ void HideSettingsWindows() {
     if (g_ignoreWordsWindow && IsWindow(g_ignoreWordsWindow)) {
         ShowWindow(g_ignoreWordsWindow, SW_HIDE);
     }
+    // Closing settings resumes the timer only if the user did not stop the
+    // countdown from the tray menu.
+    ResumeCountdownForSettings();
 }
 
 void UpdateWebViewBounds(HWND hwnd, ComPtr<ICoreWebView2Controller>& controller) {

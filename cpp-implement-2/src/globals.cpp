@@ -8,6 +8,7 @@ int g_nextTaskIndex = 0;
 TaskType g_currentTask = TaskType::English;
 int g_countdownSeconds = kCountDownStartSeconds;
 bool g_countdownPaused = false;
+bool g_countdownSettingsPaused = false;
 std::wstring g_countDownTheme = L"paper";
 POINT g_countDownPosition{};
 bool g_countDownPositionValid = false;

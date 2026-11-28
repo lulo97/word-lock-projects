@@ -130,6 +130,7 @@ extern int g_nextTaskIndex;
 extern TaskType g_currentTask;
 extern int g_countdownSeconds;
 extern bool g_countdownPaused;
+extern bool g_countdownSettingsPaused;
 extern POINT g_countDownPosition;
 extern bool g_countDownPositionValid;
 
@@ -230,7 +231,10 @@ void StopCountdown();
 void StartCountdown();
 void PauseCountdown();
 void ResumeCountdown();
-bool IsCountdownRunning();   // visible and not paused
+void SyncCountdownTimer();
+void PauseCountdownForSettings();
+void ResumeCountdownForSettings();
+bool IsCountdownRunning();   // visible and not paused by the tray or settings
 void AdvanceTheme();
 void FinishCurrentTask();
 void RememberCountDownPosition(HWND hwnd);

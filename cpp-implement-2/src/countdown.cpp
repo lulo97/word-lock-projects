@@ -4,6 +4,7 @@ namespace wordlock {
 
 void StopCountdown() {
     g_countdownPaused = false;
+    g_countdownSettingsPaused = false;
     if (g_countDownWindow && IsWindow(g_countDownWindow)) {
         KillTimer(g_countDownWindow, kCountDownTimerId);
         ShowWindow(g_countDownWindow, SW_HIDE);
@@ -12,6 +13,7 @@ void StopCountdown() {
 
 void StartCountdown() {
     g_countdownPaused = false;
+    g_countdownSettingsPaused = false;
     g_countdownSeconds = std::clamp(g_settings.countdownSeconds, 1, 3600);
 
     if (!g_isQuitting) {
@@ -23,9 +25,7 @@ void StartCountdown() {
         SyncChromeFreeze();
     }
     if (g_countDownWindow && IsWindow(g_countDownWindow)) {
-        KillTimer(g_countDownWindow, kCountDownTimerId);
-        SetTimer(g_countDownWindow, kCountDownTimerId,
-                 TestIntervalMs(kTestCountdownTickMsEnv, 1000), nullptr);
+        SyncCountdownTimer();
         ApplyCountDownPosition(g_countDownWindow);
         ShowWindow(g_countDownWindow, SW_SHOW);
         UpdateWindow(g_countDownWindow);
@@ -37,8 +37,8 @@ void PauseCountdown() {
         !IsWindowVisible(g_countDownWindow)) {
         return;
     }
-    KillTimer(g_countDownWindow, kCountDownTimerId);
     g_countdownPaused = true;
+    SyncCountdownTimer();
 }
 
 void ResumeCountdown() {
@@ -46,13 +46,29 @@ void ResumeCountdown() {
         return;
     }
     g_countdownPaused = false;
-    SetTimer(g_countDownWindow, kCountDownTimerId,
-             TestIntervalMs(kTestCountdownTickMsEnv, 1000), nullptr);
+    SyncCountdownTimer();
+}
+
+void PauseCountdownForSettings() {
+    if (g_countdownSettingsPaused) {
+        return;
+    }
+    g_countdownSettingsPaused = true;
+    SyncCountdownTimer();
+}
+
+void ResumeCountdownForSettings() {
+    if (!g_countdownSettingsPaused) {
+        return;
+    }
+    g_countdownSettingsPaused = false;
+    SyncCountdownTimer();
 }
 
 bool IsCountdownRunning() {
     return g_countDownWindow && IsWindow(g_countDownWindow) &&
-           IsWindowVisible(g_countDownWindow) && !g_countdownPaused;
+           IsWindowVisible(g_countDownWindow) && !g_countdownPaused &&
+           !g_countdownSettingsPaused;
 }
 
 const wchar_t* TaskAsset(TaskType task) {

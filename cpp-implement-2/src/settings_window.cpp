@@ -3,6 +3,9 @@
 namespace wordlock {
 
 void OpenSettingWindow() {
+    // Keep the countdown window visible, but stop its timer while settings are
+    // open. This is independent of a tray pause.
+    PauseCountdownForSettings();
     if (g_settingWindow && IsWindow(g_settingWindow)) {
         SendSettingsToSettingsWebView();
         ShowWindow(g_settingWindow, SW_SHOW);
@@ -32,6 +35,8 @@ void OpenSettingWindow() {
     if (g_settingWindow) {
         ShowWindow(g_settingWindow, SW_SHOW);
         UpdateWindow(g_settingWindow);
+    } else {
+        ResumeCountdownForSettings();
     }
 }
 

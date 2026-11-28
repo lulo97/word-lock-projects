@@ -31,6 +31,14 @@ void InitializeDatabase() {
                "language TEXT NOT NULL, word_id INTEGER NOT NULL, "
                "show_count INTEGER NOT NULL DEFAULT 0, "
                "PRIMARY KEY(language, word_id))");
+    ExecuteSql("CREATE TABLE IF NOT EXISTS tts_cache ("
+               "lang TEXT NOT NULL, voice TEXT NOT NULL, text TEXT NOT NULL, "
+               "audio BLOB NOT NULL, byte_size INTEGER NOT NULL, "
+               "created_at INTEGER NOT NULL, last_used_at INTEGER NOT NULL, "
+               "hit_count INTEGER NOT NULL DEFAULT 0, "
+               "PRIMARY KEY(lang, voice, text))");
+    ExecuteSql("CREATE INDEX IF NOT EXISTS idx_tts_cache_last_used "
+               "ON tts_cache(last_used_at)");
 
     EnsureColumn("english_word", "examples_vi", "TEXT NOT NULL DEFAULT '[]'");
     EnsureColumn("english_word", "part_of_speech", "TEXT NOT NULL DEFAULT 'noun'");

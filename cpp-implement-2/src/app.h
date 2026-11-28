@@ -75,6 +75,9 @@ constexpr wchar_t kTtsHost[] = L"127.0.0.1";
 constexpr unsigned short kTtsPort = 8080;
 constexpr wchar_t kTtsPath[] = L"/tts";
 constexpr wchar_t kTtsUnavailableMessage[] = L"TTS server is not available at 127.0.0.1:8080.";
+constexpr wchar_t kTtsMockEnv[] = L"WORDLOCK_TTS_MOCK";
+constexpr char kTtsVoice[] = "female";
+constexpr int64_t kTtsCacheMaxBytes = 200LL * 1024 * 1024;
 
 constexpr int kCountDownWidth = 100;
 constexpr int kCountDownHeight = 50;
@@ -315,6 +318,35 @@ std::wstring JsonEscape(const std::wstring& value);
 std::wstring JsLiteral(const std::wstring& value);
 const wchar_t* BoolLiteral(bool value);
 void ShowTrayMenu(HWND hwnd);
+std::wstring NormalizeTtsText(const std::wstring& text);
+bool TtsCacheGet(const std::string& lang, const std::string& voice,
+                 const std::string& text, std::vector<unsigned char>& audio);
+bool TtsCachePut(const std::string& lang, const std::string& voice,
+                 const std::string& text, const std::vector<unsigned char>& audio);
+bool TtsCacheRemove(const std::string& lang, const std::string& voice,
+                    const std::string& text);
+void TtsCacheEvict(int64_t maxBytes);
+int64_t TtsCacheTotalBytes();
+struct TtsTempFiles {
+    std::filesystem::path input;
+    std::filesystem::path output;
+    ~TtsTempFiles();
+};
+TtsTempFiles MakeTtsTempFiles(const wchar_t* inputExtension,
+                              const wchar_t* outputExtension);
+bool WriteTtsTempFile(const std::filesystem::path& path,
+                      const std::vector<unsigned char>& bytes);
+bool ReadTtsTempFile(const std::filesystem::path& path,
+                     std::vector<unsigned char>& bytes);
+std::wstring QuoteTtsPath(const std::filesystem::path& path);
+bool RunTtsFfmpeg(const std::wstring& arguments);
+bool ConvertWavToOgg(const std::vector<unsigned char>& wav,
+                     std::vector<unsigned char>& ogg);
+bool ConvertOggToWav(const std::vector<unsigned char>& ogg,
+                     std::vector<unsigned char>& wav);
+bool TryGetMockTtsWav(std::vector<unsigned char>& wav);
+bool FetchTtsWav(const std::wstring& text, const std::wstring& lang,
+                 std::vector<unsigned char>& wav, std::wstring& error);
 bool SynthesizeTts(const std::wstring& text,
                    const std::wstring& lang,
                    std::wstring& wavBase64,

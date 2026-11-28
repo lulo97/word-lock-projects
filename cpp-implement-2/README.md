@@ -66,6 +66,11 @@ automatically.
 - Ignore words are filtered case-insensitively from random English and Japanese queries.
 - Speech posts `{"input","lang","voice":"female"}` to `http://127.0.0.1:8080/tts`; when the
   server is unavailable, automatic speech stays quiet while button clicks show an error.
+- Successful speech is cached in the `tts_cache` table as un-gained OGG bytes, keyed by
+  `(lang, voice, trimmed text)`. On every read the cache decodes OGG back to WAV with `ffmpeg.exe`
+  (PATH) and applies the current master volume, so changing volume does not serve stale loudness.
+  `ffmpeg` compresses a ~46 KB WAV to ~9 KB OGG in testing; a 200 MB LRU cap prunes old rows.
+  Cache hits work offline, and speech still works uncached if `ffmpeg` is missing.
 - Chrome freeze records each PID's start time before `NtSuspendProcess`, refreezes every
   2 seconds, resumes on disable/exit, and resumes leftovers on the next startup.
 - Auto-start writes `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\PomodoroLockCpp`,
@@ -76,6 +81,10 @@ automatically.
 
 - `WORDLOCK_USE_TEST_DATA=1` — in-memory SQLite and in-memory settings defaults.
 - `WORDLOCK_CHROME_FREEZE_MOCK=1` — disables the single-instance mutex and Chrome freeze.
+- `WORDLOCK_TTS_MOCK=1` — replaces the network call with a short synthetic WAV; `fail` simulates an
+  offline TTS server.
+- `WORDLOCK_TTS_TEST_FORCE_MOCK=1` — forces the TTS cache integration test down its mock branch
+  even when port 8080 is listening.
 - `WORDLOCK_TEST_MODE=1` — enables test hooks (message log, DOM dump, command script, and
   per-process window class suffixes). The harness in `tests/support/app_harness.h` sets these for
   every runtime test:

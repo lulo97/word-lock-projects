@@ -97,6 +97,7 @@ constexpr UINT kTrayIconId = 1;
 constexpr UINT ID_TRAY_OPEN = 1;
 constexpr UINT ID_TRAY_SETTING = 2;
 constexpr UINT ID_TRAY_EXIT = 3;
+constexpr UINT ID_TRAY_COUNTDOWN = 4;
 
 struct TaskSettings {
     bool englishWord = true;
@@ -128,6 +129,7 @@ extern sqlite3* g_db;
 extern int g_nextTaskIndex;
 extern TaskType g_currentTask;
 extern int g_countdownSeconds;
+extern bool g_countdownPaused;
 extern POINT g_countDownPosition;
 extern bool g_countDownPositionValid;
 
@@ -226,6 +228,9 @@ void UnfreezeChromeOnExit();
 void SyncChromeFreeze();
 void StopCountdown();
 void StartCountdown();
+void PauseCountdown();
+void ResumeCountdown();
+bool IsCountdownRunning();   // visible and not paused
 void AdvanceTheme();
 void FinishCurrentTask();
 void RememberCountDownPosition(HWND hwnd);

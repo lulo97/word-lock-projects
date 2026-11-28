@@ -3,6 +3,7 @@
 namespace wordlock {
 
 void StopCountdown() {
+    g_countdownPaused = false;
     if (g_countDownWindow && IsWindow(g_countDownWindow)) {
         KillTimer(g_countDownWindow, kCountDownTimerId);
         ShowWindow(g_countDownWindow, SW_HIDE);
@@ -10,6 +11,7 @@ void StopCountdown() {
 }
 
 void StartCountdown() {
+    g_countdownPaused = false;
     g_countdownSeconds = std::clamp(g_settings.countdownSeconds, 1, 3600);
 
     if (!g_isQuitting) {
@@ -28,6 +30,29 @@ void StartCountdown() {
         ShowWindow(g_countDownWindow, SW_SHOW);
         UpdateWindow(g_countDownWindow);
     }
+}
+
+void PauseCountdown() {
+    if (!g_countDownWindow || !IsWindow(g_countDownWindow) ||
+        !IsWindowVisible(g_countDownWindow)) {
+        return;
+    }
+    KillTimer(g_countDownWindow, kCountDownTimerId);
+    g_countdownPaused = true;
+}
+
+void ResumeCountdown() {
+    if (!g_countDownWindow || !IsWindow(g_countDownWindow) || !g_countdownPaused) {
+        return;
+    }
+    g_countdownPaused = false;
+    SetTimer(g_countDownWindow, kCountDownTimerId,
+             TestIntervalMs(kTestCountdownTickMsEnv, 1000), nullptr);
+}
+
+bool IsCountdownRunning() {
+    return g_countDownWindow && IsWindow(g_countDownWindow) &&
+           IsWindowVisible(g_countDownWindow) && !g_countdownPaused;
 }
 
 const wchar_t* TaskAsset(TaskType task) {

@@ -30,6 +30,22 @@ LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
                  TestIntervalMs(kTestCountdownTickMsEnv, 1000), nullptr);
         return 0;
 
+    case kTestPauseCountdownMessage:
+        if (IsTestModeEnabled()) {
+            AppendTestMessageLog(L"countdown:pause");
+            PauseCountdown();
+            return 0;
+        }
+        break;
+
+    case kTestResumeCountdownMessage:
+        if (IsTestModeEnabled()) {
+            AppendTestMessageLog(L"countdown:resume");
+            ResumeCountdown();
+            return 0;
+        }
+        break;
+
     case kThemeChangedMessage:
         if (IsTestModeEnabled()) {
             AppendTestMessageLog(L"countdown:theme:" + g_countDownTheme);

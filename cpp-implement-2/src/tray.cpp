@@ -15,6 +15,14 @@ void ShowTrayMenu(HWND hwnd) {
     }
 
     AppendMenuW(menu, MF_STRING, ID_TRAY_OPEN, L"Show App");
+
+    const bool countdownVisible = g_countDownWindow && IsWindow(g_countDownWindow) &&
+                              IsWindowVisible(g_countDownWindow);
+    AppendMenuW(menu,
+                MF_STRING | (countdownVisible ? MF_ENABLED : MF_GRAYED),
+                ID_TRAY_COUNTDOWN,
+                g_countdownPaused ? L"Resume Countdown" : L"Pause Countdown");
+
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
     AppendMenuW(menu, MF_STRING, ID_TRAY_SETTING, L"Settings");
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -34,6 +42,13 @@ void ShowTrayMenu(HWND hwnd) {
     switch (command) {
     case ID_TRAY_OPEN:
         ShowMainWindow();
+        break;
+    case ID_TRAY_COUNTDOWN:
+        if (g_countdownPaused) {
+            ResumeCountdown();
+        } else {
+            PauseCountdown();
+        }
         break;
     case ID_TRAY_SETTING:
         OpenSettingWindow();

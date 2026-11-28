@@ -13,15 +13,34 @@ constexpr wchar_t kForceTtsMockEnv[] = L"WORDLOCK_TTS_TEST_FORCE_MOCK";
 
 bool TtsServerAvailable() {
     HINTERNET session = WinHttpOpen(L"PomodoroLockCpp TTS probe/1.0",
-                                    WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
+                                    WINHTTP_ACCESS_TYPE_NO_PROXY,  // loopback: skip system proxy
                                     WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    if (session == nullptr) {
-        return false;
-    }
+    if (!session) return false;
+
+    // resolve, connect, send, receive (ms)
     WinHttpSetTimeouts(session, 300, 300, 1000, 1000);
+
+    bool available = false;
     HINTERNET connect = WinHttpConnect(session, kTtsHost, kTtsPort, 0);
-    const bool available = connect != nullptr;
-    if (connect != nullptr) {
+    if (connect) {
+        HINTERNET request = WinHttpOpenRequest(connect, L"GET", L"/health",  // or L"/status"
+                                               nullptr, WINHTTP_NO_REFERER,
+                                               WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+        if (request) {
+            if (WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+                                   WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
+                WinHttpReceiveResponse(request, nullptr)) {
+                DWORD status = 0;
+                DWORD size = sizeof(status);
+                if (WinHttpQueryHeaders(request,
+                                        WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                                        WINHTTP_HEADER_NAME_BY_INDEX, &status, &size,
+                                        WINHTTP_NO_HEADER_INDEX)) {
+                    available = (status == 200);
+                }
+            }
+            WinHttpCloseHandle(request);
+        }
         WinHttpCloseHandle(connect);
     }
     WinHttpCloseHandle(session);

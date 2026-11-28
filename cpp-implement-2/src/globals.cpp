@@ -7,6 +7,7 @@ sqlite3* g_db = nullptr;
 int g_nextTaskIndex = 0;
 TaskType g_currentTask = TaskType::English;
 int g_countdownSeconds = kCountDownStartSeconds;
+bool g_countdownPaused = false;
 std::wstring g_countDownTheme = L"paper";
 POINT g_countDownPosition{};
 bool g_countDownPositionValid = false;

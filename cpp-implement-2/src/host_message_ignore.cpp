@@ -28,7 +28,9 @@ bool HandleIgnoreWordsMessage(const std::wstring& type, const std::wstring& mess
             reply(L"{\"ok\":false,\"error\":" + JsLiteral(kIgnoreError) + L"}");
         }
     } else if (type == L"ignoreWords:close") {
-        HideSettingsWindows();
+        // Save and Cancel close only this dialog; the parent settings window
+        // must stay open. The X button uses the same WM_CLOSE path.
+        HideIgnoreWordsWindow();
     } else {
         return false;
     }

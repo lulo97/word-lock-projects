@@ -169,6 +169,7 @@ struct TestApp {
         bool singleInstance = false;
         int freezeIntervalMs = 0;   // 0 keeps the app default.
         int countdownTickMs = 0;    // 0 keeps the app default.
+        std::string ignoreScript;   // Runs only in the IgnoreWords webview.
         std::wstring prefix = L"PomodoroLockTest";
         std::wstring singleInstanceName;  // Shared mutex suffix for instance tests.
         std::wstring testHome;            // Override WORDLOCK_TEST_HOME across restarts.
@@ -184,11 +185,16 @@ struct TestApp {
         messageLog = dir / L"messages.log";
         dumpFile = dir / L"dom_dump.json";
         const std::filesystem::path commandFile = dir / L"command.js";
+        const std::filesystem::path ignoreCommandFile = dir / L"ignore_command.js";
         std::filesystem::create_directories(dir);
 
         if (!options.commandScript.empty()) {
             std::ofstream command(commandFile, std::ios::binary | std::ios::trunc);
             command << options.commandScript;
+        }
+        if (!options.ignoreScript.empty()) {
+            std::ofstream command(ignoreCommandFile, std::ios::binary | std::ios::trunc);
+            command << options.ignoreScript;
         }
 
         SetEnv(L"WORDLOCK_TEST_MODE", L"1");
@@ -196,10 +202,13 @@ struct TestApp {
         SetEnv(L"WORDLOCK_CHROME_FREEZE_MOCK", options.chromeFreezeMock ? L"1" : L"");
         SetEnv(L"WORDLOCK_TEST_HOME", options.testHome.empty() ? dir.wstring() : options.testHome);
         // Command scripts run from the DOM-dump hook, so a script implies a dump.
-        const bool needsDump = options.wantDomDump || !options.commandScript.empty();
+        const bool needsDump = options.wantDomDump || !options.commandScript.empty() ||
+                               !options.ignoreScript.empty();
         SetEnv(L"WORDLOCK_TEST_DOM_DUMP_FILE", needsDump ? dumpFile.wstring() : L"");
         SetEnv(L"WORDLOCK_TEST_COMMAND_FILE",
                options.commandScript.empty() ? L"" : commandFile.wstring());
+        SetEnv(L"WORDLOCK_TEST_IGNORE_COMMAND_FILE",
+               options.ignoreScript.empty() ? L"" : ignoreCommandFile.wstring());
         SetEnv(L"WORDLOCK_TEST_MESSAGE_LOG_FILE", messageLog.wstring());
         if (options.freezeIntervalMs > 0) {
             SetEnv(L"WORDLOCK_TEST_FREEZE_INTERVAL_MS", std::to_wstring(options.freezeIntervalMs));

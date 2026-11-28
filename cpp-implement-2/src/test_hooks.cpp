@@ -41,11 +41,13 @@ void AppendTestMessageLog(const std::wstring& type) {
     }
 }
 
-void ExecuteTestCommand(ICoreWebView2* webView) {
+void ExecuteTestCommand(ICoreWebView2* webView, const wchar_t* htmlFile) {
     if (!IsTestModeEnabled() || webView == nullptr) {
         return;
     }
-    const std::wstring pathValue = GetEnvironmentValue(kTestCommandFileEnv);
+    const bool ignoreView = htmlFile != nullptr && wcscmp(htmlFile, L"ignoreWords.html") == 0;
+    const std::wstring pathValue = GetEnvironmentValue(
+        ignoreView ? kTestIgnoreCommandFileEnv : kTestCommandFileEnv);
     if (pathValue.empty()) {
         return;
     }

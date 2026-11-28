@@ -171,6 +171,7 @@ extern ComPtr<ICoreWebView2Controller> g_ignoreWordsController;
 LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 constexpr wchar_t kTestCommandFileEnv[] = L"WORDLOCK_TEST_COMMAND_FILE";
+constexpr wchar_t kTestIgnoreCommandFileEnv[] = L"WORDLOCK_TEST_IGNORE_COMMAND_FILE";
 constexpr wchar_t kTestMessageLogFileEnv[] = L"WORDLOCK_TEST_MESSAGE_LOG_FILE";
 constexpr wchar_t kAppUriPrefix[] = L"https://app/";
 
@@ -268,6 +269,7 @@ bool HandleContentMessage(const std::wstring& type, const std::wstring& message,
 bool HandleIgnoreWordsMessage(const std::wstring& type, const std::wstring& message,
                               const ReplyFn& reply);
 void OpenIgnoreWordsWindow();
+void HideIgnoreWordsWindow();
 LRESULT CALLBACK IgnoreWordsWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 bool IsJapaneseScriptWord(const std::wstring& word);
 std::vector<std::wstring> ParseIgnoreWords(const std::wstring& value, bool japanese);
@@ -320,7 +322,7 @@ LRESULT CALLBACK SettingWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 bool IsTestDomDumpEnabled();
 void WriteTestDomDump(const std::wstring& contents);
 void AppendTestMessageLog(const std::wstring& type);
-void ExecuteTestCommand(ICoreWebView2* webView);
+void ExecuteTestCommand(ICoreWebView2* webView, const wchar_t* htmlFile);
 std::wstring Utf8ToWide(const std::string& text);
 std::string WideToUtf8(const std::wstring& text);
 std::wstring JsonEscape(const std::wstring& value);

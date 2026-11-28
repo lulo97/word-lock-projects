@@ -6,11 +6,13 @@ void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
     if (!IsTestDomDumpEnabled()) {
         return;
     }
+    const std::wstring domHtmlFile(htmlFile != nullptr ? htmlFile : L"");
     const bool settingsDump = wcscmp(htmlFile, L"settings.html") == 0;
+    const bool ignoreDump = wcscmp(htmlFile, L"ignoreWords.html") == 0;
     const bool dumbbellDump = wcscmp(htmlFile, L"dumbbell.html") == 0;
     const bool wordDump = wcscmp(htmlFile, L"english.html") == 0 ||
                           wcscmp(htmlFile, L"japanese.html") == 0;
-    if (!settingsDump && !dumbbellDump && !wordDump) {
+    if (!settingsDump && !ignoreDump && !dumbbellDump && !wordDump) {
         return;
     }
 
@@ -27,7 +29,7 @@ void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
 
     webView->add_NavigationCompleted(
         Callback<ICoreWebView2NavigationCompletedEventHandler>(
-            [dumpScript](ICoreWebView2* sender,
+            [dumpScript, domHtmlFile](ICoreWebView2* sender,
                          ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
                 BOOL success = FALSE;
                 if (args == nullptr || FAILED(args->get_IsSuccess(&success))) {
@@ -43,12 +45,12 @@ void InstallTestDomDump(ICoreWebView2* webView, const wchar_t* htmlFile) {
                 const HRESULT hr = view->ExecuteScript(
                     dumpScript.c_str(),
                     Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
-                        [view](HRESULT result, LPCWSTR resultJson) -> HRESULT {
+                        [view, domHtmlFile](HRESULT result, LPCWSTR resultJson) -> HRESULT {
                             if (FAILED(result) || resultJson == nullptr) {
                                 WriteTestDomDump(L"{\"domScriptFailed\":true}");
                             } else {
                                 WriteTestDomDump(resultJson);
-                                ExecuteTestCommand(view.Get());
+                                ExecuteTestCommand(view.Get(), domHtmlFile.c_str());
                             }
                             return S_OK;
                         }).Get());

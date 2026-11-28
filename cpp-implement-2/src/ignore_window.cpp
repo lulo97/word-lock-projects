@@ -34,6 +34,12 @@ void OpenIgnoreWordsWindow() {
     }
 }
 
+void HideIgnoreWordsWindow() {
+    if (g_ignoreWordsWindow && IsWindow(g_ignoreWordsWindow)) {
+        ShowWindow(g_ignoreWordsWindow, SW_HIDE);
+    }
+}
+
 LRESULT CALLBACK IgnoreWordsWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
     case WM_CREATE:
@@ -49,7 +55,7 @@ LRESULT CALLBACK IgnoreWordsWndProc(HWND hwnd, UINT message, WPARAM wParam, LPAR
         break;
 
     case WM_CLOSE:
-        ShowWindow(hwnd, SW_HIDE);
+        HideIgnoreWordsWindow();
         return 0;
 
     case WM_DESTROY:

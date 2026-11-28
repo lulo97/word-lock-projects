@@ -37,11 +37,11 @@ std::wstring NextThemeId(const std::wstring& current) {
 
 std::wstring Trim(const std::wstring& value) {
     size_t begin = 0;
-    while (begin < value.size() && std::isspace(static_cast<unsigned char>(value[begin]))) {
+    while (begin < value.size() && std::iswspace(value[begin])) {
         ++begin;
     }
     size_t end = value.size();
-    while (end > begin && std::isspace(static_cast<unsigned char>(value[end - 1]))) {
+    while (end > begin && std::iswspace(value[end - 1])) {
         --end;
     }
     return value.substr(begin, end - begin);

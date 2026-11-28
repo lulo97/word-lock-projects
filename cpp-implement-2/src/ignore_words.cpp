@@ -41,7 +41,7 @@ std::vector<std::wstring> ParseIgnoreWords(const std::wstring& value, bool japan
             throw std::runtime_error("invalid ignore words");
         }
         for (wchar_t ch : token) {
-            if (std::isspace(static_cast<unsigned char>(ch))) {
+            if (std::iswspace(ch)) {
                 throw std::runtime_error("invalid ignore words");
             }
         }

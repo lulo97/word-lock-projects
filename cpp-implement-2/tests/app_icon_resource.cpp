@@ -1,26 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <windows.h>
-
-#include <filesystem>
-#include <string>
-
-namespace {
-
-std::filesystem::path CurrentExecutablePath() {
-    wchar_t buffer[MAX_PATH]{};
-    const DWORD length = GetModuleFileNameW(nullptr, buffer, MAX_PATH);
-    return std::filesystem::path(std::wstring(buffer, length));
-}
-
-std::filesystem::path AppExecutablePath() {
-    const std::filesystem::path testExe = CurrentExecutablePath();
-    const std::filesystem::path configDir = testExe.parent_path();
-    const std::filesystem::path buildDir = configDir.parent_path().parent_path();
-    return buildDir / configDir.filename() / L"PomodoroLockCpp.exe";
-}
-
-}  // namespace
+#include "app_harness.h"
 
 TEST_CASE("Executable embeds app icon resource for Explorer", "[icon][resource]") {
     const std::filesystem::path app = AppExecutablePath();

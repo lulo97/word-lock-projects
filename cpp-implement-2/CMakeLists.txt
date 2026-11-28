@@ -13,16 +13,26 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(unofficial-webview2 CONFIG REQUIRED)
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
 
-file(GLOB APP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-add_executable(${PROJECT_NAME} WIN32 ${APP_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc")
+file(GLOB CORE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+list(REMOVE_ITEM CORE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
-target_link_libraries(${PROJECT_NAME} PRIVATE
+# Both the app and the unit tests link this library, so pure helpers are
+# reachable from fast tests without launching the GUI.
+add_library(wordlock_core STATIC ${CORE_SOURCES})
+target_compile_definitions(wordlock_core PUBLIC UNICODE _UNICODE)
+target_include_directories(wordlock_core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(wordlock_core PUBLIC
     shell32.lib
     winhttp.lib
     unofficial::sqlite3::sqlite3
     unofficial::webview2::webview2
 )
+
+add_executable(${PROJECT_NAME} WIN32
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc"
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE wordlock_core)
 
 # WebView2 screens are plain HTML/CSS copied next to the executable.
 function(copy_webview_asset source_file asset_name)

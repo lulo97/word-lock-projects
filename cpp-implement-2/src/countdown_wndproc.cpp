@@ -26,7 +26,8 @@ LRESULT CALLBACK CountDownWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
     case WM_CREATE:
         g_countdownSeconds = std::clamp(g_settings.countdownSeconds, 1, 3600);
-        SetTimer(hwnd, kCountDownTimerId, 1000, nullptr);
+        SetTimer(hwnd, kCountDownTimerId,
+                 TestIntervalMs(kTestCountdownTickMsEnv, 1000), nullptr);
         return 0;
 
     case kThemeChangedMessage:

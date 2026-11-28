@@ -11,6 +11,8 @@
 #include <WebView2.h>
 #include <sqlite3.h>
 
+#include "app_messages.h"
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -54,6 +56,10 @@ constexpr wchar_t kChromeFreezeMockEnv[] = L"WORDLOCK_CHROME_FREEZE_MOCK";
 constexpr wchar_t kTestChromeFreezeEnv[] = L"WORDLOCK_TEST_CHROME_FREEZE";
 constexpr wchar_t kTestCountdownSecondsEnv[] = L"WORDLOCK_TEST_COUNTDOWN_SECONDS";
 constexpr wchar_t kTestAutoThemeEnv[] = L"WORDLOCK_TEST_AUTO_THEME";
+constexpr wchar_t kTestFreezeIntervalMsEnv[] = L"WORDLOCK_TEST_FREEZE_INTERVAL_MS";
+constexpr wchar_t kTestCountdownTickMsEnv[] = L"WORDLOCK_TEST_COUNTDOWN_TICK_MS";
+constexpr wchar_t kTestSingleInstanceEnv[] = L"WORDLOCK_TEST_SINGLE_INSTANCE";
+constexpr wchar_t kTestSingleInstanceNameEnv[] = L"WORDLOCK_TEST_SINGLE_INSTANCE_NAME";
 constexpr wchar_t kUseTestDataEnv[] = L"WORDLOCK_USE_TEST_DATA";
 constexpr wchar_t kTestModeEnv[] = L"WORDLOCK_TEST_MODE";
 constexpr wchar_t kTestHomeEnv[] = L"WORDLOCK_TEST_HOME";
@@ -78,14 +84,11 @@ constexpr int kCountDownFontHeight = 28;
 constexpr int kCountDownStartSeconds = 60;
 constexpr UINT_PTR kCountDownTimerId = 1;
 constexpr UINT_PTR kChromeFreezeTimerId = 2;
-constexpr UINT kThemeChangedMessage = WM_APP + 3;
 constexpr int kSettingWindowWidth = 780;
 constexpr int kSettingWindowHeight = 780;
 constexpr int kIgnoreWindowWidth = 560;
 constexpr int kIgnoreWindowHeight = 620;
 
-constexpr UINT kTrayMessage = WM_APP + 1;
-constexpr UINT kTestQuitMessage = WM_APP + 2;
 constexpr UINT kTrayIconId = 1;
 
 constexpr UINT ID_TRAY_OPEN = 1;
@@ -238,6 +241,7 @@ std::wstring GetDatabaseInfoJson();
 int ScaleForDpi(int value, UINT dpi);
 void HandleDpiChanged(HWND hwnd, LPARAM lParam);
 bool EnvFlagEnabled(const wchar_t* name);
+int TestIntervalMs(const wchar_t* name, int fallbackMs);
 bool IsTestModeEnabled();
 std::wstring GetEnvironmentValue(const wchar_t* name);
 std::wstring WindowClassForCurrentProcess(const wchar_t* base);

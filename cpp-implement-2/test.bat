@@ -24,7 +24,7 @@ echo Running test: %TEST_NAME%
 set "CTEST_RC=%ERRORLEVEL%"
 type "%CTEST_OUT%"
 findstr /C:"***Timeout" "%CTEST_OUT%" >nul
-if not errorlevel 1 echo [10s MAX LIMIT REACHED] Test "%TEST_NAME%" exceeded 10s and was killed.
+if not errorlevel 1 echo [TIMEOUT] Test "%TEST_NAME%" exceeded its CTest limit ^(30s for [runtime] tests, 10s otherwise^) and was killed.
 del "%CTEST_OUT%" >nul 2>&1
 exit /b %CTEST_RC%
 
@@ -34,6 +34,6 @@ echo Running all tests...
 set "CTEST_RC=%ERRORLEVEL%"
 type "%CTEST_OUT%"
 findstr /C:"***Timeout" "%CTEST_OUT%" >nul
-if not errorlevel 1 echo [10s MAX LIMIT REACHED] One or more tests exceeded 10s and were killed.
+if not errorlevel 1 echo [TIMEOUT] One or more tests exceeded their CTest limit ^(30s for [runtime] tests, 10s otherwise^) and were killed.
 del "%CTEST_OUT%" >nul 2>&1
 exit /b %CTEST_RC%

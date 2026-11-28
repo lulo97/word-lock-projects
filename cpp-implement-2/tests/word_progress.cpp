@@ -1,179 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 
-#include <windows.h>
-
-#include <chrono>
-#include <filesystem>
-#include <fstream>
-#include <iterator>
-#include <string>
-#include <thread>
-#include <vector>
+#include "app_harness.h"
 
 namespace {
 
-constexpr UINT kTestQuitMessage = WM_APP + 2;
-
-std::filesystem::path CurrentExecutablePath() {
-    wchar_t buffer[MAX_PATH]{};
-    const DWORD length = GetModuleFileNameW(nullptr, buffer, MAX_PATH);
-    return std::filesystem::path(std::wstring(buffer, length));
-}
-
-std::filesystem::path TempRoot() {
-    wchar_t buffer[MAX_PATH]{};
-    const DWORD length = GetTempPathW(MAX_PATH, buffer);
-    return std::filesystem::path(std::wstring(buffer, length));
-}
-
-std::filesystem::path AppExecutablePath() {
-    const std::filesystem::path testExe = CurrentExecutablePath();
-    const std::filesystem::path configDir = testExe.parent_path();
-    const std::filesystem::path buildDir = configDir.parent_path().parent_path();
-    return buildDir / configDir.filename() / L"PomodoroLockCpp.exe";
-}
-
-std::string ReadFile(const std::filesystem::path& path) {
-    std::ifstream input(path, std::ios::binary);
-    return std::string(std::istreambuf_iterator<char>(input),
-                       std::istreambuf_iterator<char>());
-}
-
-bool WaitForNonEmptyFile(const std::filesystem::path& path, DWORD timeoutMs) {
-    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMs);
-    while (std::chrono::steady_clock::now() < deadline) {
-        std::error_code error;
-        if (std::filesystem::exists(path, error) &&
-            std::filesystem::file_size(path, error) > 0) {
-            return true;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    }
-    return false;
-}
-
-bool WaitForAllMessages(const std::filesystem::path& path,
-                        const std::vector<std::string>& needles,
-                        DWORD timeoutMs) {
-    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMs);
-    while (std::chrono::steady_clock::now() < deadline) {
-        const std::string contents = ReadFile(path);
-        bool allFound = true;
-        for (const std::string& needle : needles) {
-            if (contents.find(needle) == std::string::npos) {
-                allFound = false;
-                break;
-            }
-        }
-        if (allFound) {
-            return true;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    }
-    return false;
-}
-
-HWND WaitForVisibleWindow(const std::wstring& className, DWORD timeoutMs) {
-    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMs);
-    while (std::chrono::steady_clock::now() < deadline) {
-        HWND window = FindWindowW(className.c_str(), nullptr);
-        if (window != nullptr && IsWindowVisible(window)) {
-            return window;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    }
-    return nullptr;
-}
-
-struct ProcessGuard {
-    PROCESS_INFORMATION process{};
-
-    ProcessGuard() = default;
-    ProcessGuard(const ProcessGuard&) = delete;
-    ProcessGuard& operator=(const ProcessGuard&) = delete;
-
-    ~ProcessGuard() {
-        if (process.hProcess != nullptr) {
-            DWORD exitCode = 0;
-            if (GetExitCodeProcess(process.hProcess, &exitCode) && exitCode == STILL_ACTIVE) {
-                TerminateProcess(process.hProcess, 1);
-            }
-            CloseHandle(process.hProcess);
-        }
-        if (process.hThread != nullptr) {
-            CloseHandle(process.hThread);
-        }
-    }
-
-    void Dismiss() { process = {}; }
-};
-
-void RunProgressScenario(const std::filesystem::path& app,
-                         const std::wstring& languageTag,
-                         const std::wstring& launchArg,
-                         const std::string& script,
-                         const std::vector<std::string>& requiredMessages) {
-    const auto stamp = std::chrono::duration_cast<std::chrono::milliseconds>(
-                           std::chrono::steady_clock::now().time_since_epoch())
-                           .count();
-    const std::filesystem::path testDir =
-        TempRoot() / (L"PomodoroLockProgress_" + languageTag + L"_" +
-                      std::to_wstring(GetCurrentProcessId()) + L"_" + std::to_wstring(stamp));
-    const std::filesystem::path dumpFile = testDir / L"word_dom.json";
-    const std::filesystem::path commandFile = testDir / L"command.js";
-    const std::filesystem::path messageLog = testDir / L"messages.log";
-    std::filesystem::create_directories(testDir);
-
-    {
-        std::ofstream command(commandFile, std::ios::binary | std::ios::trunc);
-        command << script;
-    }
-
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_MODE", L"1"));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_USE_TEST_DATA", L"1"));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_CHROME_FREEZE_MOCK", L"1"));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_HOME", testDir.c_str()));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_DOM_DUMP_FILE", dumpFile.c_str()));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_COMMAND_FILE", commandFile.c_str()));
-    REQUIRE(SetEnvironmentVariableW(L"WORDLOCK_TEST_MESSAGE_LOG_FILE", messageLog.c_str()));
-
-    std::wstring commandLine = L"\"" + app.wstring() + L"\" " + launchArg;
-    std::vector<wchar_t> commandBuffer(commandLine.begin(), commandLine.end());
-    commandBuffer.push_back(L'\0');
-
-    STARTUPINFOW startup{};
-    startup.cb = sizeof(startup);
-    ProcessGuard guard;
-    REQUIRE(CreateProcessW(nullptr, commandBuffer.data(), nullptr, nullptr, FALSE, 0, nullptr,
-                           nullptr, &startup, &guard.process));
-
-    const std::wstring mainClass =
-        L"MainWindowTest" + std::to_wstring(guard.process.dwProcessId);
-    REQUIRE(WaitForVisibleWindow(mainClass, 4000) != nullptr);
-    const bool dumpReady = WaitForNonEmptyFile(dumpFile, 5000);
-    INFO("DOM dump: " << ReadFile(dumpFile));
-    INFO("Host messages before wait: " << ReadFile(messageLog));
-    REQUIRE(dumpReady);
-
-    const bool messagesReady = WaitForAllMessages(messageLog, requiredMessages, 4000);
-    INFO("Host messages after wait: " << ReadFile(messageLog));
-    REQUIRE(messagesReady);
-
-    HWND mainWindow = FindWindowW(mainClass.c_str(), nullptr);
-    REQUIRE(mainWindow != nullptr);
-    REQUIRE(PostMessageW(mainWindow, kTestQuitMessage, 0, 0));
-    REQUIRE(WaitForSingleObject(guard.process.hProcess, 1000) == WAIT_OBJECT_0);
-    guard.Dismiss();
-}
-
-}  // namespace
-
-TEST_CASE("Correct answers raise show count and random picks favor least shown words",
-          "[progress][database][runtime]") {
-    const std::filesystem::path app = AppExecutablePath();
-    REQUIRE(std::filesystem::exists(app));
-
-    const std::string englishScript = R"JS((async function () {
+constexpr char kEnglishScript[] = R"JS((async function () {
   'use strict';
   function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
   function signal(type) { window.app.send(type); }
@@ -237,7 +68,7 @@ TEST_CASE("Correct answers raise show count and random picks favor least shown w
   if (Object.keys(lowest).length >= 3) signal('en:progress-random');
 })();)JS";
 
-    const std::string japaneseScript = R"JS((async function () {
+constexpr char kJapaneseScript[] = R"JS((async function () {
   'use strict';
   function sleep(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
   function signal(type) { window.app.send(type); }
@@ -301,12 +132,39 @@ TEST_CASE("Correct answers raise show count and random picks favor least shown w
   if (Object.keys(lowest).length >= 3) signal('jp:progress-random');
 })();)JS";
 
-    RunProgressScenario(app, L"english", L"--test-open-english", englishScript,
+void RunProgressScenario(const std::wstring& languageTag, const std::wstring& launchArg,
+                         const std::string& script,
+                         const std::vector<std::string>& requiredMessages) {
+    REQUIRE(std::filesystem::exists(AppExecutablePath()));
+
+    TestApp::Options options;
+    options.args = launchArg;
+    options.commandScript = script;
+    options.wantDomDump = true;
+    options.prefix = L"PomodoroLockProgress_" + languageTag;
+    TestApp app(options);
+
+    REQUIRE(WaitForWindow(app.mainClass, true, 4000) != nullptr);
+    REQUIRE(WaitForNonEmptyFile(app.dumpFile, 5000));
+    INFO("DOM dump: " << ReadFile(app.dumpFile));
+    REQUIRE(WaitForAllMessages(app.messageLog, requiredMessages, 4000));
+    INFO("Host messages after wait: " << ReadFile(app.messageLog));
+    app.Quit();
+}
+
+}  // namespace
+
+TEST_CASE("English progress counts correct answers and favors least shown words",
+          "[progress][database][english][runtime]") {
+    RunProgressScenario(L"english", L"--test-open-english", kEnglishScript,
                         {"en:progress-memory", "en:progress-empty", "en:progress-count",
                          "en:progress-phase2", "en:progress-persisted", "en:progress-least",
                          "en:progress-random"});
+}
 
-    RunProgressScenario(app, L"japanese", L"--test-open-japanese", japaneseScript,
+TEST_CASE("Japanese progress counts correct answers and favors least shown words",
+          "[progress][database][japanese][runtime]") {
+    RunProgressScenario(L"japanese", L"--test-open-japanese", kJapaneseScript,
                         {"jp:progress-memory", "jp:progress-empty", "jp:progress-count",
                          "jp:progress-phase2", "jp:progress-persisted", "jp:progress-least",
                          "jp:progress-random"});

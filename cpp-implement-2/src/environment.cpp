@@ -48,11 +48,24 @@ bool IsChromeFreezeMockEnabled() {
 }
 
 bool AcquireSingleInstanceLock() {
-    if (IsTestModeEnabled() || IsChromeFreezeMockEnabled()) {
+    // Tests normally bypass the mutex so parallel scenarios do not collide.
+    // Opt in explicitly when testing single-instance behaviour itself.
+    const bool singleInstanceTest =
+        IsTestModeEnabled() && EnvFlagEnabled(kTestSingleInstanceEnv);
+    if (!singleInstanceTest && (IsTestModeEnabled() || IsChromeFreezeMockEnabled())) {
         return true;
     }
 
-    g_singleInstanceMutex = CreateMutexW(nullptr, TRUE, kSingleInstanceMutexName);
+    std::wstring mutexName(kSingleInstanceMutexName);
+    if (singleInstanceTest) {
+        // Isolate each test pair so a leftover mutex from another scenario
+        // cannot make the "first" instance lose the lock.
+        const std::wstring suffix = GetEnvironmentValue(kTestSingleInstanceNameEnv);
+        if (!suffix.empty()) {
+            mutexName += L"_" + suffix;
+        }
+    }
+    g_singleInstanceMutex = CreateMutexW(nullptr, TRUE, mutexName.c_str());
     if (g_singleInstanceMutex == nullptr) {
         return true;  // Fail open: a lock error must not block the real instance.
     }

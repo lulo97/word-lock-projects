@@ -70,6 +70,18 @@ automatically.
 
 - `WORDLOCK_USE_TEST_DATA=1` — in-memory SQLite and in-memory settings defaults.
 - `WORDLOCK_CHROME_FREEZE_MOCK=1` — disables the single-instance mutex and Chrome freeze.
+- `WORDLOCK_TEST_MODE=1` — enables test hooks (message log, DOM dump, command script, and
+  per-process window class suffixes). The harness in `tests/support/app_harness.h` sets these for
+  every runtime test:
+  - `WORDLOCK_TEST_MESSAGE_LOG_FILE` — appends each host message type to this file.
+  - `WORDLOCK_TEST_DOM_DUMP_FILE` / `WORDLOCK_TEST_COMMAND_FILE` — writes a one-shot DOM snapshot
+    and runs the supplied JavaScript inside the WebView.
+  - `WORDLOCK_TEST_HOME` — data directory used when `WORDLOCK_USE_TEST_DATA` is off, which makes
+    settings/database persistence testable.
+  - `WORDLOCK_TEST_FREEZE_INTERVAL_MS` / `WORDLOCK_TEST_COUNTDOWN_TICK_MS` — shorten the 2 s
+    Chrome-freeze and 1 s countdown timers so negative checks stay fast.
+  - `WORDLOCK_TEST_SINGLE_INSTANCE=1` — opts into the single-instance mutex when test mode is on;
+    `WORDLOCK_TEST_SINGLE_INSTANCE_NAME` gives each test pair its own mutex name.
 
 ## Build
 
@@ -117,5 +129,19 @@ Run one test file with:
 test.bat tests\settings_window_shows_settings_text.cpp
 ```
 
-The runtime WebView2 test launches `PomodoroLockCpp.exe` in isolated test mode, opens the real
-Settings window, and asserts that the live WebView DOM contains `Settings`.
+Every test case that launches the real executable carries the `[runtime]` tag. CTest gives those
+a 30s timeout and a shared `desktop` resource lock so window/focus tests never run in parallel;
+all other tests get 10s. The pure-logic checks live in `unit_*.cpp` and can be run alone with:
+
+```bat
+ctest --test-dir build -C Release -R "^unit_" --output-on-failure
+```
+
+Runtime tests share `tests/support/app_harness.h`, which sets the test environment, launches the
+app in a job object, polls for messages/windows instead of sleeping, and removes its temp directory
+on exit.
+
+Runtime tests launch `PomodoroLockCpp.exe` in isolated test mode and exercise the real windows and
+WebView2 views: settings confirm, theme swapping, input focus, word progress, Chrome freeze scope,
+ignore-word persistence, single-instance behaviour, countdown dragging/foreground/theme, and the
+`https://app/` 403 traversal guard.

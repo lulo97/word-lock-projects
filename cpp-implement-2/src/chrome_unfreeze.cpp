@@ -42,7 +42,8 @@ void SyncChromeFreeze() {
     const bool shouldFreeze = g_settings.chromeFreeze && IsWindowVisible(g_mainWindow);
     if (shouldFreeze) {
         FreezeChromeProcesses();
-        SetTimer(g_mainWindow, kChromeFreezeTimerId, 2000, nullptr);
+        SetTimer(g_mainWindow, kChromeFreezeTimerId,
+                 TestIntervalMs(kTestFreezeIntervalMsEnv, 2000), nullptr);
     } else {
         KillTimer(g_mainWindow, kChromeFreezeTimerId);
         UnfreezeHeldChromeProcesses();
